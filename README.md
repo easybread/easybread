@@ -22,7 +22,9 @@ All pull requests and commits should go through automated testing and code quali
 
 ## Standardized CRUD Format
 
-Each third party will require a plugin to talk in their own format. The goal is to transform these different requests/responses into a standardized format to make pulling and updating information to and from these services a breeze. There should be a list of standard API calls that you can call to communicate with each third-party provider to put and pull information in a consistent format. Any extra information or APIs you would like to include as part of the standard module should not interfere with the standard API calls. 
+Each third party will require a plugin to talk in their own format. The goal is to transform these different requests/responses into a standardized format to make pulling and updating information to and from these services a breeze. Should use https://schema.org/ for our schema when building out the "Standardized" set of information we pull. Basically any response we get from third-party providers, we should map to schema.org objects.
+
+There should be a list of standard API calls that you can call to communicate with each third-party provider to put and pull information in a consistent format. Any extra information or APIs you would like to include as part of the standard module should not interfere with the standard API calls. 
 
 ## Standardized Auth Flow
 Each plugin may require the user to authenticate to communicate with the service. Authentication should be standardized between the different third party providers. There may be “background” or “server-side” processes that happen and “foreground” or “in-browser” processes that occur.
@@ -35,7 +37,7 @@ Easy bread should be database agnostic. The user should have the ability to choo
 ## Other Ideas
 Everything should be testable and put into a validatable format. For example, jsonschema or simple-schema should be used to validate the objects passed by users and when formatted to the standard format from the third-party API. 
 
-##Plugins
+## Plugins
 Current “plugins” on the roadmap to build:
 ![plugins](https://i.imgur.com/ANhtccQ.png)
 
