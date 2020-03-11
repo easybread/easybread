@@ -1,0 +1,51 @@
+{
+  "name": "@easybread/easybread",
+  "version": "0.0.1",
+  "description": "Easily browse, read, edit, add, and delete (BREAD) data from third-party providers",
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
+  "scripts": {
+    "compile": "tsc -p .",
+    "prettier:write": "prettier 'src/**/*.ts' --write",
+    "prettier:check": "prettier 'src/**/*.ts' --check",
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "test": "jest --coverage --passWithNoTests",
+    "test:watch": "jest --coverage --passWithNoTests --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easybread/easybread.git"
+  },
+  "author": "Idris Adamjy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/easybread/easybread/issues"
+  },
+  "homepage": "https://github.com/easybread/easybread#readme",
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.0",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.3",
+    "jest": "^25.1.0",
+    "lint-staged": "^10.0.8",
+    "prettier": "^1.19.1",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && jest --coverage"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --fix"
+    ]
+  }
+}
