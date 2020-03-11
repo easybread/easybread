@@ -6,11 +6,11 @@
 
 <https://www.npmjs.com/org/easybread>
 
-Easily browse, read, edit, add, and delete (BREAD) data from third-party providers in a standard format. 
+Easily browse, read, edit, add, and delete (BREAD) data from third-party providers in a standard format.
 
 Build an expandable, open-source NPM module for syncing data between third party HR / Identity providers with an easy API to include new third party providers as separate “plugins”. Each module should allow access to the raw data from the third party, as well as a standardized format for reading information that is consistent between third party providers.
 
-An example package that does this type of plugin integration is <https://github.com/editor-js.> EditorJS allows you to pull in the primary “editor” as its own module, and then you can include “plugins” to extend the functionality. This project should model that approach.
+An example package that does this type of plugin integration is <https://github.com/editor-js>. EditorJS allows you to pull in the primary “editor” as its own module, and then you can include “plugins” to extend the functionality. This project should model that approach.
 
 The project and all modules should use TypeScript as the primary language. The code should be validated using husky pre-commit (to prevent committing bad code) and pre-push (to prevent pushing bad code) hooks. Utilize TSLint for lint checking.
 
