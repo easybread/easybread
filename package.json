@@ -18,8 +18,24 @@
     "type": "git",
     "url": "git+https://github.com/easybread/easybread.git"
   },
-  "author": "Idris Adamjy",
-  "license": "ISC",
+  "keywords": [
+    "easybread"
+  ],
+  "author": {
+    "name": "Easybread",
+    "url": "https://easybread.io/"
+  },
+  "contributors": [
+    {
+      "name": "Idris Adamjy",
+      "email": "adamjyidris@gmail.com"
+    },
+    {
+      "name": "William Reiske",
+      "email": "wreiske@mieweb.com"
+    }
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/easybread/easybread/issues"
   },
