@@ -5,6 +5,7 @@
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "scripts": {
+    "precompile": "npm run lint:fix",
     "compile": "tsc -p .",
     "prettier:write": "prettier 'src/**/*.ts' --write",
     "prettier:check": "prettier 'src/**/*.ts' --check",
