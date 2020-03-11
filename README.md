@@ -1,5 +1,8 @@
 # easybread
 
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/easybread/easybread.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/easybread/easybread/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/easybread/easybread.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/easybread/easybread/context:javascript)
+
 <https://easybread.io/>
 
 <https://github.com/easybread>
