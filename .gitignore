@@ -1,0 +1,16 @@
+node_modules/
+build/
+dist/
+coverage/
+reports/
+docs/
+
+npm-debug.log
+yarn-error.log
+
+.nyc_output
+.vscode
+.idea
+.DS_Store
+.cache/
+
