@@ -1,0 +1,4 @@
+export enum BreadOperationName {
+  SETUP_BASIC_AUTH = 'BREAD/SETUP_BASIC_AUTH',
+  EMPLOYEE_SEARCH = 'BREAD/EMPLOYEE/SEARCH'
+}

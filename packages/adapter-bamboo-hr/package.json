@@ -1,0 +1,19 @@
+{
+  "name": "adapter-bamboo-hr",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Aleksander Cherednichenko <alexandr2110pro@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/adapter-bamboo-hr.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
