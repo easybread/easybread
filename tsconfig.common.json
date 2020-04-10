@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "module": "esnext",
+    "module": "CommonJS",
     "target": "es2018",
     "lib": [
       "es2018"
