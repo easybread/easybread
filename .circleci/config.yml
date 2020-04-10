@@ -1,0 +1,106 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@2.0.1
+
+# ---
+
+executors:
+  bread-executor:
+    parameters:
+      tag:
+        type: string
+        default: 'latest'
+    docker:
+      - image: cimg/node:<<parameters.tag>>
+    working_directory: ~/app
+
+# ---
+
+jobs:
+
+  test:
+    executor:
+      name: bread-executor
+      tag: '12.16.1'
+    steps:
+      - checkout
+      - run: yarn --version
+      - run: node --version
+
+      - node/install-packages:
+          app-dir: ~/app
+          pkg-manager: yarn
+          cache-key: yarn.lock
+
+      - run:
+          name: Lerna Bootsrap
+          command: yarn bootsrap
+
+      - run:
+          name: "Check Types"
+          command: yarn check-types
+
+      - run:
+          name: "Lint"
+          command: yarn lint:ci
+
+      - run:
+          name: "Test"
+          command: yarn test:ci
+
+      - store_test_results:
+          path: packages/adapter-bamboo-hr/reports/junit
+      - store_test_results:
+          path: packages/adapter-breezy/reports/junit
+      - store_test_results:
+          path: packages/adapter-google/reports/junit
+      - store_test_results:
+          path: packages/common/reports/junit
+      - store_test_results:
+          path: packages/core/reports/junit
+      - store_test_results:
+          path: packages/operations/reports/junit
+
+      - store_artifacts:
+          path: packages/adapter-bamboo-hr/reports/junit
+          destination: test-results/adapter-bamboo-hr
+      - store_artifacts:
+          path: packages/adapter-breezy/reports/junit
+          destination: test-results/adapter-breezy
+      - store_artifacts:
+          path: packages/adapter-google/reports/junit
+          destination: test-results/adapter-google
+      - store_artifacts:
+          path: packages/common/reports/junit
+          destination: test-results/common
+      - store_artifacts:
+          path: packages/core/reports/junit
+          destination: test-results/core
+      - store_artifacts:
+          path: packages/operations/reports/junit
+          destination: test-results/operations
+
+      - store_artifacts:
+          path: packages/adapter-bamboo-hr/reports/junit
+          destination: coverage/adapter-bamboo-hr
+      - store_artifacts:
+          path: packages/adapter-breezy/reports/junit
+          destination: coverage/adapter-breezy
+      - store_artifacts:
+          path: packages/adapter-google/reports/junit
+          destination: coverage/adapter-google
+      - store_artifacts:
+          path: packages/common/reports/junit
+          destination: coverage/common
+      - store_artifacts:
+          path: packages/core/reports/junit
+          destination: coverage/core
+      - store_artifacts:
+          path: packages/operations/reports/junit
+          destination: coverage/operations
+
+workflows:
+  test:
+    jobs:
+      - test:

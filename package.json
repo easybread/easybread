@@ -5,7 +5,9 @@
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
     "test": "lerna run test",
-    "check-types": "lerna run check-types"
+    "check-types": "lerna run check-types",
+    "lint:ci": "lerna run lint:ci",
+    "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit lerna run test:ci"
   },
   "husky": {
     "hooks": {
