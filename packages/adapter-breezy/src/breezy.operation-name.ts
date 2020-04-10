@@ -1,0 +1,4 @@
+export enum BreezyOperationName {
+  AUTHENTICATE = 'BREEZY/AUTHENTICATE',
+  COMPANY_SEARCH = 'BREEZY/COMPANY/SEARCH'
+}
