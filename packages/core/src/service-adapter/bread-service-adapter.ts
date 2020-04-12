@@ -46,7 +46,7 @@ export abstract class BreadServiceAdapter<
   protected registerOperationHandlers(
     ...operationHandlers: BreadOperationHandler<T, A>[]
   ): void {
-    operationHandlers.map((h) => this.registerOperationHandler(h.name, h));
+    operationHandlers.map(h => this.registerOperationHandler(h.name, h));
   }
 
   protected registerOperationHandler(

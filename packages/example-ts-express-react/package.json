@@ -34,7 +34,7 @@
   "scripts": {
     "start": "react-scripts start",
     "start:server": "ts-node --project ./tsconfig.server.json ./src/server.ts",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "lint": "eslint 'src/**/*.ts'",
     "lint:ci": "yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
     "lint:fix": "eslint 'src/**/*.ts' --fix",

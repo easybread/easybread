@@ -24,7 +24,7 @@ export const googleContactToPersonTransform = (
     // title
   } = contact;
 
-  person.email = gd$email.find((m) => m.primary === 'true')?.address;
+  person.email = gd$email.find(m => m.primary === 'true')?.address;
 
   if (gd$name) {
     person.name = gd$name.gd$fullName?.$t;
@@ -49,7 +49,7 @@ export const googleContactToPersonTransform = (
     // TODO: what to do if there're many phones.
     // TODO: figure out the type of the phone by `rel`
     const tel =
-      gd$phoneNumber.find((p) => p.primary === 'true') || gd$phoneNumber[0];
+      gd$phoneNumber.find(p => p.primary === 'true') || gd$phoneNumber[0];
 
     person.telephone = tel.$t;
   }

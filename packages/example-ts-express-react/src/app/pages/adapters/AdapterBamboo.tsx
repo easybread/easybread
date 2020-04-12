@@ -23,7 +23,7 @@ export const AdapterBamboo: FC<AdapterBambooProps> = ({ data, onUpdated }) => {
     setupBamboo({ apiKey, companyName });
   };
 
-  const resetForm = () => {
+  const resetForm = (): void => {
     setApiKey('');
     setCompanyName('');
   };
