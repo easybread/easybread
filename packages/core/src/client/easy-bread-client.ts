@@ -27,8 +27,8 @@ export class EasyBreadClient<
     const context = this.createContext(input.breadId);
 
     return this.preProcess(input, context)
-      .then(input => this.process(input, context))
-      .then(output => this.postProcess(output, context));
+      .then((input) => this.process(input, context))
+      .then((output) => this.postProcess(output, context));
   }
 
   private createContext(breadId: string): BreadOperationContext<T, A> {

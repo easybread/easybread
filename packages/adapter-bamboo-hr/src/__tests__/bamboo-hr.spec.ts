@@ -1,10 +1,10 @@
-import { mockAxios, setExtendedTimeout } from '@easybread/common';
 import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeSearchOperation,
   SetupBasicAuthOperation
 } from '@easybread/operations';
+import { mockAxios, setExtendedTimeout } from '@easybread/test-utils';
 import axiosMock from 'axios';
 
 import { BambooHrAuthStrategy } from '..';

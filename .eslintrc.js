@@ -18,7 +18,7 @@ module.exports = {
     'lines-between-class-members': [
       'error',
       'always',
-      { exceptAfterSingleLine: true }
+      {exceptAfterSingleLine: true}
     ],
     'max-depth': 'error',
     'max-len': [
@@ -32,7 +32,7 @@ module.exports = {
         ignorePattern: '^(import|export)'
       }
     ],
-    'no-bitwise': ['error', { allow: ['~'] }],
+    'no-bitwise': ['error', {allow: ['~']}],
     'no-console': 'error', // Use debug instead
     'no-underscore-dangle': 'error',
     'no-unused-expressions': [
@@ -42,21 +42,29 @@ module.exports = {
         allowTernary: true
       }
     ],
-    'no-use-before-define': ['error', { functions: false }],
+    'no-use-before-define': ['error', {functions: false}],
     'no-var': 'error',
     'prefer-arrow-callback': 'warn',
     'prefer-const': 'error',
-    'prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
+    'prefer-promise-reject-errors': ['error', {allowEmptyReject: true}],
     quotes: [
       'error',
       'single',
-      { avoidEscape: true, allowTemplateLiterals: true }
+      {avoidEscape: true, allowTemplateLiterals: true}
     ],
     semi: ['error', 'always'],
     '@typescript-eslint/member-ordering': 'error',
     '@typescript-eslint/no-inferrable-types': 0,
     '@typescript-eslint/ban-ts-ignore': 0,
-    '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
-    '@typescript-eslint/camelcase': 1
+    '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
+    '@typescript-eslint/camelcase': 1,
+    '@typescript-eslint/explicit-function-return-type': [
+      'error',
+      {
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true
+      }
+    ]
   }
 };

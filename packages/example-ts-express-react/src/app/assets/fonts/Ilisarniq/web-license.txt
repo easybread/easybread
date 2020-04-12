@@ -1,0 +1,29 @@
+End User License Agreement
+Web License
+
+Fonderie Typographique Coppers and Brasses
+Version 1.0 issued in January 2016
+
+The following is an agreement between the user (You) and Fonderie Typographique Coppers and Brasses (Coppers and Brasses). If you do not accept the terms, you may not complete the purchase of the font software license.
+
+What you are purchasing from Coppers and Brasses is a license to serve webfont software using the CSS @font-face rule. All the domains and subdomains that serve the webfonts must belong to the licensee organization. You are not purchasing the copyright of the typefaces but the rights to serve the webfonts.
+
+The webfonts are provided in WOFF2, WOFF, EOT and TTF formats. Additional formats are available upon request, and may require the purchase of a different license.
+
+All Web Licensing is one-time, perpetual, and upgradable.
+
+You may serve the webfonts to the maximum number of monthly page views specified in your license across all licensee domains. You can upgrade your license at any time, which allows you to serve the webfonts to additional page views.
+
+You may exceed your maximum number of page views for three consecutive months, but if the number of page views to your site increases for four or more consecutive months you are expected to extend your Web License.
+
+You may not use the webfonts with any computer software without the purchase of a Desktop License. The fonts may not be used in any standalone software packages, such as iOS or Android applications, without the purchase of an App license.
+
+You may not modify, convert, adapt, decompile or reverse engineer the webfonts.
+
+If you do experience any difficulties with our webfont software within 90 days after the purchase, we will work with you to resolve any technical issues related to it. If, after we have worked to resolve any technical issues, you are still not satisfied with our software, we will be pleased to refund your money, which shall be the limit of our liability in this transaction.
+
+Coppers and Brasses reserves the right to amend or modify this License Agreement at any time and without prior notification.
+
+For any licensing situations not covered in this agreement, please contact us.
+
+Thank you : )

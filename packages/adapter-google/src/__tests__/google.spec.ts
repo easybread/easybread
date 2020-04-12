@@ -1,9 +1,13 @@
-import { expectDate, mockAxios, setExtendedTimeout } from '@easybread/common';
 import {
   EasyBreadClient,
   InMemoryStateAdapter,
   ServiceException
 } from '@easybread/core';
+import {
+  expectDate,
+  mockAxios,
+  setExtendedTimeout
+} from '@easybread/test-utils';
 import axiosMock from 'axios';
 
 import {

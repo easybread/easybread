@@ -61,6 +61,7 @@
     "schema-dts": "^0.5.2"
   },
   "devDependencies": {
+    "@easybread/test-utils": "^0.0.0",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
   }
