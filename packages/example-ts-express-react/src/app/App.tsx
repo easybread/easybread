@@ -4,19 +4,22 @@ import styled from 'styled-components/macro';
 
 import { AppRoutes } from './AppRoutes';
 import { Header } from './components/Header';
+import { useAdaptersData } from './hooks';
 import { GlobalStyles } from './styles/GlobalStyles';
 
 interface AppProps {}
 
 export const App: FC<AppProps> = () => {
+  const [adaptersData, refetch] = useAdaptersData();
+
   return (
     <div>
       <GlobalStyles />
 
       <StyledWrapper>
         <BrowserRouter>
-          <Header />
-          <AppRoutes />
+          <Header adaptersData={adaptersData} />
+          <AppRoutes refetch={refetch} adaptersData={adaptersData} />
         </BrowserRouter>
       </StyledWrapper>
     </div>

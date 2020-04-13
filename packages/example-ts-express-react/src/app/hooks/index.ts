@@ -1,0 +1,1 @@
+export { useAdaptersData } from './useAdaptersData';

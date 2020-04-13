@@ -12,7 +12,7 @@ app.use('/', express.static(path.resolve(__dirname, '..', 'build')));
 app.use('/api', apiRouter);
 
 app.get('/*', (_req, res) => {
-  res.send(path.resolve(__dirname, '..', 'build', 'index.html'));
+  res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
 });
 
 app.listen(3000, () => {

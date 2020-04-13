@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import { AdaptersStateDto } from '../../../../dtos';
-import { useGet } from '../../../hooks/http';
+import { AdaptersStateDto } from '../../dtos';
+import { useGet } from './http';
 import {
   FetchResult,
   HookReturnTwoElements,
   RefetchFunction
-} from '../../../hooks/http/interfaces';
+} from './http/interfaces';
 
 export function useAdaptersData(): HookReturnTwoElements<
   FetchResult<AdaptersStateDto>,

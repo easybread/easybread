@@ -2,6 +2,9 @@ import React, { FC } from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
+import { AdaptersStateDto } from '../../../dtos';
+import { FetchResult } from '../../hooks/http/interfaces';
+
 const StyledHeaderNav = styled.nav`
   display: flex;
   margin-left: var(--gap-10);
@@ -19,17 +22,25 @@ const StyledLink = styled(NavLink)<NavLinkProps>`
   }
 `;
 
-interface HeaderNavProps {}
+interface HeaderNavProps {
+  adaptersData: FetchResult<AdaptersStateDto>;
+}
 
-export const HeaderNav: FC<HeaderNavProps> = ({}) => {
+export const HeaderNav: FC<HeaderNavProps> = ({ adaptersData }) => {
+  const { data } = adaptersData;
+  const showPeople = data?.bamboo?.configured && data.google?.configured;
+
   return (
     <StyledHeaderNav>
       <StyledLink to={'/adapters'} activeClassName={'active'}>
         Adapters
       </StyledLink>
-      <StyledLink to={'/people'} activeClassName={'active'}>
-        People
-      </StyledLink>
+
+      {showPeople && (
+        <StyledLink to={'/people'} activeClassName={'active'}>
+          People
+        </StyledLink>
+      )}
     </StyledHeaderNav>
   );
 };

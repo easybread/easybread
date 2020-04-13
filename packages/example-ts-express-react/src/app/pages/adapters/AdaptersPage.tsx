@@ -1,15 +1,20 @@
 import React, { FC } from 'react';
 
+import { AdaptersStateDto } from '../../../dtos';
+import { FetchResult, RefetchFunction } from '../../hooks/http/interfaces';
 import { LayoutContentWrapper } from '../../ui-kit/layout-kit';
 import { AdapterBamboo } from './components/AdapterBamboo';
 import { AdapterGoogle } from './components/AdapterGoogle';
-import { useAdaptersData } from './hooks';
 
-interface AdaptersPageProps {}
+interface AdaptersPageProps {
+  adaptersData: FetchResult<AdaptersStateDto>;
+  refetch: RefetchFunction;
+}
 
-export const AdaptersPage: FC<AdaptersPageProps> = () => {
-  const [adaptersData, refetch] = useAdaptersData();
-
+export const AdaptersPage: FC<AdaptersPageProps> = ({
+  adaptersData,
+  refetch
+}) => {
   if (adaptersData.pending || adaptersData.idle) {
     return <LayoutContentWrapper>loading</LayoutContentWrapper>;
   }
