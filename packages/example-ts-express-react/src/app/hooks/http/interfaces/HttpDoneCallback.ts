@@ -1,1 +1,1 @@
-export type HttpDoneCallback = () => void;
+export type HttpDoneCallback<T> = (data?: T | null) => void;

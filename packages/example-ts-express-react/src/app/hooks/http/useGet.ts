@@ -1,21 +1,21 @@
-import { useEffect } from 'react';
+import { noop } from 'lodash';
+import { useCallback } from 'react';
 
-import { HttpDoneCallback, UseGetReturn } from './interfaces';
+import { FetchFunction, HttpDoneCallback, UseGetReturn } from './interfaces';
 import { useAxios } from './useAxios';
 
 export function useGet<TResult>(
   url: string,
-  callback: HttpDoneCallback,
-  deps: any[] = []
+  callback: HttpDoneCallback<TResult> = noop
 ): UseGetReturn<TResult> {
   const [result, requestConfigSetter, refetch] = useAxios<TResult>(callback);
 
-  useEffect(() => {
+  const fetchFunction: FetchFunction = useCallback(() => {
     requestConfigSetter({
       url,
       method: 'GET'
     });
-  }, deps);
+  }, [requestConfigSetter, url]);
 
-  return [result, refetch];
+  return [result, fetchFunction, refetch];
 }

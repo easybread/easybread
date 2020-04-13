@@ -20,10 +20,14 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
     super(state, GOOGLE_PROVIDER);
   }
 
-  async createAuthUri(payload: GoogleOauth2StartInputPayload): Promise<string> {
+  async createAuthUri(
+    breadId: string,
+    payload: GoogleOauth2StartInputPayload
+  ): Promise<string> {
     const {
       prompt,
       clientId,
+      clientSecret,
       includeGrantedScopes = true,
       loginHint,
       redirectUri,
@@ -58,6 +62,15 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
 
     const query = queryString.stringify(params);
 
+    // save client id and client secret for future calls
+    await this.writeAuthData(breadId, {
+      clientId,
+      clientSecret,
+      accessToken: '',
+      expiresAt: new Date().toISOString(),
+      refreshToken: ''
+    });
+
     return `https://accounts.google.com/o/oauth2/v2/auth?${query}`;
   }
 
@@ -65,7 +78,8 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
     breadId: string,
     payload: GoogleOauth2CompleteInputPayload
   ): Promise<GoogleAccessTokenCreateResponse> {
-    const { clientId, clientSecret, code, redirectUri } = payload;
+    const { code, redirectUri } = payload;
+    const { clientId, clientSecret } = await this.readAuthData(breadId);
 
     const data: GoogleAccessTokenCreateRequestData = {
       client_id: clientId,

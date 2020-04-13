@@ -1,13 +1,18 @@
 import { Request } from 'express';
 
-import { SetupBambooDto } from '../../dtos';
+import { SetupBambooDto, SetupGoogleDto } from '../../dtos';
 
-export type CreateConfigurationRequest = Request<
+type SetupGoogleRequest = Request<
+  { adapter: 'google' },
+  unknown,
+  SetupGoogleDto
+>;
+type SetupBambooRequest = Request<
   { adapter: 'bamboo' },
   unknown,
   SetupBambooDto
->| Request<
-  { adapter: 'google' },
-  unknown,
-  SetupBambooDto
 >;
+
+export type CreateConfigurationRequest =
+  | SetupBambooRequest
+  | SetupGoogleRequest;

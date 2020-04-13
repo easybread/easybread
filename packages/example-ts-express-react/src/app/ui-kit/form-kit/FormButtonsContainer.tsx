@@ -1,9 +1,8 @@
-import { FC } from 'react';
 import styled from 'styled-components/macro';
 
 import { BREAKPOINTS } from '../../styles/theme';
 
-export const FormButtonsContainer: FC = styled.div`
+export const FormButtonsContainer = styled.div`
   display: flex;
   background-color: #fff;
   padding-bottom: 1.25rem;

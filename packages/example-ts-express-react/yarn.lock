@@ -9734,6 +9734,11 @@ scheduler@^0.19.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
+schema-dts@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/schema-dts/-/schema-dts-0.5.2.tgz#eccfbaae7c4bd448aa59821ab1fe7311e5104a22"
+  integrity sha512-+5hqt+jzvD/uMwxMnYEmnZpGO+gthtCzyflY0Niu2rNyJg4X6I5MOVYDvfFJiiqSWtYx2S1xE3KDNUf67I1yZw==
+
 schema-utils@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-1.0.0.tgz#0b79a93204d7b600d4b2850d1f66c2a34951c770"

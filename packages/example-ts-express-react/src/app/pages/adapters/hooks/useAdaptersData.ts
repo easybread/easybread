@@ -1,9 +1,22 @@
-import { noop } from 'lodash';
+import { useEffect } from 'react';
 
 import { AdaptersStateDto } from '../../../../dtos';
 import { useGet } from '../../../hooks/http';
-import { UseGetReturn } from '../../../hooks/http/interfaces';
+import {
+  FetchResult,
+  HookReturnTwoElements,
+  RefetchFunction
+} from '../../../hooks/http/interfaces';
 
-export function useAdaptersData(): UseGetReturn<AdaptersStateDto> {
-  return useGet<AdaptersStateDto>('/api/adapters', noop);
+export function useAdaptersData(): HookReturnTwoElements<
+  FetchResult<AdaptersStateDto>,
+  RefetchFunction
+> {
+  const [result, fetch, refetch] = useGet<AdaptersStateDto>('/api/adapters');
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  return [result, refetch];
 }

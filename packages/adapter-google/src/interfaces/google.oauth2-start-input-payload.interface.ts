@@ -4,6 +4,7 @@
 export interface GoogleOauth2StartInputPayload {
   scope: string[];
   clientId: string;
+  clientSecret: string;
   redirectUri: string;
   state?: string;
   includeGrantedScopes?: boolean;

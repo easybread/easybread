@@ -61,7 +61,7 @@ describe('Google Plugin', () => {
 
   describe('Operations', () => {
     describe(GoogleOperationName.AUTH_FLOW_START, () => {
-      it(`should create the auth uri`, async () => {
+      it(`should save user credentials and create the auth uri`, async () => {
         const result = await client.invoke<GoogleOauth2StartOperation>({
           breadId: USER_ID,
           name: GoogleOperationName.AUTH_FLOW_START,
@@ -72,6 +72,7 @@ describe('Google Plugin', () => {
             includeGrantedScopes: true,
             redirectUri: 'http://localhost:8080',
             clientId: CLIENT_ID,
+            clientSecret: CLIENT_SECRET,
             scope: AUTH_SCOPES
           }
         });
@@ -98,6 +99,15 @@ describe('Google Plugin', () => {
             success: true
           }
         });
+
+        // the client creds are saved, but the rest of the data is empty
+        expect(await authStrategy.readAuthData(USER_ID)).toEqual({
+          accessToken: '',
+          clientId: 'client-id',
+          clientSecret: 'client-secret',
+          expiresAt: expectDate,
+          refreshToken: ''
+        });
       });
     });
 
@@ -111,8 +121,6 @@ describe('Google Plugin', () => {
           breadId: USER_ID,
           name: GoogleOperationName.AUTH_FLOW_COMPLETE,
           payload: {
-            clientSecret: CLIENT_SECRET,
-            clientId: CLIENT_ID,
             code: 'my-auth-code',
             redirectUri: 'http://localhost:8080'
           }

@@ -36,7 +36,10 @@ export abstract class BreadOAuth2AuthStrategy<
     return new Date(Date.now() + expireTimeInMS - 60 * 1000).toISOString();
   }
 
-  abstract async createAuthUri(params: object): Promise<string>;
+  abstract async createAuthUri(
+    breadId: string,
+    params: object
+  ): Promise<string>;
 
   abstract async refreshToken(breadId: string): Promise<void>;
 }

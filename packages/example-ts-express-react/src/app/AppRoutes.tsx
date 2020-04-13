@@ -2,7 +2,8 @@ import React, { FC } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { AdaptersPage } from './pages/adapters';
-import { OperationsPage } from './pages/operations';
+import { CompleteGoogleOAuth2Page } from './pages/oauth';
+import { PeoplePage } from './pages/people';
 
 interface AppRoutesProps {}
 
@@ -13,8 +14,12 @@ export const AppRoutes: FC<AppRoutesProps> = () => {
         <AdaptersPage />
       </Route>
 
-      <Route path={'/operations'}>
-        <OperationsPage />
+      <Route path={'/people'}>
+        <PeoplePage />
+      </Route>
+
+      <Route path={'/complete-google-auth'}>
+        <CompleteGoogleOAuth2Page />
       </Route>
 
       <Redirect from={'/'} to={'/adapters'} />

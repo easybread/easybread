@@ -8,7 +8,7 @@ import {
 } from '../../../hooks/http/interfaces';
 
 export function useSetupBamboo(
-  callback: HttpDoneCallback
+  callback: HttpDoneCallback<SetupBasicAuthOperation['output']>
 ): UsePostReturn<SetupBambooDto, SetupBasicAuthOperation['output']> {
   return usePost('/api/adapters/bamboo/configurations', callback);
 }

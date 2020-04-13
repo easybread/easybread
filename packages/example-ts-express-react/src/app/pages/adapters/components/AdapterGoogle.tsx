@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 
-import { AdapterStateDto } from '../../../dtos';
-import { FormFieldsContainer, LabeledInput } from '../../ui-kit/form-kit';
-import { AdapterContainer } from './components/Adapter';
-import { useSetupGoogle } from './hooks';
+import { AdapterStateDto } from '../../../../dtos';
+import { FormFieldsContainer, LabeledInput } from '../../../ui-kit/form-kit';
+import { useSetupGoogle } from '../hooks';
+import { AdapterContainer } from './Adapter';
 
 interface GoogleAdapterProps {
   data: AdapterStateDto | undefined;

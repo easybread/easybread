@@ -27,8 +27,8 @@ export const HeaderNav: FC<HeaderNavProps> = ({}) => {
       <StyledLink to={'/adapters'} activeClassName={'active'}>
         Adapters
       </StyledLink>
-      <StyledLink to={'/operations'} activeClassName={'active'}>
-        Operations
+      <StyledLink to={'/people'} activeClassName={'active'}>
+        People
       </StyledLink>
     </StyledHeaderNav>
   );

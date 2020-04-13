@@ -1,8 +1,10 @@
+import { FetchFunction } from './FetchFunction';
 import { FetchResult } from './FetchResult';
-import { HookReturnTwoElements } from './HttpHookReturnTuple';
+import { HookReturnThreeElements } from './HttpHookReturnTuple';
 import { RefetchFunction } from './RefetchFunction';
 
-export type UseGetReturn<TResult> = HookReturnTwoElements<
+export type UseGetReturn<TResult> = HookReturnThreeElements<
   FetchResult<TResult>,
+  FetchFunction,
   RefetchFunction
 >;

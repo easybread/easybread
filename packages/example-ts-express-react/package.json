@@ -27,6 +27,7 @@
     "react-icons": "^3.9.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "schema-dts": "^0.5.2",
     "styled-components": "^5.1.0",
     "styled-reset": "^4.1.2",
     "ts-node": "^8.8.2"
@@ -36,11 +37,11 @@
     "start:server": "ts-node --project ./tsconfig.server.json ./src/server.ts",
     "build": "CI=false react-scripts build",
     "lint": "eslint 'src/**/*.ts'",
-    "lint:ci": "yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
+    "lint:ci": "CI=false yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "test": "jest --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
-    "test:ci": "jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
+    "test:ci": "CI=false jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
     "test:watch": "jest --coverage --passWithNoTests --watchAll",
     "eject": "react-scripts eject"
   },

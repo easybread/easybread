@@ -1,2 +1,3 @@
 export { AdaptersPage } from './adapters';
-export { OperationsPage } from './operations';
+export { PeoplePage } from './people';
+export { CompleteGoogleOAuth2Page } from './oauth';

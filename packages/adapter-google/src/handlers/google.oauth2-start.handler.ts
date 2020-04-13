@@ -11,8 +11,10 @@ export const GoogleOauth2StartHandler: BreadOperationHandler<
   name: GoogleOperationName.AUTH_FLOW_START,
 
   async handle(input, context) {
-    const authUri = await context.auth.createAuthUri(input.payload);
-
+    const authUri = await context.auth.createAuthUri(
+      input.breadId,
+      input.payload
+    );
     return {
       name: GoogleOperationName.AUTH_FLOW_START,
       rawPayload: {

@@ -9,7 +9,7 @@ import { useAxios } from './useAxios';
 
 export function usePost<TData, TResult>(
   url: string,
-  callback: HttpDoneCallback
+  callback: HttpDoneCallback<TResult>
 ): UsePostReturn<TData, TResult> {
   const [result, requestConfigSetter, refetch] = useAxios<TResult>(callback);
 
@@ -21,7 +21,7 @@ export function usePost<TData, TResult>(
         data
       });
     },
-    [requestConfigSetter, callback, url]
+    [requestConfigSetter, url]
   );
 
   return [result, dataSetter, refetch];

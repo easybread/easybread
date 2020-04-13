@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   FetchResult,
@@ -11,7 +11,7 @@ import {
 } from './interfaces';
 
 export function useAxios<TResult>(
-  callback: HttpDoneCallback
+  callback: HttpDoneCallback<TResult>
 ): UseAxiosReturn<TResult> {
   const [result, setResult] = useState<FetchResult<TResult>>({
     data: null,
@@ -22,16 +22,13 @@ export function useAxios<TResult>(
 
   const [config, setConfig] = useState<AxiosRequestConfig | null>(null);
 
-  const configSetter: RequestConfigSetter = useCallback(
-    (requestConfig: AxiosRequestConfig) => {
-      if (!config || !isEqual(config, requestConfig)) setConfig(requestConfig);
-    },
-    [setConfig, config]
-  );
+  const configSetter: RequestConfigSetter = (requestConfig) => {
+    if (!config || !isEqual(config, requestConfig)) setConfig(requestConfig);
+  };
 
-  const refetch: RefetchFunction = useCallback(() => {
-    setConfig({ ...config });
-  }, [setConfig, config]);
+  const refetch: RefetchFunction = () => {
+    setConfig((config) => ({ ...config }));
+  };
 
   useEffect(() => {
     if (!config) return;
@@ -52,7 +49,7 @@ export function useAxios<TResult>(
           error: false,
           pending: false
         });
-        callback();
+        callback(r.data);
       })
       .catch(() => {
         setResult({
@@ -61,9 +58,9 @@ export function useAxios<TResult>(
           error: true,
           pending: false
         });
-        callback();
+        callback(null);
       });
-  }, [config, setResult, callback]);
+  }, [config]);
 
   return [result, configSetter, refetch];
 }
