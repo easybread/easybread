@@ -30,6 +30,7 @@ mockAxios();
 const USER_ID = '1';
 const CLIENT_ID = 'client-id';
 const CLIENT_SECRET = 'client-secret';
+const REDIRECT_URI = 'http://localhost:8080/accept-google-oauth2-code';
 
 const AUTH_SCOPES = [
   'https://www.google.com/m8/feeds/',
@@ -51,7 +52,11 @@ const ACCESS_TOKEN_CREATE_RESPONSE_DATA: GoogleAccessTokenCreateResponse = {
 describe('Google Plugin', () => {
   const serviceAdapter = new GoogleAdapter();
   const stateAdapter = new InMemoryStateAdapter();
-  const authStrategy = new GoogleAuthStrategy(stateAdapter);
+  const authStrategy = new GoogleAuthStrategy(stateAdapter, {
+    clientId: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
+    redirectUri: REDIRECT_URI
+  });
 
   const client = new EasyBreadClient(
     stateAdapter,
@@ -61,7 +66,7 @@ describe('Google Plugin', () => {
 
   describe('Operations', () => {
     describe(GoogleOperationName.AUTH_FLOW_START, () => {
-      it(`should save user credentials and create the auth uri`, async () => {
+      it(`should create the auth uri`, async () => {
         const result = await client.invoke<GoogleOauth2StartOperation>({
           breadId: USER_ID,
           name: GoogleOperationName.AUTH_FLOW_START,
@@ -70,9 +75,6 @@ describe('Google Plugin', () => {
             prompt: 'none',
             loginHint: 'my hint',
             includeGrantedScopes: true,
-            redirectUri: 'http://localhost:8080',
-            clientId: CLIENT_ID,
-            clientSecret: CLIENT_SECRET,
             scope: AUTH_SCOPES
           }
         });
@@ -84,29 +86,20 @@ describe('Google Plugin', () => {
             data: {
               authUri:
                 'https://accounts.google.com/o/oauth2/v2/auth?' +
-                'client_id=client-id&' +
-                'redirect_uri=http%3A%2F%2Flocalhost%3A8080&' +
-                'response_type=code&' +
+                'client_id=client-id' +
+                '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
+                '&response_type=code' +
                 // eslint-disable-next-line max-len
-                'scope=https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcontacts.readonly&' +
-                'access_type=offline&' +
-                'include_granted_scopes=true&' +
-                'alt=json&' +
-                'login_hint=my%20hint&' +
-                'state=my-state-value&' +
-                'prompt=none'
+                '&scope=https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcontacts.readonly' +
+                '&access_type=offline' +
+                '&include_granted_scopes=true' +
+                '&alt=json' +
+                '&login_hint=my%20hint' +
+                '&state=my-state-value' +
+                '&prompt=none'
             },
             success: true
           }
-        });
-
-        // the client creds are saved, but the rest of the data is empty
-        expect(await authStrategy.readAuthData(USER_ID)).toEqual({
-          accessToken: '',
-          clientId: 'client-id',
-          clientSecret: 'client-secret',
-          expiresAt: expectDate,
-          refreshToken: ''
         });
       });
     });
@@ -120,10 +113,7 @@ describe('Google Plugin', () => {
         return client.invoke<GoogleOauth2CompleteOperation>({
           breadId: USER_ID,
           name: GoogleOperationName.AUTH_FLOW_COMPLETE,
-          payload: {
-            code: 'my-auth-code',
-            redirectUri: 'http://localhost:8080'
-          }
+          payload: { code: 'my-auth-code' }
         });
       }
 
@@ -150,7 +140,7 @@ describe('Google Plugin', () => {
           data:
             'client_id=client-id' +
             '&client_secret=client-secret' +
-            '&redirect_uri=http%3A%2F%2Flocalhost%3A8080' +
+            '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
             '&grant_type=authorization_code' +
             '&code=my-auth-code'
         });
@@ -161,8 +151,6 @@ describe('Google Plugin', () => {
 
         expect(actual).toEqual({
           accessToken: 'access-token',
-          clientId: 'client-id',
-          clientSecret: 'client-secret',
           expiresAt: expectDate,
           refreshToken: 'refresh-token'
         });
@@ -357,7 +345,8 @@ describe('Google Plugin', () => {
             url: 'https://oauth2.googleapis.com/token'
           }
         ]);
-        // check contacts feed uri was called
+
+        // check contacts feed uri was called with an updated access token
         expect((axiosMock.request as Mock).mock.calls[1]).toEqual([
           {
             headers: {
@@ -377,8 +366,6 @@ describe('Google Plugin', () => {
         );
         expect(updatedAuthData).toEqual({
           accessToken: 'new-access-token',
-          clientId: 'client-id',
-          clientSecret: 'client-secret',
           refreshToken: 'refresh-token',
           expiresAt: expectDate
         });

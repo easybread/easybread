@@ -3,5 +3,4 @@
  */
 export interface GoogleOauth2CompleteInputPayload {
   code: string;
-  redirectUri: string;
 }

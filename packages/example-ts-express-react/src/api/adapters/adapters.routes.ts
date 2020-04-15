@@ -10,7 +10,7 @@ import {
 } from '@easybread/operations';
 import { Router } from 'express';
 
-import { SetupBambooDto, SetupGoogleDto } from '../../dtos';
+import { SetupBambooDto } from '../../dtos';
 import { bambooHrClient, googleClient } from '../shared';
 import { AdaptersService } from './adapters.service';
 import { CompleteAuthRequest } from './CompleteAuthRequest';
@@ -43,16 +43,12 @@ adaptersRoutes.post(
     }
 
     if (req.params.adapter === 'google') {
-      const { clientId, clientSecret } = req.body as SetupGoogleDto;
       const result = await googleClient.invoke<GoogleOauth2StartOperation>({
         name: GoogleOperationName.AUTH_FLOW_START,
         breadId: '1',
         payload: {
-          clientId,
-          clientSecret,
           prompt: ['consent'],
           includeGrantedScopes: true,
-          redirectUri: 'http://localhost:8080/complete-google-auth',
           scope: [
             'https://www.google.com/m8/feeds/',
             'https://www.googleapis.com/auth/contacts.readonly'
@@ -83,10 +79,7 @@ adaptersRoutes.post(
     const result = await googleClient.invoke<GoogleOauth2CompleteOperation>({
       name: GoogleOperationName.AUTH_FLOW_COMPLETE,
       breadId: '1',
-      payload: {
-        code,
-        redirectUri: 'http://localhost:8080/complete-google-auth'
-      }
+      payload: { code }
     });
 
     if (!result.rawPayload.success) {

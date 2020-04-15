@@ -8,6 +8,7 @@ import {
   GoogleAccessTokenRefreshRequestData,
   GoogleAccessTokenRefreshResponse,
   GoogleAuthorizationParameters,
+  GoogleAuthStrategyOptions,
   GoogleOauth2CompleteInputPayload,
   GoogleOauth2StartInputPayload,
   GoogleOauth2StateData
@@ -16,24 +17,26 @@ import {
 export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
   GoogleOauth2StateData
 > {
-  constructor(state: BreadStateAdapter) {
+  private readonly options: GoogleAuthStrategyOptions;
+
+  constructor(state: BreadStateAdapter, options: GoogleAuthStrategyOptions) {
     super(state, GOOGLE_PROVIDER);
+    this.options = options;
   }
 
   async createAuthUri(
-    breadId: string,
+    _breadId: string,
     payload: GoogleOauth2StartInputPayload
   ): Promise<string> {
     const {
       prompt,
-      clientId,
-      clientSecret,
       includeGrantedScopes = true,
       loginHint,
-      redirectUri,
       scope = [],
       state
     } = payload;
+
+    const { clientId, redirectUri } = this.options;
 
     const params: GoogleAuthorizationParameters = {
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -62,15 +65,6 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
 
     const query = queryString.stringify(params);
 
-    // save client id and client secret for future calls
-    await this.writeAuthData(breadId, {
-      clientId,
-      clientSecret,
-      accessToken: '',
-      expiresAt: new Date().toISOString(),
-      refreshToken: ''
-    });
-
     return `https://accounts.google.com/o/oauth2/v2/auth?${query}`;
   }
 
@@ -78,8 +72,8 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
     breadId: string,
     payload: GoogleOauth2CompleteInputPayload
   ): Promise<GoogleAccessTokenCreateResponse> {
-    const { code, redirectUri } = payload;
-    const { clientId, clientSecret } = await this.readAuthData(breadId);
+    const { code } = payload;
+    const { clientId, clientSecret, redirectUri } = this.options;
 
     const data: GoogleAccessTokenCreateRequestData = {
       client_id: clientId,
@@ -102,18 +96,15 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
     await this.writeAuthData(breadId, {
       accessToken: access_token,
       refreshToken: refresh_token,
-      expiresAt: this.createExpirationDate(expires_in * 1000),
-      clientId,
-      clientSecret
+      expiresAt: this.createExpirationDate(expires_in * 1000)
     });
 
     return result.data;
   }
 
   async refreshToken(breadId: string): Promise<void> {
-    const { clientId, clientSecret, refreshToken } = await this.readAuthData(
-      breadId
-    );
+    const { refreshToken } = await this.readAuthData(breadId);
+    const { clientSecret, clientId } = this.options;
 
     const data: GoogleAccessTokenRefreshRequestData = {
       client_id: clientId,
@@ -136,9 +127,7 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
     await this.writeAuthData(breadId, {
       accessToken: access_token,
       expiresAt: this.createExpirationDate(expires_in * 1000),
-      refreshToken,
-      clientId,
-      clientSecret
+      refreshToken
     });
   }
 }

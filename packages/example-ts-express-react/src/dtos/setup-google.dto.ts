@@ -1,4 +1,1 @@
-export interface SetupGoogleDto {
-  clientId: string;
-  clientSecret: string;
-}
+export interface SetupGoogleDto {}

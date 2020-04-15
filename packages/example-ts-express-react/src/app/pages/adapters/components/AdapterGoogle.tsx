@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 
 import { AdapterStateDto } from '../../../../dtos';
-import { FormFieldsContainer, LabeledInput } from '../../../ui-kit/form-kit';
 import { useSetupGoogle } from '../hooks';
 import { AdapterContainer } from './Adapter';
 
@@ -34,21 +33,7 @@ export const AdapterGoogle: FC<GoogleAdapterProps> = ({ data, onUpdated }) => {
       onSubmit={onSubmit}
       onCollapse={resetForm}
       onExpand={resetForm}
-    >
-      <FormFieldsContainer>
-        <LabeledInput
-          label={'Client ID'}
-          value={clientId}
-          type={'text'}
-          onChange={setClientId}
-        />
-        <LabeledInput
-          label={'Client Secret'}
-          value={clientSecret}
-          type={'text'}
-          onChange={setClientSecret}
-        />
-      </FormFieldsContainer>
-    </AdapterContainer>
+      submitOnExpand={true}
+    />
   );
 };

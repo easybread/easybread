@@ -17,6 +17,7 @@ interface AdapterProps {
   onSubmit: () => void;
   onCollapse?: () => void;
   onExpand?: () => void;
+  submitOnExpand?: boolean;
 }
 
 export const AdapterContainer: FC<AdapterProps> = ({
@@ -25,12 +26,18 @@ export const AdapterContainer: FC<AdapterProps> = ({
   onCollapse = noop,
   onExpand = noop,
   onSubmit,
-  children
+  children,
+  submitOnExpand = false
 }) => {
   const [expanded, setExpanded] = useState(false);
 
   const toggleExpanded = (): void => {
     if (configured) return;
+
+    if (submitOnExpand && !expanded) {
+      return onSubmit();
+    }
+
     setExpanded(!expanded);
     expanded ? onCollapse() : onExpand();
   };
@@ -54,6 +61,7 @@ export const AdapterContainer: FC<AdapterProps> = ({
       >
         {configured ? <FaCheckCircle size={24} /> : <strong>{title}</strong>}
       </StyledAdapterTitle>
+
       <AdapterContainerForm expanded={expanded}>
         <FormContainer onSubmit={submit}>
           {children}
@@ -108,8 +116,8 @@ const StyledAdapterTitle = styled.div<Expandable & { disabled: boolean }>`
     background-color: var(--brand-teal-light-transparent);
   }
 
-  ${(p) => p.disabled && disabledStyle}
-  ${(p) => p.expanded && expandedStyle}
+  ${p => p.disabled && disabledStyle}
+  ${p => p.expanded && expandedStyle}
 `;
 
 const StyledAdapterWrapper = styled.div`

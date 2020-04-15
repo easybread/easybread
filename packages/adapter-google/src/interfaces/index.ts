@@ -13,6 +13,7 @@ export { GoogleAccessTokenRefreshRequestData } from './google.access-token-refre
 export { GoogleAccessTokenRefreshResponse } from './google.access-token-refresh-response.interface';
 
 export { GoogleOauth2StateData } from './google.oauth2-state-data.interface';
+export { GoogleAuthStrategyOptions } from './google.auth-strategy-options.interface';
 
 export { GoogleContactsFeed } from './google.contacts-feed.interface';
 export { GoogleContactsFeedEntry } from './google.contacts-feed-entry.interface';
