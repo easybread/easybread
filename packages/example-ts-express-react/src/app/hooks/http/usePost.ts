@@ -14,7 +14,7 @@ export function usePost<TData, TResult>(
   const [result, requestConfigSetter, refetch] = useAxios<TResult>(callback);
 
   const dataSetter: RequestDataSetter<TData> = useCallback(
-    (data) => {
+    data => {
       requestConfigSetter({
         method: 'POST',
         url,

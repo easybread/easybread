@@ -22,12 +22,12 @@ export function useAxios<TResult>(
 
   const [config, setConfig] = useState<AxiosRequestConfig | null>(null);
 
-  const configSetter: RequestConfigSetter = (requestConfig) => {
+  const configSetter: RequestConfigSetter = requestConfig => {
     if (!config || !isEqual(config, requestConfig)) setConfig(requestConfig);
   };
 
   const refetch: RefetchFunction = () => {
-    setConfig((config) => ({ ...config }));
+    setConfig(config => ({ ...config }));
   };
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export function useAxios<TResult>(
 
     axios
       .request<TResult>(config)
-      .then((r) => {
+      .then(r => {
         setResult({
           data: r.data,
           idle: false,

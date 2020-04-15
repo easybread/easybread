@@ -14,7 +14,7 @@ export function useSetupGoogle(
   const internalCallback: HttpDoneCallback<
     GoogleOauth2StartOperation['output']
   > = useCallback(
-    (data) => {
+    data => {
       if (!data?.rawPayload.success) return;
 
       const popup = window.open(
