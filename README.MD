@@ -8,11 +8,19 @@ Run from project root:
 $ yarn install
 $ yarn bootstrap
 $ yarn build
-
 ```
 
-Then, go to `packages/example-ts-express-react` and start the server:
+Then, go to `packages/example-ts-express-react` and create `.env` file from the template:
 
+```bash
+$ cp ./.env.example ./.env
+```
+
+Then, edit it following recommendations in the comments.
+
+After that, start the server:
+
+(in the same `packages/example-ts-express-react` dir)
 ```bash
 $ yarn start:server 
 ```
