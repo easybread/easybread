@@ -1,33 +1,49 @@
 import React, { FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
-import { FaCheckCircle } from 'react-icons/fa';
 
-import { ElementButton } from '../../../ui-kit/element-kit';
+import { RootState } from '../../../redux';
+import {
+  AdaptersBooleanState,
+  loadPeople
+} from '../../../redux/features/people';
+import { LoadButton } from './LoadButton';
 
-interface PeopleControlsProps {
-  fetch: (adapter: 'google' | 'bamboo') => void;
-  fetched: {
-    google: boolean;
-    bamboo: boolean;
-  };
-}
+interface PeopleControlsProps {}
 
-export const PeopleControls: FC<PeopleControlsProps> = ({ fetch, fetched }) => {
+export const PeopleControls: FC<PeopleControlsProps> = () => {
+  const dispatch = useDispatch();
+
+  const loaded = useSelector<RootState, AdaptersBooleanState>(
+    state => state.people.loaded
+  );
+  const loading = useSelector<RootState, AdaptersBooleanState>(
+    state => state.people.loading
+  );
+
   const fetchGoogle = (): void => {
-    fetch('google');
+    dispatch(loadPeople('google'));
   };
   const fetchBamboo = (): void => {
-    fetch('bamboo');
+    dispatch(loadPeople('bamboo'));
   };
 
   return (
     <StyledPeopleControls>
-      <StyledButton onClick={fetchGoogle} disabled={fetched.google}>
-        {fetched.google ? <FaCheckCircle /> : 'Load from Google'}
-      </StyledButton>
-      <StyledButton onClick={fetchBamboo} disabled={fetched.bamboo}>
-        {fetched.bamboo ? <FaCheckCircle /> : 'Load from BambooHR '}
-      </StyledButton>
+      <LoadButton
+        busy={loading.google}
+        loaded={loaded.google}
+        onClick={fetchGoogle}
+      >
+        Load from Google
+      </LoadButton>
+      <LoadButton
+        busy={loading.bamboo}
+        loaded={loaded.bamboo}
+        onClick={fetchBamboo}
+      >
+        Load from BambooHR
+      </LoadButton>
     </StyledPeopleControls>
   );
 };
@@ -36,17 +52,4 @@ const StyledPeopleControls = styled.section`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const StyledButton = styled(ElementButton)`
-  margin-right: var(--gap-10);
-  &:last-of-type {
-    margin-right: 0;
-  }
-
-  &.disabled,
-  &:disabled {
-    border-color: var(--brand-teal);
-    color: var(--brand-teal);
-  }
 `;

@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
+import { Organization } from 'schema-dts';
 
+import { PersonInfo } from '../../../redux/features/people';
 import { ListItemContainer } from '../../../ui-kit/lists-kit';
 import { CardImage } from './CardImage';
-import { PersonInfo } from './PersonInfo';
 import { CardMainInfo } from './CardMainInfo';
 
 interface PersonCardProps {
@@ -11,7 +12,7 @@ interface PersonCardProps {
 
 const COLORS = {
   google: '#d15a4f',
-  'bamboo-hr': '#68ac38'
+  bamboo: '#68ac38'
 };
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {
@@ -19,9 +20,17 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
 
   if (typeof person === 'string') return null;
 
-  const { email, givenName, familyName, image, telephone } = person;
+  const {
+    email,
+    givenName,
+    familyName,
+    image,
+    telephone,
+    jobTitle,
+    worksFor,
+    workLocation
+  } = person;
 
-  // eslint-disable-next-line no-console
   return (
     <ListItemContainer color={COLORS[provider]}>
       <CardImage image={image as string} />
@@ -30,6 +39,9 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
         firstName={givenName as string}
         lastName={familyName as string}
         phone={telephone as string}
+        jobTitle={jobTitle as string}
+        worksFor={worksFor as Organization}
+        workLocation={workLocation as string}
       />
     </ListItemContainer>
   );

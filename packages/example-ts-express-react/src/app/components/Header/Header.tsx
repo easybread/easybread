@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components/macro';
 
-import { AdaptersStateDto } from '../../../dtos';
-import { FetchResult } from '../../hooks/http/interfaces';
 import { px4, py3 } from '../../styles/mixins';
 import { HeaderLogo } from './HeaderLogo';
 import { HeaderNav } from './HeaderNav';
@@ -15,15 +13,13 @@ const StyledNav = styled.nav`
   ${px4}
 `;
 
-interface HeaderProps {
-  adaptersData: FetchResult<AdaptersStateDto>;
-}
+interface HeaderProps {}
 
-export const Header: FC<HeaderProps> = ({ adaptersData }) => {
+export const Header: FC<HeaderProps> = () => {
   return (
     <StyledNav>
       <HeaderLogo />
-      <HeaderNav adaptersData={adaptersData} />
+      <HeaderNav />
     </StyledNav>
   );
 };

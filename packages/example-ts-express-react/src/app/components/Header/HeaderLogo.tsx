@@ -26,7 +26,7 @@ export const HeaderLogo: FunctionComponent = () => {
   return (
     <StylesLogoHolder>
       <StyledLogo src={logo} />
-      <StylesLogoText>EasyBread</StylesLogoText>
+      <StylesLogoText>EasyBREAD</StylesLogoText>
     </StylesLogoHolder>
   );
 };

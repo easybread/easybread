@@ -12,14 +12,8 @@ export const ListItemContainer = styled.div<ListItemContainerProps>`
   justify-content: space-between;
   padding: 1rem;
   position: relative;
-  cursor: pointer;
   border-left: 8px solid ${p => p.color};
   background-color: var(--white);
   margin-bottom: var(--gap-8);
   color: var(--text-main-color-mid);
-
-  :hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
 `;

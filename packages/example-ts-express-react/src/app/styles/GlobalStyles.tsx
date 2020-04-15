@@ -24,7 +24,9 @@ export const GlobalStyles: GlobalStyleComponent<
   
   html {
     margin: 0;
-    font-family: Ilisarniq;
+    font-family: Ilisarniq, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.25;

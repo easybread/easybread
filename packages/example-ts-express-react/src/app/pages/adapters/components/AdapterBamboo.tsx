@@ -1,26 +1,25 @@
 import React, { FC, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { AdapterStateDto } from '../../../../dtos';
+import {
+  setupBamboo,
+  useAdapterConfigured
+} from '../../../redux/features/adapters';
 import { FormFieldsContainer, LabeledInput } from '../../../ui-kit/form-kit';
-import { useSetupBamboo } from '../hooks';
 import { AdapterContainer } from './Adapter';
 
-interface AdapterBambooProps {
-  data: AdapterStateDto | undefined;
-  onUpdated: () => void;
-}
+interface AdapterBambooProps {}
 
-export const AdapterBamboo: FC<AdapterBambooProps> = ({ data, onUpdated }) => {
+export const AdapterBamboo: FC<AdapterBambooProps> = () => {
+  const dispatch = useDispatch();
+
   const [apiKey, setApiKey] = useState('');
   const [companyName, setCompanyName] = useState('');
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // @ts-ignore
-  const [_, setupBamboo] = useSetupBamboo(onUpdated);
+  const configured = useAdapterConfigured('bamboo');
 
   const onSubmit = (): void => {
-    // eslint-disable-next-line no-console
-    setupBamboo({ apiKey, companyName });
+    dispatch(setupBamboo({ apiKey, companyName }));
   };
 
   const resetForm = (): void => {
@@ -30,7 +29,7 @@ export const AdapterBamboo: FC<AdapterBambooProps> = ({ data, onUpdated }) => {
 
   return (
     <AdapterContainer
-      configured={!!data?.configured}
+      configured={configured}
       title={'Bamboo HR'}
       onCollapse={resetForm}
       onExpand={resetForm}

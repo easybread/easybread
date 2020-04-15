@@ -2,8 +2,7 @@ import React, { FC } from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
-import { AdaptersStateDto } from '../../../dtos';
-import { FetchResult } from '../../hooks/http/interfaces';
+import { useAdapterConfigured } from '../../redux/features/adapters';
 
 const StyledHeaderNav = styled.nav`
   display: flex;
@@ -22,13 +21,13 @@ const StyledLink = styled(NavLink)<NavLinkProps>`
   }
 `;
 
-interface HeaderNavProps {
-  adaptersData: FetchResult<AdaptersStateDto>;
-}
+interface HeaderNavProps {}
 
-export const HeaderNav: FC<HeaderNavProps> = ({ adaptersData }) => {
-  const { data } = adaptersData;
-  const showPeople = data?.bamboo?.configured && data.google?.configured;
+export const HeaderNav: FC<HeaderNavProps> = () => {
+  const bambooConfigured = useAdapterConfigured('bamboo');
+  const googleConfigured = useAdapterConfigured('google');
+
+  const showPeople = bambooConfigured && googleConfigured;
 
   return (
     <StyledHeaderNav>

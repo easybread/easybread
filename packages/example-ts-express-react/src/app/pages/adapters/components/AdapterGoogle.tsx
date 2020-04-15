@@ -1,38 +1,27 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { AdapterStateDto } from '../../../../dtos';
-import { useSetupGoogle } from '../hooks';
+import {
+  setupGoogle,
+  useAdapterConfigured
+} from '../../../redux/features/adapters';
 import { AdapterContainer } from './Adapter';
 
-interface GoogleAdapterProps {
-  data: AdapterStateDto | undefined;
-  onUpdated: () => void;
-}
+interface GoogleAdapterProps {}
 
-export const AdapterGoogle: FC<GoogleAdapterProps> = ({ data, onUpdated }) => {
-  const [clientId, setClientId] = useState<string>('');
-  const [clientSecret, setClientSecret] = useState<string>('initState');
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // @ts-ignore
-  const [_, setupGoogle] = useSetupGoogle(onUpdated);
+export const AdapterGoogle: FC<GoogleAdapterProps> = () => {
+  const dispatch = useDispatch();
+  const configured = useAdapterConfigured('google');
 
   const onSubmit = (): void => {
-    setupGoogle({ clientId, clientSecret });
-  };
-
-  const resetForm = (): void => {
-    setClientId('');
-    setClientSecret('');
+    dispatch(setupGoogle());
   };
 
   return (
     <AdapterContainer
       title={'Google'}
-      configured={!!data?.configured}
+      configured={configured}
       onSubmit={onSubmit}
-      onCollapse={resetForm}
-      onExpand={resetForm}
       submitOnExpand={true}
     />
   );

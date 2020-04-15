@@ -1,35 +1,21 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
-import { PeopleResultsDto } from '../../../../dtos';
+import { RootState } from '../../../redux';
+import { PersonInfo } from '../../../redux/features/people';
 import { PersonCard } from './PersonCard';
-import { PersonInfo } from './PersonInfo';
 
-interface PeopleResultsProps {
-  results: (PeopleResultsDto | null)[];
-}
+interface PeopleResultsProps {}
 
-export const PeopleResults: FC<PeopleResultsProps> = ({ results }) => {
-  const [people, setPeople] = useState<PersonInfo[]>([]);
-
-  useEffect(() => {
-    const all = results.reduce((personInfos: PersonInfo[], item) => {
-      return item
-        ? personInfos.concat(
-            item.payload.map(p => ({
-              person: p,
-              provider: item.provider
-            }))
-          )
-        : personInfos;
-    }, []);
-
-    setPeople(all);
-  }, [results]);
+export const PeopleResults: FC<PeopleResultsProps> = () => {
+  const personInfos = useSelector<RootState, PersonInfo[]>(
+    state => state.people.data
+  );
 
   return (
     <StyledPeopleResults>
-      {people.map((info, key) => (
+      {personInfos.map((info, key) => (
         <PersonCard info={info} key={key} />
       ))}
     </StyledPeopleResults>
