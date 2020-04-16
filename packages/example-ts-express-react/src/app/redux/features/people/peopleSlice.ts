@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Person } from 'schema-dts';
 
 type AdapterName = 'google' | 'bamboo';
 
 export interface PersonInfo {
-  person: Person;
+  // TODO: Person here breaks the tsc build (hangs infinitely)
+  person: any;
   provider: AdapterName;
 }
 

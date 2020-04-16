@@ -25,3 +25,4 @@ After that, start the server:
 $ yarn start:server 
 ```
 
+This should start the server on `http://localhost:8080`;

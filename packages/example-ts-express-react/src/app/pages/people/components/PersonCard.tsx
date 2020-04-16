@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Organization } from 'schema-dts';
+import { Organization, Person } from 'schema-dts';
 
 import { PersonInfo } from '../../../redux/features/people';
 import { ListItemContainer } from '../../../ui-kit/lists-kit';
@@ -16,7 +16,9 @@ const COLORS = {
 };
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {
-  const { person, provider } = info;
+  const { provider } = info;
+
+  const person = info.person as Person;
 
   if (typeof person === 'string') return null;
 
