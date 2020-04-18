@@ -11,8 +11,8 @@ interface PersonCardProps {
 }
 
 const COLORS = {
-  google: '#d15a4f',
-  bamboo: '#68ac38'
+  google: '#efc655',
+  bamboo: '#83c158'
 };
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {

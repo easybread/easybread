@@ -14,7 +14,8 @@
   --brand-teal-accent: #00ab9f;
   --brand-teal-light-transparent: rgba(126, 226, 215, 0.16);
   --brand-teal-dark: #319795;
-  --brand-teal-desaturated: #8faba8;
+  --brand-teal-desaturated: #799d99;
+  --brand-teal-desaturated-light: #9fbebb;
 
   /* Background colors */
   --bg-color-main: #ebf8ff;
@@ -38,6 +39,7 @@
   --text-sm: 0.875rem;
   --text-md: 1rem;
   --text-lg: 1.125rem;
+  --text-xlg: 1.25rem;
 
   /* screens */
   --screen-sm: 640px;

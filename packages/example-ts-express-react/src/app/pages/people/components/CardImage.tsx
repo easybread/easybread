@@ -12,7 +12,7 @@ export const CardImage: FC<CardImageProps> = ({ image }) => {
 
 export const StyledImagePlaceholder = styled.div`
   flex-shrink: 0;
-  background-color: var(--brand-teal-desaturated);
+  background-color: var(--brand-teal-desaturated-light);
   width: 150px;
   height: 150px;
 `;

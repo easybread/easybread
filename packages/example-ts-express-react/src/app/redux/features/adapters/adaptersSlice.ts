@@ -17,16 +17,22 @@ interface AdaptersConfiguredState {
   configured: AdaptersBooleanState;
 }
 
+interface AdaptersInitializedState {
+  initialized: boolean;
+}
+
 export type AdaptersState = AdaptersLoadingState &
   AdaptersConfiguredState &
-  AdaptersErrorState;
+  AdaptersErrorState &
+  AdaptersInitializedState;
 
 //  ------------------------------------
 
 const initialState: AdaptersState = {
   configured: { bamboo: false, google: false },
   loading: false,
-  error: false
+  error: false,
+  initialized: false
 };
 
 //  ------------------------------------
@@ -45,9 +51,11 @@ const adaptersSlice = createSlice({
     },
     setAdaptersConfigured(state, action: PayloadAction<AdaptersBooleanState>) {
       state.configured = action.payload;
+      state.initialized = true;
     },
     setAdaptersError(state, action: PayloadAction<boolean>) {
       state.error = action.payload;
+      state.initialized = true;
     },
     setAdapterConfigured(
       state,

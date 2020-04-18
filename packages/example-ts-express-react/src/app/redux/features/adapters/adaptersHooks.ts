@@ -18,6 +18,12 @@ export function useAdaptersLoading(): boolean {
   });
 }
 
+export function useAdaptersInitialized(): boolean {
+  return useSelector<RootState, boolean>(state => {
+    return state.adapters.initialized;
+  });
+}
+
 export function useAdaptersError(): boolean {
   return useSelector<RootState, boolean>(state => {
     return state.adapters.error;
