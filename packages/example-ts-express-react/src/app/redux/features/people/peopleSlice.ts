@@ -4,7 +4,8 @@ type AdapterName = 'google' | 'bamboo';
 
 export interface PersonInfo {
   // TODO: Person here breaks the tsc build (hangs infinitely)
-  person: any;
+  // object|string is a very simplified Thing type
+  person: object | string;
   provider: AdapterName;
 }
 

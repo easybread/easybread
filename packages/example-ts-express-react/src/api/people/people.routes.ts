@@ -34,8 +34,7 @@ peopleRoutes.get('/:adapter', async (req: PeopleRequest, res) => {
           EmployeeSearchOperation<BambooEmployeesDirectory>
         >({
           name: BreadOperationName.EMPLOYEE_SEARCH,
-          breadId: '1',
-          params: { '@type': 'Person' }
+          breadId: '1'
         })
       );
 

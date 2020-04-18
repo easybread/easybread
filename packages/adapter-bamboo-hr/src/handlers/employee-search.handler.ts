@@ -21,7 +21,7 @@ export const EmployeeSearchHandler: BreadOperationHandler<
 
     const result = await context.httpRequest<BambooEmployeesDirectory>({
       method: 'GET',
-      // TODO: refactor: build base url with company in one place
+      // TODO (priority): refactor: build base url with company in one place
       url: `https://api.bamboohr.com/api/gateway.php/${companyName}/v1/employees/directory`,
       headers: { accept: 'application/json' }
     });

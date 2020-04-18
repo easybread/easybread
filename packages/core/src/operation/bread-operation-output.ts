@@ -58,7 +58,6 @@ export interface BreadOperationOutputWithPayload<
 
 //  ------------------------------------
 
-// TODO: is there a better way of doing it?
 export type BreadOperationOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,

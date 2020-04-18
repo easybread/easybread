@@ -10,18 +10,25 @@ export const breezyCompanyToOrganizationTransform = (
     // creation_date,
     // friendly_id,
     initial,
-    // member_count,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    member_count,
     name
     // updated_date
   } = company;
 
   const result: Organization = { '@type': 'Organization' };
 
-  return Object.assign({}, result, {
+  return {
+    ...result,
     name,
     // TODO: better schema property for initial
     alternateName: initial,
-    identifier: _id
+    identifier: _id,
+    numberOfEmployees: {
+      '@type': 'QuantitativeValue',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      value: member_count
+    }
     // TODO: schema properties for other fields;
-  });
+  };
 };

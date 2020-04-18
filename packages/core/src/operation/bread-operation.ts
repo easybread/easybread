@@ -17,11 +17,11 @@ export interface BreadOperation<T extends string> {
   name: T;
   input:
     | BreadOperationInput<T>
-    | BreadOperationInputWithParams<T, object | Thing>
+    | BreadOperationInputWithParams<T, object>
     | BreadOperationInputWithPayload<T, object | object[] | Thing[] | Thing>
     | BreadOperationInputWithParamsAndPayload<
         T,
-        object | Thing,
+        object,
         object | object[] | Thing[] | Thing
       >;
   output:

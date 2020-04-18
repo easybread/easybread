@@ -71,11 +71,7 @@ describe('usage', () => {
       EmployeeSearchOperation<BambooEmployeesDirectory>
     >({
       breadId: USER_ID,
-      name: BreadOperationName.EMPLOYEE_SEARCH,
-      params: {
-        '@type': 'Person',
-        email: 'alexandr2110pro@mail.com'
-      }
+      name: BreadOperationName.EMPLOYEE_SEARCH
     });
 
     expect(axiosMock.request).toHaveBeenCalledWith({

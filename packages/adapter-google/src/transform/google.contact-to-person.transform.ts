@@ -19,6 +19,7 @@ export const googleContactToPersonTransform = (
     gd$phoneNumber,
     id
     // TODO: figure out schema.org representation for this field
+    //       it is an array of links to 'self', 'edit' and 'image'
     // link,
     // TODO: figure out schema.org representation for this field
     // title
