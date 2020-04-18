@@ -27,7 +27,7 @@ export const HeaderNav: FC<HeaderNavProps> = () => {
   const bambooConfigured = useAdapterConfigured('bamboo');
   const googleConfigured = useAdapterConfigured('google');
 
-  const showPeople = bambooConfigured && googleConfigured;
+  const showPeople = bambooConfigured || googleConfigured;
 
   return (
     <StyledHeaderNav>
