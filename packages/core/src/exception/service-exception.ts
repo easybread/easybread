@@ -3,14 +3,18 @@ import { BreadException } from './bread-exception';
 // TODO: improve and refactor
 export class ServiceException extends BreadException {
   provider: string;
-  originalError: Error | { status?: number; message: string };
+  originalError: Error | { status?: number; message: string } | string;
 
   constructor(
     provider: string,
-    error: Error | { status?: number; message: string }
+    error: Error | { status?: number; message: string } | string
   ) {
     // TODO: better error format
-    super(`${provider}: ${error.message ?? error.toString()}`);
+    const message =
+      typeof error === 'string' ? error : error.message ?? error.toString();
+
+    super(`${provider}: ${message}`);
+
     this.provider = provider;
     this.originalError = error;
   }

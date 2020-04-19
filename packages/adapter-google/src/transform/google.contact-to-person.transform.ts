@@ -25,7 +25,9 @@ export const googleContactToPersonTransform = (
     // title
   } = contact;
 
-  person.email = gd$email.find(m => m.primary === 'true')?.address;
+  if (gd$email) {
+    person.email = gd$email.find(m => m.primary === 'true')?.address;
+  }
 
   if (gd$name) {
     person.name = gd$name.gd$fullName?.$t;
@@ -55,7 +57,9 @@ export const googleContactToPersonTransform = (
     person.telephone = tel.$t;
   }
 
-  person.identifier = id.$t;
+  if (id) {
+    person.identifier = id.$t;
+  }
 
   return person;
 };

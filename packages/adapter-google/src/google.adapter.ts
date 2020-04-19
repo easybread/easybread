@@ -6,6 +6,7 @@ import { GoogleOperation } from './google.operation';
 import {
   GoogleOauth2CompleteHandler,
   GoogleOauth2StartHandler,
+  GooglePeopleCreateHandler,
   GooglePeopleSearchHandler
 } from './handlers';
 
@@ -20,7 +21,8 @@ export class GoogleAdapter extends BreadServiceAdapter<
     this.registerOperationHandlers(
       GoogleOauth2StartHandler,
       GoogleOauth2CompleteHandler,
-      GooglePeopleSearchHandler
+      GooglePeopleSearchHandler,
+      GooglePeopleCreateHandler
     );
   }
 }

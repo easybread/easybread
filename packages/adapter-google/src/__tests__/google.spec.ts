@@ -19,10 +19,12 @@ import {
   GoogleOauth2StartOperation,
   GoogleOauth2StateData,
   GoogleOperationName,
+  GooglePeopleCreateOperation,
   GooglePeopleSearchOperation
 } from '..';
 import { CONTACTS_FEED_MOCK } from './contacts-feed.mock';
 import Mock = jest.Mock;
+import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 
 setExtendedTimeout();
 mockAxios();
@@ -179,16 +181,8 @@ describe('Google Plugin', () => {
     });
 
     describe(GoogleOperationName.PEOPLE_SEARCH, () => {
-      let simulateFailedRequest: boolean;
-
       function setupContactsMock(): void {
         (axiosMock.request as Mock).mockImplementationOnce(() => {
-          if (simulateFailedRequest) {
-            throw {
-              status: 500,
-              message: 'Internal Server Error'
-            };
-          }
           return Promise.resolve({
             status: 200,
             data: CONTACTS_FEED_MOCK
@@ -220,7 +214,6 @@ describe('Google Plugin', () => {
       }
 
       beforeEach(async () => {
-        simulateFailedRequest = false;
         jest.resetAllMocks();
         setupContactsMock();
       });
@@ -372,13 +365,94 @@ describe('Google Plugin', () => {
       });
 
       it(`should fail if no auth data is saved for the user`, async () => {
+        const authDataStateKey = `google:auth-data:${USER_ID}`;
+        // cache auth data
+        const authData = await stateAdapter.read<GoogleOauth2StateData>(
+          authDataStateKey
+        );
+
+        // rm auth data
         await stateAdapter.reset();
+
         const result = await invokePeopleSearch();
         expect(result.rawPayload).toEqual({
           success: false,
           error: new ServiceException('google', {
-            message: `no auth data in the sate for user ${USER_ID}`
+            message: `no auth data in the state for user ${USER_ID}`
           })
+        });
+
+        // restore auth data
+        await stateAdapter.write<GoogleOauth2StateData>(
+          authDataStateKey,
+          authData as GoogleOauth2StateData
+        );
+      });
+    });
+
+    describe(GoogleOperationName.PEOPLE_CREATE, () => {
+      function setupCreateContactMock(): void {
+        (axiosMock.request as Mock).mockImplementationOnce(() =>
+          Promise.resolve({
+            status: 200,
+            data: CONTACT_FEED_ENTRY_CREATE_MOCK
+          })
+        );
+      }
+
+      async function invokePeopleCreate(): Promise<
+        GooglePeopleCreateOperation['output']
+      > {
+        return client.invoke<GooglePeopleCreateOperation>({
+          breadId: USER_ID,
+          name: GoogleOperationName.PEOPLE_CREATE,
+          payload: {
+            '@type': 'Person',
+            givenName: 'Test',
+            familyName: 'Contact',
+            email: 'test@mail.com',
+            telephone: '+7 (965) 444 2211'
+          }
+        });
+      }
+
+      beforeEach(async () => {
+        jest.resetAllMocks();
+        setupCreateContactMock();
+      });
+
+      it(`should call POST /m8/feeds/contacts/default/full?alt=json API`, async () => {
+        await invokePeopleCreate();
+        expect(axiosMock.request).toHaveBeenCalledWith({
+          method: 'POST',
+          url: 'https://www.google.com/m8/feeds/contacts/default/full',
+          params: { alt: 'json' },
+          headers: {
+            'GData-Version': '3.0',
+            accept: 'application/json',
+            authorization: 'Bearer new-access-token'
+          },
+          data: {
+            gd$phoneNumber: [
+              {
+                rel: 'http://schemas.google.com/g/2005#work',
+                primary: 'true',
+                $t: '+7 (965) 444 2211'
+              }
+            ],
+            gd$email: [
+              {
+                rel: 'http://schemas.google.com/g/2005#work',
+                primary: 'true',
+                address: 'test@mail.com'
+              }
+            ],
+            gd$name: {
+              gd$fullName: { $t: 'Test Contact' },
+              gd$givenName: { $t: 'Test' },
+              gd$familyName: { $t: 'Contact' }
+            }
+          }
         });
       });
     });

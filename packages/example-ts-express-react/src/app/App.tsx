@@ -4,41 +4,23 @@ import styled from 'styled-components/macro';
 
 import { AppRoutes } from './AppRoutes';
 import { Header } from './components/Header';
-import {
-  useAdaptersError,
-  useAdaptersLoading,
-  useInitAdaptersData
-} from './redux/features/adapters';
+import { useInitAdaptersData } from './redux/features/adapters';
 import { GlobalStyles } from './styles/GlobalStyles';
-import { LayoutContentWrapper } from './ui-kit/layout-kit';
 
 interface AppProps {}
 
 export const App: FC<AppProps> = () => {
-  const loading = useAdaptersLoading();
-  const error = useAdaptersError();
-
   useInitAdaptersData();
 
-  if (loading) {
-    return <LayoutContentWrapper>loading</LayoutContentWrapper>;
-  }
-
-  if (error) {
-    return <LayoutContentWrapper>error</LayoutContentWrapper>;
-  }
-
   return (
-    <>
+    <BrowserRouter>
       <GlobalStyles />
 
       <StyledWrapper>
-        <BrowserRouter>
-          <Header />
-          <AppRoutes />
-        </BrowserRouter>
+        <Header />
+        <AppRoutes />
       </StyledWrapper>
-    </>
+    </BrowserRouter>
   );
 };
 
