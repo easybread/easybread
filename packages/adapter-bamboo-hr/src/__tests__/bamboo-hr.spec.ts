@@ -1,6 +1,7 @@
 import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   BreadOperationName,
+  EmployeeCreateOperation,
   EmployeeSearchOperation,
   SetupBasicAuthOperation
 } from '@easybread/operations';
@@ -16,6 +17,10 @@ import {
 
 mockAxios();
 setExtendedTimeout();
+
+const API_KEY = 'user-secret-key';
+const BREAD_ID = 'user-one';
+const COMPANY_NAME = 'company-one';
 
 describe('usage', () => {
   // create adapters
@@ -38,74 +43,151 @@ describe('usage', () => {
     jest.restoreAllMocks();
   });
 
-  // TODO: replace with multiple tests
-  it(`should work`, async () => {
-    const API_KEY = 'user-secret-key';
-    const USER_ID = 'user-one';
-    const COMPANY_NAME = 'company-one';
+  describe(`${BreadOperationName.SETUP_BASIC_AUTH}`, () => {
+    it(`should store auth data`, async () => {
+      const authResult = await client.invoke<
+        SetupBasicAuthOperation<BambooBasicAuthPayload>
+      >({
+        breadId: BREAD_ID,
+        name: BreadOperationName.SETUP_BASIC_AUTH,
+        payload: { apiKey: API_KEY, companyName: COMPANY_NAME }
+      });
 
-    const authResult = await client.invoke<
-      SetupBasicAuthOperation<BambooBasicAuthPayload>
-    >({
-      breadId: USER_ID,
-      name: BreadOperationName.SETUP_BASIC_AUTH,
-      payload: { apiKey: API_KEY, companyName: COMPANY_NAME }
+      expect(authResult).toEqual({
+        provider: bambooHrAdapter.provider,
+        name: 'BREAD/SETUP_BASIC_AUTH',
+        rawPayload: {
+          success: true
+        }
+      });
+
+      const authData = await authStrategy.readAuthData(BREAD_ID);
+      expect(authData).toEqual({
+        companyName: 'company-one',
+        token: 'dXNlci1zZWNyZXQta2V5Ong='
+      });
+    });
+  });
+
+  describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
+    beforeEach(async () => {
+      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+        Promise.resolve({
+          status: 200,
+          data: getEmployeesDirMockData()
+        })
+      );
     });
 
-    expect(authResult).toEqual({
-      provider: bambooHrAdapter.provider,
-      name: 'BREAD/SETUP_BASIC_AUTH',
-      rawPayload: {
-        success: true
-      }
+    function invokeEmployeeSearch(): Promise<
+      EmployeeSearchOperation<BambooEmployeesDirectory>['output']
+    > {
+      return client.invoke<EmployeeSearchOperation<BambooEmployeesDirectory>>({
+        breadId: BREAD_ID,
+        name: BreadOperationName.EMPLOYEE_SEARCH
+      });
+    }
+
+    it(`should call bamboo https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/employees/directory api`, async () => {
+      await invokeEmployeeSearch();
+
+      expect(axiosMock.request).toHaveBeenCalledWith({
+        url: `https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/employees/directory`,
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          authorization: expect.stringMatching(/Basic .+/)
+        }
+      });
     });
 
-    (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
-      Promise.resolve({
-        status: 200,
-        data: getEmployeesDirMockData()
-      })
-    );
+    it(`should have correct output`, async () => {
+      const employees = await invokeEmployeeSearch();
+      expect(employees).toEqual({
+        provider: bambooHrAdapter.provider,
+        name: 'BREAD/EMPLOYEE/SEARCH',
+        payload: [
+          {
+            '@type': 'Person',
+            email: '2110pro@mail.ru',
+            familyName: 'Employee',
+            gender: 'Male',
+            givenName: 'Test',
+            identifier: '112',
+            image:
+              'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+            jobTitle: 'JavaScript Developer',
+            name: 'Test Employee',
+            telephone: '+71231231212',
+            workLocation: 'Remote'
+          }
+        ],
+        rawPayload: {
+          success: true,
+          data: getEmployeesDirMockData()
+        }
+      });
+    });
+  });
 
-    const employees = await client.invoke<
-      EmployeeSearchOperation<BambooEmployeesDirectory>
-    >({
-      breadId: USER_ID,
-      name: BreadOperationName.EMPLOYEE_SEARCH
+  describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
+    beforeEach(async () => {
+      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+        Promise.resolve({ status: 201 })
+      );
     });
 
-    expect(axiosMock.request).toHaveBeenCalledWith({
-      method: 'GET',
-      url: `https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/employees/directory`,
-      headers: {
-        accept: 'application/json',
-        authorization: expect.stringMatching(/Basic .+/)
-      }
+    function invokeEmployeeCreate(): Promise<
+      EmployeeCreateOperation['output']
+    > {
+      return client.invoke<EmployeeCreateOperation>({
+        name: BreadOperationName.EMPLOYEE_CREATE,
+        breadId: BREAD_ID,
+        payload: {
+          '@type': 'Person',
+          email: '2110pro@mail.ru',
+          givenName: 'New',
+          familyName: 'Employee',
+          telephone: '+71231231212'
+        }
+      });
+    }
+    it(`should call bamboo API`, async () => {
+      await invokeEmployeeCreate();
+      expect(axiosMock.request).toHaveBeenCalledWith({
+        url:
+          'https://api.bamboohr.com/api/gateway.php/company-one/v1/employees',
+        method: 'POST',
+        data: {
+          firstName: 'New',
+          lastName: 'Employee',
+          workEmail: '2110pro@mail.ru',
+          workPhone: '+71231231212'
+        },
+        headers: {
+          accept: 'application/json',
+          authorization: 'Basic dXNlci1zZWNyZXQta2V5Ong='
+        }
+      });
     });
 
-    expect(employees).toEqual({
-      provider: bambooHrAdapter.provider,
-      name: 'BREAD/EMPLOYEE/SEARCH',
-      payload: [
-        {
+    it(`should have correct output`, async () => {
+      const result = await invokeEmployeeCreate();
+      expect(result).toEqual({
+        name: 'BREAD/EMPLOYEE/CREATE',
+        payload: {
           '@type': 'Person',
           email: '2110pro@mail.ru',
           familyName: 'Employee',
-          gender: 'Male',
-          givenName: 'Test',
-          identifier: '112',
-          image:
-            'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
-          jobTitle: 'JavaScript Developer',
-          name: 'Test Employee',
-          telephone: '+71231231212',
-          workLocation: 'Remote'
+          givenName: 'New',
+          telephone: '+71231231212'
+        },
+        provider: 'bamboo-hr',
+        rawPayload: {
+          data: {},
+          success: true
         }
-      ],
-      rawPayload: {
-        success: true,
-        data: getEmployeesDirMockData()
-      }
+      });
     });
   });
 });

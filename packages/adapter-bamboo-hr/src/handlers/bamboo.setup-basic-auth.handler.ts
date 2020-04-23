@@ -7,7 +7,7 @@ import {
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { BambooBasicAuthPayload } from '../interfaces';
 
-export const SetupBasicAuthHandler: BreadOperationHandler<
+export const BambooSetupBasicAuthHandler: BreadOperationHandler<
   SetupBasicAuthOperation<BambooBasicAuthPayload>,
   BambooHrAuthStrategy
 > = {

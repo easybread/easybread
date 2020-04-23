@@ -6,9 +6,9 @@ import {
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { BambooEmployeesDirectory } from '../interfaces';
-import { employeeToPersonTransform } from '../transform';
+import { bambooEmployeeToPersonTransform } from '../transform';
 
-export const EmployeeSearchHandler: BreadOperationHandler<
+export const BambooEmployeeSearchHandler: BreadOperationHandler<
   EmployeeSearchOperation<BambooEmployeesDirectory>,
   BambooHrAuthStrategy
 > = {
@@ -28,7 +28,7 @@ export const EmployeeSearchHandler: BreadOperationHandler<
 
     return {
       name: BreadOperationName.EMPLOYEE_SEARCH,
-      payload: result.data.employees.map(employeeToPersonTransform),
+      payload: result.data.employees.map(bambooEmployeeToPersonTransform),
       rawPayload: {
         success: true,
         data: result.data

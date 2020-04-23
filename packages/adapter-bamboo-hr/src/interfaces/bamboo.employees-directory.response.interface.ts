@@ -1,4 +1,4 @@
-import { BambooEmployee } from './bamboo-employee.interface';
+import { BambooEmployee } from './bamboo.employee.interface';
 
 export interface BambooEmployeesDirectory {
   employees: BambooEmployee[];

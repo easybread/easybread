@@ -3,7 +3,7 @@ import { Person } from 'schema-dts';
 
 import { BambooEmployee } from '../interfaces';
 
-export const employeeToPersonTransform = (
+export const bambooEmployeeToPersonTransform = (
   bambooEmployee: BambooEmployee
 ): Person => {
   // TODO: how to represent commented out fields in the Person schema

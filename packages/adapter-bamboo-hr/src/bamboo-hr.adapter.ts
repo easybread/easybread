@@ -3,7 +3,11 @@ import { BreadServiceAdapter } from '@easybread/core';
 import { BambooHrAuthStrategy } from './bamboo-hr.auth-strategy';
 import { BAMBOO_HR_PROVIDER } from './bamboo-hr.constants';
 import { BambooHrOperation } from './bamboo-hr.operation';
-import { EmployeeSearchHandler, SetupBasicAuthHandler } from './handlers';
+import {
+  BambooEmployeeCreateHandler,
+  BambooEmployeeSearchHandler,
+  BambooSetupBasicAuthHandler
+} from './handlers';
 
 export class BambooHrAdapter extends BreadServiceAdapter<
   BambooHrOperation,
@@ -14,8 +18,9 @@ export class BambooHrAdapter extends BreadServiceAdapter<
   constructor() {
     super();
     this.registerOperationHandlers(
-      SetupBasicAuthHandler,
-      EmployeeSearchHandler
+      BambooSetupBasicAuthHandler,
+      BambooEmployeeSearchHandler,
+      BambooEmployeeCreateHandler
     );
   }
 }
