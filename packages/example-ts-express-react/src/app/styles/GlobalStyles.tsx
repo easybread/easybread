@@ -51,9 +51,17 @@ export const GlobalStyles: GlobalStyleComponent<
     margin: 0;
     appearance: none;
     line-height: 1.25;
+    border-radius: 0;
     
-    :focus {
+    background-color: #fff;
+    padding: 0.5rem 1rem;
+    color: var(--text-main-color-light);
+    border: 2px solid #edf2f7;
+
+    &:focus {
       outline: none;
+      background-color: #fff;
+      border-color: var(--brand-teal);
     }
   }
     

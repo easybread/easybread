@@ -21,7 +21,10 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
     await context.httpRequest<undefined>({
       method: 'POST',
       url: `https://api.bamboohr.com/api/gateway.php/${companyName}/v1/employees`,
-      headers: { accept: 'application/json' },
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
       data: bambooPersonToEmployeeTransform(payload as Person)
     });
 

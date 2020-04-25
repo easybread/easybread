@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface AdaptersBooleanState {
+export interface AdaptersBooleanState {
   google: boolean;
   bamboo: boolean;
 }

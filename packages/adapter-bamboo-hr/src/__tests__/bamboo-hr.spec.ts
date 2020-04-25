@@ -165,6 +165,7 @@ describe('usage', () => {
           workPhone: '+71231231212'
         },
         headers: {
+          'Content-Type': 'application/json',
           accept: 'application/json',
           authorization: 'Basic dXNlci1zZWNyZXQta2V5Ong='
         }

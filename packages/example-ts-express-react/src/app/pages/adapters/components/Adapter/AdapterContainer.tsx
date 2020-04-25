@@ -101,6 +101,7 @@ const disabledStyle = css`
     background-color: transparent;
   }
 `;
+
 const StyledAdapterTitle = styled.div<Expandable & { disabled: boolean }>`
   color: var(--brand-teal);
   height: 50px;

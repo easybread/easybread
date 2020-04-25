@@ -5,7 +5,10 @@ import {
   setupBamboo,
   useAdapterConfigured
 } from '../../../redux/features/adapters';
-import { FormFieldsContainer, LabeledInput } from '../../../ui-kit/form-kit';
+import {
+  FormFieldsContainer,
+  FormLabeledInput
+} from '../../../ui-kit/form-kit';
 import { AdapterContainer } from './Adapter';
 
 interface AdapterBambooProps {}
@@ -36,13 +39,13 @@ export const AdapterBamboo: FC<AdapterBambooProps> = () => {
       onSubmit={onSubmit}
     >
       <FormFieldsContainer>
-        <LabeledInput
+        <FormLabeledInput
           label={'API Key'}
           value={apiKey}
           type={'text'}
           onChange={setApiKey}
         />
-        <LabeledInput
+        <FormLabeledInput
           label={'Company Name'}
           value={companyName}
           type={'text'}

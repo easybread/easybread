@@ -10,6 +10,7 @@ import {
 import { LayoutContentWrapper } from '../../ui-kit/layout-kit';
 import { PeopleControls } from './components/PeopleControls';
 import { PeopleResults } from './components/PeopleResults';
+import { CreatePerson } from './components/CreatePerson';
 
 interface OperationsPageProps {}
 
@@ -40,6 +41,7 @@ export const PeoplePage: FC<OperationsPageProps> = () => {
   return (
     <LayoutContentWrapper>
       <PeopleControls />
+      <CreatePerson />
       <PeopleResults />
     </LayoutContentWrapper>
   );

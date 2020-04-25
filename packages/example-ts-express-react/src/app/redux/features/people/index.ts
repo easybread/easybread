@@ -1,3 +1,4 @@
 export * from './peopleSlice';
 
-export { loadPeople } from './loadPeople';
+export { peopleLoad } from './peopleLoad';
+export { peopleCreate } from './peopleCreate';

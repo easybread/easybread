@@ -5,7 +5,7 @@ import styled from 'styled-components/macro';
 import { RootState } from '../../../redux';
 import {
   AdaptersBooleanState,
-  loadPeople
+  peopleLoad
 } from '../../../redux/features/people';
 import { LoadButton } from './LoadButton';
 import { useAdapterConfigured } from '../../../redux/features/adapters';
@@ -26,10 +26,10 @@ export const PeopleControls: FC<PeopleControlsProps> = () => {
   );
 
   const fetchGoogle = (): void => {
-    dispatch(loadPeople('google'));
+    dispatch(peopleLoad('google'));
   };
   const fetchBamboo = (): void => {
-    dispatch(loadPeople('bamboo'));
+    dispatch(peopleLoad('bamboo'));
   };
 
   return (

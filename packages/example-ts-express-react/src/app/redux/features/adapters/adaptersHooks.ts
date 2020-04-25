@@ -1,7 +1,10 @@
+import { reduce } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '../../rootReducer';
+import { AdapterName } from '../people';
+import { AdaptersBooleanState } from './adaptersSlice';
 import { loadAdaptersData } from './loadAdaptersData';
 
 export function useInitAdaptersData(): void {
@@ -36,4 +39,19 @@ export function useAdapterConfigured(
   return useSelector<RootState, boolean>(state => {
     return state.adapters.configured[adapterName];
   });
+}
+
+export function useConfiguredAdapterNames(): AdapterName[] {
+  const configured = useSelector<RootState, AdaptersBooleanState>(state => {
+    return state.adapters.configured;
+  });
+
+  return reduce(
+    configured,
+    (result: AdapterName[], val: boolean, key: string) => {
+      if (val) result.push(key as keyof AdaptersBooleanState);
+      return result;
+    },
+    []
+  );
 }

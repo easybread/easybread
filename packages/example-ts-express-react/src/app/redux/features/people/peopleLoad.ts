@@ -1,15 +1,15 @@
-import { PeopleResultsDto } from '../../../../dtos';
+import { PeopleResponseDto } from '../../../../dtos';
 import { getRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { peopleActions, PersonInfo } from './peopleSlice';
 
-export const loadPeople = (
+export const peopleLoad = (
   adapter: 'google' | 'bamboo'
 ): AppThunk => async dispatch => {
-  dispatch(peopleActions.peopleLoadingStart({ adapter }));
+  dispatch(peopleActions.peopleLoadingStart(adapter));
 
   try {
-    const results = await getRequest<PeopleResultsDto>(
+    const results = await getRequest<PeopleResponseDto>(
       `/api/people/${adapter}`
     );
 
@@ -25,6 +25,6 @@ export const loadPeople = (
       })
     );
   } catch (e) {
-    dispatch(peopleActions.peopleLoadingError({ adapter }));
+    dispatch(peopleActions.peopleLoadingError(adapter));
   }
 };
