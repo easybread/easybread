@@ -5,13 +5,9 @@ import { BreadException } from './bread-exception';
 // TODO: improve and refactor
 export class ServiceException extends BreadException {
   provider: string;
-  originalError: Error | { status?: number; message: string } | string;
+  originalError?: Error | AxiosError;
 
-  constructor(provider: string, error: Error | AxiosError | string) {
-    // TODO: better error format
-    const message =
-      typeof error === 'string' ? error : error.message ?? error.toString();
-
+  constructor(provider: string, message: string, error?: Error | AxiosError) {
     super(`${provider}: ${message}`);
 
     this.provider = provider;

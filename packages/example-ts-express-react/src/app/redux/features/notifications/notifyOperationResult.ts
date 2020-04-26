@@ -29,32 +29,14 @@ export function notifyOperationResult<
 //  ------------------------------------
 // TODO: move to shared
 
-function isServiceException(arg: any): arg is ServiceException {
-  return !!arg.provider;
-}
-
 function isError(arg: any): arg is Error {
   return arg.message;
-}
-
-function buildErrorMessageFromOriginalError(
-  error: Error | { status?: number; message: string } | string
-): string {
-  return typeof error !== 'string'
-    ? error['status']
-      ? `${error['status']} ${error.message}`
-      : error.message
-    : error;
 }
 
 function buildErrorMessage(
   error: string | BreadException | ServiceException | object
 ): string {
   if (typeof error === 'string') return error;
-
-  if (isServiceException(error)) {
-    return buildErrorMessageFromOriginalError(error.originalError);
-  }
 
   if (isError(error)) return error.message;
 

@@ -1,8 +1,4 @@
-import {
-  EasyBreadClient,
-  InMemoryStateAdapter,
-  ServiceException
-} from '@easybread/core';
+import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   expectDate,
   mockAxios,
@@ -22,9 +18,9 @@ import {
   GooglePeopleCreateOperation,
   GooglePeopleSearchOperation
 } from '..';
+import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 import { CONTACTS_FEED_MOCK } from './contacts-feed.mock';
 import Mock = jest.Mock;
-import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 
 setExtendedTimeout();
 mockAxios();
@@ -375,11 +371,15 @@ describe('Google Plugin', () => {
         await stateAdapter.reset();
 
         const result = await invokePeopleSearch();
-        expect(result.rawPayload).toEqual({
-          success: false,
-          error: new ServiceException('google', {
-            message: `no auth data in the state for user ${USER_ID}`
-          })
+        expect(JSON.parse(JSON.stringify(result.rawPayload))).toEqual({
+          error: {
+            message: 'google: no auth data in the state for user 1',
+            originalError: {
+              message: 'no auth data in the state for user 1'
+            },
+            provider: 'google'
+          },
+          success: false
         });
 
         // restore auth data

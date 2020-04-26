@@ -39,23 +39,31 @@ export abstract class BreadServiceAdapter<
     }
   }
 
+  // TODO: improve this method
   protected createServiceException(
     error: Error | AxiosError | BreadException | ServiceException | string
   ): ServiceException {
     if (error instanceof ServiceException) return error;
 
-    if (error['isAxiosError']) {
+    if (typeof error === 'string') {
+      return new ServiceException(this.provider, error);
+    }
+
+    if (this.isAxiosError(error)) {
       return new ServiceException(
         this.provider,
-        this.transformAxiosError(error as AxiosError)
+        this.createServiceExceptionMessageFromAxiosError(error),
+        error
       );
     }
 
-    return new ServiceException(this.provider, error);
+    return new ServiceException(this.provider, error.message, error);
   }
 
-  protected transformAxiosError(error: AxiosError): AxiosError {
-    return error;
+  protected createServiceExceptionMessageFromAxiosError(
+    error: AxiosError
+  ): string {
+    return error.message;
   }
 
   protected setProviderToOutput(
@@ -88,5 +96,9 @@ export abstract class BreadServiceAdapter<
       throw new NotImplementedException();
     }
     return this.handlers.get(operationName) as BreadOperationHandler<T, A>;
+  }
+
+  private isAxiosError(arg: Error | AxiosError): arg is AxiosError {
+    return !!arg['isAxiosError'];
   }
 }

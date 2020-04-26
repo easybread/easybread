@@ -26,17 +26,20 @@ export class BambooHrAdapter extends BreadServiceAdapter<
     );
   }
 
-  protected transformAxiosError(error: AxiosError): AxiosError {
+  protected createServiceExceptionMessageFromAxiosError(
+    error: AxiosError
+  ): string {
     // this might be a comma separated list possibly with duplicates
     const bambooErrorMessagesString =
       error.response?.headers['x-bamboohr-error-message'];
 
-    if (!bambooErrorMessagesString) return super.transformAxiosError(error);
+    if (!bambooErrorMessagesString) {
+      return super.createServiceExceptionMessageFromAxiosError(error);
+    }
 
     // get rid of duplicates and set extended message.
     const message = uniq(bambooErrorMessagesString.split(/,\s?/)).join(', ');
-    error.message = `${error.message}. ${message}`;
 
-    return super.transformAxiosError(error);
+    return `${error.message}. ${message}`;
   }
 }

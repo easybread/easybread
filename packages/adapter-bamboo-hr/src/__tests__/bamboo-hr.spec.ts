@@ -1,8 +1,4 @@
-import {
-  EasyBreadClient,
-  InMemoryStateAdapter,
-  ServiceException
-} from '@easybread/core';
+import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeCreateOperation,
@@ -219,21 +215,33 @@ describe('usage', () => {
 
       const result = await invokeEmployeeCreate();
 
-      expect(result).toEqual({
-        provider: 'bamboo-hr',
+      // get what the res.json would send
+      expect(JSON.parse(JSON.stringify(result))).toEqual({
         name: 'BREAD/EMPLOYEE/CREATE',
+        provider: 'bamboo-hr',
         rawPayload: {
-          success: false,
-          error: new ServiceException(bambooHrAdapter.provider, error)
+          error: {
+            message:
+              'bamboo-hr: Request failed with status code 409. Duplicate email',
+            originalError: {
+              isAxiosError: true,
+              response: {
+                data: '',
+                headers: {
+                  'x-bamboohr-error-message':
+                    'Duplicate email, Duplicate email',
+                  'x-bamboohr-error-messsage':
+                    'Duplicate email, Duplicate email'
+                },
+                status: 409,
+                statusText: 'conflict'
+              }
+            },
+            provider: 'bamboo-hr'
+          },
+          success: false
         }
       });
-
-      expect(result.rawPayload['error']['message']).toEqual(
-        'bamboo-hr: Request failed with status code 409. Duplicate email'
-      );
-      expect(result.rawPayload['error']['originalError']['message']).toEqual(
-        'Request failed with status code 409. Duplicate email'
-      );
     });
   });
 });
