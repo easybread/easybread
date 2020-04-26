@@ -1,8 +1,8 @@
 import { AdaptersStateDto } from '../../../../dtos';
 import { getRequest } from '../../../http';
 import { AppThunk } from '../../store';
-import { adaptersActions } from './adaptersSlice';
 import { notifyError } from '../notifications';
+import { adaptersActions } from './adaptersSlice';
 
 export const loadAdaptersData = (): AppThunk => async dispatch => {
   dispatch(adaptersActions.setAdaptersLoading(true));

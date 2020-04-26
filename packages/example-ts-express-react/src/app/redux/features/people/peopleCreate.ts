@@ -3,8 +3,8 @@ import { Person } from 'schema-dts';
 import { PeopleCreateResponseDto } from '../../../../dtos';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
-import { peopleActions } from './peopleSlice';
 import { notifyOperationResult } from '../notifications';
+import { peopleActions } from './peopleSlice';
 
 export const peopleCreate = (
   adapter: 'google' | 'bamboo',
