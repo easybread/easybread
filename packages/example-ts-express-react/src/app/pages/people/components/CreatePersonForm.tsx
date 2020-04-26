@@ -1,6 +1,9 @@
+import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components/macro';
 
+import { useConfiguredAdapterNames } from '../../../redux/features/adapters';
+import { AdapterName } from '../../../redux/features/people';
 import {
   FormButton,
   FormButtonsContainer,
@@ -10,9 +13,6 @@ import {
   FormLabeledSelect
 } from '../../../ui-kit/form-kit';
 import { UtilExpandableContentProps } from '../../../ui-kit/util-kit';
-import { AdapterName } from '../../../redux/features/people';
-import { useConfiguredAdapterNames } from '../../../redux/features/adapters';
-import { capitalize } from 'lodash';
 
 export interface PersonFormData {
   email: string;
