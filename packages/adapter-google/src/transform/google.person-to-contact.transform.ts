@@ -9,7 +9,7 @@ export const googlePersonToContactTransform = (
   if (typeof person === 'string') {
     throw new ServiceException('google', 'string Person is not supported');
   }
-  const { givenName, familyName, email, telephone } = person;
+  const { givenName, familyName, email, telephone, identifier } = person;
 
   const contact: GoogleContactsFeedEntry = {};
 
@@ -45,6 +45,12 @@ export const googlePersonToContactTransform = (
         rel: 'http://schemas.google.com/g/2005#work'
       }
     ];
+  }
+
+  if (identifier) {
+    contact.id = {
+      $t: `https://www.google.com/m8/feeds/contacts/alexandr2110pro%40gmail.com/full/${identifier}`
+    };
   }
 
   return contact;

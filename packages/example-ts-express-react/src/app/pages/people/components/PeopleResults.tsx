@@ -1,17 +1,13 @@
 import React, { FC } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
-import { RootState } from '../../../redux';
-import { PersonInfo } from '../../../redux/features/people';
+import { usePersonInfosArray } from '../../../redux/features/people';
 import { PersonCard } from './PersonCard';
 
 interface PeopleResultsProps {}
 
 export const PeopleResults: FC<PeopleResultsProps> = () => {
-  const personInfos = useSelector<RootState, PersonInfo[]>(
-    state => state.people.data
-  );
+  const personInfos = usePersonInfosArray();
 
   return (
     <StyledPeopleResults>

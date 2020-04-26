@@ -5,12 +5,12 @@ interface ListItemContainerProps {
 }
 
 export const ListItemContainer = styled.div<ListItemContainerProps>`
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 0px -3px rgba(3, 26, 26, 0.1),
+    0 4px 0px -2px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  padding: 1rem;
+  padding: var(--gap-4);
   position: relative;
   border-left: 8px solid ${p => p.color};
   background-color: var(--white);

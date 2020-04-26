@@ -31,6 +31,7 @@ export const GlobalStyles: GlobalStyleComponent<
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.25;
     color: var(--text-main-color);
+    min-width: 420px;
   }
   
   html body {

@@ -1,5 +1,6 @@
 import { capitalize } from 'lodash';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { Person } from 'schema-dts';
 import styled from 'styled-components/macro';
 
 import { useConfiguredAdapterNames } from '../../../redux/features/adapters';
@@ -23,10 +24,12 @@ export interface PersonFormData {
 }
 
 interface CreatePersonFormProps extends UtilExpandableContentProps {
+  person?: Person;
   onSubmit: (data: PersonFormData) => void;
 }
 
-export const CreatePersonForm: FC<CreatePersonFormProps> = ({
+export const EditPersonForm: FC<CreatePersonFormProps> = ({
+  person,
   close,
   expanded,
   onSubmit
@@ -39,6 +42,20 @@ export const CreatePersonForm: FC<CreatePersonFormProps> = ({
 
   const adapterNames = useConfiguredAdapterNames();
 
+  const editMode = useMemo(() => !!person, [person]);
+
+  useEffect(() => {
+    // TODO: those checks and type
+    if (typeof person === 'string' || typeof person === 'undefined') return;
+
+    const { email, telephone, givenName, familyName } = person;
+
+    email && setEmail(email as string);
+    telephone && setTelephone(telephone as string);
+    givenName && setFirstName(givenName as string);
+    familyName && setLastName(familyName as string);
+  }, [person]);
+
   if (!expanded) return null;
 
   const resetForm = (): void => {
@@ -46,6 +63,7 @@ export const CreatePersonForm: FC<CreatePersonFormProps> = ({
     setFirstName('');
     setLastName('');
     setTelephone('');
+    setProvider('');
   };
 
   const handleSubmit = (): void => {
@@ -66,44 +84,50 @@ export const CreatePersonForm: FC<CreatePersonFormProps> = ({
     resetForm();
   };
 
-  const enableSubmit = provider && email && firstName && lastName && telephone;
+  const enableSubmit = editMode
+    ? email || telephone
+    : provider && (email || telephone);
 
   return (
     <FormContainer onSubmit={handleSubmit}>
       <FormFieldsContainer>
-        <FormLabeledSelect
-          label={'Target'}
-          value={provider}
-          onChange={setProvider}
-          options={[
-            { label: '-- Please select --', value: '' },
-            ...adapterNames.map(value => ({ label: capitalize(value), value }))
-          ]}
-        />
+        {/* we don't need provider selector when editing */}
+        {!editMode && (
+          <FormLabeledSelect
+            label={'Target'}
+            value={provider}
+            onChange={setProvider}
+            options={[
+              { label: '-- Please select --', value: '' },
+              ...adapterNames.map(value => ({
+                label: capitalize(value),
+                value
+              }))
+            ]}
+          />
+        )}
 
         <FormLabeledInput
-          required={true}
-          label={'Email'}
-          value={email}
-          type={'email'}
-          onChange={setEmail}
-        />
-        <FormLabeledInput
-          required={true}
           label={'First Name'}
           value={firstName}
           type={'text'}
           onChange={setFirstName}
         />
         <FormLabeledInput
-          required={true}
           label={'Last Name'}
           value={lastName}
           type={'text'}
           onChange={setLastName}
         />
         <FormLabeledInput
-          required={true}
+          required={!telephone}
+          label={'Email'}
+          value={email}
+          type={'email'}
+          onChange={setEmail}
+        />
+        <FormLabeledInput
+          required={!email}
           label={'telephone'}
           value={telephone}
           type={'text'}

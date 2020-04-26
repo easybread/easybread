@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 
 import { UtilExpandable } from '../../../ui-kit/util-kit';
 import { CreatePersonButton } from './CreatePersonButton';
-import { CreatePersonForm, PersonFormData } from './CreatePersonForm';
+import { EditPersonForm, PersonFormData } from './EditPersonForm';
 import { peopleCreate } from '../../../redux/features/people';
 import { useDispatch } from 'react-redux';
 
@@ -29,7 +29,7 @@ export const CreatePerson: FC<CreatePersonProps> = () => {
       <UtilExpandable
         renderToggle={CreatePersonButton}
         renderContent={props => (
-          <CreatePersonForm onSubmit={onSubmit} {...props} />
+          <EditPersonForm onSubmit={onSubmit} {...props} />
         )}
       />
     </StyledCreatePerson>

@@ -58,8 +58,13 @@ export const googleContactToPersonTransform = (
   }
 
   if (id) {
-    person.identifier = id.$t;
+    person.identifier = getIdFromLink(id.$t);
   }
 
   return person;
 };
+
+function getIdFromLink(idLink: string): string {
+  // like http://www.google.com/m8/feeds/contacts/testmail%40gmail.com/base/800b654893678c4
+  return idLink.replace(/.+\/([^\/]+)$/, '$1');
+}

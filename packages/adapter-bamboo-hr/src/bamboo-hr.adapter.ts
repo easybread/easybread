@@ -8,6 +8,7 @@ import { BambooHrOperation } from './bamboo-hr.operation';
 import {
   BambooEmployeeCreateHandler,
   BambooEmployeeSearchHandler,
+  BambooEmployeeUpdateHandler,
   BambooSetupBasicAuthHandler
 } from './handlers';
 
@@ -22,7 +23,8 @@ export class BambooHrAdapter extends BreadServiceAdapter<
     this.registerOperationHandlers(
       BambooSetupBasicAuthHandler,
       BambooEmployeeSearchHandler,
-      BambooEmployeeCreateHandler
+      BambooEmployeeCreateHandler,
+      BambooEmployeeUpdateHandler
     );
   }
 

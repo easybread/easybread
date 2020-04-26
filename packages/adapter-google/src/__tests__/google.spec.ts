@@ -244,8 +244,7 @@ describe('Google Plugin', () => {
             email: 'apeeling50@gmail.com',
             familyName: 'One',
             givenName: 'Contact',
-            identifier:
-              'http://www.google.com/m8/feeds/contacts/testuser%40gmail.com/base/cce0f8ee06147',
+            identifier: 'cce0f8ee06147',
             name: 'Contact One'
           },
           {
@@ -253,8 +252,7 @@ describe('Google Plugin', () => {
             email: 'two@mail.com',
             familyName: 'Two',
             givenName: 'Contact',
-            identifier:
-              'http://www.google.com/m8/feeds/contacts/testuser%40gmail.com/base/f98b6c09ec5b23',
+            identifier: 'f98b6c09ec5b23',
             name: 'Contact Two'
           },
           {
@@ -262,8 +260,7 @@ describe('Google Plugin', () => {
             email: 'three@mail.com',
             familyName: 'Three',
             givenName: 'Contact',
-            identifier:
-              'http://www.google.com/m8/feeds/contacts/testuser%40gmail.com/base/116021795164d6c',
+            identifier: '116021795164d6c',
             name: 'Contact Three',
             worksFor: {
               '@type': 'Organization',
@@ -275,8 +272,7 @@ describe('Google Plugin', () => {
             email: 'four@mail.ru',
             familyName: 'Four',
             givenName: 'Contact',
-            identifier:
-              'http://www.google.com/m8/feeds/contacts/testuser%40gmail.com/base/19779cd0cdf63d0',
+            identifier: '19779cd0cdf63d0',
             name: 'Contact Four'
           },
           {
@@ -284,8 +280,7 @@ describe('Google Plugin', () => {
             email: 'five@mail.st',
             familyName: 'Five',
             givenName: 'Contact',
-            identifier:
-              'http://www.google.com/m8/feeds/contacts/testuser%40gmail.com/base/1b7734a92b42f11',
+            identifier: '1b7734a92b42f11',
             name: 'Contact Five'
           },
           {
@@ -294,8 +289,7 @@ describe('Google Plugin', () => {
             email: 'six@mail.com',
             familyName: 'Six',
             givenName: 'Contact',
-            identifier:
-              'http://www.google.com/m8/feeds/contacts/testuser%40gmail.com/base/21a311097e1974d',
+            identifier: '21a311097e1974d',
             name: 'Contact Additional Six',
             telephone: '+7 (123) 123-1212'
           }
