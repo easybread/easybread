@@ -6,6 +6,7 @@ import { AppRoutes } from './AppRoutes';
 import { Header } from './components/Header';
 import { useInitAdaptersData } from './redux/features/adapters';
 import { GlobalStyles } from './styles/GlobalStyles';
+import { Notifications } from './components/Notifications';
 
 interface AppProps {}
 
@@ -19,6 +20,7 @@ export const App: FC<AppProps> = () => {
       <StyledWrapper>
         <Header />
         <AppRoutes />
+        <Notifications />
       </StyledWrapper>
     </BrowserRouter>
   );

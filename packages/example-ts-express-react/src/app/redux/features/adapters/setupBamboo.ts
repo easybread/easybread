@@ -4,22 +4,25 @@ import { SetupBasicAuthOperation } from '@easybread/operations';
 import { SetupBambooDto } from '../../../../dtos';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
+import { notifyOperationResult } from '../notifications';
 import { adaptersActions } from './adaptersSlice';
 
-export const setupBamboo = (
-  data: SetupBambooDto
-): AppThunk => async dispatch => {
-  const result = await postRequest<
-    SetupBambooDto,
-    SetupBasicAuthOperation<BambooBasicAuthPayload>['output']
-  >('/api/adapters/bamboo/configurations', data);
+export function setupBamboo(data: SetupBambooDto): AppThunk {
+  return async dispatch => {
+    const result = await postRequest<
+      SetupBambooDto,
+      SetupBasicAuthOperation<BambooBasicAuthPayload>['output']
+    >('/api/adapters/bamboo/configurations', data);
 
-  if (!result.rawPayload.success) throw new Error('failed to setup bamboo');
+    dispatch(notifyOperationResult(result));
 
-  dispatch(
-    adaptersActions.setAdapterConfigured({
-      configured: true,
-      adapter: 'bamboo'
-    })
-  );
-};
+    if (result.rawPayload.success) {
+      dispatch(
+        adaptersActions.setAdapterConfigured({
+          configured: true,
+          adapter: 'bamboo'
+        })
+      );
+    }
+  };
+}

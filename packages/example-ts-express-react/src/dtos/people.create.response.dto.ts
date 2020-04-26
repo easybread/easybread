@@ -1,7 +1,7 @@
-import { Person } from 'schema-dts';
+import { GooglePeopleCreateOperation } from '@easybread/adapter-google';
+import { EmployeeCreateOperation } from '@easybread/operations';
 
-export interface PeopleCreateResponseDto {
-  rawPayload: { success: boolean };
-  payload: Person;
-  provider: 'google' | 'bamboo-hr';
-}
+export type PeopleCreateResponseDto = (
+  | GooglePeopleCreateOperation
+  | EmployeeCreateOperation
+)['output'];

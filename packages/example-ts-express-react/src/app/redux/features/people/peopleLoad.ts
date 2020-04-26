@@ -1,6 +1,7 @@
 import { PeopleResponseDto } from '../../../../dtos';
 import { getRequest } from '../../../http';
 import { AppThunk } from '../../store';
+import { notifyOperationResult } from '../notifications';
 import { peopleActions, PersonInfo } from './peopleSlice';
 
 export const peopleLoad = (
@@ -8,11 +9,11 @@ export const peopleLoad = (
 ): AppThunk => async dispatch => {
   dispatch(peopleActions.peopleLoadingStart(adapter));
 
-  try {
-    const results = await getRequest<PeopleResponseDto>(
-      `/api/people/${adapter}`
-    );
+  const results = await getRequest<PeopleResponseDto>(`/api/people/${adapter}`);
 
+  dispatch(notifyOperationResult(results));
+
+  if (results.rawPayload.success) {
     const personInfos: PersonInfo[] = results.payload.map(person => ({
       provider: adapter,
       person
@@ -24,7 +25,7 @@ export const peopleLoad = (
         data: personInfos
       })
     );
-  } catch (e) {
+  } else {
     dispatch(peopleActions.peopleLoadingError(adapter));
   }
 };

@@ -35,6 +35,7 @@
   --disabled-text-color: #e2e8f0;
 
   /* text sizes */
+  --text-xxs: 0.625rem;
   --text-xs: 0.750rem;
   --text-sm: 0.875rem;
   --text-md: 1rem;
@@ -47,6 +48,7 @@
   --screen-lg: 1024px;
 
   /* gaps */
+  --gap-1: .25rem;
   --gap-2: .5rem;
   --gap-3: .75rem;
   --gap-4: 1rem;

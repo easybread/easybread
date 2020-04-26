@@ -2,6 +2,7 @@ import { GoogleOauth2StartOperation } from '@easybread/adapter-google';
 
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
+import { notifyOperationResult } from '../notifications';
 import { adaptersActions } from './adaptersSlice';
 
 export const setupGoogle = (): AppThunk => async dispatch => {
@@ -33,10 +34,9 @@ export const setupGoogle = (): AppThunk => async dispatch => {
     {}
   );
 
-  if (!result.rawPayload.success) {
-    // TODO: handle error
-    throw new Error(result.rawPayload.error.toString());
-  }
+  dispatch(notifyOperationResult(result));
 
-  openPopup(result.rawPayload.data.authUri);
+  if (result.rawPayload.success) {
+    openPopup(result.rawPayload.data.authUri);
+  }
 };

@@ -4,6 +4,7 @@ import { PeopleCreateResponseDto } from '../../../../dtos';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { peopleActions } from './peopleSlice';
+import { notifyOperationResult } from '../notifications';
 
 export const peopleCreate = (
   adapter: 'google' | 'bamboo',
@@ -16,6 +17,8 @@ export const peopleCreate = (
     data
   );
 
+  dispatch(notifyOperationResult(result));
+
   if (result.rawPayload.success) {
     dispatch(
       peopleActions.peopleCreateSuccess({
@@ -27,8 +30,6 @@ export const peopleCreate = (
       })
     );
   } else {
-    // eslint-disable-next-line no-console
-    console.log('FAILED PEOPLE CREATE', result);
     dispatch(peopleActions.peopleCreateFail(adapter));
   }
 };

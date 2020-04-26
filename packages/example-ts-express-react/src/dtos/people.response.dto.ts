@@ -1,6 +1,8 @@
-import { Person } from 'schema-dts';
+import { BambooEmployeesDirectory } from '@easybread/adapter-bamboo-hr';
+import { GooglePeopleSearchOperation } from '@easybread/adapter-google';
+import { EmployeeSearchOperation } from '@easybread/operations';
 
-export interface PeopleResponseDto {
-  payload: Person[];
-  provider: 'google' | 'bamboo-hr';
-}
+export type PeopleResponseDto = (
+  | EmployeeSearchOperation<BambooEmployeesDirectory>
+  | GooglePeopleSearchOperation
+)['output'];
