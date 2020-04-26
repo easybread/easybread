@@ -6,7 +6,7 @@ import {
   SetupBasicAuthOperation
 } from '@easybread/operations';
 import { mockAxios, setExtendedTimeout } from '@easybread/test-utils';
-import axiosMock, { AxiosError } from 'axios';
+import axiosMock, { AxiosError, AxiosResponse } from 'axios';
 
 import { BambooHrAuthStrategy } from '..';
 import {
@@ -133,7 +133,14 @@ describe('usage', () => {
   describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
     beforeEach(async () => {
       (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
-        Promise.resolve({ status: 201 })
+        Promise.resolve({
+          status: 201,
+          headers: {
+            // this has a new id
+            location:
+              'https://api.bamboohr.com/api/gateway.php/mietest/v1/employees/27'
+          }
+        } as AxiosResponse)
       );
     });
 
@@ -179,6 +186,7 @@ describe('usage', () => {
         name: 'BREAD/EMPLOYEE/CREATE',
         payload: {
           '@type': 'Person',
+          identifier: '27',
           email: '2110pro@mail.ru',
           familyName: 'Employee',
           givenName: 'New',

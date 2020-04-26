@@ -1,20 +1,18 @@
 import { BreadOperationHandler, ServiceException } from '@easybread/core';
 import {
   BreadOperationName,
-  EmployeeCreateOperation
+  EmployeeUpdateOperation
 } from '@easybread/operations';
-import { AxiosResponse } from 'axios';
 import { Person } from 'schema-dts';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { BAMBOO_HR_PROVIDER } from '../bamboo-hr.constants';
 import { bambooPersonToEmployeeTransform } from '../transform';
 
-export const BambooEmployeeCreateHandler: BreadOperationHandler<
-  EmployeeCreateOperation,
+export const BambooEmployeeUpdateHandler: BreadOperationHandler<
+  EmployeeUpdateOperation,
   BambooHrAuthStrategy
 > = {
-  name: BreadOperationName.EMPLOYEE_CREATE,
   async handle(input, context) {
     const { breadId, payload } = input;
 
@@ -27,9 +25,9 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
 
     const { companyName } = await context.auth.readAuthData(breadId);
 
-    const response = await context.httpRequest<undefined>({
+    await context.httpRequest<undefined>({
       method: 'POST',
-      url: `https://api.bamboohr.com/api/gateway.php/${companyName}/v1/employees`,
+      url: `https://api.bamboohr.com/api/gateway.php/${companyName}/v1/employees/${payload.identifier}`,
       headers: {
         accept: 'application/json',
         'Content-Type': 'application/json'
@@ -38,21 +36,13 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
     });
 
     return {
-      name: BreadOperationName.EMPLOYEE_CREATE,
-      payload: {
-        ...payload,
-        identifier: getIdentifierFromHeaders(response)
-      },
+      name: BreadOperationName.EMPLOYEE_UPDATE,
+      payload: payload,
       rawPayload: {
         success: true,
         data: {}
       }
     };
-  }
+  },
+  name: BreadOperationName.EMPLOYEE_UPDATE
 };
-
-function getIdentifierFromHeaders(response: AxiosResponse): string {
-  // location is like
-  // `https://api.bamboohr.com/api/gateway.php/<company_name>/v1/employees/<id_number>`
-  return response.headers.location.replace(/.+\/(\d+)$/, '$1');
-}
