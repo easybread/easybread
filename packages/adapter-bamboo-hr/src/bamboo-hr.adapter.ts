@@ -1,4 +1,6 @@
 import { BreadServiceAdapter } from '@easybread/core';
+import { AxiosError } from 'axios';
+import { uniq } from 'lodash';
 
 import { BambooHrAuthStrategy } from './bamboo-hr.auth-strategy';
 import { BAMBOO_HR_PROVIDER } from './bamboo-hr.constants';
@@ -22,5 +24,19 @@ export class BambooHrAdapter extends BreadServiceAdapter<
       BambooEmployeeSearchHandler,
       BambooEmployeeCreateHandler
     );
+  }
+
+  protected transformAxiosError(error: AxiosError): AxiosError {
+    // this might be a comma separated list possibly with duplicates
+    const bambooErrorMessagesString =
+      error.response?.headers['x-bamboohr-error-message'];
+
+    if (!bambooErrorMessagesString) return super.transformAxiosError(error);
+
+    // get rid of duplicates and set extended message.
+    const message = uniq(bambooErrorMessagesString.split(/,\s?/)).join(', ');
+    error.message = `${error.message}. ${message}`;
+
+    return super.transformAxiosError(error);
   }
 }

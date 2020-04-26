@@ -1,4 +1,8 @@
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
+import {
+  EasyBreadClient,
+  InMemoryStateAdapter,
+  ServiceException
+} from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeCreateOperation,
@@ -6,7 +10,7 @@ import {
   SetupBasicAuthOperation
 } from '@easybread/operations';
 import { mockAxios, setExtendedTimeout } from '@easybread/test-utils';
-import axiosMock from 'axios';
+import axiosMock, { AxiosError } from 'axios';
 
 import { BambooHrAuthStrategy } from '..';
 import {
@@ -152,6 +156,7 @@ describe('usage', () => {
         }
       });
     }
+
     it(`should call bamboo API`, async () => {
       await invokeEmployeeCreate();
       expect(axiosMock.request).toHaveBeenCalledWith({
@@ -189,6 +194,46 @@ describe('usage', () => {
           success: true
         }
       });
+    });
+
+    it(`should return construct correct error when request failed with 409`, async () => {
+      jest.resetAllMocks();
+
+      const error = new Error('Request failed with status code 409');
+      Object.assign(error, {
+        isAxiosError: true,
+        response: {
+          status: 409,
+          statusText: 'conflict',
+          headers: {
+            'x-bamboohr-error-messsage': 'Duplicate email, Duplicate email',
+            'x-bamboohr-error-message': 'Duplicate email, Duplicate email'
+          },
+          data: ''
+        }
+      } as AxiosError);
+
+      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+        Promise.reject(error)
+      );
+
+      const result = await invokeEmployeeCreate();
+
+      expect(result).toEqual({
+        provider: 'bamboo-hr',
+        name: 'BREAD/EMPLOYEE/CREATE',
+        rawPayload: {
+          success: false,
+          error: new ServiceException(bambooHrAdapter.provider, error)
+        }
+      });
+
+      expect(result.rawPayload['error']['message']).toEqual(
+        'bamboo-hr: Request failed with status code 409. Duplicate email'
+      );
+      expect(result.rawPayload['error']['originalError']['message']).toEqual(
+        'Request failed with status code 409. Duplicate email'
+      );
     });
   });
 });

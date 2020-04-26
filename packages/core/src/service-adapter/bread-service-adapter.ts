@@ -1,5 +1,11 @@
+import { AxiosError } from 'axios';
+
 import { BreadAuthStrategy } from '../auth-strategy';
-import { NotImplementedException, ServiceException } from '../exception';
+import {
+  BreadException,
+  NotImplementedException,
+  ServiceException
+} from '../exception';
 import {
   BreadOperation,
   BreadOperationContext,
@@ -26,12 +32,30 @@ export abstract class BreadServiceAdapter<
   ): Promise<O['output']> {
     try {
       const handler = this.findHandler(input.name);
-      return this.setProviderToOutput(await handler.handle(input, context));
+      const output = await handler.handle(input, context);
+      return this.setProviderToOutput(output);
     } catch (error) {
-      // TODO: throw different type of exception
-      //       (when exceptions design is finished)
-      throw new ServiceException(this.provider, error);
+      throw this.createServiceException(error);
     }
+  }
+
+  protected createServiceException(
+    error: Error | AxiosError | BreadException | ServiceException | string
+  ): ServiceException {
+    if (error instanceof ServiceException) return error;
+
+    if (error['isAxiosError']) {
+      return new ServiceException(
+        this.provider,
+        this.transformAxiosError(error as AxiosError)
+      );
+    }
+
+    return new ServiceException(this.provider, error);
+  }
+
+  protected transformAxiosError(error: AxiosError): AxiosError {
+    return error;
   }
 
   protected setProviderToOutput(
