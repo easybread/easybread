@@ -11,7 +11,7 @@ interface CreatePersonProps {}
 
 export const CreatePerson: FC<CreatePersonProps> = () => {
   const dispatch = useDispatch();
-  const onSubmit = (data: PersonFormData) => {
+  const onSubmit = (data: PersonFormData): void => {
     const { provider, email, firstName, lastName, telephone } = data;
 
     dispatch(
