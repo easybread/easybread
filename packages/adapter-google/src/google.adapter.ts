@@ -7,7 +7,8 @@ import {
   GoogleOauth2CompleteHandler,
   GoogleOauth2StartHandler,
   GooglePeopleCreateHandler,
-  GooglePeopleSearchHandler
+  GooglePeopleSearchHandler,
+  GooglePeopleUpdateHandler
 } from './handlers';
 
 export class GoogleAdapter extends BreadServiceAdapter<
@@ -22,7 +23,8 @@ export class GoogleAdapter extends BreadServiceAdapter<
       GoogleOauth2StartHandler,
       GoogleOauth2CompleteHandler,
       GooglePeopleSearchHandler,
-      GooglePeopleCreateHandler
+      GooglePeopleCreateHandler,
+      GooglePeopleUpdateHandler
     );
   }
 }

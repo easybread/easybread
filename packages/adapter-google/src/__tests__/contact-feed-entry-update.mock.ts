@@ -1,4 +1,4 @@
-export const CONTACT_FEED_ENTRY_CREATE_MOCK = {
+export const CONTACT_FEED_ENTRY_UPDATE_MOCK = {
   version: '1.0',
   encoding: 'UTF-8',
   entry: {
@@ -45,18 +45,18 @@ export const CONTACT_FEED_ENTRY_CREATE_MOCK = {
     ],
     gd$name: {
       gd$fullName: {
-        $t: 'Test Contact'
+        $t: 'UpdatedFName UpdatedSName'
       },
       gd$givenName: {
-        $t: 'Test'
+        $t: 'UpdatedFName'
       },
       gd$familyName: {
-        $t: 'Contact'
+        $t: 'UpdatedSName'
       }
     },
     gd$email: [
       {
-        address: 'test@mail.com',
+        address: 'updated@mail.com',
         primary: 'true',
         rel: 'http://schemas.google.com/g/2005#work'
       }
@@ -65,8 +65,8 @@ export const CONTACT_FEED_ENTRY_CREATE_MOCK = {
       {
         rel: 'http://schemas.google.com/g/2005#home',
         primary: 'true',
-        uri: 'tel:+7-965-444-22-11',
-        $t: '+7 (965) 444 2211'
+        uri: 'tel:+7-965-444-22-22',
+        $t: '+7 (965) 444 2222'
       }
     ],
     xmlns: 'http://www.w3.org/2005/Atom',

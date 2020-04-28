@@ -6,7 +6,7 @@ export const googleUpdateContactTransform = (
   baseEntry: GoogleContactsFeedEntry,
   updateEntry: GoogleContactsFeedEntry
 ): GoogleContactsFeedEntry => {
-  const baseEntryClone = cloneDeep(baseEntry);
+  const baseEntryClone = cloneDeep<GoogleContactsFeedEntry>(baseEntry);
 
   const {
     gd$email,
@@ -26,6 +26,7 @@ export const googleUpdateContactTransform = (
   }
 
   if (gd$email && gd$email.length) {
+    if (!baseEntryClone.gd$email) baseEntryClone.gd$email = [];
     updateArrayField(
       baseEntryClone.gd$email,
       gd$email,
@@ -37,6 +38,7 @@ export const googleUpdateContactTransform = (
   }
 
   if (gd$phoneNumber && gd$phoneNumber.length) {
+    if (!baseEntryClone.gd$phoneNumber) baseEntryClone.gd$phoneNumber = [];
     updateArrayField(
       baseEntryClone.gd$phoneNumber,
       gd$phoneNumber,
@@ -53,6 +55,7 @@ export const googleUpdateContactTransform = (
   }
 
   if (gd$organization) {
+    if (!baseEntryClone.gd$organization) baseEntryClone.gd$organization = [];
     updateArrayField(
       baseEntryClone.gd$organization,
       gd$organization,

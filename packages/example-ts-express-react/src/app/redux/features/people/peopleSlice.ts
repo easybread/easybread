@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Person } from 'schema-dts';
 import { isString } from 'lodash';
+import { Person } from 'schema-dts';
 
 export type AdapterName = 'google' | 'bamboo';
 

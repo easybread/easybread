@@ -4,7 +4,7 @@ import {
   mockAxios,
   setExtendedTimeout
 } from '@easybread/test-utils';
-import axiosMock from 'axios';
+import axiosMock, { AxiosRequestConfig } from 'axios';
 
 import {
   GoogleAccessTokenCreateResponse,
@@ -16,11 +16,14 @@ import {
   GoogleOauth2StateData,
   GoogleOperationName,
   GooglePeopleCreateOperation,
-  GooglePeopleSearchOperation
+  GooglePeopleSearchOperation,
+  GooglePeopleUpdateOperation
 } from '..';
 import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 import { CONTACTS_FEED_MOCK } from './contacts-feed.mock';
 import Mock = jest.Mock;
+import { CONTACT_FEED_ENTRY_UPDATE_MOCK } from './contact-feed-entry-update.mock';
+import { CONTACT_FEED_ENTRY_MOCK } from './contact-feed-entry.mock';
 
 setExtendedTimeout();
 mockAxios();
@@ -446,6 +449,258 @@ describe('Google Plugin', () => {
               gd$givenName: { $t: 'Test' },
               gd$familyName: { $t: 'Contact' }
             }
+          }
+        });
+      });
+    });
+
+    describe(`${GoogleOperationName.PEOPLE_UPDATE}`, () => {
+      function setupUpdateContactMock(): void {
+        (axiosMock.request as Mock).mockImplementation(
+          (config: AxiosRequestConfig) =>
+            Promise.resolve({
+              status: 200,
+              data:
+                config.method === 'GET'
+                  ? CONTACT_FEED_ENTRY_MOCK
+                  : CONTACT_FEED_ENTRY_UPDATE_MOCK
+            })
+        );
+      }
+
+      async function invokePeopleUpdate(): Promise<
+        GooglePeopleUpdateOperation['output']
+      > {
+        return client.invoke<GooglePeopleUpdateOperation>({
+          breadId: USER_ID,
+          name: GoogleOperationName.PEOPLE_UPDATE,
+          payload: {
+            '@type': 'Person',
+            identifier: '79ec2071883179b9',
+            givenName: 'UpdatedFName',
+            familyName: 'UpdatedSName',
+            email: 'updated@mail.com',
+            telephone: '+7 (965) 444 2222'
+          }
+        });
+      }
+
+      beforeEach(async () => {
+        jest.resetAllMocks();
+        setupUpdateContactMock();
+      });
+
+      afterAll(() => {
+        jest.resetAllMocks();
+      });
+
+      it(`should call /m8/feeds/contacts/default/full?alt=json API 2 times - to get and update the entry`, async () => {
+        await invokePeopleUpdate();
+        expect((axiosMock.request as Mock).mock.calls).toEqual([
+          [
+            {
+              headers: {
+                'GData-Version': '3.0',
+                accept: 'application/json',
+                authorization: 'Bearer new-access-token'
+              },
+              method: 'GET',
+              params: {
+                alt: 'json'
+              },
+              url:
+                'https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9'
+            }
+          ],
+          [
+            {
+              data: {
+                app$edited: {
+                  $t: '2020-04-19T15:41:56.731Z',
+                  xmlns$app: 'http://www.w3.org/2007/app'
+                },
+                category: [
+                  {
+                    scheme: 'http://schemas.google.com/g/2005#kind',
+                    term: 'http://schemas.google.com/contact/2008#contact'
+                  }
+                ],
+                gd$email: [
+                  {
+                    address: 'updated@mail.com',
+                    primary: 'true',
+                    rel: 'http://schemas.google.com/g/2005#work'
+                  }
+                ],
+                gd$etag: '"R3k4eTVSLyt7I2A9XB5UE0wKTgU."',
+                gd$name: {
+                  gd$familyName: {
+                    $t: 'UpdatedSName'
+                  },
+                  gd$fullName: {
+                    $t: 'UpdatedFName UpdatedSName'
+                  },
+                  gd$givenName: {
+                    $t: 'UpdatedFName'
+                  }
+                },
+                gd$phoneNumber: [
+                  {
+                    $t: '+7 (965) 444 2211',
+                    primary: 'true',
+                    rel: 'http://schemas.google.com/g/2005#home',
+                    uri: 'tel:+7-965-444-22-11'
+                  },
+                  {
+                    $t: '+7 (965) 444 2222',
+                    primary: 'true',
+                    rel: 'http://schemas.google.com/g/2005#work'
+                  }
+                ],
+                id: {
+                  $t:
+                    'http://www.google.com/m8/feeds/contacts/testuser%40mail.com/base/79ec2071883179b9'
+                },
+                link: [
+                  {
+                    href:
+                      'https://www.google.com/m8/feeds/photos/media/testuser%40mail.com/79ec2071883179b9',
+                    rel: 'http://schemas.google.com/contacts/2008/rel#photo',
+                    type: 'image/*'
+                  },
+                  {
+                    href:
+                      'https://www.google.com/m8/feeds/contacts/testuser%40mail.com/full/79ec2071883179b9',
+                    rel: 'self',
+                    type: 'application/atom+xml'
+                  },
+                  {
+                    href:
+                      'https://www.google.com/m8/feeds/contacts/testuser%40mail.com/full/79ec2071883179b9',
+                    rel: 'edit',
+                    type: 'application/atom+xml'
+                  }
+                ],
+                title: {
+                  $t: 'Test Contact'
+                },
+                updated: {
+                  $t: '2020-04-19T15:41:56.731Z'
+                },
+                xmlns: 'http://www.w3.org/2005/Atom',
+                xmlns$batch: 'http://schemas.google.com/gdata/batch',
+                xmlns$gContact: 'http://schemas.google.com/contact/2008',
+                xmlns$gd: 'http://schemas.google.com/g/2005'
+              },
+              headers: {
+                'GData-Version': '3.0',
+                accept: 'application/json',
+                authorization: 'Bearer new-access-token'
+              },
+              method: 'PUT',
+              params: {
+                alt: 'json'
+              },
+              url:
+                'https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9'
+            }
+          ]
+        ]);
+      });
+
+      it(`should return an updated entity`, async () => {
+        const result = await invokePeopleUpdate();
+        expect(result).toEqual({
+          name: 'GOOGLE/PEOPLE/UPDATE',
+          payload: {
+            '@type': 'Person',
+            email: 'updated@mail.com',
+            familyName: 'UpdatedSName',
+            givenName: 'UpdatedFName',
+            identifier: '79ec2071883179b9',
+            name: 'UpdatedFName UpdatedSName',
+            telephone: '+7 (965) 444 2222'
+          },
+          provider: 'google',
+          rawPayload: {
+            data: {
+              encoding: 'UTF-8',
+              entry: {
+                app$edited: {
+                  $t: '2020-04-19T15:41:56.731Z',
+                  xmlns$app: 'http://www.w3.org/2007/app'
+                },
+                category: [
+                  {
+                    scheme: 'http://schemas.google.com/g/2005#kind',
+                    term: 'http://schemas.google.com/contact/2008#contact'
+                  }
+                ],
+                gd$email: [
+                  {
+                    address: 'updated@mail.com',
+                    primary: 'true',
+                    rel: 'http://schemas.google.com/g/2005#work'
+                  }
+                ],
+                gd$etag: '"R3k4eTVSLyt7I2A9XB5UE0wKTgU."',
+                gd$name: {
+                  gd$familyName: {
+                    $t: 'UpdatedSName'
+                  },
+                  gd$fullName: {
+                    $t: 'UpdatedFName UpdatedSName'
+                  },
+                  gd$givenName: {
+                    $t: 'UpdatedFName'
+                  }
+                },
+                gd$phoneNumber: [
+                  {
+                    $t: '+7 (965) 444 2222',
+                    primary: 'true',
+                    rel: 'http://schemas.google.com/g/2005#home',
+                    uri: 'tel:+7-965-444-22-22'
+                  }
+                ],
+                id: {
+                  $t:
+                    'http://www.google.com/m8/feeds/contacts/testuser%40mail.com/base/79ec2071883179b9'
+                },
+                link: [
+                  {
+                    href:
+                      'https://www.google.com/m8/feeds/photos/media/testuser%40mail.com/79ec2071883179b9',
+                    rel: 'http://schemas.google.com/contacts/2008/rel#photo',
+                    type: 'image/*'
+                  },
+                  {
+                    href:
+                      'https://www.google.com/m8/feeds/contacts/testuser%40mail.com/full/79ec2071883179b9',
+                    rel: 'self',
+                    type: 'application/atom+xml'
+                  },
+                  {
+                    href:
+                      'https://www.google.com/m8/feeds/contacts/testuser%40mail.com/full/79ec2071883179b9',
+                    rel: 'edit',
+                    type: 'application/atom+xml'
+                  }
+                ],
+                title: {
+                  $t: 'Test Contact'
+                },
+                updated: {
+                  $t: '2020-04-19T15:41:56.731Z'
+                },
+                xmlns: 'http://www.w3.org/2005/Atom',
+                xmlns$batch: 'http://schemas.google.com/gdata/batch',
+                xmlns$gContact: 'http://schemas.google.com/contact/2008',
+                xmlns$gd: 'http://schemas.google.com/g/2005'
+              },
+              version: '1.0'
+            },
+            success: true
           }
         });
       });

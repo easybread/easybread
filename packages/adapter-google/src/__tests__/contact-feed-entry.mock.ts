@@ -1,4 +1,4 @@
-export const CONTACT_FEED_ENTRY_CREATE_MOCK = {
+export const CONTACT_FEED_ENTRY_MOCK = {
   version: '1.0',
   encoding: 'UTF-8',
   entry: {
