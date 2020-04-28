@@ -2,9 +2,11 @@ import { BambooEmployeesDirectory } from '@easybread/adapter-bamboo-hr';
 import {
   GoogleOperationName,
   GooglePeopleCreateOperation,
+  GooglePeopleDeleteOperation,
   GooglePeopleSearchOperation,
   GooglePeopleUpdateOperation
 } from '@easybread/adapter-google';
+import { NotImplementedException } from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeCreateOperation,
@@ -109,6 +111,29 @@ peopleRoutes.put('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
       );
 
       break;
+
+    default:
+      throw new Error('not implemented');
+  }
+});
+
+peopleRoutes.delete('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
+  const { adapter } = req.params;
+
+  switch (adapter) {
+    case 'google':
+      res.json(
+        await googleClient.invoke<GooglePeopleDeleteOperation>({
+          name: GoogleOperationName.PEOPLE_DELETE,
+          breadId: '1',
+          payload: req.body
+        })
+      );
+
+      break;
+
+    case 'bamboo':
+      throw new NotImplementedException();
 
     default:
       throw new Error('not implemented');
