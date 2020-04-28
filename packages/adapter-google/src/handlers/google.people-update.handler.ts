@@ -18,12 +18,15 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
 > = {
   name: GoogleOperationName.PEOPLE_UPDATE,
   async handle(input, context) {
-    const personChange = input.payload;
-
-    if (isString(personChange)) {
-      throw new ServiceException(GOOGLE_PROVIDER, 'person is a string');
+    if (isString(input.payload)) {
+      throw new ServiceException(GOOGLE_PROVIDER, 'Person is string');
     }
 
+    if (!input.payload.identifier) {
+      throw new ServiceException(GOOGLE_PROVIDER, 'identifier is empty');
+    }
+
+    const personChange = input.payload;
     const entryUrl = `https://www.google.com/m8/feeds/contacts/default/full/${personChange.identifier}`;
 
     const contactBase = await context.httpRequest<
@@ -53,6 +56,7 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
       params: { alt: 'json' },
       headers: {
         'GData-Version': '3.0',
+        'If-Match': 'Etag',
         accept: 'application/json'
       }
     });

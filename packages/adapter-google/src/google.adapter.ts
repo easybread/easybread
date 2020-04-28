@@ -7,6 +7,7 @@ import {
   GoogleOauth2CompleteHandler,
   GoogleOauth2StartHandler,
   GooglePeopleCreateHandler,
+  GooglePeopleDeleteHandler,
   GooglePeopleSearchHandler,
   GooglePeopleUpdateHandler
 } from './handlers';
@@ -24,7 +25,8 @@ export class GoogleAdapter extends BreadServiceAdapter<
       GoogleOauth2CompleteHandler,
       GooglePeopleSearchHandler,
       GooglePeopleCreateHandler,
-      GooglePeopleUpdateHandler
+      GooglePeopleUpdateHandler,
+      GooglePeopleDeleteHandler
     );
   }
 }

@@ -6,7 +6,7 @@ import {
 
 import { BreadOperationName } from '../bread.operation-name';
 
-export interface EmployeeDeleteOperation<TOutputRawData extends object = {}>
+export interface EmployeeDeleteOperation
   extends BreadOperation<BreadOperationName.EMPLOYEE_DELETE> {
   input: BreadOperationInputWithParams<
     BreadOperationName.EMPLOYEE_DELETE,
@@ -15,6 +15,6 @@ export interface EmployeeDeleteOperation<TOutputRawData extends object = {}>
 
   output: BreadOperationOutputWithRawData<
     BreadOperationName.EMPLOYEE_DELETE,
-    TOutputRawData
+    { identifier: string }
   >;
 }

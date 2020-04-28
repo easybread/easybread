@@ -2,6 +2,7 @@ import {
   GoogleOauth2CompleteOperation,
   GoogleOauth2StartOperation,
   GooglePeopleCreateOperation,
+  GooglePeopleDeleteOperation,
   GooglePeopleSearchOperation,
   GooglePeopleUpdateOperation
 } from './operations';
@@ -11,4 +12,5 @@ export type GoogleOperation =
   | GoogleOauth2CompleteOperation
   | GooglePeopleSearchOperation
   | GooglePeopleCreateOperation
-  | GooglePeopleUpdateOperation;
+  | GooglePeopleUpdateOperation
+  | GooglePeopleDeleteOperation;

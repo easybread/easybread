@@ -16,6 +16,7 @@ import {
   GoogleOauth2StateData,
   GoogleOperationName,
   GooglePeopleCreateOperation,
+  GooglePeopleDeleteOperation,
   GooglePeopleSearchOperation,
   GooglePeopleUpdateOperation
 } from '..';
@@ -594,6 +595,7 @@ describe('Google Plugin', () => {
               },
               headers: {
                 'GData-Version': '3.0',
+                'If-Match': 'Etag',
                 accept: 'application/json',
                 authorization: 'Bearer new-access-token'
               },
@@ -702,6 +704,60 @@ describe('Google Plugin', () => {
             },
             success: true
           }
+        });
+      });
+    });
+
+    describe(`${GoogleOperationName.PEOPLE_DELETE}`, () => {
+      function setupUpdateContactMock(): void {
+        (axiosMock.request as Mock).mockImplementationOnce(() =>
+          Promise.resolve({ status: 200 })
+        );
+      }
+
+      async function invokePeopleDelete(): Promise<
+        GooglePeopleDeleteOperation['output']
+      > {
+        return client.invoke<GooglePeopleDeleteOperation>({
+          breadId: USER_ID,
+          name: GoogleOperationName.PEOPLE_DELETE,
+          payload: {
+            '@type': 'Person',
+            identifier: '79ec2071883179b9'
+          }
+        });
+      }
+
+      beforeEach(() => {
+        jest.resetAllMocks();
+        setupUpdateContactMock();
+      });
+
+      it(`should call delete contact api`, async () => {
+        await invokePeopleDelete();
+        expect(axiosMock.request).toHaveBeenCalledWith({
+          method: 'DELETE',
+          url: `https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9`,
+          params: { alt: 'json' },
+          headers: {
+            'GData-Version': '3.0',
+            'If-Match': 'Etag',
+            authorization: 'Bearer new-access-token',
+            accept: 'application/json'
+          }
+        });
+      });
+
+      it(`should return a Person with identifier field`, async () => {
+        const result = await invokePeopleDelete();
+        expect(result).toEqual({
+          name: 'GOOGLE/PEOPLE/DELETE',
+          payload: {
+            '@type': 'Person',
+            identifier: '79ec2071883179b9'
+          },
+          provider: 'google',
+          rawPayload: { success: true }
         });
       });
     });
