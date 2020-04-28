@@ -1,9 +1,13 @@
-import { BreadOperationHandler, ServiceException } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  ServiceStringThingException
+} from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeCreateOperation
 } from '@easybread/operations';
 import { AxiosResponse } from 'axios';
+import { isString } from 'lodash';
 import { Person } from 'schema-dts';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
@@ -18,11 +22,8 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
   async handle(input, context) {
     const { breadId, payload } = input;
 
-    if (typeof payload === 'string') {
-      throw new ServiceException(
-        BAMBOO_HR_PROVIDER,
-        'String Person is not allowed'
-      );
+    if (isString(payload)) {
+      throw new ServiceStringThingException(BAMBOO_HR_PROVIDER, 'Person');
     }
 
     const { companyName } = await context.auth.readAuthData(breadId);

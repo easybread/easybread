@@ -1,14 +1,17 @@
-import { ServiceException } from '@easybread/core';
+import { ServiceStringThingException } from '@easybread/core';
+import { isString } from 'lodash';
 import { Person } from 'schema-dts';
 
+import { GOOGLE_PROVIDER } from '../google.constants';
 import { GoogleContactsFeedEntry } from '../interfaces';
 
 export const googlePersonToContactTransform = (
   person: Person
 ): GoogleContactsFeedEntry => {
-  if (typeof person === 'string') {
-    throw new ServiceException('google', 'string Person is not supported');
+  if (isString(person)) {
+    throw new ServiceStringThingException(GOOGLE_PROVIDER, 'Person');
   }
+
   const { givenName, familyName, email, telephone, identifier } = person;
 
   const contact: GoogleContactsFeedEntry = {};

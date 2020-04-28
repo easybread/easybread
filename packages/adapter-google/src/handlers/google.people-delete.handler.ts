@@ -1,4 +1,8 @@
-import { BreadOperationHandler, ServiceException } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  ServiceException,
+  ServiceStringThingException
+} from '@easybread/core';
 import { isString } from 'lodash';
 
 import { GoogleAuthStrategy } from '../google.auth-strategy';
@@ -14,7 +18,7 @@ export const GooglePeopleDeleteHandler: BreadOperationHandler<
   name: GoogleOperationName.PEOPLE_DELETE,
   async handle(input, context) {
     if (isString(input.payload)) {
-      throw new ServiceException(GOOGLE_PROVIDER, 'Person is string');
+      throw new ServiceStringThingException(GOOGLE_PROVIDER, 'Person');
     }
 
     if (!input.payload.identifier) {

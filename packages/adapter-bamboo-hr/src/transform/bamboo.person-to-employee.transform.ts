@@ -1,13 +1,15 @@
-import { ServiceException } from '@easybread/core';
+import { ServiceStringThingException } from '@easybread/core';
+import { isString } from 'lodash';
 import { Person } from 'schema-dts';
 
+import { BAMBOO_HR_PROVIDER } from '../bamboo-hr.constants';
 import { BambooEmployee } from '../interfaces';
 
 export const bambooPersonToEmployeeTransform = (
   person: Person
 ): BambooEmployee => {
-  if (typeof person === 'string') {
-    throw new ServiceException('bamboo-hr', 'string Person is not supported');
+  if (isString(person)) {
+    throw new ServiceStringThingException(BAMBOO_HR_PROVIDER, 'Person');
   }
 
   const { givenName, familyName, email, telephone } = person;
