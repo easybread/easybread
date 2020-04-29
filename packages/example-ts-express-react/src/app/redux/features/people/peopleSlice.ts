@@ -1,15 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isString, omit, without } from 'lodash';
-import { Person } from 'schema-dts';
+import { omit, without } from 'lodash';
 
-export type AdapterName = 'google' | 'bamboo';
-
-export interface PersonInfo {
-  // TODO: Person here breaks the tsc build (hangs infinitely)
-  // object|string is a very simplified Thing type
-  person: object | string;
-  provider: AdapterName;
-}
+import {
+  AdapterName,
+  createPersonInfoStateIdFromPersonIdPayload,
+  createPersonInfoStateIdFromPersonInfo,
+  PersonIdPayload,
+  PersonInfo
+} from './peopleCommon';
 
 //  ------------------------------------
 
@@ -39,7 +37,7 @@ interface CreatePersonState {
 }
 
 interface UpdatePersonState {
-  updatingPerson: AdaptersBooleanState;
+  updatingIds: string[];
 }
 
 interface DeletePersonState {
@@ -59,10 +57,10 @@ const initialState: PeopleState = {
   error: { google: false, bamboo: false },
   loaded: { google: false, bamboo: false },
   creatingPerson: { google: false, bamboo: false },
-  updatingPerson: { google: false, bamboo: false },
   byId: {},
   ids: [],
-  deletingIds: []
+  deletingIds: [],
+  updatingIds: []
 };
 
 //  ------------------------------------
@@ -80,11 +78,6 @@ interface PeopleCreateSuccessPayload {
 interface PeopleUpdateSuccessPayload {
   adapter: AdapterName;
   data: PersonInfo;
-}
-
-interface PersonIdPayload {
-  identifier: string;
-  adapter: AdapterName;
 }
 
 const peopleSlice = createSlice({
@@ -145,19 +138,25 @@ const peopleSlice = createSlice({
 
     //  UPDATE ------------------------------------
 
-    peopleUpdateStart(state, action: PayloadAction<AdapterName>) {
-      state.updatingPerson[action.payload] = true;
+    peopleUpdateStart(state, action: PayloadAction<PersonIdPayload>) {
+      state.updatingIds.push(
+        createPersonInfoStateIdFromPersonIdPayload(action.payload)
+      );
     },
-    peopleUpdateFail(state, action: PayloadAction<AdapterName>) {
-      state.updatingPerson[action.payload] = false;
+    peopleUpdateFail(state, action: PayloadAction<PersonIdPayload>) {
+      state.updatingIds = without(
+        state.updatingIds,
+        createPersonInfoStateIdFromPersonIdPayload(action.payload)
+      );
     },
     peopleUpdateSuccess(
       state,
       action: PayloadAction<PeopleUpdateSuccessPayload>
     ) {
-      const { data, adapter } = action.payload;
+      const { data } = action.payload;
       const id = createPersonInfoStateIdFromPersonInfo(data);
-      state.updatingPerson[adapter] = false;
+
+      state.updatingIds = without(state.updatingIds, id);
 
       Object.assign(state.byId[id].person, data.person);
     },
@@ -187,29 +186,3 @@ const peopleSlice = createSlice({
 });
 
 export const { reducer: peopleReducer, actions: peopleActions } = peopleSlice;
-
-function getPersonId(person: Person): string {
-  if (isString(person)) throw new Error('string person is not allowed');
-  return person.identifier as string;
-}
-
-function createPersonInfoStateIdFromPersonInfo(info: PersonInfo): string {
-  return createPersonInfoStateId(
-    info.provider,
-    getPersonId(info.person as Person)
-  );
-}
-
-function createPersonInfoStateIdFromPersonIdPayload({
-  identifier,
-  adapter
-}: PersonIdPayload): string {
-  return createPersonInfoStateId(adapter, identifier);
-}
-
-function createPersonInfoStateId(
-  adapter: AdapterName,
-  personId: string
-): string {
-  return `${adapter}:${personId}`;
-}

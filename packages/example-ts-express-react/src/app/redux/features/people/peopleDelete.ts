@@ -5,7 +5,8 @@ import { PeopleDeleteResponseDto } from '../../../../dtos';
 import { deleteRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
-import { AdapterName, peopleActions } from './peopleSlice';
+import { AdapterName } from './peopleCommon';
+import { peopleActions } from './peopleSlice';
 
 export const peopleDelete = (
   adapter: AdapterName,

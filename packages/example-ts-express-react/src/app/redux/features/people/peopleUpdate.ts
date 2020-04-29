@@ -5,16 +5,22 @@ import { PeopleCreateResponseDto } from '../../../../dtos';
 import { putRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
-import { AdapterName, peopleActions } from './peopleSlice';
+import { AdapterName } from './peopleCommon';
+import { peopleActions } from './peopleSlice';
 
 export const peopleUpdate = (
   adapter: AdapterName,
   data: Person
 ): AppThunk => async dispatch => {
   if (isString(data)) throw new Error(`can't update: person is string`);
-  if (!data.identifier) throw new Error(`can't update: identifier is empty`);
 
-  dispatch(peopleActions.peopleUpdateStart(adapter));
+  if (!isString(data.identifier)) {
+    throw new Error(`can't update: identifier is empty`);
+  }
+
+  const { identifier } = data;
+
+  dispatch(peopleActions.peopleUpdateStart({ adapter, identifier }));
 
   try {
     const result = await putRequest<Person, PeopleCreateResponseDto>(
@@ -35,9 +41,9 @@ export const peopleUpdate = (
         })
       );
     } else {
-      dispatch(peopleActions.peopleUpdateFail(adapter));
+      dispatch(peopleActions.peopleUpdateFail({ adapter, identifier }));
     }
   } catch (e) {
-    dispatch(peopleActions.peopleUpdateFail(adapter));
+    dispatch(peopleActions.peopleUpdateFail({ adapter, identifier }));
   }
 };

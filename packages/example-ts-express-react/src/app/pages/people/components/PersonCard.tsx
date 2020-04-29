@@ -5,7 +5,8 @@ import styled from 'styled-components/macro';
 import {
   PersonInfo,
   useDispatchPersonDelete,
-  useDispatchPersonUpdate
+  useDispatchPersonUpdate,
+  useIsPersonUpdating
 } from '../../../redux/features/people';
 import { ListItemContainer } from '../../../ui-kit/lists-kit';
 import { CardDeleteButton } from './CardDeleteButton';
@@ -14,6 +15,7 @@ import { CardEditButton } from './CardEditButton';
 import { CardImage } from './CardImage';
 import { CardMainInfo } from './CardMainInfo';
 import { EditPersonForm, PersonFormData } from './EditPersonForm';
+import { CardSpinnerOverlay } from './CardSpinnerOverlay';
 
 interface PersonCardProps {
   info: PersonInfo;
@@ -44,6 +46,8 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
 
   const [editMode, setEditMode] = useState(false);
   const [deleteConfirmOpened, setDeleteConfirmOpened] = useState(false);
+
+  const isLoading = useIsPersonUpdating(info);
 
   // remove stuff
   const dispatchPersonDelete = useDispatchPersonDelete();
@@ -101,6 +105,7 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
             onConfirm={confirmDelete}
             onCancel={cancelDelete}
           />
+          <CardSpinnerOverlay visible={isLoading} />
         </>
       )}
 

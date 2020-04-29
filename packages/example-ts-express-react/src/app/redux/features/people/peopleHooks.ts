@@ -1,10 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Person } from 'schema-dts';
 
 import { RootState } from '../../rootReducer';
+import {
+  AdapterName,
+  createPersonInfoStateIdFromPersonInfo,
+  PersonInfo
+} from './peopleCommon';
 import { peopleDelete } from './peopleDelete';
-import { AdapterName, PersonInfo } from './peopleSlice';
 import { peopleUpdate } from './peopleUpdate';
 
 export function useCreatingPerson(): boolean {
@@ -46,4 +50,18 @@ export function useDispatchPersonDelete(): (
     },
     [dispatch]
   );
+}
+
+export function useIsPersonUpdating(info: PersonInfo): boolean {
+  const id = useMemo(() => createPersonInfoStateIdFromPersonInfo(info), [info]);
+
+  const deleting = useSelector<RootState, boolean>(state => {
+    return state.people.deletingIds.includes(id);
+  });
+
+  const updating = useSelector<RootState, boolean>(state => {
+    return state.people.updatingIds.includes(id);
+  });
+
+  return deleting || updating;
 }

@@ -1,3 +1,5 @@
+export * from './peopleCommon';
+
 export * from './peopleSlice';
 export * from './peopleHooks';
 
