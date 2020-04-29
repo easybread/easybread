@@ -547,15 +547,9 @@ describe('Google Plugin', () => {
                 },
                 gd$phoneNumber: [
                   {
-                    $t: '+7 (965) 444 2211',
-                    primary: 'true',
-                    rel: 'http://schemas.google.com/g/2005#home',
-                    uri: 'tel:+7-965-444-22-11'
-                  },
-                  {
                     $t: '+7 (965) 444 2222',
                     primary: 'true',
-                    rel: 'http://schemas.google.com/g/2005#work'
+                    rel: 'http://schemas.google.com/g/2005#home'
                   }
                 ],
                 id: {

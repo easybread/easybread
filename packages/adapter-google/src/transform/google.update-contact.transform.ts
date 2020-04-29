@@ -1,4 +1,4 @@
-import { cloneDeep, merge } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import { GoogleContactsFeedEntry } from '../interfaces';
 
@@ -22,7 +22,7 @@ export const googleUpdateContactTransform = (
   } = updateEntry;
 
   if (title) {
-    baseEntryClone.title = { $t: title.$t };
+    baseEntryClone.title = title;
   }
 
   if (gd$email && gd$email.length) {
@@ -30,9 +30,12 @@ export const googleUpdateContactTransform = (
     updateArrayField(
       baseEntryClone.gd$email,
       gd$email,
-      (base, update) => base.rel === update.rel,
+      (base, update) =>
+        (base.primary === 'true' && update.primary === 'true') ||
+        (base.primary === update.primary && base.rel === update.rel),
       (base, update) => {
-        base.address = update.address;
+        if (update.address) base.address = update.address;
+        if (update.label) base.label = update.label;
       }
     );
   }
@@ -42,7 +45,9 @@ export const googleUpdateContactTransform = (
     updateArrayField(
       baseEntryClone.gd$phoneNumber,
       gd$phoneNumber,
-      (base, update) => base.rel === update.rel,
+      (base, update) =>
+        (base.primary === 'true' && update.primary === 'true') ||
+        (base.primary === update.primary && base.rel === update.rel),
       (base, update) => {
         base.$t = update.$t;
         base.uri = update.uri;
@@ -52,7 +57,9 @@ export const googleUpdateContactTransform = (
 
   if (gd$name) {
     if (!baseEntryClone.gd$name) baseEntryClone.gd$name = {};
-    merge(baseEntryClone.gd$name, gd$name);
+    baseEntryClone.gd$name.gd$givenName = gd$name.gd$givenName;
+    baseEntryClone.gd$name.gd$familyName = gd$name.gd$familyName;
+    baseEntryClone.gd$name.gd$fullName = gd$name.gd$fullName;
   }
 
   if (gd$organization) {
@@ -60,9 +67,13 @@ export const googleUpdateContactTransform = (
     updateArrayField(
       baseEntryClone.gd$organization,
       gd$organization,
-      (base, update) => base.rel === update.rel,
+      (base, update) =>
+        (base.primary === 'true' && update.primary === 'true') ||
+        (base.primary === update.primary && base.rel === update.rel),
       (base, update) => {
-        merge(base, update);
+        if (update.gd$orgName) base.gd$orgName = update.gd$orgName;
+        if (update.gd$orgTitle) base.gd$orgTitle = update.gd$orgTitle;
+        if (update.label) base.label = update.label;
       }
     );
   }
