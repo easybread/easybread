@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro';
 
-import { px4, py2 } from '../../styles/mixins';
-
 export const ElementButton = styled.button`
   display: flex;
   align-items: center;
@@ -12,9 +10,9 @@ export const ElementButton = styled.button`
   font-weight: 600;
   height: 2.5rem;
   cursor: pointer;
-  ${py2}
-  ${px4}
-  
+  padding: 0 1rem;
+  max-height: 100%;
+
   :hover {
     color: var(--white);
     background-color: var(--brand-teal);

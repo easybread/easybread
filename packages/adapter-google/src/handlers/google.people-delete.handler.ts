@@ -25,13 +25,28 @@ export const GooglePeopleDeleteHandler: BreadOperationHandler<
       throw new ServiceException(GOOGLE_PROVIDER, 'identifier is empty');
     }
 
-    await context.httpRequest<GoogleContactsFeedEntryCreateResponse>({
-      method: 'DELETE',
-      url: `https://www.google.com/m8/feeds/contacts/default/full/${input.payload.identifier}`,
+    const url = `https://www.google.com/m8/feeds/contacts/default/full/${input.payload.identifier}`;
+
+    const contactBase = await context.httpRequest<
+      GoogleContactsFeedEntryCreateResponse
+    >({
+      url,
+      method: 'GET',
       params: { alt: 'json' },
       headers: {
         'GData-Version': '3.0',
-        'If-Match': 'Etag',
+        accept: 'application/json'
+      }
+    });
+
+    await context.httpRequest<GoogleContactsFeedEntryCreateResponse>({
+      url,
+      method: 'DELETE',
+      params: { alt: 'json' },
+      headers: {
+        'GData-Version': '3.0',
+        'Content-Type': 'application/json',
+        'If-Match': contactBase.data.entry.gd$etag,
         accept: 'application/json'
       }
     });

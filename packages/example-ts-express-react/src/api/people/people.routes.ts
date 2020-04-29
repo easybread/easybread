@@ -118,7 +118,7 @@ peopleRoutes.put('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
 });
 
 peopleRoutes.delete('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
-  const { adapter } = req.params;
+  const { adapter, id } = req.params;
 
   switch (adapter) {
     case 'google':
@@ -126,7 +126,7 @@ peopleRoutes.delete('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
         await googleClient.invoke<GooglePeopleDeleteOperation>({
           name: GoogleOperationName.PEOPLE_DELETE,
           breadId: '1',
-          payload: req.body
+          payload: { '@type': 'Person', identifier: id }
         })
       );
 

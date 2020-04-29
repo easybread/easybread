@@ -1,7 +1,9 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Person } from 'schema-dts';
 
 import { RootState } from '../../rootReducer';
+import { peopleDelete } from './peopleDelete';
 import { AdapterName, PersonInfo } from './peopleSlice';
 import { peopleUpdate } from './peopleUpdate';
 
@@ -25,7 +27,23 @@ export function useDispatchPersonUpdate(): (
 ) => void {
   const dispatch = useDispatch();
 
-  return (adapter: AdapterName, person: Person) => {
-    dispatch(peopleUpdate(adapter, person));
-  };
+  return useCallback(
+    (adapter: AdapterName, person: Person) => {
+      dispatch(peopleUpdate(adapter, person));
+    },
+    [dispatch]
+  );
+}
+export function useDispatchPersonDelete(): (
+  adapter: AdapterName,
+  person: Person
+) => void {
+  const dispatch = useDispatch();
+
+  return useCallback(
+    (adapter: AdapterName, person: Person) => {
+      dispatch(peopleDelete(adapter, person));
+    },
+    [dispatch]
+  );
 }

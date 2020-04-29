@@ -6,3 +6,4 @@ export type { CompleteGoogleOauth2Dto } from './complete-google-oauth2.dto';
 export type { GoogleAuthCallbackParamsDto } from './google-auth-callback-params.dto';
 export type { PeopleResponseDto } from './people.response.dto';
 export type { PeopleCreateResponseDto } from './people.create.response.dto';
+export type { PeopleDeleteResponseDto } from './people.delete.response.dto';

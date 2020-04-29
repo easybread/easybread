@@ -51,6 +51,7 @@ export const googleUpdateContactTransform = (
   }
 
   if (gd$name) {
+    if (!baseEntryClone.gd$name) baseEntryClone.gd$name = {};
     merge(baseEntryClone.gd$name, gd$name);
   }
 

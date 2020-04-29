@@ -16,6 +16,7 @@ export interface GoogleContactsFeedEntry {
   id?: GdataText;
   title?: GdataText;
   link?: GdataLink[];
+  gd$etag?: string;
   gd$email?: GdataEmail[];
   gd$name?: GdataName;
   gd$organization?: GdataOrganization[];

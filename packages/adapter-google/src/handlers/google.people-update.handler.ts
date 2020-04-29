@@ -60,7 +60,8 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
       params: { alt: 'json' },
       headers: {
         'GData-Version': '3.0',
-        'If-Match': 'Etag',
+        'Content-Type': 'application/json',
+        'If-Match': contactBase.data.entry.gd$etag,
         accept: 'application/json'
       }
     });

@@ -21,10 +21,10 @@ import {
   GooglePeopleUpdateOperation
 } from '..';
 import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
-import { CONTACTS_FEED_MOCK } from './contacts-feed.mock';
-import Mock = jest.Mock;
 import { CONTACT_FEED_ENTRY_UPDATE_MOCK } from './contact-feed-entry-update.mock';
 import { CONTACT_FEED_ENTRY_MOCK } from './contact-feed-entry.mock';
+import { CONTACTS_FEED_MOCK } from './contacts-feed.mock';
+import Mock = jest.Mock;
 
 setExtendedTimeout();
 mockAxios();
@@ -594,8 +594,9 @@ describe('Google Plugin', () => {
                 xmlns$gd: 'http://schemas.google.com/g/2005'
               },
               headers: {
+                'Content-Type': 'application/json',
                 'GData-Version': '3.0',
-                'If-Match': 'Etag',
+                'If-Match': '"R3k4eTVSLyt7I2A9XB5UE0wKTgU."',
                 accept: 'application/json',
                 authorization: 'Bearer new-access-token'
               },
@@ -710,8 +711,12 @@ describe('Google Plugin', () => {
 
     describe(`${GoogleOperationName.PEOPLE_DELETE}`, () => {
       function setupUpdateContactMock(): void {
-        (axiosMock.request as Mock).mockImplementationOnce(() =>
-          Promise.resolve({ status: 200 })
+        (axiosMock.request as Mock).mockImplementation(
+          (config: AxiosRequestConfig) => {
+            return config.method === 'GET'
+              ? Promise.resolve({ status: 200, data: CONTACT_FEED_ENTRY_MOCK })
+              : Promise.resolve({ status: 200 });
+          }
         );
       }
 
@@ -733,19 +738,46 @@ describe('Google Plugin', () => {
         setupUpdateContactMock();
       });
 
-      it(`should call delete contact api`, async () => {
+      afterAll(() => {
+        jest.resetAllMocks();
+      });
+
+      it(`should call contact api 2 times: to fetch and then delete the entity`, async () => {
         await invokePeopleDelete();
-        expect(axiosMock.request).toHaveBeenCalledWith({
-          method: 'DELETE',
-          url: `https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9`,
-          params: { alt: 'json' },
-          headers: {
-            'GData-Version': '3.0',
-            'If-Match': 'Etag',
-            authorization: 'Bearer new-access-token',
-            accept: 'application/json'
-          }
-        });
+        expect((axiosMock.request as Mock).mock.calls).toEqual([
+          [
+            {
+              headers: {
+                'GData-Version': '3.0',
+                accept: 'application/json',
+                authorization: 'Bearer new-access-token'
+              },
+              method: 'GET',
+              params: {
+                alt: 'json'
+              },
+              url:
+                'https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9'
+            }
+          ],
+          [
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'GData-Version': '3.0',
+                'If-Match': '"R3k4eTVSLyt7I2A9XB5UE0wKTgU."',
+                accept: 'application/json',
+                authorization: 'Bearer new-access-token'
+              },
+              method: 'DELETE',
+              params: {
+                alt: 'json'
+              },
+              url:
+                'https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9'
+            }
+          ]
+        ]);
       });
 
       it(`should return a Person with identifier field`, async () => {

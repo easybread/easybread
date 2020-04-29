@@ -1,13 +1,16 @@
-import React, { FC, useState } from 'react';
-import { FaPenSquare } from 'react-icons/fa';
+import React, { FC, useCallback, useState } from 'react';
 import { Organization, Person } from 'schema-dts';
 import styled from 'styled-components/macro';
 
 import {
   PersonInfo,
+  useDispatchPersonDelete,
   useDispatchPersonUpdate
 } from '../../../redux/features/people';
 import { ListItemContainer } from '../../../ui-kit/lists-kit';
+import { CardDeleteButton } from './CardDeleteButton';
+import { CardDeleteConfirm } from './CardDeleteConfirm';
+import { CardEditButton } from './CardEditButton';
 import { CardImage } from './CardImage';
 import { CardMainInfo } from './CardMainInfo';
 import { EditPersonForm, PersonFormData } from './EditPersonForm';
@@ -22,14 +25,10 @@ const COLORS = {
 };
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {
-  const [editMode, setEditMode] = useState(false);
-  const dispatchPersonUpdate = useDispatchPersonUpdate();
-
   const { provider } = info;
-
   const person = info.person as Person;
 
-  if (typeof person === 'string') return null;
+  if (typeof person === 'string') throw new Error('person is string');
 
   const {
     email,
@@ -39,28 +38,43 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
     telephone,
     jobTitle,
     worksFor,
-    workLocation
+    workLocation,
+    identifier
   } = person;
 
-  const edit = (): void => {
-    setEditMode(true);
-  };
+  const [editMode, setEditMode] = useState(false);
+  const [deleteConfirmOpened, setDeleteConfirmOpened] = useState(false);
 
-  const cancelEdit = (): void => {
-    setEditMode(false);
-  };
-
-  const onSubmit = (formData: PersonFormData): void => {
-    const { firstName, telephone, lastName, email } = formData;
-    dispatchPersonUpdate(provider, {
+  // remove stuff
+  const dispatchPersonDelete = useDispatchPersonDelete();
+  const openDeleteConfirm = useCallback(() => setDeleteConfirmOpened(true), []);
+  const cancelDelete = useCallback(() => setDeleteConfirmOpened(false), []);
+  const confirmDelete = useCallback(() => {
+    setDeleteConfirmOpened(false);
+    dispatchPersonDelete(provider, {
       '@type': 'Person',
-      identifier: person.identifier,
-      givenName: firstName,
-      familyName: lastName,
-      email: email,
-      telephone
+      identifier
     });
-  };
+  }, [dispatchPersonDelete, provider, identifier]);
+
+  // edit stuff
+  const dispatchPersonUpdate = useDispatchPersonUpdate();
+  const startEdit = useCallback(() => setEditMode(true), []);
+  const cancelEdit = useCallback(() => setEditMode(false), []);
+  const submitEdit = useCallback(
+    (formData: PersonFormData) => {
+      const { firstName, telephone, lastName, email } = formData;
+      dispatchPersonUpdate(provider, {
+        '@type': 'Person',
+        identifier: identifier,
+        givenName: firstName,
+        familyName: lastName,
+        email: email,
+        telephone
+      });
+    },
+    [identifier, dispatchPersonUpdate, provider]
+  );
 
   return (
     <ListItemContainer color={COLORS[provider]}>
@@ -77,9 +91,16 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
             workLocation={workLocation as string}
           />
 
-          <StyledEditOverlay onClick={edit}>
-            <FaPenSquare size={26} />
-          </StyledEditOverlay>
+          <StyledActionsCorner>
+            <CardEditButton onClick={startEdit} />
+            <CardDeleteButton onClick={openDeleteConfirm} />
+          </StyledActionsCorner>
+
+          <CardDeleteConfirm
+            opened={deleteConfirmOpened}
+            onConfirm={confirmDelete}
+            onCancel={cancelDelete}
+          />
         </>
       )}
 
@@ -88,7 +109,7 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
           <EditPersonForm
             expanded={editMode}
             person={person}
-            onSubmit={onSubmit}
+            onSubmit={submitEdit}
             close={cancelEdit}
           />
         </StyledFormWrapper>
@@ -97,27 +118,13 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
   );
 };
 
-const StyledEditOverlay = styled.div`
+const StyledActionsCorner = styled.div`
+  display: flex;
   position: absolute;
   top: var(--gap-4);
   right: var(--gap-4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-  margin-top: -7px;
-  margin-right: -7px;
-  border-radius: 5px;
-  //background: rgba(163, 221, 224, 0.2);
-  opacity: 0.6;
-  transition: opacity 0.1s ease, color 0.1s ease;
-  cursor: pointer;
-  color: var(--brand-teal-desaturated-light);
-
-  &:hover {
-    color: var(--brand-teal-accent);
-    opacity: 1;
-  }
+  margin-top: -3px;
+  margin-right: -5px;
 `;
 
 const StyledFormWrapper = styled.div`

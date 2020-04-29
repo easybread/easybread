@@ -5,10 +5,10 @@ import { PeopleCreateResponseDto } from '../../../../dtos';
 import { putRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
-import { peopleActions } from './peopleSlice';
+import { AdapterName, peopleActions } from './peopleSlice';
 
 export const peopleUpdate = (
-  adapter: 'google' | 'bamboo',
+  adapter: AdapterName,
   data: Person
 ): AppThunk => async dispatch => {
   if (isString(data)) throw new Error(`can't update: person is string`);

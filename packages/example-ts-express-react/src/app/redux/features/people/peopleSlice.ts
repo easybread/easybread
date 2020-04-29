@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isString } from 'lodash';
+import { isString, omit, without } from 'lodash';
 import { Person } from 'schema-dts';
 
 export type AdapterName = 'google' | 'bamboo';
@@ -37,8 +37,13 @@ interface DataState {
 interface CreatePersonState {
   creatingPerson: AdaptersBooleanState;
 }
+
 interface UpdatePersonState {
   updatingPerson: AdaptersBooleanState;
+}
+
+interface DeletePersonState {
+  deletingIds: string[];
 }
 
 export type PeopleState = LoadingState &
@@ -46,7 +51,8 @@ export type PeopleState = LoadingState &
   ErrorState &
   DataState &
   CreatePersonState &
-  UpdatePersonState;
+  UpdatePersonState &
+  DeletePersonState;
 
 const initialState: PeopleState = {
   loading: { google: false, bamboo: false },
@@ -55,7 +61,8 @@ const initialState: PeopleState = {
   creatingPerson: { google: false, bamboo: false },
   updatingPerson: { google: false, bamboo: false },
   byId: {},
-  ids: []
+  ids: [],
+  deletingIds: []
 };
 
 //  ------------------------------------
@@ -69,9 +76,15 @@ interface PeopleCreateSuccessPayload {
   adapter: AdapterName;
   data: PersonInfo;
 }
+
 interface PeopleUpdateSuccessPayload {
   adapter: AdapterName;
   data: PersonInfo;
+}
+
+interface PersonIdPayload {
+  identifier: string;
+  adapter: AdapterName;
 }
 
 const peopleSlice = createSlice({
@@ -103,7 +116,7 @@ const peopleSlice = createSlice({
       state.error[adapter] = false;
 
       data.forEach(info => {
-        const id = createPersonInfoStateId(info);
+        const id = createPersonInfoStateIdFromPersonInfo(info);
         state.byId[id] = info;
         state.ids.unshift(id);
       });
@@ -120,7 +133,7 @@ const peopleSlice = createSlice({
     ) {
       const { data, adapter } = action.payload;
 
-      const id = createPersonInfoStateId(data);
+      const id = createPersonInfoStateIdFromPersonInfo(data);
       state.byId[id] = data;
       state.ids.unshift(id);
 
@@ -143,10 +156,32 @@ const peopleSlice = createSlice({
       action: PayloadAction<PeopleUpdateSuccessPayload>
     ) {
       const { data, adapter } = action.payload;
-      const id = createPersonInfoStateId(data);
+      const id = createPersonInfoStateIdFromPersonInfo(data);
       state.updatingPerson[adapter] = false;
 
       Object.assign(state.byId[id].person, data.person);
+    },
+
+    // REMOVE ------------------------------------
+
+    peopleDeleteStart(state, action: PayloadAction<PersonIdPayload>) {
+      state.deletingIds.unshift(
+        createPersonInfoStateIdFromPersonIdPayload(action.payload)
+      );
+    },
+    peopleDeleteFail(state, action: PayloadAction<PersonIdPayload>) {
+      state.deletingIds = without(
+        state.deletingIds,
+        createPersonInfoStateIdFromPersonIdPayload(action.payload)
+      );
+    },
+    peopleDeleteSuccess(state, action: PayloadAction<PersonIdPayload>) {
+      const id = createPersonInfoStateIdFromPersonIdPayload(action.payload);
+
+      state.deletingIds = without(state.deletingIds, id);
+      state.ids = without(state.ids, id);
+
+      omit(state.byId, id);
     }
   }
 });
@@ -158,6 +193,23 @@ function getPersonId(person: Person): string {
   return person.identifier as string;
 }
 
-function createPersonInfoStateId(info: PersonInfo): string {
-  return `${info.provider}:${getPersonId(info.person as Person)}`;
+function createPersonInfoStateIdFromPersonInfo(info: PersonInfo): string {
+  return createPersonInfoStateId(
+    info.provider,
+    getPersonId(info.person as Person)
+  );
+}
+
+function createPersonInfoStateIdFromPersonIdPayload({
+  identifier,
+  adapter
+}: PersonIdPayload): string {
+  return createPersonInfoStateId(adapter, identifier);
+}
+
+function createPersonInfoStateId(
+  adapter: AdapterName,
+  personId: string
+): string {
+  return `${adapter}:${personId}`;
 }
