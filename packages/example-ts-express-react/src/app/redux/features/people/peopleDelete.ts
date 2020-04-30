@@ -4,7 +4,7 @@ import { Person } from 'schema-dts';
 import { PeopleDeleteResponseDto } from '../../../../dtos';
 import { deleteRequest } from '../../../http';
 import { AppThunk } from '../../store';
-import { notifyOperationResult } from '../notifications';
+import { notifyError, notifyOperationResult } from '../notifications';
 import { AdapterName } from './peopleCommon';
 import { peopleActions } from './peopleSlice';
 
@@ -35,6 +35,8 @@ export const peopleDelete = (
       dispatch(peopleActions.peopleDeleteFail({ identifier, adapter }));
     }
   } catch (e) {
+    const message = e?.response?.data?.message || e.message || e.toString();
+    dispatch(notifyError('failed to remove item', message));
     dispatch(peopleActions.peopleDeleteFail({ identifier, adapter }));
   }
 };

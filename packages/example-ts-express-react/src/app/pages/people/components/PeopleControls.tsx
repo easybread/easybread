@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { RootState } from '../../../redux';
+import { useAdapterConfigured } from '../../../redux/features/adapters';
 import {
   AdaptersBooleanState,
   peopleLoad
 } from '../../../redux/features/people';
 import { LoadButton } from './LoadButton';
-import { useAdapterConfigured } from '../../../redux/features/adapters';
 
 interface PeopleControlsProps {}
 

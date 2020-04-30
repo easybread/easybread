@@ -14,8 +14,11 @@ export const ElementButton = styled.button`
   max-height: 100%;
 
   :hover {
-    color: var(--white);
-    background-color: var(--brand-teal);
+    background-color: var(--brand-teal-light-transparent);
+  }
+
+  :active {
+    background: var(--brand-teal-accent-transparent);
   }
 
   &[disabled] {

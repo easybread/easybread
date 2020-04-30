@@ -112,9 +112,13 @@ const StyledAdapterTitle = styled.div<Expandable & { disabled: boolean }>`
   cursor: pointer;
   font-size: var(--text-lg);
 
-  &:hover {
+  :hover {
     color: var(--brand-teal-accent);
     background-color: var(--brand-teal-light-transparent);
+  }
+
+  :active {
+    background: var(--brand-teal-accent-transparent);
   }
 
   ${p => p.disabled && disabledStyle}

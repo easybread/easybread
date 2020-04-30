@@ -53,8 +53,7 @@ export const GlobalStyles: GlobalStyleComponent<
     appearance: none;
     line-height: 1.25;
     border-radius: 0;
-    
-    background-color: #fff;
+    background: transparent;
     padding: 0.5rem 1rem;
     color: var(--text-main-color-light);
     border: 2px solid #edf2f7;

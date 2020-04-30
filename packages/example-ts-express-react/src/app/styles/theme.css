@@ -12,6 +12,7 @@
 
   --brand-teal: #4fd1c5;
   --brand-teal-accent: #00ab9f;
+  --brand-teal-accent-transparent: rgba(0, 171, 159, 0.16);
   --brand-teal-light: rgb(126, 226, 215);
   --brand-teal-light-transparent: rgba(126, 226, 215, 0.16);
   --brand-teal-dark: #319795;

@@ -133,10 +133,10 @@ peopleRoutes.delete('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
       break;
 
     case 'bamboo':
-      throw new NotImplementedException();
-
     default:
-      throw new Error('not implemented');
+      res.status(501);
+      res.json(new NotImplementedException());
+      break;
   }
 });
 
