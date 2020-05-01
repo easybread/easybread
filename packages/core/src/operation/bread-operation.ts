@@ -1,4 +1,4 @@
-import { Thing } from 'schema-dts';
+import { BreadSchema } from '@easybread/schemas';
 
 import {
   BreadOperationInput,
@@ -18,15 +18,19 @@ export interface BreadOperation<T extends string> {
   input:
     | BreadOperationInput<T>
     | BreadOperationInputWithParams<T, object>
-    | BreadOperationInputWithPayload<T, object | object[] | Thing[] | Thing>
+    | BreadOperationInputWithPayload<T, object | BreadSchema | BreadSchema[]>
     | BreadOperationInputWithParamsAndPayload<
         T,
         object,
-        object | object[] | Thing[] | Thing
+        object | BreadSchema | BreadSchema[]
       >;
   output:
     | BreadOperationOutput<T>
     | BreadOperationOutputWithRawData<T, object>
-    | BreadOperationOutputWithPayload<T, Thing | Thing[]>
-    | BreadOperationOutputWithRawDataAndPayload<T, object, Thing | Thing[]>;
+    | BreadOperationOutputWithPayload<T, BreadSchema | BreadSchema[]>
+    | BreadOperationOutputWithRawDataAndPayload<
+        T,
+        object,
+        BreadSchema | BreadSchema[]
+      >;
 }

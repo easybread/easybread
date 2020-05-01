@@ -1,0 +1,65 @@
+{
+  "name": "@easybread/schemas",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "> TODO: description",
+  "author": {
+    "name": "Easybread",
+    "url": "https://easybread.io/"
+  },
+  "contributors": [
+    {
+      "name": "Idris Adamjy",
+      "email": "adamjyidris@gmail.com"
+    },
+    {
+      "name": "William Reiske",
+      "email": "wreiske@mieweb.com"
+    },
+    {
+      "name": "Alexander Cherednichenko",
+      "email": "alexandr2110pro@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "prebuild": "yarn lint:fix",
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "prettier:write": "prettier 'src/**/*.ts' --write",
+    "prettier:check": "prettier 'src/**/*.ts' --check",
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:ci": "yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
+    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "test": "jest --passWithNoTests",
+    "test:cov": "jest --coverage --passWithNoTests",
+    "test:ci": "jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
+    "test:watch": "jest --coverage --passWithNoTests --watchAll"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn check-types && lint-staged && yarn test"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "yarn lint:fix"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8"
+  }
+}

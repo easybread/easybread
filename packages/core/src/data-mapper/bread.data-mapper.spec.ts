@@ -1,5 +1,4 @@
-import { NotString } from '@easybread/common';
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 import { BreadDataMapDefinition } from './bread.data-map-definition.interface';
 import { BreadDataMapper } from './bread.data-mapper';
@@ -14,9 +13,9 @@ interface TestEntity {
   };
 }
 
-class TestDataMapper extends BreadDataMapper<TestEntity, NotString<Person>> {
+class TestDataMapper extends BreadDataMapper<TestEntity, PersonSchema> {
   protected readonly toRemoteMap: BreadDataMapDefinition<
-    NotString<Person>,
+    PersonSchema,
     TestEntity
   > = {
     contacts: input => {
@@ -32,7 +31,7 @@ class TestDataMapper extends BreadDataMapper<TestEntity, NotString<Person>> {
 
   protected readonly toSchemaMap: BreadDataMapDefinition<
     TestEntity,
-    NotString<Person>
+    PersonSchema
   > = {
     '@type': () => 'Person',
     identifier: 'id',

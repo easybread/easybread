@@ -1,4 +1,4 @@
-import { Thing } from 'schema-dts';
+import { BreadSchema } from '@easybread/schemas';
 
 /*
  * Basically we want these interfaces to be as strict as possible.
@@ -50,7 +50,7 @@ export interface BreadOperationOutputWithRawData<
 
 export interface BreadOperationOutputWithPayload<
   TName extends string,
-  TPayload extends Thing | Thing[]
+  TPayload extends BreadSchema | BreadSchema[]
 > extends BreadOperationOutputBase<TName> {
   rawPayload: BreadOperationOutputRawPayload;
   payload: TPayload;
@@ -61,6 +61,6 @@ export interface BreadOperationOutputWithPayload<
 export type BreadOperationOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
-  TPayload extends Thing | Thing[]
+  TPayload extends BreadSchema | BreadSchema[]
 > = BreadOperationOutputWithRawData<TName, TRawData> &
   BreadOperationOutputWithPayload<TName, TPayload>;

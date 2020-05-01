@@ -1,5 +1,5 @@
+import { OrganizationSchema } from '@easybread/schemas';
 import React, { FC } from 'react';
-import { ContactPoint, Organization, Place } from 'schema-dts';
 import styled from 'styled-components/macro';
 
 import { CardMainInfoRow } from './CardMainInfoRow';
@@ -10,8 +10,8 @@ interface CardMainInfoProps {
   firstName?: string;
   lastName?: string;
   jobTitle?: string;
-  worksFor?: Organization;
-  workLocation: ContactPoint | Place;
+  worksFor?: OrganizationSchema;
+  workLocation: string;
 }
 
 export const CardMainInfo: FC<CardMainInfoProps> = ({
@@ -23,17 +23,7 @@ export const CardMainInfo: FC<CardMainInfoProps> = ({
   worksFor,
   workLocation
 }) => {
-  const organizationName = !worksFor
-    ? undefined
-    : typeof worksFor === 'string'
-    ? worksFor
-    : (worksFor.name as string);
-
-  const workLocationString = !workLocation
-    ? undefined
-    : typeof workLocation === 'string'
-    ? workLocation
-    : (workLocation.name as string);
+  const organizationName = !worksFor ? undefined : (worksFor.name as string);
 
   return (
     <StyledCardMainInfo>
@@ -43,7 +33,7 @@ export const CardMainInfo: FC<CardMainInfoProps> = ({
       <CardMainInfoRow label={'Phone'} value={phone} />
       <CardMainInfoRow label={'Title'} value={jobTitle} />
       <CardMainInfoRow label={'Organization'} value={organizationName} />
-      <CardMainInfoRow label={'Work Location'} value={workLocationString} />
+      <CardMainInfoRow label={'Work Location'} value={workLocation} />
     </StyledCardMainInfo>
   );
 };

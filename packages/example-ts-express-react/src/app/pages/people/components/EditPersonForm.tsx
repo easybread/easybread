@@ -1,6 +1,6 @@
+import { PersonSchema } from '@easybread/schemas';
 import { capitalize } from 'lodash';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Person } from 'schema-dts';
 import styled from 'styled-components/macro';
 
 import { useConfiguredAdapterNames } from '../../../redux/features/adapters';
@@ -24,7 +24,7 @@ export interface PersonFormData {
 }
 
 interface CreatePersonFormProps extends UtilExpandableContentProps {
-  person?: Person;
+  person?: PersonSchema;
   onSubmit: (data: PersonFormData) => void;
 }
 
@@ -46,7 +46,7 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
 
   useEffect(() => {
     // TODO: those checks and type
-    if (typeof person === 'string' || typeof person === 'undefined') return;
+    if (typeof person === 'undefined') return;
 
     const { email, telephone, givenName, familyName } = person;
 

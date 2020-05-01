@@ -2,11 +2,11 @@ import { PeopleResponseDto } from '../../../../dtos';
 import { getRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
-import { PersonInfo } from './peopleCommon';
+import { AdapterName, PersonInfo } from './peopleCommon';
 import { peopleActions } from './peopleSlice';
 
 export const peopleLoad = (
-  adapter: 'google' | 'bamboo'
+  adapter: AdapterName
 ): AppThunk => async dispatch => {
   dispatch(peopleActions.peopleLoadingStart(adapter));
 

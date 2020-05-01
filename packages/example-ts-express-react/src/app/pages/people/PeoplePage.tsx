@@ -8,9 +8,9 @@ import {
   useAdaptersLoading
 } from '../../redux/features/adapters';
 import { LayoutContentWrapper } from '../../ui-kit/layout-kit';
+import { CreatePerson } from './components/CreatePerson';
 import { PeopleControls } from './components/PeopleControls';
 import { PeopleResults } from './components/PeopleResults';
-import { CreatePerson } from './components/CreatePerson';
 
 interface OperationsPageProps {}
 

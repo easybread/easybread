@@ -3,7 +3,7 @@ import {
   BreadOperationInput,
   BreadOperationOutputWithRawDataAndPayload
 } from '@easybread/core';
-import { Organization } from 'schema-dts';
+import { OrganizationSchema } from '@easybread/schemas';
 
 import { BreezyOperationName } from '../breezy.operation-name';
 import { BreezyCompany } from '../interfaces';
@@ -14,6 +14,6 @@ export interface BreezyCompanySearchOperation
   output: BreadOperationOutputWithRawDataAndPayload<
     BreezyOperationName.COMPANY_SEARCH,
     BreezyCompany[],
-    Organization[]
+    OrganizationSchema[]
   >;
 }

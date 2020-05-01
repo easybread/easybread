@@ -1,5 +1,5 @@
+import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
 import React, { FC, useCallback, useState } from 'react';
-import { Organization, Person } from 'schema-dts';
 import styled from 'styled-components/macro';
 
 import {
@@ -14,8 +14,8 @@ import { CardDeleteConfirm } from './CardDeleteConfirm';
 import { CardEditButton } from './CardEditButton';
 import { CardImage } from './CardImage';
 import { CardMainInfo } from './CardMainInfo';
-import { EditPersonForm, PersonFormData } from './EditPersonForm';
 import { CardSpinnerOverlay } from './CardSpinnerOverlay';
+import { EditPersonForm, PersonFormData } from './EditPersonForm';
 
 interface PersonCardProps {
   info: PersonInfo;
@@ -28,9 +28,7 @@ const COLORS = {
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {
   const { provider } = info;
-  const person = info.person as Person;
-
-  if (typeof person === 'string') throw new Error('person is string');
+  const person = info.person as PersonSchema;
 
   const {
     email,
@@ -91,7 +89,7 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
             lastName={familyName as string}
             phone={telephone as string}
             jobTitle={jobTitle as string}
-            worksFor={worksFor as Organization}
+            worksFor={worksFor as OrganizationSchema}
             workLocation={workLocation as string}
           />
 

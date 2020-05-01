@@ -1,5 +1,4 @@
-import { isString } from 'lodash';
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 import { PeopleDeleteResponseDto } from '../../../../dtos';
 import { deleteRequest } from '../../../http';
@@ -10,15 +9,14 @@ import { peopleActions } from './peopleSlice';
 
 export const peopleDelete = (
   adapter: AdapterName,
-  data: Person
+  data: PersonSchema
 ): AppThunk => async dispatch => {
-  if (isString(data)) throw new Error(`can't delete: person is string`);
-
-  if (!isString(data.identifier)) {
-    throw new Error(`can't delete: identifier is not a string`);
-  }
-
   const { identifier } = data;
+
+  if (!identifier) {
+    dispatch(notifyError('failed to remove item', 'identifier is empty'));
+    return;
+  }
 
   dispatch(peopleActions.peopleDeleteStart({ identifier, adapter }));
 

@@ -1,6 +1,6 @@
+import { PersonSchema } from '@easybread/schemas';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Person } from 'schema-dts';
 
 import { RootState } from '../../rootReducer';
 import {
@@ -27,12 +27,12 @@ export function usePersonInfosArray(): PersonInfo[] {
 
 export function useDispatchPersonUpdate(): (
   adapter: AdapterName,
-  person: Person
+  person: PersonSchema
 ) => void {
   const dispatch = useDispatch();
 
   return useCallback(
-    (adapter: AdapterName, person: Person) => {
+    (adapter: AdapterName, person: PersonSchema) => {
       dispatch(peopleUpdate(adapter, person));
     },
     [dispatch]
@@ -40,12 +40,12 @@ export function useDispatchPersonUpdate(): (
 }
 export function useDispatchPersonDelete(): (
   adapter: AdapterName,
-  person: Person
+  person: PersonSchema
 ) => void {
   const dispatch = useDispatch();
 
   return useCallback(
-    (adapter: AdapterName, person: Person) => {
+    (adapter: AdapterName, person: PersonSchema) => {
       dispatch(peopleDelete(adapter, person));
     },
     [dispatch]

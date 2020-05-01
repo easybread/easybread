@@ -12,7 +12,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn check-types &&  ./node_modules/.bin/lerna run lint-staged && yarn test"
+      "pre-commit": "yarn check-types && yarn lint && yarn test"
     }
   },
   "devDependencies": {

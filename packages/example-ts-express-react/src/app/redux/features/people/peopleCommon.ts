@@ -1,12 +1,9 @@
-import { isString } from 'lodash';
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 export type AdapterName = 'google' | 'bamboo';
 
 export interface PersonInfo {
-  // TODO: Person here breaks the tsc build (hangs infinitely)
-  // object|string is a very simplified Thing type
-  person: object | string;
+  person: PersonSchema;
   provider: AdapterName;
 }
 
@@ -15,18 +12,14 @@ export interface PersonIdPayload {
   adapter: AdapterName;
 }
 
-export function getPersonId(person: Person): string {
-  if (isString(person)) throw new Error('string person is not allowed');
+export function getPersonId(person: PersonSchema): string {
   return person.identifier as string;
 }
 
 export function createPersonInfoStateIdFromPersonInfo(
   info: PersonInfo
 ): string {
-  return createPersonInfoStateId(
-    info.provider,
-    getPersonId(info.person as Person)
-  );
+  return createPersonInfoStateId(info.provider, getPersonId(info.person));
 }
 
 export function createPersonInfoStateIdFromPersonIdPayload({

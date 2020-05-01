@@ -1,10 +1,10 @@
 import { BreadOperationHandler } from '@easybread/core';
 
+import { GoogleContactMapper } from '../data-mappers';
 import { GoogleAuthStrategy } from '../google.auth-strategy';
 import { GoogleOperationName } from '../google.operation-name';
 import { GoogleContactsFeedResponse } from '../interfaces';
 import { GooglePeopleSearchOperation } from '../operations';
-import { googleContactToPersonTransform } from '../transform';
 
 export const GooglePeopleSearchHandler: BreadOperationHandler<
   GooglePeopleSearchOperation,
@@ -13,6 +13,8 @@ export const GooglePeopleSearchHandler: BreadOperationHandler<
   name: GoogleOperationName.PEOPLE_SEARCH,
 
   async handle(_input, context) {
+    const dataMapper = new GoogleContactMapper();
+
     const result = await context.httpRequest<GoogleContactsFeedResponse>({
       method: 'GET',
       url: `https://www.google.com/m8/feeds/contacts/default/full`,
@@ -25,7 +27,7 @@ export const GooglePeopleSearchHandler: BreadOperationHandler<
 
     return {
       name: GoogleOperationName.PEOPLE_SEARCH,
-      payload: result.data.feed.entry.map(googleContactToPersonTransform),
+      payload: result.data.feed.entry.map(entry => dataMapper.toSchema(entry)),
       rawPayload: { success: true, data: result.data }
     };
   }

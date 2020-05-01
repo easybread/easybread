@@ -3,7 +3,7 @@ import {
   BreadOperationInput,
   BreadOperationOutputWithRawDataAndPayload
 } from '@easybread/core';
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 import { GoogleOperationName } from '../google.operation-name';
 import { GoogleContactsFeedResponse } from '../interfaces';
@@ -14,6 +14,6 @@ export interface GooglePeopleSearchOperation
   output: BreadOperationOutputWithRawDataAndPayload<
     GoogleOperationName.PEOPLE_SEARCH,
     GoogleContactsFeedResponse,
-    Person[]
+    PersonSchema[]
   >;
 }

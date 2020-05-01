@@ -5,8 +5,8 @@ import {
 } from '@easybread/operations';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
+import { BambooEmployeeMapper } from '../data-mappers';
 import { BambooEmployeesDirectory } from '../interfaces';
-import { bambooEmployeeToPersonTransform } from '../transform';
 
 export const BambooEmployeeSearchHandler: BreadOperationHandler<
   EmployeeSearchOperation<BambooEmployeesDirectory>,
@@ -26,9 +26,10 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
       headers: { accept: 'application/json' }
     });
 
+    const dataMapper = new BambooEmployeeMapper();
     return {
       name: BreadOperationName.EMPLOYEE_SEARCH,
-      payload: result.data.employees.map(bambooEmployeeToPersonTransform),
+      payload: result.data.employees.map(e => dataMapper.toSchema(e)),
       rawPayload: {
         success: true,
         data: result.data

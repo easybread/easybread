@@ -133,10 +133,7 @@ describe('Breezy', () => {
             alternateName: 'MI',
             identifier: '90e727223953',
             name: 'Medical Informatics Engineering',
-            numberOfEmployees: {
-              '@type': 'QuantitativeValue',
-              value: 2
-            }
+            numberOfEmployees: 2
           }
         ]);
       });

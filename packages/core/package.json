@@ -57,9 +57,9 @@
   },
   "dependencies": {
     "@easybread/common": "^0.0.0",
+    "@easybread/schemas": "^0.0.0",
     "axios": "^0.19.2",
-    "lodash": "^4.17.15",
-    "schema-dts": "^0.5.2"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@easybread/test-utils": "^0.0.0",

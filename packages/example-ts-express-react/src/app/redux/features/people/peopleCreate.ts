@@ -1,18 +1,19 @@
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 import { PeopleCreateResponseDto } from '../../../../dtos';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
+import { AdapterName } from './peopleCommon';
 import { peopleActions } from './peopleSlice';
 
 export const peopleCreate = (
-  adapter: 'google' | 'bamboo',
-  data: Person
+  adapter: AdapterName,
+  data: PersonSchema
 ): AppThunk => async dispatch => {
   dispatch(peopleActions.peopleCreateStart(adapter));
 
-  const result = await postRequest<Person, PeopleCreateResponseDto>(
+  const result = await postRequest<PersonSchema, PeopleCreateResponseDto>(
     `/api/people/${adapter}`,
     data
   );

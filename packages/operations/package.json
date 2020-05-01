@@ -58,7 +58,7 @@
   "dependencies": {
     "@easybread/common": "^0.0.0",
     "@easybread/core": "^0.0.0",
-    "schema-dts": "^0.5.2"
+    "@easybread/schemas": "^0.0.0"
   },
   "devDependencies": {
     "@easybread/test-utils": "^0.0.0",

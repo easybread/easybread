@@ -3,7 +3,7 @@ import {
   BreadOperationInput,
   BreadOperationOutputWithRawDataAndPayload
 } from '@easybread/core';
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 import { BreadOperationName } from '../bread.operation-name';
 
@@ -14,6 +14,6 @@ export interface EmployeeSearchOperation<T extends object = {}>
   output: BreadOperationOutputWithRawDataAndPayload<
     BreadOperationName.EMPLOYEE_SEARCH,
     T,
-    Person[]
+    PersonSchema[]
   >;
 }

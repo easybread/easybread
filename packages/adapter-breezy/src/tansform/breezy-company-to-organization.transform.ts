@@ -1,10 +1,10 @@
-import { Organization } from 'schema-dts';
+import { OrganizationSchema } from '@easybread/schemas';
 
 import { BreezyCompany } from '../interfaces';
 
 export const breezyCompanyToOrganizationTransform = (
   company: BreezyCompany
-): Organization => {
+): OrganizationSchema => {
   const {
     _id,
     // creation_date,
@@ -16,7 +16,7 @@ export const breezyCompanyToOrganizationTransform = (
     // updated_date
   } = company;
 
-  const result: Organization = { '@type': 'Organization' };
+  const result: OrganizationSchema = { '@type': 'Organization' };
 
   return {
     ...result,
@@ -24,11 +24,7 @@ export const breezyCompanyToOrganizationTransform = (
     // TODO: better schema property for initial
     alternateName: initial,
     identifier: _id,
-    numberOfEmployees: {
-      '@type': 'QuantitativeValue',
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      value: member_count
-    }
+    numberOfEmployees: member_count
     // TODO: schema properties for other fields;
   };
 };

@@ -1,20 +1,12 @@
-import {
-  BreadOperationHandler,
-  ServiceException,
-  ServiceStringThingException
-} from '@easybread/core';
-import { isString } from 'lodash';
+import { BreadOperationHandler, ServiceException } from '@easybread/core';
 
+import { GoogleContactMapper } from '../data-mappers';
 import { GoogleAuthStrategy } from '../google.auth-strategy';
 import { GOOGLE_PROVIDER } from '../google.constants';
 import { GoogleOperationName } from '../google.operation-name';
 import { GoogleContactsFeedEntryCreateResponse } from '../interfaces';
 import { GooglePeopleUpdateOperation } from '../operations';
-import {
-  googleContactToPersonTransform,
-  googlePersonToContactTransform,
-  googleUpdateContactTransform
-} from '../transform';
+import { googleUpdateContactTransform } from '../transform';
 
 export const GooglePeopleUpdateHandler: BreadOperationHandler<
   GooglePeopleUpdateOperation,
@@ -22,10 +14,6 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
 > = {
   name: GoogleOperationName.PEOPLE_UPDATE,
   async handle(input, context) {
-    if (isString(input.payload)) {
-      throw new ServiceStringThingException(GOOGLE_PROVIDER, 'Person');
-    }
-
     if (!input.payload.identifier) {
       throw new ServiceException(GOOGLE_PROVIDER, 'identifier is empty');
     }
@@ -33,6 +21,10 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
     const personChange = input.payload;
     const entryUrl = `https://www.google.com/m8/feeds/contacts/default/full/${personChange.identifier}`;
 
+    // https://developers.google.com/contacts/v3#updating_contacts
+    //  "To update a contact, first retrieve the contact entry,
+    //   modify the data and send an authorized PUT request
+    //   to the contact's edit URL with the modified contact entry in the body."
     const contactBase = await context.httpRequest<
       GoogleContactsFeedEntryCreateResponse
     >({
@@ -45,7 +37,11 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
       }
     });
 
-    const contactEntryChange = googlePersonToContactTransform(personChange);
+    const dataMapper = new GoogleContactMapper();
+
+    const contactEntryChange = dataMapper.toRemote(personChange);
+
+    // TODO: replace this with data mapper too.
     const contactUpdatedEntry = googleUpdateContactTransform(
       contactBase.data.entry,
       contactEntryChange
@@ -68,7 +64,7 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
 
     return {
       name: GoogleOperationName.PEOPLE_UPDATE,
-      payload: googleContactToPersonTransform(result.data.entry),
+      payload: dataMapper.toSchema(result.data.entry),
       rawPayload: { success: true, data: result.data }
     };
   }

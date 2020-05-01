@@ -10,11 +10,13 @@ export interface EmployeeDeleteOperation
   extends BreadOperation<BreadOperationName.EMPLOYEE_DELETE> {
   input: BreadOperationInputWithParams<
     BreadOperationName.EMPLOYEE_DELETE,
+    // TODO: consider using schema entity here as well
     { identifier: string }
   >;
 
   output: BreadOperationOutputWithRawData<
     BreadOperationName.EMPLOYEE_DELETE,
+    // TODO: consider using schema entity here as well
     { identifier: string }
   >;
 }

@@ -1,17 +1,11 @@
-import {
-  BreadOperationHandler,
-  ServiceStringThingException
-} from '@easybread/core';
+import { BreadOperationHandler } from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeUpdateOperation
 } from '@easybread/operations';
-import { isString } from 'lodash';
-import { Person } from 'schema-dts';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { BAMBOO_HR_PROVIDER } from '../bamboo-hr.constants';
-import { bambooPersonToEmployeeTransform } from '../transform';
+import { BambooEmployeeMapper } from '../data-mappers';
 
 export const BambooEmployeeUpdateHandler: BreadOperationHandler<
   EmployeeUpdateOperation,
@@ -20,11 +14,9 @@ export const BambooEmployeeUpdateHandler: BreadOperationHandler<
   async handle(input, context) {
     const { breadId, payload } = input;
 
-    if (isString(payload)) {
-      throw new ServiceStringThingException(BAMBOO_HR_PROVIDER, 'Person');
-    }
-
     const { companyName } = await context.auth.readAuthData(breadId);
+
+    const dataMapper = new BambooEmployeeMapper();
 
     await context.httpRequest<undefined>({
       method: 'POST',
@@ -33,7 +25,7 @@ export const BambooEmployeeUpdateHandler: BreadOperationHandler<
         accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      data: bambooPersonToEmployeeTransform(payload as Person)
+      data: dataMapper.toRemote(payload)
     });
 
     return {

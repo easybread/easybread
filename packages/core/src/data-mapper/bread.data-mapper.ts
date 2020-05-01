@@ -1,12 +1,11 @@
-import { NotString } from '@easybread/common';
-import { Thing } from 'schema-dts';
+import { BreadSchema } from '@easybread/schemas';
 
 import { BreadDataMapDefinition } from './bread.data-map-definition.interface';
 import { BreadPropertiesResolver } from './bread.properties-resolver';
 
 export abstract class BreadDataMapper<
   TRemoteType extends object,
-  TSchemaType extends NotString<Thing>
+  TSchemaType extends BreadSchema
 > {
   protected abstract readonly toRemoteMap: BreadDataMapDefinition<
     TSchemaType,

@@ -1,5 +1,4 @@
-import { isString } from 'lodash';
-import { Person } from 'schema-dts';
+import { PersonSchema } from '@easybread/schemas';
 
 import { PeopleCreateResponseDto } from '../../../../dtos';
 import { putRequest } from '../../../http';
@@ -10,20 +9,18 @@ import { peopleActions } from './peopleSlice';
 
 export const peopleUpdate = (
   adapter: AdapterName,
-  data: Person
+  data: PersonSchema
 ): AppThunk => async dispatch => {
-  if (isString(data)) throw new Error(`can't update: person is string`);
+  const { identifier } = data;
 
-  if (!isString(data.identifier)) {
+  if (!identifier) {
     throw new Error(`can't update: identifier is empty`);
   }
-
-  const { identifier } = data;
 
   dispatch(peopleActions.peopleUpdateStart({ adapter, identifier }));
 
   try {
-    const result = await putRequest<Person, PeopleCreateResponseDto>(
+    const result = await putRequest<PersonSchema, PeopleCreateResponseDto>(
       `/api/people/${adapter}/${data.identifier}`,
       data
     );
