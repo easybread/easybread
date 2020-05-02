@@ -8,7 +8,7 @@ const api: express.Application = express();
 
 api.use(bodyParser.json());
 
-api.use('/api', authMiddleware);
-api.use('/api', apiRouter);
+api.use('/', authMiddleware);
+api.use('/', apiRouter);
 
 export { api };
