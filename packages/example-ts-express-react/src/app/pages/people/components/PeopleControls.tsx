@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
+import { ADAPTER_NAME } from '../../../../common';
 import { RootState } from '../../../redux';
 import { useAdapterConfigured } from '../../../redux/features/adapters';
 import {
@@ -13,8 +14,8 @@ import { LoadButton } from './LoadButton';
 interface PeopleControlsProps {}
 
 export const PeopleControls: FC<PeopleControlsProps> = () => {
-  const bambooConfigured = useAdapterConfigured('bamboo');
-  const googleConfigured = useAdapterConfigured('google');
+  const bambooConfigured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
+  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
 
   const dispatch = useDispatch();
 
@@ -26,10 +27,10 @@ export const PeopleControls: FC<PeopleControlsProps> = () => {
   );
 
   const fetchGoogle = (): void => {
-    dispatch(peopleLoad('google'));
+    dispatch(peopleLoad(ADAPTER_NAME.GOOGLE));
   };
   const fetchBamboo = (): void => {
-    dispatch(peopleLoad('bamboo'));
+    dispatch(peopleLoad(ADAPTER_NAME.BAMBOO));
   };
 
   return (

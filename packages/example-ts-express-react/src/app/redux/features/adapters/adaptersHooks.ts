@@ -2,8 +2,8 @@ import { reduce } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ADAPTER_NAME } from '../../../../common';
 import { RootState } from '../../rootReducer';
-import { AdapterName } from '../people';
 import { AdaptersBooleanState } from './adaptersSlice';
 import { loadAdaptersData } from './loadAdaptersData';
 
@@ -33,22 +33,20 @@ export function useAdaptersError(): boolean {
   });
 }
 
-export function useAdapterConfigured(
-  adapterName: 'google' | 'bamboo'
-): boolean {
+export function useAdapterConfigured(adapterName: ADAPTER_NAME): boolean {
   return useSelector<RootState, boolean>(state => {
     return state.adapters.configured[adapterName];
   });
 }
 
-export function useConfiguredAdapterNames(): AdapterName[] {
+export function useConfiguredAdapterNames(): ADAPTER_NAME[] {
   const configured = useSelector<RootState, AdaptersBooleanState>(state => {
     return state.adapters.configured;
   });
 
   return reduce(
     configured,
-    (result: AdapterName[], val: boolean, key: string) => {
+    (result: ADAPTER_NAME[], val: boolean, key: string) => {
       if (val) result.push(key as keyof AdaptersBooleanState);
       return result;
     },

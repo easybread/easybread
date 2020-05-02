@@ -1,4 +1,4 @@
-import { AdaptersStateDto } from '../../../../dtos';
+import { AdaptersStateDto } from '../../../../api/api.dtos';
 import { getRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyError } from '../notifications';

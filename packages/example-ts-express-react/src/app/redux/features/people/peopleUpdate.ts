@@ -1,14 +1,14 @@
 import { PersonSchema } from '@easybread/schemas';
 
-import { PeopleCreateResponseDto } from '../../../../dtos';
+import { PeopleCreateResponseDto } from '../../../../api/api.dtos';
+import { ADAPTER_NAME } from '../../../../common';
 import { putRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
-import { AdapterName } from './peopleCommon';
 import { peopleActions } from './peopleSlice';
 
 export const peopleUpdate = (
-  adapter: AdapterName,
+  adapter: ADAPTER_NAME,
   data: PersonSchema
 ): AppThunk => async dispatch => {
   const { identifier } = data;

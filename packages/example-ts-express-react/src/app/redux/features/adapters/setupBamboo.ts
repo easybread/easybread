@@ -1,7 +1,8 @@
 import { BambooBasicAuthPayload } from '@easybread/adapter-bamboo-hr';
 import { SetupBasicAuthOperation } from '@easybread/operations';
 
-import { SetupBambooDto } from '../../../../dtos';
+import { SetupBambooDto } from '../../../../api/api.dtos';
+import { ADAPTER_NAME } from '../../../../common';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
@@ -20,7 +21,7 @@ export function setupBamboo(data: SetupBambooDto): AppThunk {
       dispatch(
         adaptersActions.setAdapterConfigured({
           configured: true,
-          adapter: 'bamboo'
+          adapter: ADAPTER_NAME.BAMBOO
         })
       );
     }

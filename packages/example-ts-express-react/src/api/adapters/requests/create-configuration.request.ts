@@ -1,15 +1,16 @@
 import { Request } from 'express';
 
+import { ADAPTER_NAME } from '../../../common';
 import { SetupBambooDto, SetupGoogleDto } from '../dtos';
 
 type SetupGoogleRequest = Request<
-  { adapter: 'google' },
+  { adapter: ADAPTER_NAME.GOOGLE },
   unknown,
   SetupGoogleDto
 >;
 
 type SetupBambooRequest = Request<
-  { adapter: 'bamboo' },
+  { adapter: ADAPTER_NAME.BAMBOO },
   unknown,
   SetupBambooDto
 >;
@@ -22,11 +23,11 @@ export type CreateConfigurationRequest =
 export const isSetupBambooRequest = (
   req: CreateConfigurationRequest
 ): req is SetupBambooRequest => {
-  return req.params.adapter === 'bamboo';
+  return req.params.adapter === ADAPTER_NAME.BAMBOO;
 };
 
 export const isSetupGoogleRequest = (
   req: CreateConfigurationRequest
 ): req is SetupGoogleRequest => {
-  return req.params.adapter === 'google';
+  return req.params.adapter === ADAPTER_NAME.GOOGLE;
 };

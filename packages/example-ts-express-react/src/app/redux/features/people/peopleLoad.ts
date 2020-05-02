@@ -1,12 +1,13 @@
-import { PeopleResponseDto } from '../../../../dtos';
+import { PeopleResponseDto } from '../../../../api/api.dtos';
+import { ADAPTER_NAME } from '../../../../common';
 import { getRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
-import { AdapterName, PersonInfo } from './peopleCommon';
+import { PersonInfo } from './peopleCommon';
 import { peopleActions } from './peopleSlice';
 
 export const peopleLoad = (
-  adapter: AdapterName
+  adapter: ADAPTER_NAME
 ): AppThunk => async dispatch => {
   dispatch(peopleActions.peopleLoadingStart(adapter));
 

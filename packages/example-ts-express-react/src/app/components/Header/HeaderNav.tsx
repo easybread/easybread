@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
+import { ADAPTER_NAME } from '../../../common';
 import { useAdapterConfigured } from '../../redux/features/adapters';
 
 const StyledHeaderNav = styled.nav`
@@ -24,8 +25,8 @@ const StyledLink = styled(NavLink)<NavLinkProps>`
 interface HeaderNavProps {}
 
 export const HeaderNav: FC<HeaderNavProps> = () => {
-  const bambooConfigured = useAdapterConfigured('bamboo');
-  const googleConfigured = useAdapterConfigured('google');
+  const bambooConfigured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
+  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
 
   const showPeople = bambooConfigured || googleConfigured;
 

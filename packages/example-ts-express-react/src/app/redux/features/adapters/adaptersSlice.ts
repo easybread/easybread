@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { ADAPTER_NAME } from '../../../../common';
+
 export interface AdaptersBooleanState {
-  google: boolean;
-  bamboo: boolean;
+  [ADAPTER_NAME.GOOGLE]: boolean;
+  [ADAPTER_NAME.BAMBOO]: boolean;
 }
 
 interface AdaptersLoadingState {
@@ -38,7 +40,7 @@ const initialState: AdaptersState = {
 //  ------------------------------------
 
 interface SetAdapterConfiguredPayload {
-  adapter: 'google' | 'bamboo';
+  adapter: ADAPTER_NAME;
   configured: boolean;
 }
 

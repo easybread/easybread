@@ -1,7 +1,7 @@
 import { GoogleAdapter, GoogleAuthStrategy } from '@easybread/adapter-google';
 import { EasyBreadClient } from '@easybread/core';
 
-import { stateAdapter } from './state-adapter';
+import { stateAdapter } from '../state';
 
 const {
   GOOGLE_CLIENT_ID,

@@ -11,8 +11,8 @@ import {
 
 const adaptersRoutes = Router();
 
-adaptersRoutes.get('/', async (_, res) => {
-  res.json(await AdaptersService.adaptersState());
+adaptersRoutes.get('/', async (req, res) => {
+  res.json(await AdaptersService.adaptersState(req['user'].id));
 });
 
 adaptersRoutes.post(
@@ -21,14 +21,17 @@ adaptersRoutes.post(
     if (isSetupBambooRequest(req)) {
       return handleOperationOutput(
         res,
-        await AdaptersService.createBambooConfiguration(req.body)
+        await AdaptersService.createBambooConfiguration(
+          req['user'].id,
+          req.body
+        )
       );
     }
 
     if (isSetupGoogleRequest(req)) {
       return handleOperationOutput(
         res,
-        await AdaptersService.startGoogleOAuthFlow()
+        await AdaptersService.startGoogleOAuthFlow(req['user'].id)
       );
     }
 
@@ -38,12 +41,11 @@ adaptersRoutes.post(
 
 adaptersRoutes.post(
   '/:adapter/complete-oauth',
-
   async (req: CompleteAuthRequest, res) => {
     if (isCompleteGoogleOAuthRequest(req)) {
       return handleOperationOutput(
         res,
-        await AdaptersService.completeGoogleOAuthFlow(req.body)
+        await AdaptersService.completeGoogleOAuthFlow(req['user'].id, req.body)
       );
     }
 

@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { omit, without } from 'lodash';
 
+import { ADAPTER_NAME } from '../../../../common';
 import {
-  AdapterName,
   createPersonInfoStateIdFromPersonIdPayload,
   createPersonInfoStateIdFromPersonInfo,
   PersonIdPayload,
@@ -12,7 +12,7 @@ import {
 //  ------------------------------------
 
 export type AdaptersBooleanState = {
-  [key in AdapterName]: boolean;
+  [key in ADAPTER_NAME]: boolean;
 };
 
 interface LoadingState {
@@ -66,17 +66,17 @@ const initialState: PeopleState = {
 //  ------------------------------------
 
 interface PeopleLoadingSuccessActionPayload {
-  adapter: AdapterName;
+  adapter: ADAPTER_NAME;
   data: PersonInfo[];
 }
 
 interface PeopleCreateSuccessPayload {
-  adapter: AdapterName;
+  adapter: ADAPTER_NAME;
   data: PersonInfo;
 }
 
 interface PeopleUpdateSuccessPayload {
-  adapter: AdapterName;
+  adapter: ADAPTER_NAME;
   data: PersonInfo;
 }
 
@@ -84,14 +84,14 @@ const peopleSlice = createSlice({
   name: 'people',
   initialState,
   reducers: {
-    peopleLoadingStart(state, action: PayloadAction<AdapterName>) {
+    peopleLoadingStart(state, action: PayloadAction<ADAPTER_NAME>) {
       const adapter = action.payload;
 
       state.loading[adapter] = true;
       state.loaded[adapter] = false;
       state.error[adapter] = false;
     },
-    peopleLoadingError(state, action: PayloadAction<AdapterName>) {
+    peopleLoadingError(state, action: PayloadAction<ADAPTER_NAME>) {
       const adapter = action.payload;
 
       state.loading[adapter] = false;
@@ -117,7 +117,7 @@ const peopleSlice = createSlice({
 
     //  CREATE ------------------------------------
 
-    peopleCreateStart(state, action: PayloadAction<AdapterName>) {
+    peopleCreateStart(state, action: PayloadAction<ADAPTER_NAME>) {
       state.creatingPerson[action.payload] = true;
     },
     peopleCreateSuccess(
@@ -132,7 +132,7 @@ const peopleSlice = createSlice({
 
       state.creatingPerson[adapter] = false;
     },
-    peopleCreateFail(state, action: PayloadAction<AdapterName>) {
+    peopleCreateFail(state, action: PayloadAction<ADAPTER_NAME>) {
       state.creatingPerson[action.payload] = false;
     },
 

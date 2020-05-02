@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ADAPTER_NAME } from '../../../../common';
 import {
   setupGoogle,
   useAdapterConfigured
@@ -11,7 +12,7 @@ interface GoogleAdapterProps {}
 
 export const AdapterGoogle: FC<GoogleAdapterProps> = () => {
   const dispatch = useDispatch();
-  const configured = useAdapterConfigured('google');
+  const configured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
 
   const onSubmit = (): void => {
     dispatch(setupGoogle());

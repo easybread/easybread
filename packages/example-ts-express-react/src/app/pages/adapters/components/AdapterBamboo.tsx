@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ADAPTER_NAME } from '../../../../common';
 import {
   setupBamboo,
   useAdapterConfigured
@@ -19,7 +20,7 @@ export const AdapterBamboo: FC<AdapterBambooProps> = () => {
   const [apiKey, setApiKey] = useState('');
   const [companyName, setCompanyName] = useState('');
 
-  const configured = useAdapterConfigured('bamboo');
+  const configured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
 
   const onSubmit = (): void => {
     dispatch(setupBamboo({ apiKey, companyName }));

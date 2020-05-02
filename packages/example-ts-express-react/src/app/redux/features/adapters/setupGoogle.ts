@@ -1,5 +1,6 @@
 import { GoogleOauth2StartOperation } from '@easybread/adapter-google';
 
+import { ADAPTER_NAME } from '../../../../common';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';
@@ -21,7 +22,7 @@ export const setupGoogle = (): AppThunk => async dispatch => {
         clearInterval(id);
         dispatch(
           adaptersActions.setAdapterConfigured({
-            adapter: 'google',
+            adapter: ADAPTER_NAME.GOOGLE,
             configured: true
           })
         );

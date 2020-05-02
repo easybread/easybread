@@ -1,15 +1,15 @@
 import { PersonSchema } from '@easybread/schemas';
 
-export type AdapterName = 'google' | 'bamboo';
+import { ADAPTER_NAME } from '../../../../common';
 
 export interface PersonInfo {
   person: PersonSchema;
-  provider: AdapterName;
+  provider: ADAPTER_NAME;
 }
 
 export interface PersonIdPayload {
   identifier: string;
-  adapter: AdapterName;
+  adapter: ADAPTER_NAME;
 }
 
 export function getPersonId(person: PersonSchema): string {
@@ -30,7 +30,7 @@ export function createPersonInfoStateIdFromPersonIdPayload({
 }
 
 export function createPersonInfoStateId(
-  adapter: AdapterName,
+  adapter: ADAPTER_NAME,
   personId: string
 ): string {
   return `${adapter}:${personId}`;

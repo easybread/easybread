@@ -1,6 +1,6 @@
 import { GoogleOauth2CompleteOperation } from '@easybread/adapter-google';
 
-import { CompleteGoogleOauth2Dto } from '../../../../dtos';
+import { CompleteGoogleOauth2Dto } from '../../../../api/api.dtos';
 import { postRequest } from '../../../http';
 import { AppThunk } from '../../store';
 import { notifyOperationResult } from '../notifications';

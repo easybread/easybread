@@ -1,4 +1,4 @@
-export type { PeopleRequest } from './PeopleRequest';
-export type { PeopleUpdateRequest } from './PeopleUpdateRequest';
-export type { PeopleCreateRequest } from './PeopleCreateRequest';
-export type { PeopleDeleteRequest } from './PeopleDeleteRequest';
+export type { PeopleRequest } from './people.request';
+export type { PeopleUpdateRequest } from './people-update.request';
+export type { PeopleCreateRequest } from './people-create.request';
+export type { PeopleDeleteRequest } from './people-delete.request';

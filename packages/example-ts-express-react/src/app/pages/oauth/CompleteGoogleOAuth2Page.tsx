@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
-import { GoogleAuthCallbackParamsDto } from '../../../dtos';
+import { GoogleAuthCallbackParamsDto } from '../../../api/api.dtos';
 import { completeGoogleOAuth2 } from '../../redux/features/adapters';
 import { ElementSpinner } from '../../ui-kit/element-kit';
 
@@ -19,7 +19,7 @@ export const CompleteGoogleOAuth2Page: FC<OauthPageProps> = () => {
 
   useEffect(() => {
     dispatch(completeGoogleOAuth2(params));
-  }, []);
+  }, [dispatch, params]);
 
   return (
     <StyledContainer>

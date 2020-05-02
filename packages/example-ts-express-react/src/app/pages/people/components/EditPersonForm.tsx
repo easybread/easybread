@@ -3,8 +3,8 @@ import { capitalize } from 'lodash';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components/macro';
 
+import { ADAPTER_NAME } from '../../../../common';
 import { useConfiguredAdapterNames } from '../../../redux/features/adapters';
-import { AdapterName } from '../../../redux/features/people';
 import {
   FormButton,
   FormButtonsContainer,
@@ -20,7 +20,7 @@ export interface PersonFormData {
   firstName: string;
   lastName: string;
   telephone: string;
-  provider: AdapterName;
+  provider: ADAPTER_NAME;
 }
 
 interface CreatePersonFormProps extends UtilExpandableContentProps {
@@ -72,7 +72,7 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
       firstName,
       lastName,
       telephone,
-      provider: provider as AdapterName
+      provider: provider as ADAPTER_NAME
     });
 
     resetForm();

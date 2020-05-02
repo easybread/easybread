@@ -9,6 +9,7 @@ import {
   SetupBasicAuthOperation
 } from '@easybread/operations';
 
+import { ADAPTER_NAME } from '../../common';
 import { bambooHrClient, googleClient, stateAdapter } from '../shared';
 import {
   AdaptersStateDto,
@@ -18,28 +19,30 @@ import {
 } from './dtos';
 
 export class AdaptersService {
-  static async adaptersState(): Promise<AdaptersStateDto> {
+  static async adaptersState(breadId: string): Promise<AdaptersStateDto> {
     const google = await stateAdapter.read<AdapterStateDto>(
-      'adapters:state:google'
+      this.createAdapterStateKey(breadId, ADAPTER_NAME.GOOGLE)
     );
 
     const bamboo = await stateAdapter.read<AdapterStateDto>(
-      'adapters:state:bamboo'
+      this.createAdapterStateKey(breadId, ADAPTER_NAME.BAMBOO)
     );
 
     return { google, bamboo };
   }
 
   static async setConfigured(
-    adapter: 'google' | 'bamboo'
+    breadId: string,
+    adapter: ADAPTER_NAME
   ): Promise<AdapterStateDto> {
     return await stateAdapter.write<AdapterStateDto>(
-      `adapters:state:${adapter}`,
+      this.createAdapterStateKey(breadId, adapter),
       { configured: true }
     );
   }
 
   static async createBambooConfiguration(
+    breadId: string,
     dto: SetupBambooDto
   ): Promise<SetupBasicAuthOperation<BambooBasicAuthPayload>['output']> {
     const { apiKey, companyName } = dto;
@@ -47,23 +50,23 @@ export class AdaptersService {
       SetupBasicAuthOperation<BambooBasicAuthPayload>
     >({
       name: BreadOperationName.SETUP_BASIC_AUTH,
-      breadId: '1',
+      breadId,
       payload: { apiKey, companyName }
     });
 
     if (result.rawPayload.success) {
-      await this.setConfigured('bamboo');
+      await this.setConfigured(breadId, ADAPTER_NAME.BAMBOO);
     }
 
     return result;
   }
 
-  static async startGoogleOAuthFlow(): Promise<
-    GoogleOauth2StartOperation['output']
-  > {
+  static async startGoogleOAuthFlow(
+    breadId: string
+  ): Promise<GoogleOauth2StartOperation['output']> {
     return googleClient.invoke<GoogleOauth2StartOperation>({
       name: GoogleOperationName.AUTH_FLOW_START,
-      breadId: '1',
+      breadId,
       payload: {
         prompt: ['consent'],
         includeGrantedScopes: true,
@@ -76,20 +79,28 @@ export class AdaptersService {
   }
 
   static async completeGoogleOAuthFlow(
+    breadId: string,
     dto: CompleteGoogleOauth2Dto
   ): Promise<GoogleOauth2CompleteOperation['output']> {
     const { code } = dto;
 
     const output = await googleClient.invoke<GoogleOauth2CompleteOperation>({
       name: GoogleOperationName.AUTH_FLOW_COMPLETE,
-      breadId: '1',
+      breadId,
       payload: { code }
     });
 
     if (output.rawPayload.success) {
-      await this.setConfigured('google');
+      await this.setConfigured(breadId, ADAPTER_NAME.GOOGLE);
     }
 
     return output;
+  }
+
+  private static createAdapterStateKey(
+    breadId: string,
+    adapter: ADAPTER_NAME
+  ): string {
+    return `${breadId}:adapters:state:${adapter}`;
   }
 }

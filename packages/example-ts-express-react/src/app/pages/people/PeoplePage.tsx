@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { ADAPTER_NAME } from '../../../common';
 import {
   useAdapterConfigured,
   useAdaptersError,
@@ -21,8 +22,8 @@ export const PeoplePage: FC<OperationsPageProps> = () => {
   const adaptersLoading = useAdaptersLoading();
   const adaptersInitialized = useAdaptersInitialized();
 
-  const bambooConfigured = useAdapterConfigured('bamboo');
-  const googleConfigured = useAdapterConfigured('google');
+  const bambooConfigured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
+  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
 
   if (loading) {
     return <LayoutContentWrapper>loading</LayoutContentWrapper>;

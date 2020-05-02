@@ -1,21 +1,8 @@
-import { BambooEmployeesDirectory } from '@easybread/adapter-bamboo-hr';
-import {
-  GoogleOperationName,
-  GooglePeopleCreateOperation,
-  GooglePeopleDeleteOperation,
-  GooglePeopleSearchOperation,
-  GooglePeopleUpdateOperation
-} from '@easybread/adapter-google';
-import { NotImplementedException } from '@easybread/core';
-import {
-  BreadOperationName,
-  EmployeeCreateOperation,
-  EmployeeSearchOperation,
-  EmployeeUpdateOperation
-} from '@easybread/operations';
 import { Router } from 'express';
 
-import { bambooHrClient, googleClient } from '../shared';
+import { ADAPTER_NAME } from '../../common';
+import { handleNotImplemented, handleOperationOutput } from '../shared';
+import { PeopleService } from './people.service';
 import {
   PeopleCreateRequest,
   PeopleRequest,
@@ -25,124 +12,84 @@ import {
 const peopleRoutes = Router();
 
 peopleRoutes.get('/:adapter', async (req: PeopleRequest, res) => {
-  const { adapter } = req.params;
+  const {
+    params: { adapter }
+  } = req;
 
   switch (adapter) {
-    case 'google':
-      res.json(
-        await googleClient.invoke<GooglePeopleSearchOperation>({
-          name: GoogleOperationName.PEOPLE_SEARCH,
-          breadId: '1'
-        })
+    case ADAPTER_NAME.GOOGLE:
+      return handleOperationOutput(
+        res,
+        await PeopleService.searchGoogle(req['user'].id)
       );
-
-      break;
-
-    case 'bamboo':
-      res.json(
-        await bambooHrClient.invoke<
-          EmployeeSearchOperation<BambooEmployeesDirectory>
-        >({
-          name: BreadOperationName.EMPLOYEE_SEARCH,
-          breadId: '1'
-        })
+    case ADAPTER_NAME.BAMBOO:
+      return handleOperationOutput(
+        res,
+        await PeopleService.searchBamboo(req['user'].id)
       );
-
-      break;
-
     default:
-      res.status(501);
-      res.json(new NotImplementedException());
-      break;
+      return handleNotImplemented(res);
   }
 });
 
 peopleRoutes.post('/:adapter', async (req: PeopleCreateRequest, res) => {
-  const { adapter } = req.params;
+  const {
+    params: { adapter },
+    body
+  } = req;
 
   switch (adapter) {
-    case 'google':
-      res.json(
-        await googleClient.invoke<GooglePeopleCreateOperation>({
-          name: GoogleOperationName.PEOPLE_CREATE,
-          breadId: '1',
-          payload: req.body
-        })
+    case ADAPTER_NAME.GOOGLE:
+      return handleOperationOutput(
+        res,
+        await PeopleService.createGoogleContact(req['user'].id, body)
       );
-
-      break;
-
-    case 'bamboo':
-      res.json(
-        await bambooHrClient.invoke<EmployeeCreateOperation>({
-          name: BreadOperationName.EMPLOYEE_CREATE,
-          breadId: '1',
-          payload: req.body
-        })
+    case ADAPTER_NAME.BAMBOO:
+      return handleOperationOutput(
+        res,
+        await PeopleService.createBambooEmployee(req['user'].id, body)
       );
-
-      break;
-
     default:
-      res.status(501);
-      res.json(new NotImplementedException());
-      break;
+      return handleNotImplemented(res);
   }
 });
 
 peopleRoutes.put('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
-  const { adapter } = req.params;
+  const {
+    params: { adapter },
+    body
+  } = req;
 
   switch (adapter) {
-    case 'google':
-      res.json(
-        await googleClient.invoke<GooglePeopleUpdateOperation>({
-          name: GoogleOperationName.PEOPLE_UPDATE,
-          breadId: '1',
-          payload: req.body
-        })
+    case ADAPTER_NAME.GOOGLE:
+      return handleOperationOutput(
+        res,
+        await PeopleService.updateGoogleContact(req['user'].id, body)
       );
-
-      break;
-
-    case 'bamboo':
-      res.json(
-        await bambooHrClient.invoke<EmployeeUpdateOperation>({
-          name: BreadOperationName.EMPLOYEE_UPDATE,
-          breadId: '1',
-          payload: req.body
-        })
+    case ADAPTER_NAME.BAMBOO:
+      return handleOperationOutput(
+        res,
+        await PeopleService.updateBambooEmployee(req['user'].id, body)
       );
-
-      break;
-
     default:
-      res.status(501);
-      res.json(new NotImplementedException());
-      break;
+      return handleNotImplemented(res);
   }
 });
 
 peopleRoutes.delete('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
-  const { adapter, id } = req.params;
+  const {
+    params: { adapter, id }
+  } = req;
 
   switch (adapter) {
-    case 'google':
-      res.json(
-        await googleClient.invoke<GooglePeopleDeleteOperation>({
-          name: GoogleOperationName.PEOPLE_DELETE,
-          breadId: '1',
-          payload: { '@type': 'Person', identifier: id }
-        })
+    case ADAPTER_NAME.GOOGLE:
+      return handleOperationOutput(
+        res,
+        await PeopleService.deleteGoogleContact(req['user'].id, id)
       );
 
-      break;
-
-    case 'bamboo':
     default:
-      res.status(501);
-      res.json(new NotImplementedException());
-      break;
+      return handleNotImplemented(res);
   }
 });
 

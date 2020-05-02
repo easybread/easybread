@@ -1,6 +1,8 @@
 import { Request } from 'express';
 
+import { ADAPTER_NAME } from '../../../common';
+
 export type PeopleDeleteRequest = Request<
-  { adapter: 'google' | 'bamboo'; id: string },
+  { adapter: ADAPTER_NAME; id: string },
   { id: string }
 >;
