@@ -1,20 +1,13 @@
-import { BambooBasicAuthPayload } from '@easybread/adapter-bamboo-hr';
-import {
-  GoogleOauth2CompleteOperation,
-  GoogleOauth2StartOperation,
-  GoogleOperationName
-} from '@easybread/adapter-google';
-import {
-  BreadOperationName,
-  SetupBasicAuthOperation
-} from '@easybread/operations';
 import { Router } from 'express';
 
-import { SetupBambooDto } from '../../dtos';
-import { bambooHrClient, googleClient } from '../shared';
+import { handleNotImplemented, handleOperationOutput } from '../shared';
 import { AdaptersService } from './adapters.service';
-import { CompleteAuthRequest } from './CompleteAuthRequest';
-import { CreateConfigurationRequest } from './CreateConfigurationRequest';
+import { CompleteAuthRequest, CreateConfigurationRequest } from './requests';
+import { isCompleteGoogleOAuthRequest } from './requests/complete-auth.request';
+import {
+  isSetupBambooRequest,
+  isSetupGoogleRequest
+} from './requests/create-configuration.request';
 
 const adaptersRoutes = Router();
 
@@ -25,49 +18,21 @@ adaptersRoutes.get('/', async (_, res) => {
 adaptersRoutes.post(
   '/:adapter/configurations',
   async (req: CreateConfigurationRequest, res) => {
-    if (req.params.adapter === 'bamboo') {
-      const { apiKey, companyName } = req.body as SetupBambooDto;
-      const result = await bambooHrClient.invoke<
-        SetupBasicAuthOperation<BambooBasicAuthPayload>
-      >({
-        name: BreadOperationName.SETUP_BASIC_AUTH,
-        breadId: '1',
-        payload: { apiKey, companyName }
-      });
-
-      await AdaptersService.setConfigured('bamboo');
-
-      res.json(result);
-
-      return;
+    if (isSetupBambooRequest(req)) {
+      return handleOperationOutput(
+        res,
+        await AdaptersService.createBambooConfiguration(req.body)
+      );
     }
 
-    if (req.params.adapter === 'google') {
-      const result = await googleClient.invoke<GoogleOauth2StartOperation>({
-        name: GoogleOperationName.AUTH_FLOW_START,
-        breadId: '1',
-        payload: {
-          prompt: ['consent'],
-          includeGrantedScopes: true,
-          scope: [
-            'https://www.google.com/m8/feeds/',
-            'https://www.googleapis.com/auth/contacts.readonly'
-          ]
-        }
-      });
-
-      if (!result.rawPayload.success) {
-        res.status(500);
-        res.json(result);
-        return;
-      }
-
-      res.json(result);
-      return;
+    if (isSetupGoogleRequest(req)) {
+      return handleOperationOutput(
+        res,
+        await AdaptersService.startGoogleOAuthFlow()
+      );
     }
 
-    res.status(404);
-    res.send('Not found');
+    handleNotImplemented(res);
   }
 );
 
@@ -75,22 +40,14 @@ adaptersRoutes.post(
   '/:adapter/complete-oauth',
 
   async (req: CompleteAuthRequest, res) => {
-    const { code } = req.body;
-    const result = await googleClient.invoke<GoogleOauth2CompleteOperation>({
-      name: GoogleOperationName.AUTH_FLOW_COMPLETE,
-      breadId: '1',
-      payload: { code }
-    });
-
-    if (!result.rawPayload.success) {
-      res.status(500);
-      res.json(result);
-      return;
+    if (isCompleteGoogleOAuthRequest(req)) {
+      return handleOperationOutput(
+        res,
+        await AdaptersService.completeGoogleOAuthFlow(req.body)
+      );
     }
 
-    await AdaptersService.setConfigured('google');
-
-    res.json(result);
+    handleNotImplemented(res);
   }
 );
 

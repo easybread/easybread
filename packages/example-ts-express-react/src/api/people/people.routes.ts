@@ -51,7 +51,9 @@ peopleRoutes.get('/:adapter', async (req: PeopleRequest, res) => {
       break;
 
     default:
-      throw new Error('not implemented');
+      res.status(501);
+      res.json(new NotImplementedException());
+      break;
   }
 });
 
@@ -82,7 +84,9 @@ peopleRoutes.post('/:adapter', async (req: PeopleCreateRequest, res) => {
       break;
 
     default:
-      throw new Error('not implemented');
+      res.status(501);
+      res.json(new NotImplementedException());
+      break;
   }
 });
 
@@ -113,7 +117,9 @@ peopleRoutes.put('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
       break;
 
     default:
-      throw new Error('not implemented');
+      res.status(501);
+      res.json(new NotImplementedException());
+      break;
   }
 });
 
