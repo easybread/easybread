@@ -1,0 +1,11 @@
+export { GdataEmail } from './gdata.email.interface';
+export { GdataText } from './gdata.text.interface';
+export { GdataName } from './gdata.name.interface';
+export { GcontactGroupMembershipInfo } from './gcontact.group-membership-info.interface';
+export { GdataOrganization } from './gdata.organization.interface';
+export { GdataBoolean } from './gdata.boolean.interface';
+export { GdataExtendedProperty } from './gdata.extended-property.interface';
+export { GContactWebsite } from './gcontact.website.interface';
+export { GdataPhoneNumber } from './gdata.phone-number.interface';
+export { GdataCategory } from './gdata.category.interface';
+export { GdataLink } from './gdata.link.interface';
