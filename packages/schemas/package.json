@@ -1,6 +1,6 @@
 {
   "name": "@easybread/schemas",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": {
     "name": "Easybread",
@@ -66,7 +66,6 @@
       "yarn lint:fix"
     ]
   },
-  "dependencies": {},
   "devDependencies": {
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
