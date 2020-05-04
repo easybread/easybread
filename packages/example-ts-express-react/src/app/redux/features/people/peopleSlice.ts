@@ -44,13 +44,19 @@ interface DeletePersonState {
   deletingIds: string[];
 }
 
+interface SearchState {
+  searching: boolean;
+  query: string;
+}
+
 export type PeopleState = LoadingState &
   LoadedState &
   ErrorState &
   DataState &
   CreatePersonState &
   UpdatePersonState &
-  DeletePersonState;
+  DeletePersonState &
+  SearchState;
 
 const initialState: PeopleState = {
   loading: { google: false, bamboo: false },
@@ -60,15 +66,12 @@ const initialState: PeopleState = {
   byId: {},
   ids: [],
   deletingIds: [],
-  updatingIds: []
+  updatingIds: [],
+  searching: false,
+  query: ''
 };
 
 //  ------------------------------------
-
-interface PeopleLoadingSuccessActionPayload {
-  adapter: ADAPTER_NAME;
-  data: PersonInfo[];
-}
 
 interface PeopleCreateSuccessPayload {
   adapter: ADAPTER_NAME;
@@ -80,38 +83,44 @@ interface PeopleUpdateSuccessPayload {
   data: PersonInfo;
 }
 
+interface PeopleSearchStartPayload {
+  query: string;
+}
+
+interface PeopleSearchStopPayload {
+  query: string;
+}
+
+interface PeopleSearchSuccessPayload {
+  query: string;
+  data: PersonInfo[];
+}
+
 const peopleSlice = createSlice({
   name: 'people',
   initialState,
   reducers: {
-    peopleLoadingStart(state, action: PayloadAction<ADAPTER_NAME>) {
-      const adapter = action.payload;
-
-      state.loading[adapter] = true;
-      state.loaded[adapter] = false;
-      state.error[adapter] = false;
+    searchStart(state, action: PayloadAction<PeopleSearchStartPayload>) {
+      state.searching = true;
+      state.query = action.payload.query;
     },
-    peopleLoadingError(state, action: PayloadAction<ADAPTER_NAME>) {
-      const adapter = action.payload;
-
-      state.loading[adapter] = false;
-      state.loaded[adapter] = false;
-      state.error[adapter] = true;
+    searchStop(state, action: PayloadAction<PeopleSearchStopPayload>) {
+      if (action.payload.query === state.query) {
+        state.searching = false;
+      }
     },
-    peopleLoadingSuccess(
-      state,
-      action: PayloadAction<PeopleLoadingSuccessActionPayload>
-    ) {
-      const { adapter, data } = action.payload;
+    searchComplete(state, action: PayloadAction<PeopleSearchSuccessPayload>) {
+      const { data, query } = action.payload;
 
-      state.loading[adapter] = false;
-      state.loaded[adapter] = true;
-      state.error[adapter] = false;
+      if (state.query !== query) return;
 
-      data.forEach(info => {
-        const id = createPersonInfoStateIdFromPersonInfo(info);
-        state.byId[id] = info;
-        state.ids.unshift(id);
+      state.searching = false;
+      state.ids = [];
+
+      data.forEach(personInfo => {
+        const id = createPersonInfoStateIdFromPersonInfo(personInfo);
+        state.byId[id] = personInfo;
+        state.ids.push(id);
       });
     },
 

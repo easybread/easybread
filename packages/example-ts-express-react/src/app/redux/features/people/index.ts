@@ -2,7 +2,7 @@ export * from './peopleCommon';
 export * from './peopleSlice';
 export * from './peopleHooks';
 
-export { peopleLoad } from './peopleLoad';
+export { peopleSearch } from './peopleSearch';
 export { peopleCreate } from './peopleCreate';
 export { peopleUpdate } from './peopleUpdate';
 export { peopleDelete } from './peopleDelete';

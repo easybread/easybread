@@ -6,3 +6,4 @@ export { FormFieldsContainer } from './FormFieldsContainer';
 export { FormButtonsContainer } from './FormButtonsContainer';
 export { FormLabeledSelect } from './FormLabeledSelect';
 export { FormLabel } from './FormLabel';
+export { FormInput } from './FormInput';

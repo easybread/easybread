@@ -4,7 +4,7 @@ import { ADAPTER_NAME } from '../../../../common';
 
 export interface PersonInfo {
   person: PersonSchema;
-  provider: ADAPTER_NAME;
+  adapter: ADAPTER_NAME;
 }
 
 export interface PersonIdPayload {
@@ -19,7 +19,7 @@ export function getPersonId(person: PersonSchema): string {
 export function createPersonInfoStateIdFromPersonInfo(
   info: PersonInfo
 ): string {
-  return createPersonInfoStateId(info.provider, getPersonId(info.person));
+  return createPersonInfoStateId(info.adapter, getPersonId(info.person));
 }
 
 export function createPersonInfoStateIdFromPersonIdPayload({

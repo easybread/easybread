@@ -1,1 +1,1 @@
-export const GOOGLE_PROVIDER = 'google';
+export const GOOGLE_PROVIDER_NAME = 'google';

@@ -1,7 +1,7 @@
 import { BreadAuthStrategy, BreadStateAdapter } from '@easybread/core';
 import { AxiosRequestConfig } from 'axios';
 
-import { BREEZY_PROVIDER } from './breezy.constants';
+import { BREEZY_PROVIDER_NAME } from './breezy.constants';
 import {
   BreezyAuthenticatePayload,
   BreezyAuthenticateResponse,
@@ -10,7 +10,7 @@ import {
 
 export class BreezyAuthStrategy extends BreadAuthStrategy<BreezyAuthStateData> {
   constructor(state: BreadStateAdapter) {
-    super(state, BREEZY_PROVIDER);
+    super(state, BREEZY_PROVIDER_NAME);
   }
 
   async authenticate(

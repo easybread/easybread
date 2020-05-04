@@ -1,13 +1,13 @@
 import { BreadBasicAuthStrategy, BreadStateAdapter } from '@easybread/core';
 
-import { BAMBOO_HR_PROVIDER } from './bamboo-hr.constants';
+import { BAMBOO_HR_PROVIDER_NAME } from './bamboo-hr.constants';
 import { BambooAuthStateData, BambooBasicAuthPayload } from './interfaces';
 
 export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
   BambooAuthStateData
 > {
   constructor(state: BreadStateAdapter) {
-    super(state, BAMBOO_HR_PROVIDER);
+    super(state, BAMBOO_HR_PROVIDER_NAME);
   }
 
   async authenticate(

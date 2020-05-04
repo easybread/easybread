@@ -54,9 +54,10 @@ export const GlobalStyles: GlobalStyleComponent<
     line-height: 1.25;
     border-radius: 0;
     background: transparent;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem 0.6rem;
     color: var(--text-main-color-light);
     border: 2px solid #edf2f7;
+    height: 40px;
 
     &:focus {
       outline: none;

@@ -12,13 +12,15 @@ export const GooglePeopleSearchHandler: BreadOperationHandler<
 > = {
   name: GoogleOperationName.PEOPLE_SEARCH,
 
-  async handle(_input, context) {
-    const dataMapper = new GoogleContactMapper();
+  async handle(input, context) {
+    const { query = '' } = input.params;
+
+    const contactMapper = new GoogleContactMapper();
 
     const result = await context.httpRequest<GoogleContactsFeedResponse>({
       method: 'GET',
       url: `https://www.google.com/m8/feeds/contacts/default/full`,
-      params: { alt: 'json' },
+      params: { alt: 'json', maxResults: 20, q: query },
       headers: {
         'GData-Version': '3.0',
         accept: 'application/json'
@@ -27,7 +29,9 @@ export const GooglePeopleSearchHandler: BreadOperationHandler<
 
     return {
       name: GoogleOperationName.PEOPLE_SEARCH,
-      payload: result.data.feed.entry.map(entry => dataMapper.toSchema(entry)),
+      payload: result.data.feed.entry.map(entry =>
+        contactMapper.toSchema(entry)
+      ),
       rawPayload: { success: true, data: result.data }
     };
   }

@@ -1,70 +1,40 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
-import { ADAPTER_NAME } from '../../../../common';
 import { RootState } from '../../../redux';
-import { useAdapterConfigured } from '../../../redux/features/adapters';
-import {
-  AdaptersBooleanState,
-  peopleLoad
-} from '../../../redux/features/people';
-import { LoadButton } from './LoadButton';
+import { peopleSearch } from '../../../redux/features/people';
+import { PeopleSearchField } from './PeopleSearchField';
 
 interface PeopleControlsProps {}
 
 export const PeopleControls: FC<PeopleControlsProps> = () => {
-  const bambooConfigured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
-  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
-
   const dispatch = useDispatch();
 
-  const loaded = useSelector<RootState, AdaptersBooleanState>(
-    state => state.people.loaded
-  );
-  const loading = useSelector<RootState, AdaptersBooleanState>(
-    state => state.people.loading
+  const searching = useSelector<RootState, boolean>(s => s.people.searching);
+  const query = useSelector<RootState, string>(s => s.people.query);
+
+  const search = useCallback(
+    (value: string) => {
+      if (value !== query || value === '') dispatch(peopleSearch(value));
+    },
+    [dispatch, query]
   );
 
-  const fetchGoogle = (): void => {
-    dispatch(peopleLoad(ADAPTER_NAME.GOOGLE));
-  };
-  const fetchBamboo = (): void => {
-    dispatch(peopleLoad(ADAPTER_NAME.BAMBOO));
-  };
+  useEffect(() => {
+    dispatch(peopleSearch(query));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledPeopleControls>
       <StyledSectionHeading>
-        <strong>Load From</strong>
+        <strong>Preview Contacts</strong>
       </StyledSectionHeading>
-      <StyledControlsContainer>
-        <LoadButton
-          disabled={!googleConfigured}
-          busy={loading.google}
-          loaded={loaded.google}
-          onClick={fetchGoogle}
-        >
-          Google
-        </LoadButton>
-        <LoadButton
-          disabled={!bambooConfigured}
-          busy={loading.bamboo}
-          loaded={loaded.bamboo}
-          onClick={fetchBamboo}
-        >
-          BambooHR
-        </LoadButton>
-      </StyledControlsContainer>
+      <PeopleSearchField searching={searching} query={query} search={search} />
     </StyledPeopleControls>
   );
 };
-
-const StyledControlsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
 
 const StyledSectionHeading = styled.div`
   display: flex;

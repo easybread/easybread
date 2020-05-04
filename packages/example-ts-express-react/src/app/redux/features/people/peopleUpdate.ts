@@ -4,7 +4,7 @@ import { PeopleCreateResponseDto } from '../../../../api/api.dtos';
 import { ADAPTER_NAME } from '../../../../common';
 import { putRequest } from '../../../http';
 import { AppThunk } from '../../store';
-import { notifyOperationResult } from '../notifications';
+import { notifyError, notifyOperationResult } from '../notifications';
 import { peopleActions } from './peopleSlice';
 
 export const peopleUpdate = (
@@ -32,7 +32,7 @@ export const peopleUpdate = (
         peopleActions.peopleUpdateSuccess({
           data: {
             person: result.payload,
-            provider: adapter
+            adapter
           },
           adapter
         })
@@ -41,6 +41,7 @@ export const peopleUpdate = (
       dispatch(peopleActions.peopleUpdateFail({ adapter, identifier }));
     }
   } catch (e) {
+    dispatch(notifyError(`Can't update contact`, e.toString()));
     dispatch(peopleActions.peopleUpdateFail({ adapter, identifier }));
   }
 };
