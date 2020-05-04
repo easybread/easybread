@@ -1,7 +1,7 @@
 import { BreadServiceAdapter } from '@easybread/core';
 
 import { GoogleAuthStrategy } from './google.auth-strategy';
-import { GOOGLE_PROVIDER } from './google.constants';
+import { GOOGLE_PROVIDER_NAME } from './google.constants';
 import { GoogleOperation } from './google.operation';
 import {
   GoogleOauth2CompleteHandler,
@@ -16,7 +16,7 @@ export class GoogleAdapter extends BreadServiceAdapter<
   GoogleOperation,
   GoogleAuthStrategy
 > {
-  provider = GOOGLE_PROVIDER;
+  provider = GOOGLE_PROVIDER_NAME;
 
   constructor() {
     super();

@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 
 import { apiRouter } from './api.router';
-import { authMiddleware } from './middlewares';
+import { authMiddleware } from './shared';
 
 const api: express.Application = express();
 

@@ -20,22 +20,26 @@ export class PeopleService {
   // SEARCH ------------------------------------
 
   static searchGoogle(
-    breadId: string
+    breadId: string,
+    query?: string
   ): Promise<GooglePeopleSearchOperation['output']> {
     return googleClient.invoke<GooglePeopleSearchOperation>({
       name: GoogleOperationName.PEOPLE_SEARCH,
-      breadId
+      breadId,
+      params: { query }
     });
   }
 
   static searchBamboo(
-    breadId: string
+    breadId: string,
+    query?: string
   ): Promise<EmployeeSearchOperation<BambooEmployeesDirectory>['output']> {
     return bambooHrClient.invoke<
       EmployeeSearchOperation<BambooEmployeesDirectory>
     >({
       name: BreadOperationName.EMPLOYEE_SEARCH,
-      breadId
+      breadId,
+      params: { query }
     });
   }
 

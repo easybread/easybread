@@ -204,12 +204,13 @@ describe('Google Plugin', () => {
         });
       }
 
-      async function invokePeopleSearch(): Promise<
-        GooglePeopleSearchOperation['output']
-      > {
+      async function invokePeopleSearch(
+        query?: string
+      ): Promise<GooglePeopleSearchOperation['output']> {
         return client.invoke<GooglePeopleSearchOperation>({
           breadId: USER_ID,
-          name: GoogleOperationName.PEOPLE_SEARCH
+          name: GoogleOperationName.PEOPLE_SEARCH,
+          params: { query }
         });
       }
 
@@ -223,7 +224,21 @@ describe('Google Plugin', () => {
         expect(axiosMock.request).toHaveBeenCalledWith({
           method: 'GET',
           url: 'https://www.google.com/m8/feeds/contacts/default/full',
-          params: { alt: 'json' },
+          params: { alt: 'json', maxResults: 20, q: '' },
+          headers: {
+            'GData-Version': '3.0',
+            accept: 'application/json',
+            authorization: 'Bearer access-token'
+          }
+        });
+      });
+
+      it(`should use call the api with query string if provided`, async () => {
+        await invokePeopleSearch('test');
+        expect(axiosMock.request).toHaveBeenCalledWith({
+          method: 'GET',
+          url: 'https://www.google.com/m8/feeds/contacts/default/full',
+          params: { alt: 'json', maxResults: 20, q: 'test' },
           headers: {
             'GData-Version': '3.0',
             accept: 'application/json',
@@ -341,7 +356,7 @@ describe('Google Plugin', () => {
               accept: 'application/json',
               authorization: 'Bearer new-access-token'
             },
-            params: { alt: 'json' },
+            params: { alt: 'json', maxResults: 20, q: '' },
             method: 'GET',
             url: 'https://www.google.com/m8/feeds/contacts/default/full'
           }

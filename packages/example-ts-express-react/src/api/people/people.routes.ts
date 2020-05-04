@@ -1,15 +1,41 @@
 import { Router } from 'express';
 
 import { ADAPTER_NAME } from '../../common';
-import { handleNotImplemented, handleOperationOutput } from '../shared';
+import { AdaptersService } from '../adapters/adapters.service';
+import {
+  getBreadIdFromRequest,
+  handleNotImplemented,
+  handleOperationOutput
+} from '../shared';
+import { PeopleSearchResponseDto, PeopleSearchResultsItemDto } from './dtos';
 import { PeopleService } from './people.service';
 import {
   PeopleCreateRequest,
   PeopleRequest,
+  PeopleSearchRequest,
   PeopleUpdateRequest
 } from './requests';
 
 const peopleRoutes = Router();
+
+peopleRoutes.get('/search', async (req: PeopleSearchRequest, res) => {
+  const { query } = req.query;
+
+  const breadId = getBreadIdFromRequest(req);
+  const adaptersState = await AdaptersService.adaptersState(breadId);
+  const outputsPromises: Promise<PeopleSearchResultsItemDto>[] = [];
+
+  if (adaptersState.google?.configured) {
+    outputsPromises.push(PeopleService.searchGoogle(breadId, query));
+  }
+  if (adaptersState.bamboo?.configured) {
+    outputsPromises.push(PeopleService.searchBamboo(breadId, query));
+  }
+
+  const outputs: PeopleSearchResponseDto = await Promise.all(outputsPromises);
+
+  res.json(outputs.filter(item => item.rawPayload.success));
+});
 
 peopleRoutes.get('/:adapter', async (req: PeopleRequest, res) => {
   const {

@@ -1,6 +1,7 @@
+import { ADAPTER_NAME } from '../../../common';
 import { AdapterStateDto } from './adapter-state.dto';
 
 export interface AdaptersStateDto {
-  google: AdapterStateDto | undefined;
-  bamboo: AdapterStateDto | undefined;
+  [ADAPTER_NAME.GOOGLE]: AdapterStateDto | undefined;
+  [ADAPTER_NAME.BAMBOO]: AdapterStateDto | undefined;
 }

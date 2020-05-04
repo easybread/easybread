@@ -2,7 +2,7 @@ import { BreadOperationHandler, ServiceException } from '@easybread/core';
 
 import { GoogleContactMapper } from '../data-mappers';
 import { GoogleAuthStrategy } from '../google.auth-strategy';
-import { GOOGLE_PROVIDER } from '../google.constants';
+import { GOOGLE_PROVIDER_NAME } from '../google.constants';
 import { GoogleOperationName } from '../google.operation-name';
 import { GoogleContactsFeedEntryCreateResponse } from '../interfaces';
 import { GooglePeopleUpdateOperation } from '../operations';
@@ -15,7 +15,7 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
   name: GoogleOperationName.PEOPLE_UPDATE,
   async handle(input, context) {
     if (!input.payload.identifier) {
-      throw new ServiceException(GOOGLE_PROVIDER, 'identifier is empty');
+      throw new ServiceException(GOOGLE_PROVIDER_NAME, 'identifier is empty');
     }
 
     const personChange = input.payload;

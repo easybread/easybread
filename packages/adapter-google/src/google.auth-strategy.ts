@@ -1,7 +1,7 @@
 import { BreadOAuth2AuthStrategy, BreadStateAdapter } from '@easybread/core';
 import queryString from 'querystring';
 
-import { GOOGLE_PROVIDER } from './google.constants';
+import { GOOGLE_PROVIDER_NAME } from './google.constants';
 import {
   GoogleAccessTokenCreateRequestData,
   GoogleAccessTokenCreateResponse,
@@ -20,7 +20,7 @@ export class GoogleAuthStrategy extends BreadOAuth2AuthStrategy<
   private readonly options: GoogleAuthStrategyOptions;
 
   constructor(state: BreadStateAdapter, options: GoogleAuthStrategyOptions) {
-    super(state, GOOGLE_PROVIDER);
+    super(state, GOOGLE_PROVIDER_NAME);
     this.options = options;
   }
 

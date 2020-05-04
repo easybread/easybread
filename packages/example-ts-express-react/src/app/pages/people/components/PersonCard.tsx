@@ -27,7 +27,7 @@ const COLORS = {
 };
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {
-  const { provider } = info;
+  const { adapter } = info;
   const person = info.person as PersonSchema;
 
   const {
@@ -53,11 +53,11 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
   const cancelDelete = useCallback(() => setDeleteConfirmOpened(false), []);
   const confirmDelete = useCallback(() => {
     setDeleteConfirmOpened(false);
-    dispatchPersonDelete(provider, {
+    dispatchPersonDelete(adapter, {
       '@type': 'Person',
       identifier
     });
-  }, [dispatchPersonDelete, provider, identifier]);
+  }, [dispatchPersonDelete, adapter, identifier]);
 
   // edit stuff
   const dispatchPersonUpdate = useDispatchPersonUpdate();
@@ -66,7 +66,7 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
   const submitEdit = useCallback(
     (formData: PersonFormData) => {
       const { firstName, telephone, lastName, email } = formData;
-      dispatchPersonUpdate(provider, {
+      dispatchPersonUpdate(adapter, {
         '@type': 'Person',
         identifier: identifier,
         givenName: firstName,
@@ -75,11 +75,11 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
         telephone
       });
     },
-    [identifier, dispatchPersonUpdate, provider]
+    [identifier, dispatchPersonUpdate, adapter]
   );
 
   return (
-    <ListItemContainer color={COLORS[provider]}>
+    <ListItemContainer color={COLORS[adapter]}>
       {!editMode && (
         <>
           <CardImage image={image as string} />

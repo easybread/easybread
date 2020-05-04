@@ -1,1 +1,1 @@
-export const BREEZY_PROVIDER = 'breezy';
+export const BREEZY_PROVIDER_NAME = 'breezy';

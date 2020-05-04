@@ -79,12 +79,13 @@ describe('usage', () => {
       );
     });
 
-    function invokeEmployeeSearch(): Promise<
-      EmployeeSearchOperation<BambooEmployeesDirectory>['output']
-    > {
+    function invokeEmployeeSearch(
+      query?: string
+    ): Promise<EmployeeSearchOperation<BambooEmployeesDirectory>['output']> {
       return client.invoke<EmployeeSearchOperation<BambooEmployeesDirectory>>({
         breadId: BREAD_ID,
-        name: BreadOperationName.EMPLOYEE_SEARCH
+        name: BreadOperationName.EMPLOYEE_SEARCH,
+        params: { query }
       });
     }
 
@@ -104,7 +105,6 @@ describe('usage', () => {
     it(`should have correct output`, async () => {
       const employees = await invokeEmployeeSearch();
       expect(employees).toEqual({
-        provider: bambooHrAdapter.provider,
         name: 'BREAD/EMPLOYEE/SEARCH',
         payload: [
           {
@@ -120,11 +120,320 @@ describe('usage', () => {
             name: 'Test Employee',
             telephone: '+71231231212',
             workLocation: 'Remote'
+          },
+          {
+            '@type': 'Person',
+            email: 'test2@mail.ru',
+            familyName: 'Employee2',
+            gender: 'Male',
+            givenName: 'Test',
+            identifier: '113',
+            image:
+              'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+            jobTitle: 'JavaScript Developer',
+            name: 'Test Employee2',
+            telephone: '+71231231213',
+            workLocation: 'Remote'
           }
         ],
+        provider: 'bamboo',
         rawPayload: {
-          success: true,
-          data: getEmployeesDirMockData()
+          data: {
+            employees: [
+              {
+                canUploadPhoto: 1,
+                department: 'IT',
+                displayName: 'Test Employee',
+                division: 'web',
+                firstName: 'Test',
+                gender: 'Male',
+                id: '112',
+                jobTitle: 'JavaScript Developer',
+                lastName: 'Employee',
+                linkedIn: null,
+                location: 'Remote',
+                mobilePhone: null,
+                photoUploaded: false,
+                photoUrl:
+                  'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+                preferredName: 'T-one',
+                workEmail: '2110pro@mail.ru',
+                workPhone: '+71231231212',
+                workPhoneExtension: null
+              },
+              {
+                canUploadPhoto: 1,
+                department: 'IT',
+                displayName: 'Test Employee2',
+                division: 'web',
+                firstName: 'Test',
+                gender: 'Male',
+                id: '113',
+                jobTitle: 'JavaScript Developer',
+                lastName: 'Employee2',
+                linkedIn: null,
+                location: 'Remote',
+                mobilePhone: null,
+                photoUploaded: false,
+                photoUrl:
+                  'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+                preferredName: 'T-one',
+                workEmail: 'test2@mail.ru',
+                workPhone: '+71231231213',
+                workPhoneExtension: null
+              }
+            ],
+            fields: [
+              {
+                id: 'displayName',
+                name: 'Display name',
+                type: 'text'
+              },
+              {
+                id: 'firstName',
+                name: 'First name',
+                type: 'text'
+              },
+              {
+                id: 'lastName',
+                name: 'Last name',
+                type: 'text'
+              },
+              {
+                id: 'preferredName',
+                name: 'Preferred name',
+                type: 'text'
+              },
+              {
+                id: 'gender',
+                name: 'Gender',
+                type: 'gender'
+              },
+              {
+                id: 'jobTitle',
+                name: 'Job title',
+                type: 'list'
+              },
+              {
+                id: 'workPhone',
+                name: 'Work Phone',
+                type: 'text'
+              },
+              {
+                id: 'mobilePhone',
+                name: 'Mobile Phone',
+                type: 'text'
+              },
+              {
+                id: 'workEmail',
+                name: 'Work Email',
+                type: 'email'
+              },
+              {
+                id: 'department',
+                name: 'Department',
+                type: 'list'
+              },
+              {
+                id: 'location',
+                name: 'Location',
+                type: 'list'
+              },
+              {
+                id: 'division',
+                name: 'Division',
+                type: 'list'
+              },
+              {
+                id: 'linkedIn',
+                name: 'LinkedIn URL',
+                type: 'text'
+              },
+              {
+                id: 'workPhoneExtension',
+                name: 'Work Ext.',
+                type: 'text'
+              },
+              {
+                id: 'photoUploaded',
+                name: 'Employee photo exists',
+                type: 'bool'
+              },
+              {
+                id: 'photoUrl',
+                name: 'Employee photo url',
+                type: 'url'
+              },
+              {
+                id: 'canUploadPhoto',
+                name: '',
+                type: 'bool'
+              }
+            ]
+          },
+          success: true
+        }
+      });
+    });
+
+    it(`should support search query`, async () => {
+      const employees = await invokeEmployeeSearch('employee2');
+      expect(employees).toEqual({
+        name: 'BREAD/EMPLOYEE/SEARCH',
+        payload: [
+          {
+            '@type': 'Person',
+            email: 'test2@mail.ru',
+            familyName: 'Employee2',
+            gender: 'Male',
+            givenName: 'Test',
+            identifier: '113',
+            image:
+              'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+            jobTitle: 'JavaScript Developer',
+            name: 'Test Employee2',
+            telephone: '+71231231213',
+            workLocation: 'Remote'
+          }
+        ],
+        provider: 'bamboo',
+        rawPayload: {
+          data: {
+            // raw payload contains more results. that is expected
+            // because the BambooHR API doesn't support searching.
+            employees: [
+              {
+                canUploadPhoto: 1,
+                department: 'IT',
+                displayName: 'Test Employee',
+                division: 'web',
+                firstName: 'Test',
+                gender: 'Male',
+                id: '112',
+                jobTitle: 'JavaScript Developer',
+                lastName: 'Employee',
+                linkedIn: null,
+                location: 'Remote',
+                mobilePhone: null,
+                photoUploaded: false,
+                photoUrl:
+                  'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+                preferredName: 'T-one',
+                workEmail: '2110pro@mail.ru',
+                workPhone: '+71231231212',
+                workPhoneExtension: null
+              },
+              {
+                canUploadPhoto: 1,
+                department: 'IT',
+                displayName: 'Test Employee2',
+                division: 'web',
+                firstName: 'Test',
+                gender: 'Male',
+                id: '113',
+                jobTitle: 'JavaScript Developer',
+                lastName: 'Employee2',
+                linkedIn: null,
+                location: 'Remote',
+                mobilePhone: null,
+                photoUploaded: false,
+                photoUrl:
+                  'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+                preferredName: 'T-one',
+                workEmail: 'test2@mail.ru',
+                workPhone: '+71231231213',
+                workPhoneExtension: null
+              }
+            ],
+            fields: [
+              {
+                id: 'displayName',
+                name: 'Display name',
+                type: 'text'
+              },
+              {
+                id: 'firstName',
+                name: 'First name',
+                type: 'text'
+              },
+              {
+                id: 'lastName',
+                name: 'Last name',
+                type: 'text'
+              },
+              {
+                id: 'preferredName',
+                name: 'Preferred name',
+                type: 'text'
+              },
+              {
+                id: 'gender',
+                name: 'Gender',
+                type: 'gender'
+              },
+              {
+                id: 'jobTitle',
+                name: 'Job title',
+                type: 'list'
+              },
+              {
+                id: 'workPhone',
+                name: 'Work Phone',
+                type: 'text'
+              },
+              {
+                id: 'mobilePhone',
+                name: 'Mobile Phone',
+                type: 'text'
+              },
+              {
+                id: 'workEmail',
+                name: 'Work Email',
+                type: 'email'
+              },
+              {
+                id: 'department',
+                name: 'Department',
+                type: 'list'
+              },
+              {
+                id: 'location',
+                name: 'Location',
+                type: 'list'
+              },
+              {
+                id: 'division',
+                name: 'Division',
+                type: 'list'
+              },
+              {
+                id: 'linkedIn',
+                name: 'LinkedIn URL',
+                type: 'text'
+              },
+              {
+                id: 'workPhoneExtension',
+                name: 'Work Ext.',
+                type: 'text'
+              },
+              {
+                id: 'photoUploaded',
+                name: 'Employee photo exists',
+                type: 'bool'
+              },
+              {
+                id: 'photoUrl',
+                name: 'Employee photo url',
+                type: 'url'
+              },
+              {
+                id: 'canUploadPhoto',
+                name: '',
+                type: 'bool'
+              }
+            ]
+          },
+          success: true
         }
       });
     });
@@ -192,7 +501,7 @@ describe('usage', () => {
           givenName: 'New',
           telephone: '+71231231212'
         },
-        provider: 'bamboo-hr',
+        provider: 'bamboo',
         rawPayload: {
           data: {},
           success: true
@@ -226,11 +535,11 @@ describe('usage', () => {
       // get what the res.json would send
       expect(JSON.parse(JSON.stringify(result))).toEqual({
         name: 'BREAD/EMPLOYEE/CREATE',
-        provider: 'bamboo-hr',
+        provider: 'bamboo',
         rawPayload: {
           error: {
             message:
-              'bamboo-hr: Request failed with status code 409. Duplicate email',
+              'bamboo: Request failed with status code 409. Duplicate email',
             originalError: {
               isAxiosError: true,
               response: {
@@ -245,7 +554,7 @@ describe('usage', () => {
                 statusText: 'conflict'
               }
             },
-            provider: 'bamboo-hr'
+            provider: 'bamboo'
           },
           success: false
         }
@@ -279,6 +588,27 @@ function getEmployeesDirMockData(): object {
         preferredName: 'T-one',
         workEmail: '2110pro@mail.ru',
         workPhone: '+71231231212',
+        workPhoneExtension: null
+      },
+      {
+        canUploadPhoto: 1,
+        department: 'IT',
+        displayName: 'Test Employee2',
+        division: 'web',
+        firstName: 'Test',
+        gender: 'Male',
+        id: '113',
+        jobTitle: 'JavaScript Developer',
+        lastName: 'Employee2',
+        linkedIn: null,
+        location: 'Remote',
+        mobilePhone: null,
+        photoUploaded: false,
+        photoUrl:
+          'https://spaceagencyupwork.bamboohr.com/images/photo_placeholder.gif',
+        preferredName: 'T-one',
+        workEmail: 'test2@mail.ru',
+        workPhone: '+71231231213',
         workPhoneExtension: null
       }
     ],

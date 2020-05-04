@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import styled from 'styled-components/macro';
+
+import { FormInput } from './FormInput';
 import { FormLabel } from './FormLabel';
 
 interface LabeledInputProps {
@@ -14,21 +15,13 @@ export const FormLabeledInput: FC<LabeledInputProps> = props => {
   const { value, label, type, onChange, required = false } = props;
   return (
     <FormLabel label={label}>
-      <StyledInput
+      <FormInput
         required={required}
         value={value}
         type={type}
         name={label.toLowerCase()}
-        onChange={event => onChange(event.target.value)}
+        onChanged={onChange}
       />
     </FormLabel>
   );
 };
-
-const StyledInput = styled.input`
-  width: 100%;
-
-  @media (min-width: 640px) {
-    flex: 2;
-  }
-`;

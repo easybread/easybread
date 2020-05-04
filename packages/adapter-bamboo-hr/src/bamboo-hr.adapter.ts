@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { uniq } from 'lodash';
 
 import { BambooHrAuthStrategy } from './bamboo-hr.auth-strategy';
-import { BAMBOO_HR_PROVIDER } from './bamboo-hr.constants';
+import { BAMBOO_HR_PROVIDER_NAME } from './bamboo-hr.constants';
 import { BambooHrOperation } from './bamboo-hr.operation';
 import {
   BambooEmployeeCreateHandler,
@@ -16,7 +16,7 @@ export class BambooHrAdapter extends BreadServiceAdapter<
   BambooHrOperation,
   BambooHrAuthStrategy
 > {
-  provider = BAMBOO_HR_PROVIDER;
+  provider = BAMBOO_HR_PROVIDER_NAME;
 
   constructor() {
     super();

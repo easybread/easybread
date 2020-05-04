@@ -1,5 +1,6 @@
 export * from './operations';
 export * from './interfaces';
+export * from './google.constants';
 
 export { GoogleAdapter } from './google.adapter';
 export { GoogleAuthStrategy } from './google.auth-strategy';
