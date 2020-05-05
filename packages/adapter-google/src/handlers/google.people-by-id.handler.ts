@@ -4,30 +4,31 @@ import { GoogleContactMapper } from '../data-mappers';
 import { GoogleAuthStrategy } from '../google.auth-strategy';
 import { GoogleOperationName } from '../google.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
-import { GooglePeopleCreateOperation } from '../operations';
+import { GooglePeopleByIdOperation } from '../operations';
 
-export const GooglePeopleCreateHandler: BreadOperationHandler<
-  GooglePeopleCreateOperation,
+export const GooglePeopleByIdHandler: BreadOperationHandler<
+  GooglePeopleByIdOperation,
   GoogleAuthStrategy
 > = {
-  name: GoogleOperationName.PEOPLE_CREATE,
+  name: GoogleOperationName.PEOPLE_BY_ID,
   async handle(input, context) {
-    const dataMapper = new GoogleContactMapper();
+    const { identifier } = input.params;
 
     const result = await context.httpRequest<GoogleContactsFeedEntryResponse>({
-      method: 'POST',
-      url: `https://www.google.com/m8/feeds/contacts/default/full`,
+      method: 'GET',
+      url: `https://www.google.com/m8/feeds/contacts/default/full/${identifier}`,
       params: { alt: 'json' },
       headers: {
         'GData-Version': '3.0',
         accept: 'application/json'
-      },
-      data: dataMapper.toRemote(input.payload)
+      }
     });
 
+    const contactMapper = new GoogleContactMapper();
+
     return {
-      name: GoogleOperationName.PEOPLE_CREATE,
-      payload: dataMapper.toSchema(result.data.entry),
+      name: GoogleOperationName.PEOPLE_BY_ID,
+      payload: contactMapper.toSchema(result.data.entry),
       rawPayload: { success: true, data: result.data }
     };
   }

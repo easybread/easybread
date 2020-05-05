@@ -6,6 +6,7 @@ import { GoogleOperation } from './google.operation';
 import {
   GoogleOauth2CompleteHandler,
   GoogleOauth2StartHandler,
+  GooglePeopleByIdHandler,
   GooglePeopleCreateHandler,
   GooglePeopleDeleteHandler,
   GooglePeopleSearchHandler,
@@ -26,7 +27,8 @@ export class GoogleAdapter extends BreadServiceAdapter<
       GooglePeopleSearchHandler,
       GooglePeopleCreateHandler,
       GooglePeopleUpdateHandler,
-      GooglePeopleDeleteHandler
+      GooglePeopleDeleteHandler,
+      GooglePeopleByIdHandler
     );
   }
 }

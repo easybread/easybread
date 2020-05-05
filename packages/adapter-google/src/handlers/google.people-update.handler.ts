@@ -4,7 +4,7 @@ import { GoogleContactMapper } from '../data-mappers';
 import { GoogleAuthStrategy } from '../google.auth-strategy';
 import { GOOGLE_PROVIDER_NAME } from '../google.constants';
 import { GoogleOperationName } from '../google.operation-name';
-import { GoogleContactsFeedEntryCreateResponse } from '../interfaces';
+import { GoogleContactsFeedEntryResponse } from '../interfaces';
 import { GooglePeopleUpdateOperation } from '../operations';
 import { googleUpdateContactTransform } from '../transform';
 
@@ -26,7 +26,7 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
     //   modify the data and send an authorized PUT request
     //   to the contact's edit URL with the modified contact entry in the body."
     const contactBase = await context.httpRequest<
-      GoogleContactsFeedEntryCreateResponse
+      GoogleContactsFeedEntryResponse
     >({
       method: 'GET',
       url: entryUrl,
@@ -47,9 +47,7 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
       contactEntryChange
     );
 
-    const result = await context.httpRequest<
-      GoogleContactsFeedEntryCreateResponse
-    >({
+    const result = await context.httpRequest<GoogleContactsFeedEntryResponse>({
       method: 'PUT',
       url: entryUrl,
       data: contactUpdatedEntry,
