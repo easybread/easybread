@@ -21,7 +21,7 @@ export function useCreatingPerson(): boolean {
 
 export function usePersonInfosArray(): PersonInfo[] {
   return useSelector<RootState, PersonInfo[]>(state =>
-    state.people.ids.map(id => state.people.byId[id])
+    state.people.data.ids.map(id => state.people.data.byId[id])
   );
 }
 

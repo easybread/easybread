@@ -1,3 +1,5 @@
+import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
+import { GoogleContactsFeedEntry } from '@easybread/adapter-google';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { omit, without } from 'lodash';
 
@@ -27,9 +29,17 @@ interface ErrorState {
   error: AdaptersBooleanState;
 }
 
-interface DataState {
-  byId: { [key: string]: PersonInfo };
+interface NormalizedCollection<T> {
+  byId: { [key: string]: T };
   ids: string[];
+}
+
+interface DataState {
+  data: NormalizedCollection<PersonInfo>;
+  rawData: {
+    [ADAPTER_NAME.GOOGLE]: NormalizedCollection<GoogleContactsFeedEntry>;
+    [ADAPTER_NAME.BAMBOO]: NormalizedCollection<BambooEmployee>;
+  };
 }
 
 interface CreatePersonState {
@@ -63,8 +73,11 @@ const initialState: PeopleState = {
   error: { google: false, bamboo: false },
   loaded: { google: false, bamboo: false },
   creatingPerson: { google: false, bamboo: false },
-  byId: {},
-  ids: [],
+  data: { byId: {}, ids: [] },
+  rawData: {
+    [ADAPTER_NAME.BAMBOO]: { byId: {}, ids: [] },
+    [ADAPTER_NAME.GOOGLE]: { byId: {}, ids: [] }
+  },
   deletingIds: [],
   updatingIds: [],
   searching: false,
@@ -73,27 +86,31 @@ const initialState: PeopleState = {
 
 //  ------------------------------------
 
-interface PeopleCreateSuccessPayload {
+export interface PeopleCreateSuccessPayload {
   adapter: ADAPTER_NAME;
   data: PersonInfo;
 }
 
-interface PeopleUpdateSuccessPayload {
+export interface PeopleUpdateSuccessPayload {
   adapter: ADAPTER_NAME;
   data: PersonInfo;
 }
 
-interface PeopleSearchStartPayload {
+export interface PeopleSearchStartPayload {
   query: string;
 }
 
-interface PeopleSearchStopPayload {
+export interface PeopleSearchStopPayload {
   query: string;
 }
 
-interface PeopleSearchSuccessPayload {
+export interface PeopleSearchSuccessPayload {
   query: string;
   data: PersonInfo[];
+  rawData: {
+    [ADAPTER_NAME.GOOGLE]?: GoogleContactsFeedEntry[];
+    [ADAPTER_NAME.BAMBOO]?: BambooEmployee[];
+  };
 }
 
 const peopleSlice = createSlice({
@@ -110,18 +127,35 @@ const peopleSlice = createSlice({
       }
     },
     searchComplete(state, action: PayloadAction<PeopleSearchSuccessPayload>) {
-      const { data, query } = action.payload;
+      const { data, rawData, query } = action.payload;
 
       if (state.query !== query) return;
 
       state.searching = false;
-      state.ids = [];
 
-      data.forEach(personInfo => {
-        const id = createPersonInfoStateIdFromPersonInfo(personInfo);
-        state.byId[id] = personInfo;
-        state.ids.push(id);
-      });
+      updateNormalizedCollection(
+        state.data,
+        data,
+        createPersonInfoStateIdFromPersonInfo
+      );
+
+      const bambooRawData = rawData[ADAPTER_NAME.BAMBOO];
+      if (bambooRawData) {
+        updateNormalizedCollection(
+          state.rawData[ADAPTER_NAME.BAMBOO],
+          bambooRawData,
+          employee => employee.id as string
+        );
+      }
+
+      const googleRawData = rawData[ADAPTER_NAME.GOOGLE];
+      if (googleRawData) {
+        updateNormalizedCollection(
+          state.rawData[ADAPTER_NAME.GOOGLE],
+          googleRawData,
+          contact => contact.id?.$t as string
+        );
+      }
     },
 
     //  CREATE ------------------------------------
@@ -134,11 +168,11 @@ const peopleSlice = createSlice({
       action: PayloadAction<PeopleCreateSuccessPayload>
     ) {
       const { data, adapter } = action.payload;
-
-      const id = createPersonInfoStateIdFromPersonInfo(data);
-      state.byId[id] = data;
-      state.ids.unshift(id);
-
+      createNormalizedCollectionItem(
+        state.data,
+        data,
+        createPersonInfoStateIdFromPersonInfo
+      );
       state.creatingPerson[adapter] = false;
     },
     peopleCreateFail(state, action: PayloadAction<ADAPTER_NAME>) {
@@ -162,12 +196,11 @@ const peopleSlice = createSlice({
       state,
       action: PayloadAction<PeopleUpdateSuccessPayload>
     ) {
-      const { data } = action.payload;
-      const id = createPersonInfoStateIdFromPersonInfo(data);
-
-      state.updatingIds = without(state.updatingIds, id);
-
-      Object.assign(state.byId[id].person, data.person);
+      updateNormalizedCollectionItem(
+        state.data,
+        action.payload.data,
+        createPersonInfoStateIdFromPersonInfo
+      );
     },
 
     // REMOVE ------------------------------------
@@ -185,13 +218,57 @@ const peopleSlice = createSlice({
     },
     peopleDeleteSuccess(state, action: PayloadAction<PersonIdPayload>) {
       const id = createPersonInfoStateIdFromPersonIdPayload(action.payload);
-
+      deleteNormalizedCollectionItem(state.data, id);
       state.deletingIds = without(state.deletingIds, id);
-      state.ids = without(state.ids, id);
-
-      omit(state.byId, id);
     }
   }
 });
 
 export const { reducer: peopleReducer, actions: peopleActions } = peopleSlice;
+
+//  ------------------------------------
+
+function clearNormalizedCollection(
+  collection: NormalizedCollection<unknown>
+): void {
+  collection.ids = [];
+}
+
+function updateNormalizedCollection<T>(
+  collection: NormalizedCollection<T>,
+  data: T[],
+  getId: (item: T) => string
+): void {
+  clearNormalizedCollection(collection);
+  data.reverse().forEach(item => {
+    const id = getId(item);
+    collection.byId[id] = item;
+    collection.ids.unshift(id);
+  });
+}
+
+function updateNormalizedCollectionItem<T>(
+  collection: NormalizedCollection<T>,
+  item: T,
+  getId: (item: T) => string
+): void {
+  Object.assign(collection[getId(item)], item);
+}
+
+function createNormalizedCollectionItem<T>(
+  collection: NormalizedCollection<T>,
+  item: T,
+  getId: (item: T) => string
+): void {
+  const id = getId(item);
+  collection.byId[id] = item;
+  collection.ids.unshift(id);
+}
+
+function deleteNormalizedCollectionItem<T>(
+  collection: NormalizedCollection<T>,
+  id: string
+): void {
+  omit(collection.byId, id);
+  collection.ids = without(collection.ids, id);
+}
