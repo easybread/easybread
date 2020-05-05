@@ -1,9 +1,17 @@
 import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
 import { GoogleContactsFeedEntry } from '@easybread/adapter-google';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { omit, without } from 'lodash';
+import { without } from 'lodash';
 
 import { ADAPTER_NAME } from '../../../../common';
+import {
+  createNormalizedCollectionItem,
+  createNormalizedCollectionState,
+  deleteNormalizedCollectionItem,
+  NormalizedCollectionState,
+  updateNormalizedCollection,
+  updateNormalizedCollectionItem
+} from '../../util/normalized-collection';
 import {
   createPersonInfoStateIdFromPersonIdPayload,
   createPersonInfoStateIdFromPersonInfo,
@@ -29,16 +37,11 @@ interface ErrorState {
   error: AdaptersBooleanState;
 }
 
-interface NormalizedCollection<T> {
-  byId: { [key: string]: T };
-  ids: string[];
-}
-
 interface DataState {
-  data: NormalizedCollection<PersonInfo>;
+  data: NormalizedCollectionState<PersonInfo>;
   rawData: {
-    [ADAPTER_NAME.GOOGLE]: NormalizedCollection<GoogleContactsFeedEntry>;
-    [ADAPTER_NAME.BAMBOO]: NormalizedCollection<BambooEmployee>;
+    [ADAPTER_NAME.GOOGLE]: NormalizedCollectionState<GoogleContactsFeedEntry>;
+    [ADAPTER_NAME.BAMBOO]: NormalizedCollectionState<BambooEmployee>;
   };
 }
 
@@ -75,8 +78,8 @@ const initialState: PeopleState = {
   creatingPerson: { google: false, bamboo: false },
   data: { byId: {}, ids: [] },
   rawData: {
-    [ADAPTER_NAME.BAMBOO]: { byId: {}, ids: [] },
-    [ADAPTER_NAME.GOOGLE]: { byId: {}, ids: [] }
+    [ADAPTER_NAME.BAMBOO]: createNormalizedCollectionState(),
+    [ADAPTER_NAME.GOOGLE]: createNormalizedCollectionState()
   },
   deletingIds: [],
   updatingIds: [],
@@ -225,50 +228,3 @@ const peopleSlice = createSlice({
 });
 
 export const { reducer: peopleReducer, actions: peopleActions } = peopleSlice;
-
-//  ------------------------------------
-
-function clearNormalizedCollection(
-  collection: NormalizedCollection<unknown>
-): void {
-  collection.ids = [];
-}
-
-function updateNormalizedCollection<T>(
-  collection: NormalizedCollection<T>,
-  data: T[],
-  getId: (item: T) => string
-): void {
-  clearNormalizedCollection(collection);
-  data.reverse().forEach(item => {
-    const id = getId(item);
-    collection.byId[id] = item;
-    collection.ids.unshift(id);
-  });
-}
-
-function updateNormalizedCollectionItem<T>(
-  collection: NormalizedCollection<T>,
-  item: T,
-  getId: (item: T) => string
-): void {
-  Object.assign(collection[getId(item)], item);
-}
-
-function createNormalizedCollectionItem<T>(
-  collection: NormalizedCollection<T>,
-  item: T,
-  getId: (item: T) => string
-): void {
-  const id = getId(item);
-  collection.byId[id] = item;
-  collection.ids.unshift(id);
-}
-
-function deleteNormalizedCollectionItem<T>(
-  collection: NormalizedCollection<T>,
-  id: string
-): void {
-  omit(collection.byId, id);
-  collection.ids = without(collection.ids, id);
-}
