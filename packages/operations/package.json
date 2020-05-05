@@ -1,11 +1,30 @@
 {
   "name": "@easybread/operations",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
-  "homepage": "",
   "author": {
     "name": "Easybread",
     "url": "https://easybread.io/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/easybread/easybread.git",
+    "directory": "packages/operation"
+  },
+  "homepage": "https://easybread.io",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "contributors": [
     {
@@ -22,18 +41,10 @@
     }
   ],
   "license": "MIT",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
   "scripts": {
     "prebuild": "yarn lint:fix",
     "build": "tsc",
+    "prepublish": "yarn build",
     "check-types": "tsc --noEmit",
     "prettier:write": "prettier 'src/**/*.ts' --write",
     "prettier:check": "prettier 'src/**/*.ts' --check",
@@ -56,12 +67,12 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.0",
-    "@easybread/core": "^0.0.0",
-    "@easybread/schemas": "^0.0.0"
+    "@easybread/common": "^0.0.1",
+    "@easybread/core": "^0.0.1",
+    "@easybread/schemas": "^0.0.1"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.0",
+    "@easybread/test-utils": "^0.0.1",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
   }
