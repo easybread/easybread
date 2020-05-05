@@ -18,5 +18,5 @@ export { GoogleAuthStrategyOptions } from './google.auth-strategy-options.interf
 export { GoogleContactsFeed } from './google.contacts-feed.interface';
 export { GoogleContactsFeedEntry } from './google.contacts-feed-entry.interface';
 
-export { GoogleContactsFeedEntryCreateResponse } from './google.contacts-feed-entry-create-response.interface';
+export { GoogleContactsFeedEntryResponse } from './google.contacts-feed-entry-response.interface';
 export { GoogleContactsFeedResponse } from './google.contacts-feed-response.interface';

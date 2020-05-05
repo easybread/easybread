@@ -15,8 +15,6 @@ export const GooglePeopleSearchHandler: BreadOperationHandler<
   async handle(input, context) {
     const { query = '' } = input.params;
 
-    const contactMapper = new GoogleContactMapper();
-
     const result = await context.httpRequest<GoogleContactsFeedResponse>({
       method: 'GET',
       url: `https://www.google.com/m8/feeds/contacts/default/full`,
@@ -26,6 +24,8 @@ export const GooglePeopleSearchHandler: BreadOperationHandler<
         accept: 'application/json'
       }
     });
+
+    const contactMapper = new GoogleContactMapper();
 
     return {
       name: GoogleOperationName.PEOPLE_SEARCH,

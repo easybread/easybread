@@ -15,6 +15,7 @@ import {
   GoogleOauth2StartOperation,
   GoogleOauth2StateData,
   GoogleOperationName,
+  GooglePeopleByIdOperation,
   GooglePeopleCreateOperation,
   GooglePeopleDeleteOperation,
   GooglePeopleSearchOperation,
@@ -718,8 +719,72 @@ describe('Google Plugin', () => {
       });
     });
 
+    describe(`${GoogleOperationName.PEOPLE_BY_ID}`, () => {
+      function setupGetContactMock(): void {
+        (axiosMock.request as Mock).mockImplementationOnce(_ =>
+          Promise.resolve({
+            status: 200,
+            data: CONTACT_FEED_ENTRY_MOCK
+          })
+        );
+      }
+
+      async function invokePeopleById(): Promise<
+        GooglePeopleByIdOperation['output']
+      > {
+        return client.invoke<GooglePeopleByIdOperation>({
+          breadId: USER_ID,
+          name: GoogleOperationName.PEOPLE_BY_ID,
+          params: { identifier: '79ec2071883179b9' }
+        });
+      }
+      beforeEach(() => {
+        jest.resetAllMocks();
+        setupGetContactMock();
+      });
+      afterAll(() => {
+        jest.resetAllMocks();
+      });
+
+      it(`should call google api with correct params`, async () => {
+        await invokePeopleById();
+        expect(axiosMock.request).toHaveBeenCalledWith({
+          headers: {
+            'GData-Version': '3.0',
+            accept: 'application/json',
+            authorization: 'Bearer new-access-token'
+          },
+          method: 'GET',
+          params: { alt: 'json' },
+          url:
+            'https://www.google.com/m8/feeds/contacts/default/full/79ec2071883179b9'
+        });
+      });
+
+      it(`should return correct output`, async () => {
+        const result = await invokePeopleById();
+        expect(result).toEqual({
+          name: 'GOOGLE/PEOPLE/BY_ID',
+          payload: {
+            '@type': 'Person',
+            email: 'test@mail.com',
+            familyName: 'Contact',
+            givenName: 'Test',
+            identifier: '79ec2071883179b9',
+            name: 'Test Contact',
+            telephone: '+7 (965) 444 2211'
+          },
+          provider: 'google',
+          rawPayload: {
+            data: CONTACT_FEED_ENTRY_MOCK,
+            success: true
+          }
+        });
+      });
+    });
+
     describe(`${GoogleOperationName.PEOPLE_DELETE}`, () => {
-      function setupUpdateContactMock(): void {
+      function setupGetContactMock(): void {
         (axiosMock.request as Mock).mockImplementation(
           (config: AxiosRequestConfig) => {
             return config.method === 'GET'
@@ -744,7 +809,7 @@ describe('Google Plugin', () => {
 
       beforeEach(() => {
         jest.resetAllMocks();
-        setupUpdateContactMock();
+        setupGetContactMock();
       });
 
       afterAll(() => {
