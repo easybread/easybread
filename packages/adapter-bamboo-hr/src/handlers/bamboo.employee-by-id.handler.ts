@@ -24,6 +24,29 @@ export const BambooEmployeeByIdHandler: BreadOperationHandler<
       headers: {
         accept: 'application/json',
         'Content-Type': 'application/json'
+      },
+      params: {
+        // TODO: come up with a good way to keep it consistent
+        //       with the BambooEmployee interface definition
+        fields: [
+          'canUploadPhoto',
+          'department',
+          'displayName',
+          'division',
+          'firstName',
+          'gender',
+          'jobTitle',
+          'lastName',
+          'linkedIn',
+          'location',
+          'mobilePhone',
+          'photoUploaded',
+          'photoUrl',
+          'preferredName',
+          'workEmail',
+          'workPhone',
+          'workPhoneExtension'
+        ]
       }
     });
 

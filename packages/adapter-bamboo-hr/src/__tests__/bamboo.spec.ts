@@ -209,6 +209,27 @@ describe('usage', () => {
           'Content-Type': 'application/json'
         },
         method: 'GET',
+        params: {
+          fields: [
+            'canUploadPhoto',
+            'department',
+            'displayName',
+            'division',
+            'firstName',
+            'gender',
+            'jobTitle',
+            'lastName',
+            'linkedIn',
+            'location',
+            'mobilePhone',
+            'photoUploaded',
+            'photoUrl',
+            'preferredName',
+            'workEmail',
+            'workPhone',
+            'workPhoneExtension'
+          ]
+        },
         url:
           'https://api.bamboohr.com/api/gateway.php/company-one/v1/employees/112'
       });
