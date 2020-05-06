@@ -45,7 +45,8 @@ export const BambooEmployeeByIdHandler: BreadOperationHandler<
           'preferredName',
           'workEmail',
           'workPhone',
-          'workPhoneExtension'
+          'workPhoneExtension',
+          'skypeUsername'
         ]
       }
     });
