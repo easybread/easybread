@@ -116,6 +116,14 @@ export interface PeopleSearchSuccessPayload {
   };
 }
 
+export interface PeopleByIdSuccessPayload {
+  data: PersonInfo;
+  rawData: {
+    [ADAPTER_NAME.GOOGLE]?: GoogleContactsFeedEntry;
+    [ADAPTER_NAME.BAMBOO]?: BambooEmployee;
+  };
+}
+
 const peopleSlice = createSlice({
   name: 'people',
   initialState,
@@ -156,7 +164,35 @@ const peopleSlice = createSlice({
         updateNormalizedCollection(
           state.rawData[ADAPTER_NAME.GOOGLE],
           googleRawData,
-          contact => contact.id?.$t as string
+          contact => contact.id?.$t?.replace(/.+\/([^/]+)$/, '$1') as string
+        );
+      }
+    },
+
+    // GET BY ID ------------------------------------
+    byIdSuccess(state, action: PayloadAction<PeopleByIdSuccessPayload>) {
+      const { data, rawData } = action.payload;
+      createNormalizedCollectionItem(
+        state.data,
+        data,
+        createPersonInfoStateIdFromPersonInfo
+      );
+
+      const bambooRawData = rawData[ADAPTER_NAME.BAMBOO];
+      if (bambooRawData) {
+        createNormalizedCollectionItem(
+          state.rawData[ADAPTER_NAME.BAMBOO],
+          bambooRawData,
+          employee => employee.id as string
+        );
+      }
+
+      const googleRawData = rawData[ADAPTER_NAME.GOOGLE];
+      if (googleRawData) {
+        createNormalizedCollectionItem(
+          state.rawData[ADAPTER_NAME.GOOGLE],
+          googleRawData,
+          contact => contact.id?.$t?.replace(/.+\/([^/]+)$/, '$1') as string
         );
       }
     },

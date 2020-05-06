@@ -10,6 +10,7 @@ import {
 import { PeopleSearchResponseDto, PeopleSearchResultsItemDto } from './dtos';
 import { PeopleService } from './people.service';
 import {
+  PeopleByIdRequest,
   PeopleCreateRequest,
   PeopleRequest,
   PeopleSearchRequest,
@@ -42,16 +43,18 @@ peopleRoutes.get('/:adapter', async (req: PeopleRequest, res) => {
     params: { adapter }
   } = req;
 
+  const breadId = getBreadIdFromRequest(req);
+
   switch (adapter) {
     case ADAPTER_NAME.GOOGLE:
       return handleOperationOutput(
         res,
-        await PeopleService.searchGoogle(req['user'].id)
+        await PeopleService.searchGoogle(breadId)
       );
     case ADAPTER_NAME.BAMBOO:
       return handleOperationOutput(
         res,
-        await PeopleService.searchBamboo(req['user'].id)
+        await PeopleService.searchBamboo(breadId)
       );
     default:
       return handleNotImplemented(res);
@@ -64,16 +67,38 @@ peopleRoutes.post('/:adapter', async (req: PeopleCreateRequest, res) => {
     body
   } = req;
 
+  const breadId = getBreadIdFromRequest(req);
+
   switch (adapter) {
     case ADAPTER_NAME.GOOGLE:
       return handleOperationOutput(
         res,
-        await PeopleService.createGoogleContact(req['user'].id, body)
+        await PeopleService.createGoogleContact(breadId, body)
       );
     case ADAPTER_NAME.BAMBOO:
       return handleOperationOutput(
         res,
-        await PeopleService.createBambooEmployee(req['user'].id, body)
+        await PeopleService.createBambooEmployee(breadId, body)
+      );
+    default:
+      return handleNotImplemented(res);
+  }
+});
+
+peopleRoutes.get('/:adapter/:id', async (req: PeopleByIdRequest, res) => {
+  const { adapter, id } = req.params;
+  const breadId = getBreadIdFromRequest(req);
+
+  switch (adapter) {
+    case ADAPTER_NAME.GOOGLE:
+      return handleOperationOutput(
+        res,
+        await PeopleService.byIdGoogle(breadId, id)
+      );
+    case ADAPTER_NAME.BAMBOO:
+      return handleOperationOutput(
+        res,
+        await PeopleService.byIdBamboo(breadId, id)
       );
     default:
       return handleNotImplemented(res);

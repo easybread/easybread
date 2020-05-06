@@ -34,7 +34,7 @@
   --text-main-color-mid: #2d3748;
   --text-main-color-mid-light: #718096;
   --text-main-color-light: #4a5568;
-  --text-blue-color-light: #bee3f8;
+  --text-brand-color-mid: var(--brand-teal-desaturated-dark);
 
   --disabled-border-color: #e2e8f0;
   --disabled-text-color: #e2e8f0;
