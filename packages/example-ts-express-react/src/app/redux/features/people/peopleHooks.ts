@@ -1,3 +1,5 @@
+import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
+import { GoogleContactsFeedEntry } from '@easybread/adapter-google';
 import { PersonSchema } from '@easybread/schemas';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -5,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ADAPTER_NAME } from '../../../../common';
 import { RootState } from '../../rootReducer';
 import {
+  createPersonInfoStateId,
   createPersonInfoStateIdFromPersonInfo,
   PersonInfo
 } from './peopleCommon';
@@ -64,4 +67,23 @@ export function useIsPersonUpdating(info: PersonInfo): boolean {
   });
 
   return deleting || updating;
+}
+
+export function usePersonDetailsData(
+  adapter: ADAPTER_NAME,
+  identifier: string
+): PersonSchema | undefined {
+  return useSelector<RootState, PersonSchema>(
+    s =>
+      s.people.data.byId[createPersonInfoStateId(adapter, identifier)]?.person
+  );
+}
+
+export function usePersonDetailsRawData(
+  adapter: ADAPTER_NAME,
+  identifier: string
+): GoogleContactsFeedEntry | BambooEmployee | undefined {
+  return useSelector<RootState, GoogleContactsFeedEntry | BambooEmployee>(
+    s => s.people.rawData[adapter].byId[identifier]
+  );
 }

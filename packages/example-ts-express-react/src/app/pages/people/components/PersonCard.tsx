@@ -1,5 +1,6 @@
-import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
-import React, { FC, useCallback, useState } from 'react';
+import { OrganizationSchema } from '@easybread/schemas';
+import React, { FC, MouseEventHandler, useCallback, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
 import {
@@ -27,9 +28,9 @@ const COLORS = {
 };
 
 export const PersonCard: FC<PersonCardProps> = ({ info }) => {
-  const { adapter } = info;
-  const person = info.person as PersonSchema;
-
+  const { adapter, person } = info;
+  const history = useHistory();
+  const match = useRouteMatch();
   const {
     email,
     givenName,
@@ -78,8 +79,26 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
     [identifier, dispatchPersonUpdate, adapter]
   );
 
+  const handleClick = useCallback<MouseEventHandler>(
+    _ => {
+      // eslint-disable-next-line no-console
+      if (editMode) return;
+      history.push(`${match.path}/${adapter}/${person.identifier}`);
+    },
+    [adapter, editMode, history, match.path, person.identifier]
+  );
+
+  const stopPropagation = useCallback<MouseEventHandler>(event => {
+    // eslint-disable-next-line no-console
+    event.stopPropagation();
+  }, []);
+
   return (
-    <ListItemContainer color={COLORS[adapter]}>
+    <StyledItemContainer
+      color={COLORS[adapter]}
+      onClick={handleClick}
+      editMode={editMode}
+    >
       {!editMode && (
         <>
           <CardImage image={image as string} />
@@ -93,12 +112,13 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
             workLocation={workLocation as string}
           />
 
-          <StyledActionsCorner>
+          <StyledActionsCorner onClick={stopPropagation}>
             <CardEditButton onClick={startEdit} />
             <CardDeleteButton onClick={openDeleteConfirm} />
           </StyledActionsCorner>
 
           <CardDeleteConfirm
+            onClick={stopPropagation}
             opened={deleteConfirmOpened}
             onConfirm={confirmDelete}
             onCancel={cancelDelete}
@@ -108,7 +128,7 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
       )}
 
       {editMode && (
-        <StyledFormWrapper>
+        <StyledFormWrapper onClick={stopPropagation}>
           <EditPersonForm
             expanded={editMode}
             person={person}
@@ -117,9 +137,20 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
           />
         </StyledFormWrapper>
       )}
-    </ListItemContainer>
+    </StyledItemContainer>
   );
 };
+
+const StyledItemContainer = styled(ListItemContainer)<{ editMode: boolean }>`
+  cursor: ${p => (p.editMode ? 'default' : 'pointer')};
+  transform: scale(1);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  :hover {
+    transform: scale(1.01);
+    box-shadow: 5px 15px 0px -8px rgba(3, 26, 26, 0.1);
+  }
+`;
 
 const StyledActionsCorner = styled.div`
   display: flex;

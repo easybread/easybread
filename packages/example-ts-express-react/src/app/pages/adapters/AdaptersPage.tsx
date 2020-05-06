@@ -10,7 +10,7 @@ import { AdapterGoogle } from './components/AdapterGoogle';
 
 interface AdaptersPageProps {}
 
-export const AdaptersPage: FC<AdaptersPageProps> = ({}) => {
+export const AdaptersPage: FC<AdaptersPageProps> = () => {
   const loading = useAdaptersLoading();
   const error = useAdaptersError();
 

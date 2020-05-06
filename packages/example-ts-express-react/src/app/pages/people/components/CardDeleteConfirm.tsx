@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useRef } from 'react';
+import React, { FC, MouseEventHandler, useCallback, useRef } from 'react';
 import styled from 'styled-components/macro';
 
 import { useOnClickOutside } from '../../../hooks';
@@ -8,12 +8,14 @@ interface CardDeleteConfirmProps {
   opened: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  onClick?: MouseEventHandler;
 }
 
 export const CardDeleteConfirm: FC<CardDeleteConfirmProps> = ({
   opened,
   onCancel,
-  onConfirm
+  onConfirm,
+  onClick
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
   const closeConfirm = useCallback(() => onCancel(), [onCancel]);
@@ -23,7 +25,7 @@ export const CardDeleteConfirm: FC<CardDeleteConfirmProps> = ({
   if (!opened) return null;
 
   return (
-    <StyledConfirmContainer ref={elementRef}>
+    <StyledConfirmContainer ref={elementRef} onClick={onClick}>
       <FormButton onClick={closeConfirm}>CANCEL</FormButton>
       <FormButton onClick={onConfirm}>DELETE</FormButton>
     </StyledConfirmContainer>

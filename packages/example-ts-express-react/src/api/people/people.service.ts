@@ -1,6 +1,10 @@
-import { BambooEmployeesDirectory } from '@easybread/adapter-bamboo-hr';
+import {
+  BambooEmployee,
+  BambooEmployeesDirectory
+} from '@easybread/adapter-bamboo-hr';
 import {
   GoogleOperationName,
+  GooglePeopleByIdOperation,
   GooglePeopleCreateOperation,
   GooglePeopleDeleteOperation,
   GooglePeopleSearchOperation,
@@ -8,6 +12,7 @@ import {
 } from '@easybread/adapter-google';
 import {
   BreadOperationName,
+  EmployeeByIdOperation,
   EmployeeCreateOperation,
   EmployeeSearchOperation,
   EmployeeUpdateOperation
@@ -40,6 +45,30 @@ export class PeopleService {
       name: BreadOperationName.EMPLOYEE_SEARCH,
       breadId,
       params: { query }
+    });
+  }
+
+  // GET BY ID ------------------------------------
+
+  static byIdGoogle(
+    breadId: string,
+    id: string
+  ): Promise<GooglePeopleByIdOperation['output']> {
+    return googleClient.invoke<GooglePeopleByIdOperation>({
+      name: GoogleOperationName.PEOPLE_BY_ID,
+      breadId,
+      params: { identifier: id }
+    });
+  }
+
+  static byIdBamboo(
+    breadId: string,
+    id: string
+  ): Promise<EmployeeByIdOperation<BambooEmployee>['output']> {
+    return bambooHrClient.invoke<EmployeeByIdOperation<BambooEmployee>>({
+      name: BreadOperationName.EMPLOYEE_BY_ID,
+      breadId,
+      params: { identifier: id }
     });
   }
 
