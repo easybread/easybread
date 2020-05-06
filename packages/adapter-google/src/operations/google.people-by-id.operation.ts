@@ -6,7 +6,7 @@ import {
 import { PersonSchema } from '@easybread/schemas';
 
 import { GoogleOperationName } from '../google.operation-name';
-import { GoogleContactsFeedEntry } from '../interfaces';
+import { GoogleContactsFeedEntryResponse } from '../interfaces';
 
 export interface GooglePeopleByIdOperation
   extends BreadOperation<GoogleOperationName.PEOPLE_BY_ID> {
@@ -17,7 +17,7 @@ export interface GooglePeopleByIdOperation
 
   output: BreadOperationOutputWithRawDataAndPayload<
     GoogleOperationName.PEOPLE_BY_ID,
-    GoogleContactsFeedEntry,
+    GoogleContactsFeedEntryResponse,
     PersonSchema
   >;
 }
