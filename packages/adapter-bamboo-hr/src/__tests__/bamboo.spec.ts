@@ -227,7 +227,8 @@ describe('usage', () => {
             'preferredName',
             'workEmail',
             'workPhone',
-            'workPhoneExtension'
+            'workPhoneExtension',
+            'skypeUsername'
           ]
         },
         url:
