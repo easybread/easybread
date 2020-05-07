@@ -28,7 +28,7 @@ const indentedCSS = css`
   padding-right: 10px;
   border: 1px solid #efefef;
   border-top: none;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.4);
 `;
 
 const StyledWrapper = styled.div<{ indent: boolean }>`
