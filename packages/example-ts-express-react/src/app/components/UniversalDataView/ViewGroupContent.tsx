@@ -24,9 +24,10 @@ export const ViewGroupContent: FC<ObjectViewContentProps> = ({
 };
 
 const indentedCSS = css`
-  //padding-top: 10px;
   padding-left: 10px;
-  border-left: 1px solid #efefef;
+  padding-right: 10px;
+  border: 1px solid #efefef;
+  border-top: none;
   background-color: rgba(255, 255, 255, 0.6);
 `;
 
