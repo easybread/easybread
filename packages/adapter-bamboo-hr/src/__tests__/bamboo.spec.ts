@@ -229,7 +229,7 @@ describe('usage', () => {
             'workPhone',
             'workPhoneExtension',
             'skypeUsername'
-          ]
+          ].join(',')
         },
         url:
           'https://api.bamboohr.com/api/gateway.php/company-one/v1/employees/112'
