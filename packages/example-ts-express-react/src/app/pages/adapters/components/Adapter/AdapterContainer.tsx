@@ -1,20 +1,20 @@
 import { noop } from 'lodash';
-import React, { FC, useState } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import styled, { css } from 'styled-components/macro';
+import React, { FC, useCallback, useState } from 'react';
+import styled from 'styled-components/macro';
 
 import {
   FormButton,
   FormButtonsContainer,
   FormContainer
 } from '../../../../ui-kit/form-kit';
+import { AdapterButton } from './AdapterButton';
 import { AdapterContainerForm } from './AdapterContainerForm';
-import { Expandable } from './Expandable';
 
 interface AdapterProps {
   title: string;
   configured: boolean;
   onSubmit: () => void;
+  onResetConfiguration: () => void;
   onCollapse?: () => void;
   onExpand?: () => void;
   submitOnExpand?: boolean;
@@ -26,12 +26,13 @@ export const AdapterContainer: FC<AdapterProps> = ({
   onCollapse = noop,
   onExpand = noop,
   onSubmit,
+  onResetConfiguration,
   children,
   submitOnExpand = false
 }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const toggleExpanded = (): void => {
+  const toggleExpanded = useCallback((): void => {
     if (configured) return;
 
     if (submitOnExpand && !expanded) {
@@ -40,27 +41,27 @@ export const AdapterContainer: FC<AdapterProps> = ({
 
     setExpanded(!expanded);
     expanded ? onCollapse() : onExpand();
-  };
+  }, [configured, expanded, onCollapse, onExpand, onSubmit, submitOnExpand]);
 
-  const cancel = () => {
+  const cancel = useCallback(() => {
     setExpanded(false);
     onCollapse();
-  };
+  }, [onCollapse]);
 
-  const submit = () => {
+  const submit = useCallback(() => {
     setExpanded(false);
     onSubmit();
-  };
+  }, [onSubmit]);
 
   return (
     <StyledAdapterWrapper>
-      <StyledAdapterTitle
+      <AdapterButton
         expanded={expanded}
-        onClick={toggleExpanded}
-        disabled={configured}
-      >
-        {configured ? <FaCheckCircle size={24} /> : <strong>{title}</strong>}
-      </StyledAdapterTitle>
+        toggleExpanded={toggleExpanded}
+        title={title}
+        configured={configured}
+        resetConfiguration={onResetConfiguration}
+      />
 
       <AdapterContainerForm expanded={expanded}>
         <FormContainer onSubmit={submit}>
@@ -85,44 +86,6 @@ const StyledButton = styled(FormButton)`
   &:first-of-type {
     margin-left: 0;
   }
-`;
-
-const expandedStyle = css`
-  background-color: white;
-  &:hover {
-    background-color: white;
-  }
-`;
-const disabledStyle = css`
-  cursor: default;
-  color: var(--brand-teal);
-  &:hover {
-    color: var(--brand-teal);
-    background-color: transparent;
-  }
-`;
-
-const StyledAdapterTitle = styled.div<Expandable & { disabled: boolean }>`
-  color: var(--brand-teal);
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: var(--text-lg);
-
-  :hover {
-    color: var(--brand-teal-accent);
-    background-color: var(--brand-teal-light-transparent);
-  }
-
-  :active {
-    background: var(--brand-teal-accent-transparent);
-  }
-
-  ${p => p.disabled && disabledStyle}
-  ${p => p.expanded && expandedStyle}
 `;
 
 const StyledAdapterWrapper = styled.div`

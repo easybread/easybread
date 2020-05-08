@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ADAPTER_NAME } from '../../../../common';
 import {
+  resetAdapterConfiguration,
   setupGoogle,
   useAdapterConfigured
 } from '../../../redux/features/adapters';
@@ -18,12 +19,17 @@ export const AdapterGoogle: FC<GoogleAdapterProps> = () => {
     dispatch(setupGoogle());
   };
 
+  const resetConfiguration = useCallback(() => {
+    dispatch(resetAdapterConfiguration(ADAPTER_NAME.GOOGLE));
+  }, [dispatch]);
+
   return (
     <AdapterContainer
       title={'Google'}
       configured={configured}
       onSubmit={onSubmit}
       submitOnExpand={true}
+      onResetConfiguration={resetConfiguration}
     />
   );
 };

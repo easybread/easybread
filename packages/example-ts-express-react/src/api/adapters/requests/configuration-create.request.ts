@@ -15,19 +15,19 @@ type SetupBambooRequest = Request<
   SetupBambooDto
 >;
 
-export type CreateConfigurationRequest =
+export type ConfigurationCreateRequest =
   | SetupBambooRequest
   | SetupGoogleRequest;
 
 // Guards
 export const isSetupBambooRequest = (
-  req: CreateConfigurationRequest
+  req: ConfigurationCreateRequest
 ): req is SetupBambooRequest => {
   return req.params.adapter === ADAPTER_NAME.BAMBOO;
 };
 
 export const isSetupGoogleRequest = (
-  req: CreateConfigurationRequest
+  req: ConfigurationCreateRequest
 ): req is SetupGoogleRequest => {
   return req.params.adapter === ADAPTER_NAME.GOOGLE;
 };
