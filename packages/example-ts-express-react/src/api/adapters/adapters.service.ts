@@ -31,6 +31,16 @@ export class AdaptersService {
     return { google, bamboo };
   }
 
+  static async resetConfiguration(
+    breadId: string,
+    adapter: ADAPTER_NAME
+  ): Promise<AdapterStateDto> {
+    return await stateAdapter.write<AdapterStateDto>(
+      this.createAdapterStateKey(breadId, adapter),
+      { configured: false }
+    );
+  }
+
   static async setConfigured(
     breadId: string,
     adapter: ADAPTER_NAME

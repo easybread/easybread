@@ -1,8 +1,9 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ADAPTER_NAME } from '../../../../common';
 import {
+  resetAdapterConfiguration,
   setupBamboo,
   useAdapterConfigured
 } from '../../../redux/features/adapters';
@@ -22,14 +23,18 @@ export const AdapterBamboo: FC<AdapterBambooProps> = () => {
 
   const configured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
 
-  const onSubmit = (): void => {
+  const onSubmit = useCallback((): void => {
     dispatch(setupBamboo({ apiKey, companyName }));
-  };
+  }, [apiKey, companyName, dispatch]);
 
-  const resetForm = (): void => {
+  const resetForm = useCallback((): void => {
     setApiKey('');
     setCompanyName('');
-  };
+  }, []);
+
+  const resetConfiguration = useCallback(() => {
+    dispatch(resetAdapterConfiguration(ADAPTER_NAME.BAMBOO));
+  }, [dispatch]);
 
   return (
     <AdapterContainer
@@ -38,6 +43,7 @@ export const AdapterBamboo: FC<AdapterBambooProps> = () => {
       onCollapse={resetForm}
       onExpand={resetForm}
       onSubmit={onSubmit}
+      onResetConfiguration={resetConfiguration}
     >
       <FormFieldsContainer>
         <FormLabeledInput
