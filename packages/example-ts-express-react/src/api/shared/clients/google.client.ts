@@ -1,6 +1,6 @@
 import {
-  GoogleAdapter,
-  GoogleAuthStrategy
+  GoogleContactsAdapter,
+  GoogleContactsAuthStrategy
 } from '@easybread/adapter-google-contacts';
 import { EasyBreadClient } from '@easybread/core';
 
@@ -22,8 +22,8 @@ if (!GOOGLE_REDIRECT_URI) {
   throw new Error('GOOGLE_REDIRECT_URI env variable is not defined');
 }
 
-const googleAdapter = new GoogleAdapter();
-const googleAuthStrategy = new GoogleAuthStrategy(stateAdapter, {
+const googleAdapter = new GoogleContactsAdapter();
+const googleAuthStrategy = new GoogleContactsAuthStrategy(stateAdapter, {
   clientId: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
   redirectUri: GOOGLE_REDIRECT_URI

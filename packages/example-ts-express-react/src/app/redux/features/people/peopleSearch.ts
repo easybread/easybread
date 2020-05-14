@@ -6,7 +6,7 @@ import {
 import {
   GOOGLE_PROVIDER_NAME,
   GoogleContactsFeedEntry,
-  GooglePeopleSearchOperation
+  GoogleContactsPeopleSearchOperation
 } from '@easybread/adapter-google-contacts';
 import { EmployeeSearchOperation } from '@easybread/operations';
 
@@ -80,7 +80,7 @@ function collectGoogleRawData(
 ): GoogleContactsFeedEntry[] | undefined {
   const googleOutput = data.find(
     item => item.provider === GOOGLE_PROVIDER_NAME
-  ) as GooglePeopleSearchOperation['output'] | undefined;
+  ) as GoogleContactsPeopleSearchOperation['output'] | undefined;
 
   return googleOutput && googleOutput.rawPayload.success
     ? googleOutput.rawPayload.data.feed.entry

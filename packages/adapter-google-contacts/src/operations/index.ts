@@ -1,7 +1,7 @@
-export * from './google.people-search.operation';
-export * from './google.people-by-id.operation';
-export * from './google.people-create.operation';
-export * from './google.people-update.operation';
-export * from './google.people-delete.operation';
+export * from './google-contacts.people-search.operation';
+export * from './google-contacts.people-by-id.operation';
+export * from './google-contacts.people-create.operation';
+export * from './google-contacts.people-update.operation';
+export * from './google-contacts.people-delete.operation';
 
-export * from './google.oauth2-start.operation';
+export * from './google-contacts.oauth2-start.operation';

@@ -4,11 +4,11 @@ import {
   GoogleCommonOperationName
 } from '@easybread/google-common';
 
-import { GoogleAuthStrategy } from '../google.auth-strategy';
+import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 
-export const GoogleOauth2CompleteHandler: BreadOperationHandler<
+export const GoogleContactsOauth2CompleteHandler: BreadOperationHandler<
   GoogleCommonOauth2CompleteOperation,
-  GoogleAuthStrategy
+  GoogleContactsAuthStrategy
 > = {
   name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
   async handle(input, context) {

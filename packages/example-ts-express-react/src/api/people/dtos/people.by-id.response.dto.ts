@@ -1,7 +1,7 @@
 import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
-import { GooglePeopleByIdOperation } from '@easybread/adapter-google-contacts';
+import { GoogleContactsPeopleByIdOperation } from '@easybread/adapter-google-contacts';
 import { EmployeeByIdOperation } from '@easybread/operations';
 
 export type PeopleByIdResponseDto =
-  | GooglePeopleByIdOperation['output']
+  | GoogleContactsPeopleByIdOperation['output']
   | EmployeeByIdOperation<BambooEmployee>['output'];

@@ -1,18 +1,18 @@
 import { BreadOperationHandler } from '@easybread/core';
 
-import { GoogleContactMapper } from '../data-mappers';
-import { GoogleAuthStrategy } from '../google.auth-strategy';
-import { GoogleOperationName } from '../google.operation-name';
+import { GoogleContactsContactMapper } from '../data-mappers';
+import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
+import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
-import { GooglePeopleCreateOperation } from '../operations';
+import { GoogleContactsPeopleCreateOperation } from '../operations';
 
-export const GooglePeopleCreateHandler: BreadOperationHandler<
-  GooglePeopleCreateOperation,
-  GoogleAuthStrategy
+export const GoogleContactsPeopleCreateHandler: BreadOperationHandler<
+  GoogleContactsPeopleCreateOperation,
+  GoogleContactsAuthStrategy
 > = {
-  name: GoogleOperationName.PEOPLE_CREATE,
+  name: GoogleContactsOperationName.PEOPLE_CREATE,
   async handle(input, context) {
-    const dataMapper = new GoogleContactMapper();
+    const dataMapper = new GoogleContactsContactMapper();
 
     const result = await context.httpRequest<GoogleContactsFeedEntryResponse>({
       method: 'POST',
@@ -26,7 +26,7 @@ export const GooglePeopleCreateHandler: BreadOperationHandler<
     });
 
     return {
-      name: GoogleOperationName.PEOPLE_CREATE,
+      name: GoogleContactsOperationName.PEOPLE_CREATE,
       payload: dataMapper.toSchema(result.data.entry),
       rawPayload: { success: true, data: result.data }
     };

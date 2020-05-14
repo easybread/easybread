@@ -1,1 +1,1 @@
-export { googleUpdateContactTransform } from './google.update-contact.transform';
+export { googleContactsUpdateContactTransform } from './google-contacts.update-contact.transform';

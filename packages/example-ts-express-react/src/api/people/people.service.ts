@@ -3,12 +3,12 @@ import {
   BambooEmployeesDirectory
 } from '@easybread/adapter-bamboo-hr';
 import {
-  GoogleOperationName,
-  GooglePeopleByIdOperation,
-  GooglePeopleCreateOperation,
-  GooglePeopleDeleteOperation,
-  GooglePeopleSearchOperation,
-  GooglePeopleUpdateOperation
+  GoogleContactsOperationName,
+  GoogleContactsPeopleByIdOperation,
+  GoogleContactsPeopleCreateOperation,
+  GoogleContactsPeopleDeleteOperation,
+  GoogleContactsPeopleSearchOperation,
+  GoogleContactsPeopleUpdateOperation
 } from '@easybread/adapter-google-contacts';
 import {
   BreadOperationName,
@@ -27,9 +27,9 @@ export class PeopleService {
   static searchGoogle(
     breadId: string,
     query?: string
-  ): Promise<GooglePeopleSearchOperation['output']> {
-    return googleClient.invoke<GooglePeopleSearchOperation>({
-      name: GoogleOperationName.PEOPLE_SEARCH,
+  ): Promise<GoogleContactsPeopleSearchOperation['output']> {
+    return googleClient.invoke<GoogleContactsPeopleSearchOperation>({
+      name: GoogleContactsOperationName.PEOPLE_SEARCH,
       breadId,
       params: { query }
     });
@@ -53,9 +53,9 @@ export class PeopleService {
   static byIdGoogle(
     breadId: string,
     id: string
-  ): Promise<GooglePeopleByIdOperation['output']> {
-    return googleClient.invoke<GooglePeopleByIdOperation>({
-      name: GoogleOperationName.PEOPLE_BY_ID,
+  ): Promise<GoogleContactsPeopleByIdOperation['output']> {
+    return googleClient.invoke<GoogleContactsPeopleByIdOperation>({
+      name: GoogleContactsOperationName.PEOPLE_BY_ID,
       breadId,
       params: { identifier: id }
     });
@@ -77,9 +77,9 @@ export class PeopleService {
   static createGoogleContact(
     breadId: string,
     person: PersonSchema
-  ): Promise<GooglePeopleCreateOperation['output']> {
-    return googleClient.invoke<GooglePeopleCreateOperation>({
-      name: GoogleOperationName.PEOPLE_CREATE,
+  ): Promise<GoogleContactsPeopleCreateOperation['output']> {
+    return googleClient.invoke<GoogleContactsPeopleCreateOperation>({
+      name: GoogleContactsOperationName.PEOPLE_CREATE,
       breadId,
       payload: person
     });
@@ -112,9 +112,9 @@ export class PeopleService {
   static updateGoogleContact(
     breadId: string,
     person: PersonSchema
-  ): Promise<GooglePeopleUpdateOperation['output']> {
-    return googleClient.invoke<GooglePeopleUpdateOperation>({
-      name: GoogleOperationName.PEOPLE_UPDATE,
+  ): Promise<GoogleContactsPeopleUpdateOperation['output']> {
+    return googleClient.invoke<GoogleContactsPeopleUpdateOperation>({
+      name: GoogleContactsOperationName.PEOPLE_UPDATE,
       breadId,
       payload: person
     });
@@ -125,9 +125,9 @@ export class PeopleService {
   static deleteGoogleContact(
     breadId: string,
     id: string
-  ): Promise<GooglePeopleDeleteOperation['output']> {
-    return googleClient.invoke<GooglePeopleDeleteOperation>({
-      name: GoogleOperationName.PEOPLE_DELETE,
+  ): Promise<GoogleContactsPeopleDeleteOperation['output']> {
+    return googleClient.invoke<GoogleContactsPeopleDeleteOperation>({
+      name: GoogleContactsOperationName.PEOPLE_DELETE,
       breadId,
       payload: { '@type': 'Person', identifier: id }
     });

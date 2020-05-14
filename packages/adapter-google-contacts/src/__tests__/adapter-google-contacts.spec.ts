@@ -15,15 +15,15 @@ import {
 import axiosMock, { AxiosRequestConfig } from 'axios';
 
 import {
-  GoogleAdapter,
-  GoogleAuthStrategy,
+  GoogleContactsAdapter,
   GoogleContactsAuthScopes,
-  GoogleOperationName,
-  GooglePeopleByIdOperation,
-  GooglePeopleCreateOperation,
-  GooglePeopleDeleteOperation,
-  GooglePeopleSearchOperation,
-  GooglePeopleUpdateOperation
+  GoogleContactsAuthStrategy,
+  GoogleContactsOperationName,
+  GoogleContactsPeopleByIdOperation,
+  GoogleContactsPeopleCreateOperation,
+  GoogleContactsPeopleDeleteOperation,
+  GoogleContactsPeopleSearchOperation,
+  GoogleContactsPeopleUpdateOperation
 } from '..';
 import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 import { CONTACT_FEED_ENTRY_UPDATE_MOCK } from './contact-feed-entry-update.mock';
@@ -57,9 +57,9 @@ const ACCESS_TOKEN_CREATE_RESPONSE_DATA: GoogleCommonAccessTokenCreateResponse =
 //       - extract common setup/utils
 //       - clean-up
 describe('Google Plugin', () => {
-  const serviceAdapter = new GoogleAdapter();
+  const serviceAdapter = new GoogleContactsAdapter();
   const stateAdapter = new InMemoryStateAdapter();
-  const authStrategy = new GoogleAuthStrategy(stateAdapter, {
+  const authStrategy = new GoogleContactsAuthStrategy(stateAdapter, {
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     redirectUri: REDIRECT_URI
@@ -187,7 +187,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(GoogleOperationName.PEOPLE_SEARCH, () => {
+    describe(GoogleContactsOperationName.PEOPLE_SEARCH, () => {
       function setupContactsMock(): void {
         (axiosMock.request as Mock).mockImplementationOnce(() => {
           return Promise.resolve({
@@ -213,10 +213,10 @@ describe('Google Plugin', () => {
 
       async function invokePeopleSearch(
         query?: string
-      ): Promise<GooglePeopleSearchOperation['output']> {
-        return client.invoke<GooglePeopleSearchOperation>({
+      ): Promise<GoogleContactsPeopleSearchOperation['output']> {
+        return client.invoke<GoogleContactsPeopleSearchOperation>({
           breadId: USER_ID,
-          name: GoogleOperationName.PEOPLE_SEARCH,
+          name: GoogleContactsOperationName.PEOPLE_SEARCH,
           params: { query }
         });
       }
@@ -410,7 +410,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(GoogleOperationName.PEOPLE_CREATE, () => {
+    describe(GoogleContactsOperationName.PEOPLE_CREATE, () => {
       function setupCreateContactMock(): void {
         (axiosMock.request as Mock).mockImplementationOnce(() =>
           Promise.resolve({
@@ -421,11 +421,11 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleCreate(): Promise<
-        GooglePeopleCreateOperation['output']
+        GoogleContactsPeopleCreateOperation['output']
       > {
-        return client.invoke<GooglePeopleCreateOperation>({
+        return client.invoke<GoogleContactsPeopleCreateOperation>({
           breadId: USER_ID,
-          name: GoogleOperationName.PEOPLE_CREATE,
+          name: GoogleContactsOperationName.PEOPLE_CREATE,
           payload: {
             '@type': 'Person',
             givenName: 'Test',
@@ -477,7 +477,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(`${GoogleOperationName.PEOPLE_UPDATE}`, () => {
+    describe(`${GoogleContactsOperationName.PEOPLE_UPDATE}`, () => {
       function setupUpdateContactMock(): void {
         (axiosMock.request as Mock).mockImplementation(
           (config: AxiosRequestConfig) =>
@@ -492,11 +492,11 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleUpdate(): Promise<
-        GooglePeopleUpdateOperation['output']
+        GoogleContactsPeopleUpdateOperation['output']
       > {
-        return client.invoke<GooglePeopleUpdateOperation>({
+        return client.invoke<GoogleContactsPeopleUpdateOperation>({
           breadId: USER_ID,
-          name: GoogleOperationName.PEOPLE_UPDATE,
+          name: GoogleContactsOperationName.PEOPLE_UPDATE,
           payload: {
             '@type': 'Person',
             identifier: '79ec2071883179b9',
@@ -725,7 +725,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(`${GoogleOperationName.PEOPLE_BY_ID}`, () => {
+    describe(`${GoogleContactsOperationName.PEOPLE_BY_ID}`, () => {
       function setupGetContactMock(): void {
         (axiosMock.request as Mock).mockImplementationOnce(() =>
           Promise.resolve({
@@ -736,11 +736,11 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleById(): Promise<
-        GooglePeopleByIdOperation['output']
+        GoogleContactsPeopleByIdOperation['output']
       > {
-        return client.invoke<GooglePeopleByIdOperation>({
+        return client.invoke<GoogleContactsPeopleByIdOperation>({
           breadId: USER_ID,
-          name: GoogleOperationName.PEOPLE_BY_ID,
+          name: GoogleContactsOperationName.PEOPLE_BY_ID,
           params: { identifier: '79ec2071883179b9' }
         });
       }
@@ -790,7 +790,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(`${GoogleOperationName.PEOPLE_DELETE}`, () => {
+    describe(`${GoogleContactsOperationName.PEOPLE_DELETE}`, () => {
       function setupGetContactMock(): void {
         (axiosMock.request as Mock).mockImplementation(
           (config: AxiosRequestConfig) => {
@@ -802,11 +802,11 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleDelete(): Promise<
-        GooglePeopleDeleteOperation['output']
+        GoogleContactsPeopleDeleteOperation['output']
       > {
-        return client.invoke<GooglePeopleDeleteOperation>({
+        return client.invoke<GoogleContactsPeopleDeleteOperation>({
           breadId: USER_ID,
-          name: GoogleOperationName.PEOPLE_DELETE,
+          name: GoogleContactsOperationName.PEOPLE_DELETE,
           payload: {
             '@type': 'Person',
             identifier: '79ec2071883179b9'

@@ -1,8 +1,8 @@
-export { GoogleOauth2StartHandler } from './google.oauth2-start.handler';
-export { GoogleOauth2CompleteHandler } from './google.oauth2-complete.handler';
+export { GoogleContactsOauth2StartHandler } from './google-contacts.oauth2-start.handler';
+export { GoogleContactsOauth2CompleteHandler } from './google-contacts.oauth2-complete.handler';
 
-export { GooglePeopleSearchHandler } from './google.people-search.handler';
-export { GooglePeopleCreateHandler } from './google.people-create.handler';
-export { GooglePeopleUpdateHandler } from './google.people-update.handler';
-export { GooglePeopleDeleteHandler } from './google.people-delete.handler';
-export { GooglePeopleByIdHandler } from './google.people-by-id.handler';
+export { GoogleContactsPeopleSearchHandler } from './google-contacts.people-search.handler';
+export { GoogleContactsPeopleCreateHandler } from './google-contacts.people-create.handler';
+export { GoogleContactsPeopleUpdateHandler } from './google-contacts.people-update.handler';
+export { GoogleContactsPeopleDeleteHandler } from './google-contacts.people-delete.handler';
+export { GoogleContactsPeopleByIdHandler } from './google-contacts.people-by-id.handler';

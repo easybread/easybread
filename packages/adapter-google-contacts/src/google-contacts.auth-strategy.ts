@@ -4,10 +4,10 @@ import {
   GoogleCommonOauth2AuthStrategy
 } from '@easybread/google-common';
 
-import { GOOGLE_PROVIDER_NAME } from './google.constants';
+import { GOOGLE_PROVIDER_NAME } from './google-contacts.constants';
 import { GoogleContactsAuthScopes } from './interfaces';
 
-export class GoogleAuthStrategy extends GoogleCommonOauth2AuthStrategy<
+export class GoogleContactsAuthStrategy extends GoogleCommonOauth2AuthStrategy<
   GoogleContactsAuthScopes
 > {
   constructor(

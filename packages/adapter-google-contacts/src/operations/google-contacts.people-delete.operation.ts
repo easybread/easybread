@@ -5,16 +5,16 @@ import {
 } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
-import { GoogleOperationName } from '../google.operation-name';
+import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 
-export interface GooglePeopleDeleteOperation
-  extends BreadOperation<GoogleOperationName.PEOPLE_DELETE> {
+export interface GoogleContactsPeopleDeleteOperation
+  extends BreadOperation<GoogleContactsOperationName.PEOPLE_DELETE> {
   input: BreadOperationInputWithPayload<
-    GoogleOperationName.PEOPLE_DELETE,
+    GoogleContactsOperationName.PEOPLE_DELETE,
     PersonSchema
   >;
   output: BreadOperationOutputWithPayload<
-    GoogleOperationName.PEOPLE_DELETE,
+    GoogleContactsOperationName.PEOPLE_DELETE,
     PersonSchema
   >;
 }

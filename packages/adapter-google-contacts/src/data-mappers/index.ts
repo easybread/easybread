@@ -1,1 +1,1 @@
-export { GoogleContactMapper } from './google.contact.mapper';
+export { GoogleContactsContactMapper } from './google-contacts.contact.mapper';

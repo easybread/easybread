@@ -5,18 +5,18 @@ import {
 } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
-import { GoogleOperationName } from '../google.operation-name';
+import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
 
-export interface GooglePeopleByIdOperation
-  extends BreadOperation<GoogleOperationName.PEOPLE_BY_ID> {
+export interface GoogleContactsPeopleByIdOperation
+  extends BreadOperation<GoogleContactsOperationName.PEOPLE_BY_ID> {
   input: BreadOperationInputWithParams<
-    GoogleOperationName.PEOPLE_BY_ID,
+    GoogleContactsOperationName.PEOPLE_BY_ID,
     { identifier: string }
   >;
 
   output: BreadOperationOutputWithRawDataAndPayload<
-    GoogleOperationName.PEOPLE_BY_ID,
+    GoogleContactsOperationName.PEOPLE_BY_ID,
     GoogleContactsFeedEntryResponse,
     PersonSchema
   >;
