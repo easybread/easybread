@@ -24,7 +24,7 @@
     "lib"
   ],
   "scripts": {
-    "prebuild": "yarn lint:fix",
+    "prebuild": "yarn lint:fix && rimraf ./lib",
     "build": "tsc",
     "check-types": "tsc --noEmit",
     "prettier:write": "prettier 'src/**/*.ts' --write",

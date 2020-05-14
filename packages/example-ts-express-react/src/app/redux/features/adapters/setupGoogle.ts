@@ -1,4 +1,5 @@
-import { GoogleContactsOauth2StartOperation } from '@easybread/adapter-google-contacts';
+import { GoogleContactsAuthScopes } from '@easybread/adapter-google-contacts';
+import { GoogleCommonOauth2StartOperation } from '@easybread/google-common';
 
 import { ADAPTER_NAME } from '../../../../common';
 import { postRequest } from '../../../http';
@@ -32,7 +33,7 @@ export const setupGoogle = (): AppThunk => async dispatch => {
 
   const result = await postRequest<
     {},
-    GoogleContactsOauth2StartOperation['output']
+    GoogleCommonOauth2StartOperation<GoogleContactsAuthScopes>['output']
   >('/api/adapters/google/configurations', {});
 
   dispatch(notifyOperationResult(result));
