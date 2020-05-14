@@ -1,9 +1,9 @@
 import { BambooBasicAuthPayload } from '@easybread/adapter-bamboo-hr';
+import { GoogleOauth2StartOperation } from '@easybread/adapter-google-contacts';
 import {
-  GoogleOauth2CompleteOperation,
-  GoogleOauth2StartOperation,
-  GoogleOperationName
-} from '@easybread/adapter-google';
+  GoogleCommonOauth2CompleteOperation,
+  GoogleCommonOperationName
+} from '@easybread/google-common';
 import {
   BreadOperationName,
   SetupBasicAuthOperation
@@ -75,7 +75,7 @@ export class AdaptersService {
     breadId: string
   ): Promise<GoogleOauth2StartOperation['output']> {
     return googleClient.invoke<GoogleOauth2StartOperation>({
-      name: GoogleOperationName.AUTH_FLOW_START,
+      name: GoogleCommonOperationName.AUTH_FLOW_START,
       breadId,
       payload: {
         prompt: ['consent'],
@@ -91,11 +91,13 @@ export class AdaptersService {
   static async completeGoogleOAuthFlow(
     breadId: string,
     dto: CompleteGoogleOauth2Dto
-  ): Promise<GoogleOauth2CompleteOperation['output']> {
+  ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
     const { code } = dto;
 
-    const output = await googleClient.invoke<GoogleOauth2CompleteOperation>({
-      name: GoogleOperationName.AUTH_FLOW_COMPLETE,
+    const output = await googleClient.invoke<
+      GoogleCommonOauth2CompleteOperation
+    >({
+      name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
       breadId,
       payload: { code }
     });

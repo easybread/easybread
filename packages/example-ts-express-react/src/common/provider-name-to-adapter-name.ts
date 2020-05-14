@@ -1,5 +1,5 @@
 import { BAMBOO_HR_PROVIDER_NAME } from '@easybread/adapter-bamboo-hr';
-import { GOOGLE_PROVIDER_NAME } from '@easybread/adapter-google';
+import { GOOGLE_PROVIDER_NAME } from '@easybread/adapter-google-contacts';
 
 import { ADAPTER_NAME } from './adapter-name';
 import { ProviderName } from './provider-name';

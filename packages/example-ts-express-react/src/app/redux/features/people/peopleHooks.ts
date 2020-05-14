@@ -1,5 +1,5 @@
 import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
-import { GoogleContactsFeedEntry } from '@easybread/adapter-google';
+import { GoogleContactsFeedEntry } from '@easybread/adapter-google-contacts';
 import { PersonSchema } from '@easybread/schemas';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

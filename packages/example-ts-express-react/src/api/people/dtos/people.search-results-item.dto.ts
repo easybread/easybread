@@ -1,5 +1,5 @@
 import { BambooEmployeesDirectory } from '@easybread/adapter-bamboo-hr';
-import { GooglePeopleSearchOperation } from '@easybread/adapter-google';
+import { GooglePeopleSearchOperation } from '@easybread/adapter-google-contacts';
 import { EmployeeSearchOperation } from '@easybread/operations';
 
 export type PeopleSearchResultsItemDto =

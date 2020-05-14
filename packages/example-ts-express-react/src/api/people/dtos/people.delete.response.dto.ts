@@ -1,4 +1,4 @@
-import { GooglePeopleDeleteOperation } from '@easybread/adapter-google';
+import { GooglePeopleDeleteOperation } from '@easybread/adapter-google-contacts';
 import { EmployeeDeleteOperation } from '@easybread/operations';
 
 export type PeopleDeleteResponseDto =
