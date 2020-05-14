@@ -1,4 +1,7 @@
-import { GoogleAdapter, GoogleAuthStrategy } from '@easybread/adapter-google';
+import {
+  GoogleAdapter,
+  GoogleAuthStrategy
+} from '@easybread/adapter-google-contacts';
 import { EasyBreadClient } from '@easybread/core';
 
 import { stateAdapter } from '../state';

@@ -1,5 +1,5 @@
 import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
-import { GoogleContactsFeedEntry } from '@easybread/adapter-google';
+import { GoogleContactsFeedEntry } from '@easybread/adapter-google-contacts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { without } from 'lodash';
 

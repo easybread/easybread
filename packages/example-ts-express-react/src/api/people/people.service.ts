@@ -9,7 +9,7 @@ import {
   GooglePeopleDeleteOperation,
   GooglePeopleSearchOperation,
   GooglePeopleUpdateOperation
-} from '@easybread/adapter-google';
+} from '@easybread/adapter-google-contacts';
 import {
   BreadOperationName,
   EmployeeByIdOperation,

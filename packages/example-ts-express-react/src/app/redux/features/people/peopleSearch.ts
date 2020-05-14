@@ -7,7 +7,7 @@ import {
   GOOGLE_PROVIDER_NAME,
   GoogleContactsFeedEntry,
   GooglePeopleSearchOperation
-} from '@easybread/adapter-google';
+} from '@easybread/adapter-google-contacts';
 import { EmployeeSearchOperation } from '@easybread/operations';
 
 import { PeopleSearchResponseDto } from '../../../../api/api.dtos';

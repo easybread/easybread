@@ -1,4 +1,4 @@
-import { GoogleOauth2StartOperation } from '@easybread/adapter-google';
+import { GoogleOauth2StartOperation } from '@easybread/adapter-google-contacts';
 
 import { ADAPTER_NAME } from '../../../../common';
 import { postRequest } from '../../../http';

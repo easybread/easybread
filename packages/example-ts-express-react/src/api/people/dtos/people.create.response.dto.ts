@@ -1,4 +1,4 @@
-import { GooglePeopleCreateOperation } from '@easybread/adapter-google';
+import { GooglePeopleCreateOperation } from '@easybread/adapter-google-contacts';
 import { EmployeeCreateOperation } from '@easybread/operations';
 
 export type PeopleCreateResponseDto =

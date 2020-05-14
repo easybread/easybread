@@ -1,4 +1,4 @@
-import { GoogleOauth2CompleteOperation } from '@easybread/adapter-google';
+import { GoogleCommonOauth2CompleteOperation } from '@easybread/google-common';
 
 import { CompleteGoogleOauth2Dto } from '../../../../api/api.dtos';
 import { postRequest } from '../../../http';
@@ -10,7 +10,7 @@ export const completeGoogleOAuth2 = (
 ): AppThunk => async dispatch => {
   const result = await postRequest<
     CompleteGoogleOauth2Dto,
-    GoogleOauth2CompleteOperation['output']
+    GoogleCommonOauth2CompleteOperation['output']
   >('/api/adapters/google/complete-oauth', data);
 
   dispatch(notifyOperationResult(result));
