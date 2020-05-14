@@ -6,11 +6,11 @@ import {
 } from '@easybread/test-utils';
 import axiosMock from 'axios';
 
-import { GoogleCommonOauth2AuthStrategy } from './google-common.oauth2.auth-strategy';
+import { GoogleCommonOauth2AuthStrategy } from '../google-common.oauth2.auth-strategy';
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse
-} from './interfaces';
+} from '../interfaces';
 import Mock = jest.Mock;
 
 type TestScopes =
