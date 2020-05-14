@@ -1,11 +1,13 @@
 import { BreadServiceAdapter } from '@easybread/core';
+import {
+  GoogleCommonOauth2CompleteHandler,
+  GoogleCommonOauth2StartHandler
+} from '@easybread/google-common';
 
 import { GoogleContactsAuthStrategy } from './google-contacts.auth-strategy';
 import { GOOGLE_PROVIDER_NAME } from './google-contacts.constants';
 import { GoogleContactsOperation } from './google-contacts.operation';
 import {
-  GoogleContactsOauth2CompleteHandler,
-  GoogleContactsOauth2StartHandler,
   GoogleContactsPeopleByIdHandler,
   GoogleContactsPeopleCreateHandler,
   GoogleContactsPeopleDeleteHandler,
@@ -22,8 +24,8 @@ export class GoogleContactsAdapter extends BreadServiceAdapter<
   constructor() {
     super();
     this.registerOperationHandlers(
-      GoogleContactsOauth2StartHandler,
-      GoogleContactsOauth2CompleteHandler,
+      GoogleCommonOauth2StartHandler,
+      GoogleCommonOauth2CompleteHandler,
       GoogleContactsPeopleSearchHandler,
       GoogleContactsPeopleCreateHandler,
       GoogleContactsPeopleUpdateHandler,

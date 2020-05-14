@@ -1,7 +1,9 @@
-import { GoogleCommonOauth2CompleteOperation } from '@easybread/google-common';
+import {
+  GoogleCommonOauth2CompleteOperation,
+  GoogleCommonOauth2StartOperation
+} from '@easybread/google-common';
 
 import {
-  GoogleContactsOauth2StartOperation,
   GoogleContactsPeopleByIdOperation,
   GoogleContactsPeopleCreateOperation,
   GoogleContactsPeopleDeleteOperation,
@@ -10,7 +12,7 @@ import {
 } from './operations';
 
 export type GoogleContactsOperation =
-  | GoogleContactsOauth2StartOperation
+  | GoogleCommonOauth2StartOperation
   | GoogleCommonOauth2CompleteOperation
   | GoogleContactsPeopleByIdOperation
   | GoogleContactsPeopleSearchOperation
