@@ -42,7 +42,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "prebuild": "yarn lint:fix",
+    "prebuild": "yarn lint:fix && rimraf ./lib",
     "build": "tsc",
     "prepublish": "yarn build",
     "check-types": "tsc --noEmit",

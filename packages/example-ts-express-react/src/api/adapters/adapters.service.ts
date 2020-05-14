@@ -1,7 +1,8 @@
 import { BambooBasicAuthPayload } from '@easybread/adapter-bamboo-hr';
-import { GoogleContactsOauth2StartOperation } from '@easybread/adapter-google-contacts';
+import { GoogleContactsAuthScopes } from '@easybread/adapter-google-contacts';
 import {
   GoogleCommonOauth2CompleteOperation,
+  GoogleCommonOauth2StartOperation,
   GoogleCommonOperationName
 } from '@easybread/google-common';
 import {
@@ -73,8 +74,12 @@ export class AdaptersService {
 
   static async startGoogleOAuthFlow(
     breadId: string
-  ): Promise<GoogleContactsOauth2StartOperation['output']> {
-    return googleClient.invoke<GoogleContactsOauth2StartOperation>({
+  ): Promise<
+    GoogleCommonOauth2StartOperation<GoogleContactsAuthScopes>['output']
+  > {
+    return googleClient.invoke<
+      GoogleCommonOauth2StartOperation<GoogleContactsAuthScopes>
+    >({
       name: GoogleCommonOperationName.AUTH_FLOW_START,
       breadId,
       payload: {
