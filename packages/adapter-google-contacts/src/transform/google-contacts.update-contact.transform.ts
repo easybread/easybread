@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { GoogleContactsFeedEntry } from '../interfaces';
 
-export const googleUpdateContactTransform = (
+export const googleContactsUpdateContactTransform = (
   baseEntry: GoogleContactsFeedEntry,
   updateEntry: GoogleContactsFeedEntry
 ): GoogleContactsFeedEntry => {

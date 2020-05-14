@@ -1,8 +1,8 @@
 export * from './operations';
 export * from './interfaces';
-export * from './google.constants';
+export * from './google-contacts.constants';
 
-export { GoogleAdapter } from './google.adapter';
-export { GoogleAuthStrategy } from './google.auth-strategy';
-export { GoogleOperation } from './google.operation';
-export { GoogleOperationName } from './google.operation-name';
+export { GoogleContactsAdapter } from './google-contacts.adapter';
+export { GoogleContactsAuthStrategy } from './google-contacts.auth-strategy';
+export { GoogleContactsOperation } from './google-contacts.operation';
+export { GoogleContactsOperationName } from './google-contacts.operation-name';

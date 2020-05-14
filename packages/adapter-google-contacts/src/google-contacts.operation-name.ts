@@ -1,4 +1,4 @@
-export enum GoogleOperationName {
+export enum GoogleContactsOperationName {
   PEOPLE_SEARCH = 'GOOGLE/PEOPLE/SEARCH',
   PEOPLE_CREATE = 'GOOGLE/PEOPLE/CREATE',
   PEOPLE_UPDATE = 'GOOGLE/PEOPLE/UPDATE',

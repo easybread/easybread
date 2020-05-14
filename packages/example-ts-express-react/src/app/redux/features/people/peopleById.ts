@@ -5,7 +5,7 @@ import {
 import {
   GOOGLE_PROVIDER_NAME,
   GoogleContactsFeedEntry,
-  GooglePeopleByIdOperation
+  GoogleContactsPeopleByIdOperation
 } from '@easybread/adapter-google-contacts';
 import { EmployeeByIdOperation } from '@easybread/operations';
 
@@ -59,7 +59,7 @@ function extractGoogleEntry(
     return undefined;
   }
 
-  const googleOutput = result as GooglePeopleByIdOperation['output'];
+  const googleOutput = result as GoogleContactsPeopleByIdOperation['output'];
 
   return googleOutput.rawPayload.success
     ? googleOutput.rawPayload.data.entry

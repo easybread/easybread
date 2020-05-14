@@ -11,7 +11,7 @@ import {
   GdataText
 } from '../interfaces/gdata';
 
-export class GoogleContactMapper extends BreadDataMapper<
+export class GoogleContactsContactMapper extends BreadDataMapper<
   GoogleContactsFeedEntry,
   PersonSchema
 > {

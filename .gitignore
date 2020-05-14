@@ -8,6 +8,9 @@ docs/
 
 npm-debug.log
 yarn-error.log
+lerna-debug.log
+
+report.*.json
 
 .nyc_output
 .vscode
@@ -15,5 +18,3 @@ yarn-error.log
 .DS_Store
 .cache/
 
-/report.*.json
-/lerna-debug.log

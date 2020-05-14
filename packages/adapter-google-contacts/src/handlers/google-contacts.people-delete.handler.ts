@@ -1,16 +1,16 @@
 import { BreadOperationHandler, ServiceException } from '@easybread/core';
 
-import { GoogleAuthStrategy } from '../google.auth-strategy';
-import { GOOGLE_PROVIDER_NAME } from '../google.constants';
-import { GoogleOperationName } from '../google.operation-name';
+import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
+import { GOOGLE_PROVIDER_NAME } from '../google-contacts.constants';
+import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
-import { GooglePeopleDeleteOperation } from '../operations';
+import { GoogleContactsPeopleDeleteOperation } from '../operations';
 
-export const GooglePeopleDeleteHandler: BreadOperationHandler<
-  GooglePeopleDeleteOperation,
-  GoogleAuthStrategy
+export const GoogleContactsPeopleDeleteHandler: BreadOperationHandler<
+  GoogleContactsPeopleDeleteOperation,
+  GoogleContactsAuthStrategy
 > = {
-  name: GoogleOperationName.PEOPLE_DELETE,
+  name: GoogleContactsOperationName.PEOPLE_DELETE,
   async handle(input, context) {
     if (!input.payload.identifier) {
       throw new ServiceException(GOOGLE_PROVIDER_NAME, 'identifier is empty');
@@ -43,7 +43,7 @@ export const GooglePeopleDeleteHandler: BreadOperationHandler<
     });
 
     return {
-      name: GoogleOperationName.PEOPLE_DELETE,
+      name: GoogleContactsOperationName.PEOPLE_DELETE,
       payload: input.payload,
       rawPayload: { success: true }
     };

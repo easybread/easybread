@@ -1,18 +1,18 @@
 import { BreadOperationHandler, ServiceException } from '@easybread/core';
 
-import { GoogleContactMapper } from '../data-mappers';
-import { GoogleAuthStrategy } from '../google.auth-strategy';
-import { GOOGLE_PROVIDER_NAME } from '../google.constants';
-import { GoogleOperationName } from '../google.operation-name';
+import { GoogleContactsContactMapper } from '../data-mappers';
+import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
+import { GOOGLE_PROVIDER_NAME } from '../google-contacts.constants';
+import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
-import { GooglePeopleUpdateOperation } from '../operations';
-import { googleUpdateContactTransform } from '../transform';
+import { GoogleContactsPeopleUpdateOperation } from '../operations';
+import { googleContactsUpdateContactTransform } from '../transform';
 
-export const GooglePeopleUpdateHandler: BreadOperationHandler<
-  GooglePeopleUpdateOperation,
-  GoogleAuthStrategy
+export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
+  GoogleContactsPeopleUpdateOperation,
+  GoogleContactsAuthStrategy
 > = {
-  name: GoogleOperationName.PEOPLE_UPDATE,
+  name: GoogleContactsOperationName.PEOPLE_UPDATE,
   async handle(input, context) {
     if (!input.payload.identifier) {
       throw new ServiceException(GOOGLE_PROVIDER_NAME, 'identifier is empty');
@@ -37,12 +37,12 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
       }
     });
 
-    const dataMapper = new GoogleContactMapper();
+    const dataMapper = new GoogleContactsContactMapper();
 
     const contactEntryChange = dataMapper.toRemote(personChange);
 
     // TODO: replace this with data mapper too.
-    const contactUpdatedEntry = googleUpdateContactTransform(
+    const contactUpdatedEntry = googleContactsUpdateContactTransform(
       contactBase.data.entry,
       contactEntryChange
     );
@@ -61,7 +61,7 @@ export const GooglePeopleUpdateHandler: BreadOperationHandler<
     });
 
     return {
-      name: GoogleOperationName.PEOPLE_UPDATE,
+      name: GoogleContactsOperationName.PEOPLE_UPDATE,
       payload: dataMapper.toSchema(result.data.entry),
       rawPayload: { success: true, data: result.data }
     };
