@@ -9,7 +9,8 @@ import {
 import {
   BreadOperation,
   BreadOperationContext,
-  BreadOperationHandler
+  BreadOperationHandler,
+  createFailedOperationOutput
 } from '../operation';
 
 /**
@@ -35,7 +36,11 @@ export abstract class BreadServiceAdapter<
       const output = await handler.handle(input, context);
       return this.setProviderToOutput(output);
     } catch (error) {
-      throw this.createServiceException(error);
+      return createFailedOperationOutput<O>(
+        input.name,
+        this.provider,
+        this.createServiceException(error)
+      );
     }
   }
 
