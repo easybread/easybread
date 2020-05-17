@@ -5,7 +5,7 @@ import { BreadSchema } from '@easybread/schemas';
  * So we don't use optional fields or anything like that.
  * */
 
-interface BreadFailedOperationRawPayload {
+export interface BreadFailedOperationRawPayload {
   success: false;
   error: Error | string | object;
 }

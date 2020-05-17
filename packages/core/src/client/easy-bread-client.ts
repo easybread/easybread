@@ -44,15 +44,7 @@ export class EasyBreadClient<
     input: O['input'],
     context: BreadOperationContext<T, A>
   ): Promise<O['output']> {
-    try {
-      return await this.serviceAdapter.processOperation(input, context);
-    } catch (error) {
-      return {
-        provider: error.provider || 'unknown',
-        name: input.name,
-        rawPayload: { success: false, error }
-      };
-    }
+    return await this.serviceAdapter.processOperation(input, context);
   }
 
   private async preProcess<I extends T['input']>(
