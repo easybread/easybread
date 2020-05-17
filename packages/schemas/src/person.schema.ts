@@ -3,6 +3,7 @@ import { OrganizationSchema } from './organization.schema';
 
 export interface PersonSchema extends BreadSchema {
   '@type': 'Person';
+  password?: string;
   identifier?: string;
   gender?: string;
   givenName?: string;
