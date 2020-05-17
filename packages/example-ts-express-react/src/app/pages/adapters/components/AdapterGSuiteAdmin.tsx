@@ -4,28 +4,26 @@ import { useDispatch } from 'react-redux';
 import { ADAPTER_NAME } from '../../../../common';
 import {
   resetAdapterConfiguration,
-  setupGoogle,
+  setupGsuiteAdmin,
   useAdapterConfigured
 } from '../../../redux/features/adapters';
 import { AdapterContainer } from './Adapter';
 
-interface GoogleAdapterProps {}
+interface AdapterGsuiteAdminProps {}
 
-export const AdapterGoogle: FC<GoogleAdapterProps> = () => {
+export const AdapterGsuiteAdmin: FC<AdapterGsuiteAdminProps> = () => {
   const dispatch = useDispatch();
-  const configured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
+  const configured = useAdapterConfigured(ADAPTER_NAME.GSUITE_ADMIN);
 
-  const onSubmit = (): void => {
-    dispatch(setupGoogle());
-  };
+  const onSubmit = useCallback(() => dispatch(setupGsuiteAdmin()), [dispatch]);
 
   const resetConfiguration = useCallback(() => {
-    dispatch(resetAdapterConfiguration(ADAPTER_NAME.GOOGLE));
+    dispatch(resetAdapterConfiguration(ADAPTER_NAME.GSUITE_ADMIN));
   }, [dispatch]);
 
   return (
     <AdapterContainer
-      title={'Google'}
+      title={'GSuite'}
       configured={configured}
       onSubmit={onSubmit}
       submitOnExpand={true}

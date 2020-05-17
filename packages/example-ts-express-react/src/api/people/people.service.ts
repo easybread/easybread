@@ -11,6 +11,14 @@ import {
   GoogleContactsPeopleUpdateOperation
 } from '@easybread/adapter-google-contacts';
 import {
+  GsuiteAdminOperationName,
+  GsuiteAdminUsersByIdOperation,
+  GsuiteAdminUsersCreateOperation,
+  GsuiteAdminUsersDeleteOperation,
+  GsuiteAdminUsersSearchOperation,
+  GsuiteAdminUsersUpdateOperation
+} from '@easybread/adapter-gsuite-admin';
+import {
   BreadOperationName,
   EmployeeByIdOperation,
   EmployeeCreateOperation,
@@ -19,17 +27,32 @@ import {
 } from '@easybread/operations';
 import { PersonSchema } from '@easybread/schemas';
 
-import { bambooHrClient, googleClient } from '../shared';
+import {
+  bambooHrClient,
+  googleContactsClient,
+  gsuiteAdminClient
+} from '../shared';
 
 export class PeopleService {
   // SEARCH ------------------------------------
 
-  static searchGoogle(
+  static searchGoogleContacts(
     breadId: string,
     query?: string
   ): Promise<GoogleContactsPeopleSearchOperation['output']> {
-    return googleClient.invoke<GoogleContactsPeopleSearchOperation>({
+    return googleContactsClient.invoke<GoogleContactsPeopleSearchOperation>({
       name: GoogleContactsOperationName.PEOPLE_SEARCH,
+      breadId,
+      params: { query }
+    });
+  }
+
+  static searchGsuiteAdmin(
+    breadId: string,
+    query?: string
+  ): Promise<GsuiteAdminUsersSearchOperation['output']> {
+    return gsuiteAdminClient.invoke<GsuiteAdminUsersSearchOperation>({
+      name: GsuiteAdminOperationName.USERS_SEARCH,
       breadId,
       params: { query }
     });
@@ -50,12 +73,23 @@ export class PeopleService {
 
   // GET BY ID ------------------------------------
 
-  static byIdGoogle(
+  static byIdGoogleContacts(
     breadId: string,
     id: string
   ): Promise<GoogleContactsPeopleByIdOperation['output']> {
-    return googleClient.invoke<GoogleContactsPeopleByIdOperation>({
+    return googleContactsClient.invoke<GoogleContactsPeopleByIdOperation>({
       name: GoogleContactsOperationName.PEOPLE_BY_ID,
+      breadId,
+      params: { identifier: id }
+    });
+  }
+
+  static byIdGsuite(
+    breadId: string,
+    id: string
+  ): Promise<GsuiteAdminUsersByIdOperation['output']> {
+    return gsuiteAdminClient.invoke<GsuiteAdminUsersByIdOperation>({
+      name: GsuiteAdminOperationName.USERS_BY_ID,
       breadId,
       params: { identifier: id }
     });
@@ -78,7 +112,7 @@ export class PeopleService {
     breadId: string,
     person: PersonSchema
   ): Promise<GoogleContactsPeopleCreateOperation['output']> {
-    return googleClient.invoke<GoogleContactsPeopleCreateOperation>({
+    return googleContactsClient.invoke<GoogleContactsPeopleCreateOperation>({
       name: GoogleContactsOperationName.PEOPLE_CREATE,
       breadId,
       payload: person
@@ -91,6 +125,17 @@ export class PeopleService {
   ): Promise<EmployeeCreateOperation['output']> {
     return bambooHrClient.invoke<EmployeeCreateOperation>({
       name: BreadOperationName.EMPLOYEE_CREATE,
+      breadId,
+      payload: person
+    });
+  }
+
+  static createGsuiteUser(
+    breadId: string,
+    person: PersonSchema
+  ): Promise<GsuiteAdminUsersCreateOperation['output']> {
+    return gsuiteAdminClient.invoke<GsuiteAdminUsersCreateOperation>({
+      name: GsuiteAdminOperationName.USERS_CREATE,
       breadId,
       payload: person
     });
@@ -113,8 +158,19 @@ export class PeopleService {
     breadId: string,
     person: PersonSchema
   ): Promise<GoogleContactsPeopleUpdateOperation['output']> {
-    return googleClient.invoke<GoogleContactsPeopleUpdateOperation>({
+    return googleContactsClient.invoke<GoogleContactsPeopleUpdateOperation>({
       name: GoogleContactsOperationName.PEOPLE_UPDATE,
+      breadId,
+      payload: person
+    });
+  }
+
+  static updateGsuiteUser(
+    breadId: string,
+    person: PersonSchema
+  ): Promise<GsuiteAdminUsersUpdateOperation['output']> {
+    return gsuiteAdminClient.invoke<GsuiteAdminUsersUpdateOperation>({
+      name: GsuiteAdminOperationName.USERS_UPDATE,
       breadId,
       payload: person
     });
@@ -126,8 +182,19 @@ export class PeopleService {
     breadId: string,
     id: string
   ): Promise<GoogleContactsPeopleDeleteOperation['output']> {
-    return googleClient.invoke<GoogleContactsPeopleDeleteOperation>({
+    return googleContactsClient.invoke<GoogleContactsPeopleDeleteOperation>({
       name: GoogleContactsOperationName.PEOPLE_DELETE,
+      breadId,
+      payload: { '@type': 'Person', identifier: id }
+    });
+  }
+
+  static deleteGsuiteUser(
+    breadId: string,
+    id: string
+  ): Promise<GsuiteAdminUsersDeleteOperation['output']> {
+    return gsuiteAdminClient.invoke<GsuiteAdminUsersDeleteOperation>({
+      name: GsuiteAdminOperationName.USERS_DELETE,
       breadId,
       payload: { '@type': 'Person', identifier: id }
     });

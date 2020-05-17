@@ -26,9 +26,10 @@ interface HeaderNavProps {}
 
 export const HeaderNav: FC<HeaderNavProps> = () => {
   const bambooConfigured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
-  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
+  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE_CONTACTS);
+  const gsuiteConfigured = useAdapterConfigured(ADAPTER_NAME.GSUITE_ADMIN);
 
-  const showPeople = bambooConfigured || googleConfigured;
+  const showPeople = bambooConfigured || googleConfigured || gsuiteConfigured;
 
   return (
     <StyledHeaderNav>

@@ -7,7 +7,8 @@ import {
 import { ElementSpinner } from '../../ui-kit/element-kit';
 import { LayoutContentWrapper } from '../../ui-kit/layout-kit';
 import { AdapterBamboo } from './components/AdapterBamboo';
-import { AdapterGoogle } from './components/AdapterGoogle';
+import { AdapterGoogleContacts } from './components/AdapterGoogleContacts';
+import { AdapterGsuiteAdmin } from './components/AdapterGSuiteAdmin';
 
 interface AdaptersPageProps {}
 
@@ -29,7 +30,8 @@ export const AdaptersPage: FC<AdaptersPageProps> = () => {
 
   return (
     <LayoutContentWrapper>
-      <AdapterGoogle />
+      <AdapterGoogleContacts />
+      <AdapterGsuiteAdmin />
       <AdapterBamboo />
     </LayoutContentWrapper>
   );

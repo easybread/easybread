@@ -7,6 +7,11 @@ import {
   GoogleContactsFeedEntry,
   GoogleContactsPeopleByIdOperation
 } from '@easybread/adapter-google-contacts';
+import {
+  GSUITE_ADMIN_PROVIDER_NAME,
+  GsuiteAdminUser,
+  GsuiteAdminUsersByIdOperation
+} from '@easybread/adapter-gsuite-admin';
 import { EmployeeByIdOperation } from '@easybread/operations';
 
 import { PeopleByIdResponseDto } from '../../../../api/people/dtos';
@@ -46,10 +51,31 @@ export const peopleById = (
 function extractRawData(
   adapter: ADAPTER_NAME,
   result: PeopleByIdResponseDto
-): GoogleContactsFeedEntry | BambooEmployee | undefined {
-  if (adapter === ADAPTER_NAME.GOOGLE) return extractGoogleEntry(result);
-  if (adapter === ADAPTER_NAME.BAMBOO) return extractBambooEmployee(result);
+): GoogleContactsFeedEntry | BambooEmployee | GsuiteAdminUser | undefined {
+  if (adapter === ADAPTER_NAME.GOOGLE_CONTACTS) {
+    return extractGoogleEntry(result);
+  }
+  if (adapter === ADAPTER_NAME.BAMBOO) {
+    return extractBambooEmployee(result);
+  }
+  if (adapter === ADAPTER_NAME.GSUITE_ADMIN) {
+    return extractGsuiteUser(result);
+  }
+
   return undefined;
+}
+
+function extractGsuiteUser(
+  result: PeopleByIdResponseDto
+): GsuiteAdminUser | undefined {
+  if (result.provider !== GSUITE_ADMIN_PROVIDER_NAME) {
+    return undefined;
+  }
+
+  const gsuiteOutput = result as GsuiteAdminUsersByIdOperation['output'];
+  return gsuiteOutput.rawPayload.success
+    ? gsuiteOutput.rawPayload.data
+    : undefined;
 }
 
 function extractGoogleEntry(

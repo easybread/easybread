@@ -3,8 +3,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ADAPTER_NAME } from '../../../../common';
 
 export interface AdaptersBooleanState {
-  [ADAPTER_NAME.GOOGLE]: boolean;
+  [ADAPTER_NAME.GOOGLE_CONTACTS]: boolean;
   [ADAPTER_NAME.BAMBOO]: boolean;
+  [ADAPTER_NAME.GSUITE_ADMIN]: boolean;
 }
 
 interface AdaptersLoadingState {
@@ -31,7 +32,7 @@ export type AdaptersState = AdaptersLoadingState &
 //  ------------------------------------
 
 const initialState: AdaptersState = {
-  configured: { bamboo: false, google: false },
+  configured: { bamboo: false, google: false, gsuiteAdmin: false },
   loading: false,
   error: false,
   initialized: false

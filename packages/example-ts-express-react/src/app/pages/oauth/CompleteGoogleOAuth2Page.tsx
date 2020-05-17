@@ -1,7 +1,7 @@
 import querystring from 'querystring';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
 import { GoogleAuthCallbackParamsDto } from '../../../api/api.dtos';
@@ -13,13 +13,14 @@ interface OauthPageProps {}
 export const CompleteGoogleOAuth2Page: FC<OauthPageProps> = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const params = useParams<{ adapter: 'google-contacts' | 'gsuite-admin' }>();
 
   const query = location.search.replace(/^\?/, '');
-  const params = querystring.parse(query) as GoogleAuthCallbackParamsDto;
+  const queryParams = querystring.parse(query) as GoogleAuthCallbackParamsDto;
 
   useEffect(() => {
-    dispatch(completeGoogleOAuth2(params));
-  }, [dispatch, params]);
+    dispatch(completeGoogleOAuth2(params.adapter, queryParams));
+  }, [dispatch, params.adapter, queryParams]);
 
   return (
     <StyledContainer>

@@ -12,7 +12,6 @@ import { PeopleService } from './people.service';
 import {
   PeopleByIdRequest,
   PeopleCreateRequest,
-  PeopleRequest,
   PeopleSearchRequest,
   PeopleUpdateRequest
 } from './requests';
@@ -26,39 +25,19 @@ peopleRoutes.get('/search', async (req: PeopleSearchRequest, res) => {
   const adaptersState = await AdaptersService.adaptersState(breadId);
   const outputsPromises: Promise<PeopleSearchResultsItemDto>[] = [];
 
-  if (adaptersState.google?.configured) {
-    outputsPromises.push(PeopleService.searchGoogle(breadId, query));
+  if (adaptersState[ADAPTER_NAME.GOOGLE_CONTACTS]?.configured) {
+    outputsPromises.push(PeopleService.searchGoogleContacts(breadId, query));
   }
-  if (adaptersState.bamboo?.configured) {
+  if (adaptersState[ADAPTER_NAME.BAMBOO]?.configured) {
     outputsPromises.push(PeopleService.searchBamboo(breadId, query));
+  }
+  if (adaptersState[ADAPTER_NAME.GSUITE_ADMIN]?.configured) {
+    outputsPromises.push(PeopleService.searchGsuiteAdmin(breadId, query));
   }
 
   const outputs: PeopleSearchResponseDto = await Promise.all(outputsPromises);
 
   res.json(outputs.filter(item => item.rawPayload.success));
-});
-
-peopleRoutes.get('/:adapter', async (req: PeopleRequest, res) => {
-  const {
-    params: { adapter }
-  } = req;
-
-  const breadId = getBreadIdFromRequest(req);
-
-  switch (adapter) {
-    case ADAPTER_NAME.GOOGLE:
-      return handleOperationOutput(
-        res,
-        await PeopleService.searchGoogle(breadId)
-      );
-    case ADAPTER_NAME.BAMBOO:
-      return handleOperationOutput(
-        res,
-        await PeopleService.searchBamboo(breadId)
-      );
-    default:
-      return handleNotImplemented(res);
-  }
 });
 
 peopleRoutes.post('/:adapter', async (req: PeopleCreateRequest, res) => {
@@ -70,7 +49,7 @@ peopleRoutes.post('/:adapter', async (req: PeopleCreateRequest, res) => {
   const breadId = getBreadIdFromRequest(req);
 
   switch (adapter) {
-    case ADAPTER_NAME.GOOGLE:
+    case ADAPTER_NAME.GOOGLE_CONTACTS:
       return handleOperationOutput(
         res,
         await PeopleService.createGoogleContact(breadId, body)
@@ -79,6 +58,11 @@ peopleRoutes.post('/:adapter', async (req: PeopleCreateRequest, res) => {
       return handleOperationOutput(
         res,
         await PeopleService.createBambooEmployee(breadId, body)
+      );
+    case ADAPTER_NAME.GSUITE_ADMIN:
+      return handleOperationOutput(
+        res,
+        await PeopleService.createGsuiteUser(breadId, body)
       );
     default:
       return handleNotImplemented(res);
@@ -90,15 +74,20 @@ peopleRoutes.get('/:adapter/:id', async (req: PeopleByIdRequest, res) => {
   const breadId = getBreadIdFromRequest(req);
 
   switch (adapter) {
-    case ADAPTER_NAME.GOOGLE:
+    case ADAPTER_NAME.GOOGLE_CONTACTS:
       return handleOperationOutput(
         res,
-        await PeopleService.byIdGoogle(breadId, id)
+        await PeopleService.byIdGoogleContacts(breadId, id)
       );
     case ADAPTER_NAME.BAMBOO:
       return handleOperationOutput(
         res,
         await PeopleService.byIdBamboo(breadId, id)
+      );
+    case ADAPTER_NAME.GSUITE_ADMIN:
+      return handleOperationOutput(
+        res,
+        await PeopleService.byIdGsuite(breadId, id)
       );
     default:
       return handleNotImplemented(res);
@@ -111,16 +100,23 @@ peopleRoutes.put('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
     body
   } = req;
 
+  const breadId = getBreadIdFromRequest(req);
+
   switch (adapter) {
-    case ADAPTER_NAME.GOOGLE:
+    case ADAPTER_NAME.GOOGLE_CONTACTS:
       return handleOperationOutput(
         res,
-        await PeopleService.updateGoogleContact(req['user'].id, body)
+        await PeopleService.updateGoogleContact(breadId, body)
       );
     case ADAPTER_NAME.BAMBOO:
       return handleOperationOutput(
         res,
-        await PeopleService.updateBambooEmployee(req['user'].id, body)
+        await PeopleService.updateBambooEmployee(breadId, body)
+      );
+    case ADAPTER_NAME.GSUITE_ADMIN:
+      return handleOperationOutput(
+        res,
+        await PeopleService.updateGsuiteUser(breadId, body)
       );
     default:
       return handleNotImplemented(res);
@@ -132,11 +128,18 @@ peopleRoutes.delete('/:adapter/:id', async (req: PeopleUpdateRequest, res) => {
     params: { adapter, id }
   } = req;
 
+  const breadId = getBreadIdFromRequest(req);
   switch (adapter) {
-    case ADAPTER_NAME.GOOGLE:
+    case ADAPTER_NAME.GOOGLE_CONTACTS:
       return handleOperationOutput(
         res,
-        await PeopleService.deleteGoogleContact(req['user'].id, id)
+        await PeopleService.deleteGoogleContact(breadId, id)
+      );
+
+    case ADAPTER_NAME.GSUITE_ADMIN:
+      return handleOperationOutput(
+        res,
+        await PeopleService.deleteGsuiteUser(breadId, id)
       );
 
     default:

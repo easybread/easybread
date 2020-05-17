@@ -1,5 +1,6 @@
 import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
 import { GoogleContactsFeedEntry } from '@easybread/adapter-google-contacts';
+import { GsuiteAdminUser } from '@easybread/adapter-gsuite-admin';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { without } from 'lodash';
 
@@ -40,8 +41,11 @@ interface ErrorState {
 interface DataState {
   data: NormalizedCollectionState<PersonInfo>;
   rawData: {
-    [ADAPTER_NAME.GOOGLE]: NormalizedCollectionState<GoogleContactsFeedEntry>;
+    [ADAPTER_NAME.GOOGLE_CONTACTS]: NormalizedCollectionState<
+      GoogleContactsFeedEntry
+    >;
     [ADAPTER_NAME.BAMBOO]: NormalizedCollectionState<BambooEmployee>;
+    [ADAPTER_NAME.GSUITE_ADMIN]: NormalizedCollectionState<GsuiteAdminUser>;
   };
 }
 
@@ -72,14 +76,15 @@ export type PeopleState = LoadingState &
   SearchState;
 
 const initialState: PeopleState = {
-  loading: { google: false, bamboo: false },
-  error: { google: false, bamboo: false },
-  loaded: { google: false, bamboo: false },
-  creatingPerson: { google: false, bamboo: false },
+  loading: { google: false, bamboo: false, gsuiteAdmin: false },
+  error: { google: false, bamboo: false, gsuiteAdmin: false },
+  loaded: { google: false, bamboo: false, gsuiteAdmin: false },
+  creatingPerson: { google: false, bamboo: false, gsuiteAdmin: false },
   data: { byId: {}, ids: [] },
   rawData: {
     [ADAPTER_NAME.BAMBOO]: createNormalizedCollectionState(),
-    [ADAPTER_NAME.GOOGLE]: createNormalizedCollectionState()
+    [ADAPTER_NAME.GOOGLE_CONTACTS]: createNormalizedCollectionState(),
+    [ADAPTER_NAME.GSUITE_ADMIN]: createNormalizedCollectionState()
   },
   deletingIds: [],
   updatingIds: [],
@@ -111,7 +116,7 @@ export interface PeopleSearchSuccessPayload {
   query: string;
   data: PersonInfo[];
   rawData: {
-    [ADAPTER_NAME.GOOGLE]?: GoogleContactsFeedEntry[];
+    [ADAPTER_NAME.GOOGLE_CONTACTS]?: GoogleContactsFeedEntry[];
     [ADAPTER_NAME.BAMBOO]?: BambooEmployee[];
   };
 }
@@ -119,7 +124,7 @@ export interface PeopleSearchSuccessPayload {
 export interface PeopleByIdSuccessPayload {
   data: PersonInfo;
   rawData: {
-    [ADAPTER_NAME.GOOGLE]?: GoogleContactsFeedEntry;
+    [ADAPTER_NAME.GOOGLE_CONTACTS]?: GoogleContactsFeedEntry;
     [ADAPTER_NAME.BAMBOO]?: BambooEmployee;
   };
 }
@@ -159,10 +164,10 @@ const peopleSlice = createSlice({
         );
       }
 
-      const googleRawData = rawData[ADAPTER_NAME.GOOGLE];
+      const googleRawData = rawData[ADAPTER_NAME.GOOGLE_CONTACTS];
       if (googleRawData) {
         updateNormalizedCollection(
-          state.rawData[ADAPTER_NAME.GOOGLE],
+          state.rawData[ADAPTER_NAME.GOOGLE_CONTACTS],
           googleRawData,
           contact => contact.id?.$t?.replace(/.+\/([^/]+)$/, '$1') as string
         );
@@ -187,12 +192,21 @@ const peopleSlice = createSlice({
         );
       }
 
-      const googleRawData = rawData[ADAPTER_NAME.GOOGLE];
+      const googleRawData = rawData[ADAPTER_NAME.GOOGLE_CONTACTS];
       if (googleRawData) {
         createNormalizedCollectionItem(
-          state.rawData[ADAPTER_NAME.GOOGLE],
+          state.rawData[ADAPTER_NAME.GOOGLE_CONTACTS],
           googleRawData,
           contact => contact.id?.$t?.replace(/.+\/([^/]+)$/, '$1') as string
+        );
+      }
+
+      const gsuiteRawData = rawData[ADAPTER_NAME.GSUITE_ADMIN];
+      if (gsuiteRawData) {
+        createNormalizedCollectionItem(
+          state.rawData[ADAPTER_NAME.GSUITE_ADMIN],
+          gsuiteRawData,
+          user => user.id as string
         );
       }
     },
@@ -235,6 +249,10 @@ const peopleSlice = createSlice({
       state,
       action: PayloadAction<PeopleUpdateSuccessPayload>
     ) {
+      state.updatingIds = without(
+        state.updatingIds,
+        createPersonInfoStateIdFromPersonInfo(action.payload.data)
+      );
       updateNormalizedCollectionItem(
         state.data,
         action.payload.data,

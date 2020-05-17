@@ -9,13 +9,13 @@ import { AdaptersService } from './adapters.service';
 import {
   CompleteAuthRequest,
   ConfigurationCreateRequest,
-  ConfigurationDeleteRequest
-} from './requests';
-import { isCompleteGoogleOAuthRequest } from './requests/complete-auth.request';
-import {
+  ConfigurationDeleteRequest,
+  isCompleteGoogleOAuthRequest,
+  isCompleteGSuiteAdminOAuthRequest,
   isSetupBambooRequest,
-  isSetupGoogleRequest
-} from './requests/configuration-create.request';
+  isSetupGoogleRequest,
+  isSetupGsuiteAdminRequest
+} from './requests';
 
 const adaptersRoutes = Router();
 
@@ -38,20 +38,26 @@ adaptersRoutes.delete(
 adaptersRoutes.post(
   '/:adapter/configurations',
   async (req: ConfigurationCreateRequest, res) => {
+    const breadId = getBreadIdFromRequest(req);
+
     if (isSetupBambooRequest(req)) {
       return handleOperationOutput(
         res,
-        await AdaptersService.createBambooConfiguration(
-          req['user'].id,
-          req.body
-        )
+        await AdaptersService.createBambooConfiguration(breadId, req.body)
       );
     }
 
     if (isSetupGoogleRequest(req)) {
       return handleOperationOutput(
         res,
-        await AdaptersService.startGoogleOAuthFlow(req['user'].id)
+        await AdaptersService.startGoogleOAuthFlow(breadId)
+      );
+    }
+
+    if (isSetupGsuiteAdminRequest(req)) {
+      return handleOperationOutput(
+        res,
+        await AdaptersService.startGSuiteAdminOAuthFlow(breadId)
       );
     }
 
@@ -62,10 +68,19 @@ adaptersRoutes.post(
 adaptersRoutes.post(
   '/:adapter/complete-oauth',
   async (req: CompleteAuthRequest, res) => {
+    const breadId = getBreadIdFromRequest(req);
+
     if (isCompleteGoogleOAuthRequest(req)) {
       return handleOperationOutput(
         res,
-        await AdaptersService.completeGoogleOAuthFlow(req['user'].id, req.body)
+        await AdaptersService.completeGoogleOAuthFlow(breadId, req.body)
+      );
+    }
+
+    if (isCompleteGSuiteAdminOAuthRequest(req)) {
+      return handleOperationOutput(
+        res,
+        await AdaptersService.completeGsuiteAdminOAuthFlow(breadId, req.body)
       );
     }
 

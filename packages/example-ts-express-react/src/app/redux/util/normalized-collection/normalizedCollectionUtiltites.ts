@@ -26,7 +26,7 @@ export function updateNormalizedCollectionItem<T>(
   item: T,
   getId: (item: T) => string
 ): void {
-  Object.assign(collection[getId(item)], item);
+  Object.assign(collection.byId[getId(item)], item);
 }
 
 export function createNormalizedCollectionItem<T>(

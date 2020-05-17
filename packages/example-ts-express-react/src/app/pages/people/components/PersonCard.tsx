@@ -130,6 +130,7 @@ export const PersonCard: FC<PersonCardProps> = ({ info }) => {
       {editMode && (
         <StyledFormWrapper onClick={stopPropagation}>
           <EditPersonForm
+            adapter={adapter}
             expanded={editMode}
             person={person}
             onSubmit={submitEdit}
