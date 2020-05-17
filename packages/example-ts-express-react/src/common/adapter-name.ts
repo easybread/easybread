@@ -1,4 +1,5 @@
 export enum ADAPTER_NAME {
-  GOOGLE = 'google',
-  BAMBOO = 'bamboo'
+  GOOGLE_CONTACTS = 'google',
+  BAMBOO = 'bamboo',
+  GSUITE_ADMIN = 'gsuiteAdmin'
 }

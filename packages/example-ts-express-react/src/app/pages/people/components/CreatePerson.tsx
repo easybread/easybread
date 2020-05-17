@@ -1,24 +1,25 @@
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/macro';
 
+import { peopleCreate } from '../../../redux/features/people';
 import { UtilExpandable } from '../../../ui-kit/util-kit';
 import { CreatePersonButton } from './CreatePersonButton';
 import { EditPersonForm, PersonFormData } from './EditPersonForm';
-import { peopleCreate } from '../../../redux/features/people';
-import { useDispatch } from 'react-redux';
 
 interface CreatePersonProps {}
 
 export const CreatePerson: FC<CreatePersonProps> = () => {
   const dispatch = useDispatch();
   const onSubmit = (data: PersonFormData): void => {
-    const { provider, email, firstName, lastName, telephone } = data;
+    const { provider, email, firstName, lastName, telephone, password } = data;
 
     dispatch(
       peopleCreate(provider, {
         '@type': 'Person',
         telephone,
         email,
+        password,
         givenName: firstName,
         familyName: lastName
       })

@@ -5,6 +5,7 @@
   "dependencies": {
     "@easybread/adapter-bamboo-hr": "^0.0.1",
     "@easybread/adapter-google-contacts": "^0.0.1",
+    "@easybread/adapter-gsuite-admin": "^0.0.1",
     "@easybread/common": "^0.0.1",
     "@easybread/core": "^0.0.1",
     "@easybread/google-common": "^0.0.1",

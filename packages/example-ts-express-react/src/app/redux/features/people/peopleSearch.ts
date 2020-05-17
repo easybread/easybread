@@ -53,7 +53,7 @@ export const peopleSearch = (query: string): AppThunk => async dispatch => {
         query,
         rawData: {
           [ADAPTER_NAME.BAMBOO]: collectBambooRawData(responseDto),
-          [ADAPTER_NAME.GOOGLE]: collectGoogleRawData(responseDto)
+          [ADAPTER_NAME.GOOGLE_CONTACTS]: collectGoogleRawData(responseDto)
         }
       })
     );

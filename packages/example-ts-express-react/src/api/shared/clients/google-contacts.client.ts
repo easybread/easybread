@@ -9,7 +9,7 @@ import { stateAdapter } from '../state';
 const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_REDIRECT_URI
+  GOOGLE_CONTACTS_REDIRECT_URI
 } = process.env;
 
 if (!GOOGLE_CLIENT_ID) {
@@ -18,18 +18,18 @@ if (!GOOGLE_CLIENT_ID) {
 if (!GOOGLE_CLIENT_SECRET) {
   throw new Error('GOOGLE_CLIENT_SECRET env variable is not defined');
 }
-if (!GOOGLE_REDIRECT_URI) {
-  throw new Error('GOOGLE_REDIRECT_URI env variable is not defined');
+if (!GOOGLE_CONTACTS_REDIRECT_URI) {
+  throw new Error('GOOGLE_CONTACTS_REDIRECT_URI env variable is not defined');
 }
 
 const googleAdapter = new GoogleContactsAdapter();
 const googleAuthStrategy = new GoogleContactsAuthStrategy(stateAdapter, {
   clientId: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
-  redirectUri: GOOGLE_REDIRECT_URI
+  redirectUri: GOOGLE_CONTACTS_REDIRECT_URI
 });
 
-export const googleClient = new EasyBreadClient(
+export const googleContactsClient = new EasyBreadClient(
   stateAdapter,
   googleAdapter,
   googleAuthStrategy

@@ -1,5 +1,6 @@
 import { BambooBasicAuthPayload } from '@easybread/adapter-bamboo-hr';
 import { GoogleContactsAuthScopes } from '@easybread/adapter-google-contacts';
+import { GsuiteAdminAuthScope } from '@easybread/adapter-gsuite-admin';
 import {
   GoogleCommonOauth2CompleteOperation,
   GoogleCommonOauth2StartOperation,
@@ -11,25 +12,33 @@ import {
 } from '@easybread/operations';
 
 import { ADAPTER_NAME } from '../../common';
-import { bambooHrClient, googleClient, stateAdapter } from '../shared';
+import {
+  bambooHrClient,
+  googleContactsClient,
+  gsuiteAdminClient,
+  stateAdapter
+} from '../shared';
 import {
   AdaptersStateDto,
   AdapterStateDto,
   CompleteGoogleOauth2Dto,
+  CompleteGsuiteAdminOauth2Dto,
   SetupBambooDto
 } from './dtos';
 
 export class AdaptersService {
   static async adaptersState(breadId: string): Promise<AdaptersStateDto> {
     const google = await stateAdapter.read<AdapterStateDto>(
-      this.createAdapterStateKey(breadId, ADAPTER_NAME.GOOGLE)
+      this.createAdapterStateKey(breadId, ADAPTER_NAME.GOOGLE_CONTACTS)
     );
-
     const bamboo = await stateAdapter.read<AdapterStateDto>(
       this.createAdapterStateKey(breadId, ADAPTER_NAME.BAMBOO)
     );
+    const gsuiteAdmin = await stateAdapter.read<AdapterStateDto>(
+      this.createAdapterStateKey(breadId, ADAPTER_NAME.GSUITE_ADMIN)
+    );
 
-    return { google, bamboo };
+    return { google, bamboo, gsuiteAdmin };
   }
 
   static async resetConfiguration(
@@ -77,7 +86,7 @@ export class AdaptersService {
   ): Promise<
     GoogleCommonOauth2StartOperation<GoogleContactsAuthScopes>['output']
   > {
-    return googleClient.invoke<
+    return googleContactsClient.invoke<
       GoogleCommonOauth2StartOperation<GoogleContactsAuthScopes>
     >({
       name: GoogleCommonOperationName.AUTH_FLOW_START,
@@ -93,13 +102,29 @@ export class AdaptersService {
     });
   }
 
+  static async startGSuiteAdminOAuthFlow(
+    breadId: string
+  ): Promise<GoogleCommonOauth2StartOperation<GsuiteAdminAuthScope>['output']> {
+    return gsuiteAdminClient.invoke<
+      GoogleCommonOauth2StartOperation<GsuiteAdminAuthScope>
+    >({
+      name: GoogleCommonOperationName.AUTH_FLOW_START,
+      breadId,
+      payload: {
+        prompt: ['consent'],
+        includeGrantedScopes: true,
+        scope: ['https://www.googleapis.com/auth/admin.directory.user']
+      }
+    });
+  }
+
   static async completeGoogleOAuthFlow(
     breadId: string,
     dto: CompleteGoogleOauth2Dto
   ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
     const { code } = dto;
 
-    const output = await googleClient.invoke<
+    const output = await googleContactsClient.invoke<
       GoogleCommonOauth2CompleteOperation
     >({
       name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
@@ -108,7 +133,28 @@ export class AdaptersService {
     });
 
     if (output.rawPayload.success) {
-      await this.setConfigured(breadId, ADAPTER_NAME.GOOGLE);
+      await this.setConfigured(breadId, ADAPTER_NAME.GOOGLE_CONTACTS);
+    }
+
+    return output;
+  }
+
+  static async completeGsuiteAdminOAuthFlow(
+    breadId: string,
+    dto: CompleteGsuiteAdminOauth2Dto
+  ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
+    const { code } = dto;
+
+    const output = await gsuiteAdminClient.invoke<
+      GoogleCommonOauth2CompleteOperation
+    >({
+      name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+      breadId,
+      payload: { code }
+    });
+
+    if (output.rawPayload.success) {
+      await this.setConfigured(breadId, ADAPTER_NAME.GSUITE_ADMIN);
     }
 
     return output;

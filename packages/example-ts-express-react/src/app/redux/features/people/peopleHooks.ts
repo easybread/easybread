@@ -1,5 +1,6 @@
 import { BambooEmployee } from '@easybread/adapter-bamboo-hr';
 import { GoogleContactsFeedEntry } from '@easybread/adapter-google-contacts';
+import { GsuiteAdminUser } from '@easybread/adapter-gsuite-admin';
 import { PersonSchema } from '@easybread/schemas';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,6 +42,7 @@ export function useDispatchPersonUpdate(): (
     [dispatch]
   );
 }
+
 export function useDispatchPersonDelete(): (
   adapter: ADAPTER_NAME,
   person: PersonSchema
@@ -82,8 +84,9 @@ export function usePersonDetailsData(
 export function usePersonDetailsRawData(
   adapter: ADAPTER_NAME,
   identifier: string
-): GoogleContactsFeedEntry | BambooEmployee | undefined {
-  return useSelector<RootState, GoogleContactsFeedEntry | BambooEmployee>(
-    s => s.people.rawData[adapter].byId[identifier]
-  );
+): GoogleContactsFeedEntry | BambooEmployee | GsuiteAdminUser | undefined {
+  return useSelector<
+    RootState,
+    GoogleContactsFeedEntry | BambooEmployee | GsuiteAdminUser
+  >(s => s.people.rawData[adapter].byId[identifier]);
 }

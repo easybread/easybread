@@ -1,5 +1,5 @@
 import { PersonSchema } from '@easybread/schemas';
-import { capitalize } from 'lodash';
+import { capitalize, snakeCase } from 'lodash';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components/macro';
 
@@ -21,10 +21,12 @@ export interface PersonFormData {
   lastName: string;
   telephone: string;
   provider: ADAPTER_NAME;
+  password?: string;
 }
 
 interface CreatePersonFormProps extends UtilExpandableContentProps {
   person?: PersonSchema;
+  adapter?: ADAPTER_NAME;
   onSubmit: (data: PersonFormData) => void;
 }
 
@@ -32,6 +34,7 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
   person,
   close,
   expanded,
+  adapter,
   onSubmit
 }) => {
   const [email, setEmail] = useState('');
@@ -39,6 +42,7 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
   const [lastName, setLastName] = useState('');
   const [telephone, setTelephone] = useState('');
   const [provider, setProvider] = useState('');
+  const [password, setPassword] = useState('');
 
   const adapterNames = useConfiguredAdapterNames();
 
@@ -54,7 +58,8 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
     telephone && setTelephone(telephone as string);
     givenName && setFirstName(givenName as string);
     familyName && setLastName(familyName as string);
-  }, [person]);
+    adapter && setProvider(adapter);
+  }, [adapter, person]);
 
   if (!expanded) return null;
 
@@ -64,6 +69,7 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
     setLastName('');
     setTelephone('');
     setProvider('');
+    setPassword('');
   };
 
   const handleSubmit = (): void => {
@@ -72,7 +78,8 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
       firstName,
       lastName,
       telephone,
-      provider: provider as ADAPTER_NAME
+      provider: provider as ADAPTER_NAME,
+      password
     });
 
     resetForm();
@@ -100,39 +107,62 @@ export const EditPersonForm: FC<CreatePersonFormProps> = ({
             options={[
               { label: '-- Please select --', value: '' },
               ...adapterNames.map(value => ({
-                label: capitalize(value),
+                label: snakeCase(value).split('_').map(capitalize).join(' '),
                 value
               }))
             ]}
           />
         )}
 
-        <FormLabeledInput
-          label={'First Name'}
-          value={firstName}
-          type={'text'}
-          onChange={setFirstName}
-        />
-        <FormLabeledInput
-          label={'Last Name'}
-          value={lastName}
-          type={'text'}
-          onChange={setLastName}
-        />
-        <FormLabeledInput
-          required={!telephone}
-          label={'Email'}
-          value={email}
-          type={'email'}
-          onChange={setEmail}
-        />
-        <FormLabeledInput
-          required={!email}
-          label={'telephone'}
-          value={telephone}
-          type={'text'}
-          onChange={setTelephone}
-        />
+        {/*
+          we don't want to show the form inputs until the provider is set
+          (by the selector above in create mode or by the props in edit mode)
+         */}
+        {provider && (
+          <>
+            <FormLabeledInput
+              label={'First Name'}
+              value={firstName}
+              type={'text'}
+              onChange={setFirstName}
+            />
+            <FormLabeledInput
+              label={'Last Name'}
+              value={lastName}
+              type={'text'}
+              onChange={setLastName}
+            />
+            <FormLabeledInput
+              required={!telephone}
+              label={'Email'}
+              value={email}
+              type={'email'}
+              onChange={setEmail}
+            />
+
+            {/* show telephone for all but gsuite */}
+            {provider !== ADAPTER_NAME.GSUITE_ADMIN && (
+              <FormLabeledInput
+                required={!email}
+                label={'telephone'}
+                value={telephone}
+                type={'text'}
+                onChange={setTelephone}
+              />
+            )}
+
+            {/* Show password for GSuite User in create mode */}
+            {provider === ADAPTER_NAME.GSUITE_ADMIN && !editMode && (
+              <FormLabeledInput
+                required={!editMode}
+                label={'password'}
+                value={password}
+                type={'password'}
+                onChange={setPassword}
+              />
+            )}
+          </>
+        )}
       </FormFieldsContainer>
 
       <FormButtonsContainer>

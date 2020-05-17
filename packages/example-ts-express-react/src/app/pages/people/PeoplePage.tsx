@@ -19,9 +19,10 @@ export const PeoplePage: FC<OperationsPageProps> = () => {
   const adaptersInitialized = useAdaptersInitialized();
 
   const bambooConfigured = useAdapterConfigured(ADAPTER_NAME.BAMBOO);
-  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE);
+  const googleConfigured = useAdapterConfigured(ADAPTER_NAME.GOOGLE_CONTACTS);
+  const gsuiteConfigured = useAdapterConfigured(ADAPTER_NAME.GSUITE_ADMIN);
 
-  const canNavigate = bambooConfigured || googleConfigured;
+  const canNavigate = bambooConfigured || googleConfigured || gsuiteConfigured;
 
   if (adaptersInitialized && !adaptersLoading && !canNavigate) {
     return <Redirect to={'/'} />;

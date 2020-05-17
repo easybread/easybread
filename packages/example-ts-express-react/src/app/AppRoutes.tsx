@@ -18,7 +18,7 @@ export const AppRoutes: FC<AppRoutesProps> = () => {
         <PeoplePage />
       </Route>
 
-      <Route path={'/complete-google-auth'}>
+      <Route path={'/complete-google-auth/:adapter'}>
         <CompleteGoogleOAuth2Page />
       </Route>
 
