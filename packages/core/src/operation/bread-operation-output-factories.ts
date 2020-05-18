@@ -4,10 +4,20 @@ import { BreadException, ServiceException } from '../exception';
 import { BreadOperation } from './bread-operation';
 import {
   BreadFailedOperationRawPayload,
+  BreadOperationOutput,
   BreadOperationOutputWithPayload,
   BreadOperationOutputWithRawData,
   BreadOperationOutputWithRawDataAndPayload
 } from './bread-operation-output';
+
+export function createSuccessfulOutput<TName extends string>(
+  name: TName
+): Omit<BreadOperationOutput<TName>, 'provider'> {
+  return {
+    name,
+    rawPayload: { success: true }
+  };
+}
 
 export function createSuccessfulOutputWithRawDataAndPayload<
   TName extends string,
