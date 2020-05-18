@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawData
+} from '@easybread/core';
 
 import { BreezyAuthStrategy } from '../breezy.auth-strategy';
 import { BreezyOperationName } from '../breezy.operation-name';
@@ -15,9 +18,9 @@ export const BreezyAuthenticateHandler: BreadOperationHandler<
 
     const result = await context.auth.authenticate(breadId, payload);
 
-    return {
-      name: BreezyOperationName.AUTHENTICATE,
-      rawPayload: { success: true, data: result }
-    };
+    return createSuccessfulOutputWithRawData(
+      BreezyOperationName.AUTHENTICATE,
+      result
+    );
   }
 };
