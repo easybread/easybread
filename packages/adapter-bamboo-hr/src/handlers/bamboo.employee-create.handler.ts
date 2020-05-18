@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawDataAndPayload
+} from '@easybread/core';
 import {
   BreadOperationName,
   EmployeeCreateOperation
@@ -29,17 +32,14 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
       data: dataMapper.toRemote(payload)
     });
 
-    return {
-      name: BreadOperationName.EMPLOYEE_CREATE,
-      payload: {
+    return createSuccessfulOutputWithRawDataAndPayload(
+      BreadOperationName.EMPLOYEE_CREATE,
+      {},
+      {
         ...payload,
         identifier: getIdentifierFromHeaders(response)
-      },
-      rawPayload: {
-        success: true,
-        data: {}
       }
-    };
+    );
   }
 };
 
