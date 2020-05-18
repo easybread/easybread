@@ -1,4 +1,4 @@
-import { BreadOperationHandler } from '@easybread/core';
+import { BreadOperationHandler, createSuccessfulOutput } from '@easybread/core';
 import {
   BreadOperationName,
   SetupBasicAuthOperation
@@ -15,10 +15,6 @@ export const BambooSetupBasicAuthHandler: BreadOperationHandler<
 
   async handle(input, context) {
     await context.auth.authenticate(input.breadId, input.payload);
-
-    return {
-      name: BreadOperationName.SETUP_BASIC_AUTH,
-      rawPayload: { success: true }
-    };
+    return createSuccessfulOutput(BreadOperationName.SETUP_BASIC_AUTH);
   }
 };
