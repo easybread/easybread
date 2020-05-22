@@ -1,4 +1,8 @@
-import { BreadOperationHandler, ServiceException } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithPayload,
+  ServiceException
+} from '@easybread/core';
 
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 import { GOOGLE_PROVIDER_NAME } from '../google-contacts.constants';
@@ -42,10 +46,9 @@ export const GoogleContactsPeopleDeleteHandler: BreadOperationHandler<
       }
     });
 
-    return {
-      name: GoogleContactsOperationName.PEOPLE_DELETE,
-      payload: input.payload,
-      rawPayload: { success: true }
-    };
+    return createSuccessfulOutputWithPayload(
+      GoogleContactsOperationName.PEOPLE_DELETE,
+      input.payload
+    );
   }
 };

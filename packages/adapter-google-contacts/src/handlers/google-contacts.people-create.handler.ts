@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawDataAndPayload
+} from '@easybread/core';
 
 import { GoogleContactsContactMapper } from '../data-mappers';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
@@ -25,10 +28,10 @@ export const GoogleContactsPeopleCreateHandler: BreadOperationHandler<
       data: dataMapper.toRemote(input.payload)
     });
 
-    return {
-      name: GoogleContactsOperationName.PEOPLE_CREATE,
-      payload: dataMapper.toSchema(result.data.entry),
-      rawPayload: { success: true, data: result.data }
-    };
+    return createSuccessfulOutputWithRawDataAndPayload(
+      GoogleContactsOperationName.PEOPLE_CREATE,
+      result.data,
+      dataMapper.toSchema(result.data.entry)
+    );
   }
 };

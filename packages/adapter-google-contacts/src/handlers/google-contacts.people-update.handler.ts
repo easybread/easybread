@@ -1,4 +1,8 @@
-import { BreadOperationHandler, ServiceException } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawDataAndPayload,
+  ServiceException
+} from '@easybread/core';
 
 import { GoogleContactsContactMapper } from '../data-mappers';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
@@ -60,10 +64,10 @@ export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
       }
     });
 
-    return {
-      name: GoogleContactsOperationName.PEOPLE_UPDATE,
-      payload: dataMapper.toSchema(result.data.entry),
-      rawPayload: { success: true, data: result.data }
-    };
+    return createSuccessfulOutputWithRawDataAndPayload(
+      GoogleContactsOperationName.PEOPLE_UPDATE,
+      result.data,
+      dataMapper.toSchema(result.data.entry)
+    );
   }
 };
