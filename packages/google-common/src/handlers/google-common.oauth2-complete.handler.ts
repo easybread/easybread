@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawData
+} from '@easybread/core';
 
 import { GoogleCommonOauth2AuthStrategy } from '../google-common.oauth2.auth-strategy';
 import {
@@ -13,10 +16,6 @@ export const GoogleCommonOauth2CompleteHandler: BreadOperationHandler<
   name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
   async handle(input, context) {
     const data = await context.auth.authenticate(input.breadId, input.payload);
-
-    return {
-      name: this.name,
-      rawPayload: { data, success: true }
-    };
+    return createSuccessfulOutputWithRawData(this.name, data);
   }
 };

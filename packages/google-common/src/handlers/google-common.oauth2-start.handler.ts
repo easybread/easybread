@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawData
+} from '@easybread/core';
 
 import { GoogleCommonOauth2AuthStrategy } from '../google-common.oauth2.auth-strategy';
 import {
@@ -18,12 +21,6 @@ export const GoogleCommonOauth2StartHandler: BreadOperationHandler<
       input.payload
     );
 
-    return {
-      name: this.name,
-      rawPayload: {
-        success: true,
-        data: { authUri }
-      }
-    };
+    return createSuccessfulOutputWithRawData(this.name, { authUri });
   }
 };
