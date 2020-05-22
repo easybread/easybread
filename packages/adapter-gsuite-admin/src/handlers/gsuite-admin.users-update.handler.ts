@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawDataAndPayload
+} from '@easybread/core';
 
 import { GsuiteAdminUserMapper } from '../data-mappers';
 import { GsuiteAdminAuthStrategy } from '../gsuite-admin.auth-strategy';
@@ -21,11 +24,11 @@ export const GsuiteAdminUsersUpdateHandler: BreadOperationHandler<
       data: mapper.toRemote(payload)
     });
 
-    return {
+    return createSuccessfulOutputWithRawDataAndPayload(
       name,
-      payload: mapper.toSchema(result.data),
-      rawPayload: { success: true, data: result.data }
-    };
+      result.data,
+      mapper.toSchema(result.data)
+    );
   },
 
   name: GsuiteAdminOperationName.USERS_UPDATE

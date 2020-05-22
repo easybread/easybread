@@ -1,4 +1,7 @@
-import { BreadOperationHandler } from '@easybread/core';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawDataAndPayload
+} from '@easybread/core';
 
 import { GsuiteAdminUserMapper } from '../data-mappers';
 import { GsuiteAdminAuthStrategy } from '../gsuite-admin.auth-strategy';
@@ -29,14 +32,12 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
     });
 
     const userMapper = new GsuiteAdminUserMapper();
-    return {
+
+    return createSuccessfulOutputWithRawDataAndPayload(
       name,
-      payload: response.data.users.map(user => userMapper.toSchema(user)),
-      rawPayload: {
-        success: true,
-        data: response.data
-      }
-    };
+      response.data,
+      response.data.users.map(user => userMapper.toSchema(user))
+    );
   },
   name: GsuiteAdminOperationName.USERS_SEARCH
 };
