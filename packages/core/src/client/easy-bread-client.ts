@@ -1,12 +1,12 @@
 import { BreadAuthStrategy } from '../auth-strategy';
 import {
   BreadCollectionOperation,
-  BreadCollectionOperationInputPagination,
   BreadOperation,
   BreadOperationContext
 } from '../operation';
 import { BreadServiceAdapter } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
+import { AllPagesGenerator } from './all-pages-generator';
 
 /**
  * Main library class.
@@ -18,6 +18,8 @@ export class EasyBreadClient<
   TOperation extends BreadOperation<string>,
   TAuth extends BreadAuthStrategy<object>
 > {
+  allPagesGenerator: AllPagesGenerator;
+
   /**
    * @param stateAdapter state adapter to use for persistence (save tokens & etc)
    * @param serviceAdapter a "plugin" service adapter.
@@ -28,7 +30,9 @@ export class EasyBreadClient<
     private readonly stateAdapter: BreadStateAdapter,
     private readonly serviceAdapter: BreadServiceAdapter<TOperation, TAuth>,
     private readonly authStrategy: TAuth
-  ) {}
+  ) {
+    this.allPagesGenerator = new AllPagesGenerator(input => this.invoke(input));
+  }
 
   async invoke<O extends TOperation>(input: O['input']): Promise<O['output']> {
     const context = this.createContext(input.breadId);
@@ -38,32 +42,16 @@ export class EasyBreadClient<
       .then(output => this.postProcess(output, context));
   }
 
-  async *allPages<
-    O extends Extract<TOperation, BreadCollectionOperation<string>>
-  >(
-    input: Omit<O['input'], 'pagination'>,
-    pageSize = 50
-  ): AsyncGenerator<TOperation['output'], void, unknown> {
-    let page = 0;
-
-    while (true) {
-      const pagination: BreadCollectionOperationInputPagination = {
-        skip: page++ * pageSize,
-        count: pageSize
-      };
-
-      const result = await this.invoke<O>({ ...input, pagination });
-
-      yield result;
-
-      // pagination is not supported
-      if (result.pagination === null) return;
-
-      const { count, skip, totalCount } = result.pagination;
-
-      // reached the end of the collection
-      if (skip + count >= totalCount) return;
-    }
+  allPages<
+    O extends Extract<
+      TOperation,
+      // TODO: replace with
+      //  `BreadCollectionOperation<TOperation['name'], BreadOperationPaginationType>`
+      //   and debug the tsc error
+      BreadCollectionOperation<TOperation['name'], any>
+    >
+  >(input: O['input']): AsyncGenerator<O['output'], void, unknown> {
+    return this.allPagesGenerator.generate<O>(input);
   }
 
   private createContext(

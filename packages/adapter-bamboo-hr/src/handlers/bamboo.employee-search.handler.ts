@@ -1,5 +1,6 @@
 import {
   BreadOperationHandler,
+  createDisabledPagination,
   createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 import {
@@ -71,7 +72,8 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreadOperationName.EMPLOYEE_SEARCH,
       result.data,
-      payload
+      payload,
+      createDisabledPagination()
     );
   }
 };

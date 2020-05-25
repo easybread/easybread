@@ -44,7 +44,7 @@ export class PeopleService {
       name: GoogleContactsOperationName.PEOPLE_SEARCH,
       breadId,
       params: { query },
-      pagination: null
+      pagination: { type: 'SKIP_COUNT', skip: 0, count: 15 }
     });
   }
 
@@ -56,7 +56,7 @@ export class PeopleService {
       name: GsuiteAdminOperationName.USERS_SEARCH,
       breadId,
       params: { query },
-      pagination: null
+      pagination: { type: 'PREV_NEXT' }
     });
   }
 
@@ -70,7 +70,7 @@ export class PeopleService {
       name: BreadOperationName.EMPLOYEE_SEARCH,
       breadId,
       params: { query },
-      pagination: null
+      pagination: { type: 'DISABLED' }
     });
   }
 

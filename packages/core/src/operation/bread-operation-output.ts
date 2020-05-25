@@ -1,5 +1,10 @@
 import { BreadSchema } from '@easybread/schemas';
 
+import {
+  BreadOperationOutputPagination,
+  BreadOperationPaginationType
+} from './bread-operation-pagination';
+
 /*
  * Basically we want these interfaces to be as strict as possible.
  * So we don't use optional fields or anything like that.
@@ -66,24 +71,20 @@ export type BreadOperationOutputWithRawDataAndPayload<
 // COLLECTION OPERATION RELATED STUFF
 // ------------------------------------
 
-export interface BreadCollectionOperationOutputPagination {
-  skip: number;
-  count: number;
-  totalCount: number;
-}
-
 export interface BreadCollectionOperationOutputWithPayload<
   TName extends string,
-  TPayload extends BreadSchema[]
+  TPayload extends BreadSchema[],
+  TPaginationType extends BreadOperationPaginationType = 'DISABLED'
 > extends BreadOperationOutputBase<TName> {
   rawPayload: BreadOperationOutputRawPayload;
   payload: TPayload;
-  pagination: BreadCollectionOperationOutputPagination | null;
+  pagination: BreadOperationOutputPagination<TPaginationType>;
 }
 
 export type BreadCollectionOperationOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
-  TPayload extends BreadSchema[]
+  TPayload extends BreadSchema[],
+  TPaginationType extends BreadOperationPaginationType = 'DISABLED'
 > = BreadOperationOutputWithRawData<TName, TRawData> &
-  BreadCollectionOperationOutputWithPayload<TName, TPayload>;
+  BreadCollectionOperationOutputWithPayload<TName, TPayload, TPaginationType>;

@@ -219,6 +219,7 @@ describe('Google Plugin', () => {
           name: GoogleContactsOperationName.PEOPLE_SEARCH,
           params: { query },
           pagination: {
+            type: 'SKIP_COUNT',
             skip: 0,
             count: 25
           }
@@ -339,6 +340,7 @@ describe('Google Plugin', () => {
       it(`should return pagination info`, async () => {
         const result = await invokePeopleSearch();
         expect(result.pagination).toEqual({
+          type: 'SKIP_COUNT',
           count: 25,
           skip: 0,
           totalCount: 374

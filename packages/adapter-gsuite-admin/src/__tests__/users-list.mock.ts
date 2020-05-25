@@ -7,6 +7,7 @@ export const USERS_LIST_MOCK: GsuiteAdminUsersList = {
   kind: 'admin#directory#users',
   etag:
     '"s3sxUbiDZrO_w5pDMy1k-DjAn3hLQ_44DzW8eoBN_pY/Kp6E-E4tFIQl79mPj4J6XhPmaEo"',
+  nextPageToken: 'nextpagetoken',
   users: [
     {
       kind: 'admin#directory#user',

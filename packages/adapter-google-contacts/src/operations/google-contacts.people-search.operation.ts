@@ -10,14 +10,19 @@ import { GoogleContactsFeedResponse } from '../interfaces';
 import { GoogleContactsPeopleSearchOperationInputParams } from './google-contacts.people-search.operation.input-params';
 
 export interface GoogleContactsPeopleSearchOperation
-  extends BreadCollectionOperation<GoogleContactsOperationName.PEOPLE_SEARCH> {
+  extends BreadCollectionOperation<
+    GoogleContactsOperationName.PEOPLE_SEARCH,
+    'SKIP_COUNT'
+  > {
   input: BreadCollectionOperationInputWithParams<
     GoogleContactsOperationName.PEOPLE_SEARCH,
-    GoogleContactsPeopleSearchOperationInputParams
+    GoogleContactsPeopleSearchOperationInputParams,
+    'SKIP_COUNT'
   >;
   output: BreadCollectionOperationOutputWithRawDataAndPayload<
     GoogleContactsOperationName.PEOPLE_SEARCH,
     GoogleContactsFeedResponse,
-    PersonSchema[]
+    PersonSchema[],
+    'SKIP_COUNT'
   >;
 }

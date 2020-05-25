@@ -5,7 +5,6 @@ import { BreadAuthStrategy } from '../auth-strategy';
 import {
   BreadCollectionOperation,
   BreadCollectionOperationInput,
-  BreadCollectionOperationInputPagination,
   BreadCollectionOperationOutputWithPayload
 } from '../operation';
 import { BreadServiceAdapter } from '../service-adapter';
@@ -33,12 +32,34 @@ class TestAuthStrategy extends BreadAuthStrategy<{}> {
   }
 }
 
-interface TestOperation extends BreadCollectionOperation<'TEST'> {
-  input: BreadCollectionOperationInput<'TEST'>;
-  output: BreadCollectionOperationOutputWithPayload<'TEST', PersonSchema[]>;
+interface TestSkipCountOperation
+  extends BreadCollectionOperation<'TEST', 'SKIP_COUNT'> {
+  input: BreadCollectionOperationInput<'TEST', 'SKIP_COUNT'>;
+
+  output: BreadCollectionOperationOutputWithPayload<
+    'TEST',
+    PersonSchema[],
+    'SKIP_COUNT'
+  >;
 }
 
-class TestAdapter extends BreadServiceAdapter<TestOperation, TestAuthStrategy> {
+interface TestPrevNextOperation
+  extends BreadCollectionOperation<'TEST', 'PREV_NEXT'> {
+  input: BreadCollectionOperationInput<'TEST', 'PREV_NEXT'>;
+
+  output: BreadCollectionOperationOutputWithPayload<
+    'TEST',
+    PersonSchema[],
+    'PREV_NEXT'
+  >;
+}
+
+type OperationTypes = TestSkipCountOperation | TestPrevNextOperation;
+
+class TestAdapter extends BreadServiceAdapter<
+  OperationTypes,
+  TestAuthStrategy
+> {
   provider = 'Test';
 }
 
@@ -48,160 +69,253 @@ const authStrategy = new TestAuthStrategy(state);
 
 const client = new EasyBreadClient(state, serviceAdapter, authStrategy);
 
-describe('invokeForAllPages', () => {
-  beforeEach(() => {
-    const totalCount = 378;
-    jest.restoreAllMocks();
-    jest.spyOn(client, 'invoke').mockImplementation(async input => {
-      const { pagination, name } = input;
-      return {
+describe('allPages() async generator function', () => {
+  describe('with SKIP_COUNT pagination', () => {
+    beforeEach(() => {
+      const totalCount = 378;
+      jest.restoreAllMocks();
+      jest.spyOn(client, 'invoke').mockImplementation(
+        // TODO: find out why ts complains
+        // @ts-ignore
+        async (input: TestSkipCountOperation['input']) => {
+          const { pagination, name } = input;
+          return {
+            name,
+            pagination: { ...pagination, totalCount },
+            provider: 'Test',
+            payload: [],
+            rawPayload: { success: true }
+          };
+        }
+      );
+    });
+
+    it(`should return an async generator`, () => {
+      client.invoke<TestSkipCountOperation>({
         pagination: {
-          ...(pagination as BreadCollectionOperationInputPagination),
-          totalCount
+          type: 'SKIP_COUNT',
+          count: 120,
+          skip: 0
         },
-        name,
-        provider: 'Test',
-        payload: [],
-        rawPayload: { success: true }
-      };
+        name: 'TEST',
+        breadId: '1'
+      });
+
+      const actual = client.allPages<TestSkipCountOperation>({
+        pagination: {
+          type: 'SKIP_COUNT',
+          count: 120,
+          skip: 0
+        },
+        name: 'TEST',
+        breadId: '1'
+      });
+
+      expect(actual[Symbol.asyncIterator]).toBeDefined();
     });
-  });
 
-  it(`should return an async generator`, () => {
-    const generator = client.allPages<TestOperation>({
-      name: 'TEST',
-      breadId: '1'
-    });
-    expect(generator.next).toEqual(expect.any(Function));
-    expect(generator[Symbol.asyncIterator]).toBeDefined();
-  });
+    it(`should fetch the entire collection`, async () => {
+      const results: TestSkipCountOperation['output'][] = [];
 
-  it(`should invoke operation and yield with the output for every page when iterated over`, async () => {
-    const results: TestOperation['output'][] = [];
-
-    for await (const result of client.allPages<TestOperation>({
-      name: 'TEST',
-      breadId: '1'
-    })) {
-      results.push(result);
-    }
-
-    expect((client.invoke as jest.Mock).mock.calls).toEqual([
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 0 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 50 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 100 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 150 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 200 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 250 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 300 }
-        }
-      ],
-      [
-        {
-          breadId: '1',
-          name: 'TEST',
-          pagination: { count: 50, skip: 350 }
-        }
-      ]
-    ]);
-
-    expect(results).toEqual([
-      {
+      for await (const result of client.allPages<TestSkipCountOperation>({
+        pagination: {
+          type: 'SKIP_COUNT',
+          count: 120,
+          skip: 0
+        },
         name: 'TEST',
-        pagination: { count: 50, skip: 0, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 50, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 100, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 150, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 200, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 250, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 300, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
-      },
-      {
-        name: 'TEST',
-        pagination: { count: 50, skip: 350, totalCount: 378 },
-        payload: [],
-        provider: 'Test',
-        rawPayload: { success: true }
+        breadId: '1'
+      })) {
+        results.push(result);
       }
-    ]);
+
+      expect((client.invoke as jest.Mock).mock.calls).toEqual([
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { count: 120, skip: 0, type: 'SKIP_COUNT' }
+          }
+        ],
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { count: 120, skip: 120, type: 'SKIP_COUNT' }
+          }
+        ],
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { count: 120, skip: 240, type: 'SKIP_COUNT' }
+          }
+        ],
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { count: 120, skip: 360, type: 'SKIP_COUNT' }
+          }
+        ]
+      ]);
+
+      expect(results).toEqual([
+        {
+          name: 'TEST',
+          pagination: {
+            count: 120,
+            skip: 0,
+            totalCount: 378,
+            type: 'SKIP_COUNT'
+          },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        },
+        {
+          name: 'TEST',
+          pagination: {
+            count: 120,
+            skip: 120,
+            totalCount: 378,
+            type: 'SKIP_COUNT'
+          },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        },
+        {
+          name: 'TEST',
+          pagination: {
+            count: 120,
+            skip: 240,
+            totalCount: 378,
+            type: 'SKIP_COUNT'
+          },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        },
+        {
+          name: 'TEST',
+          pagination: {
+            count: 120,
+            skip: 360,
+            totalCount: 378,
+            type: 'SKIP_COUNT'
+          },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        }
+      ]);
+    });
+  });
+
+  describe('with PREV_NEXT pagination', () => {
+    beforeEach(() => {
+      const lastPage = 3;
+      const createNextPage = (
+        currentPage?: number | string
+      ): number | undefined => {
+        const numberCurrent = Number(currentPage);
+
+        if (!numberCurrent) return 1;
+
+        return numberCurrent < lastPage ? numberCurrent + 1 : undefined;
+      };
+
+      jest.restoreAllMocks();
+      jest.spyOn(client, 'invoke').mockImplementation(
+        // TODO: find out why ts complains
+        // @ts-ignore
+        async (input: TestPrevNextOperation['input']) => {
+          const { pagination, name } = input;
+          const next = createNextPage(pagination.page);
+          return {
+            name,
+            pagination: { type: 'PREV_NEXT', next },
+            provider: 'Test',
+            payload: [],
+            rawPayload: { success: true }
+          };
+        }
+      );
+    });
+
+    it(`should fetch the entire collection`, async () => {
+      const results: TestPrevNextOperation['output'][] = [];
+
+      for await (const result of client.allPages<TestPrevNextOperation>({
+        pagination: { type: 'PREV_NEXT' },
+        name: 'TEST',
+        breadId: '1'
+      })) {
+        results.push(result);
+      }
+
+      expect((client.invoke as jest.Mock).mock.calls).toEqual([
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { type: 'PREV_NEXT' }
+          }
+        ],
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { page: 1, type: 'PREV_NEXT' }
+          }
+        ],
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { page: 2, type: 'PREV_NEXT' }
+          }
+        ],
+        [
+          {
+            breadId: '1',
+            name: 'TEST',
+            pagination: { page: 3, type: 'PREV_NEXT' }
+          }
+        ]
+      ]);
+
+      expect(results).toEqual([
+        {
+          name: 'TEST',
+          pagination: { next: 1, type: 'PREV_NEXT' },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        },
+        {
+          name: 'TEST',
+          pagination: { next: 2, type: 'PREV_NEXT' },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        },
+        {
+          name: 'TEST',
+          pagination: { next: 3, type: 'PREV_NEXT' },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        },
+        {
+          name: 'TEST',
+          pagination: { type: 'PREV_NEXT' },
+          payload: [],
+          provider: 'Test',
+          rawPayload: { success: true }
+        }
+      ]);
+    });
   });
 });

@@ -1,40 +1,42 @@
 import {
-  BreadCollectionOperationInputPagination,
-  BreadCollectionOperationOutputPagination
+  BreadOperationInputPagination,
+  BreadOperationOutputPagination,
+  BreadOperationPaginationType
 } from '../operation';
 import { BreadDataMapDefinition } from './bread.data-map-definition.interface';
 import { BreadPropertiesResolver } from './bread.properties-resolver';
 
 export abstract class BreadPaginationMapper<
   TRemoteParamsType extends object,
-  TRemoteDataType extends object
+  TRemoteDataType extends object,
+  TPaginationType extends BreadOperationPaginationType
 > {
   protected abstract readonly toOutputPaginationMap: BreadDataMapDefinition<
     TRemoteDataType,
-    BreadCollectionOperationOutputPagination
+    BreadOperationOutputPagination<TPaginationType>
   >;
 
   protected abstract readonly toRemoteParamsMap: BreadDataMapDefinition<
-    BreadCollectionOperationInputPagination,
+    BreadOperationInputPagination<TPaginationType>,
     TRemoteParamsType
   >;
 
   public toOutputPagination(
     input: TRemoteDataType
-  ): BreadCollectionOperationOutputPagination {
+  ): BreadOperationOutputPagination<TPaginationType> {
     const resolver = new BreadPropertiesResolver<
       TRemoteDataType,
-      BreadCollectionOperationOutputPagination
+      BreadOperationOutputPagination<TPaginationType>
     >(this.toOutputPaginationMap);
 
     return resolver.resolve(input);
   }
 
   public toRemoteParams(
-    input: BreadCollectionOperationInputPagination
+    input: BreadOperationInputPagination<TPaginationType>
   ): TRemoteParamsType {
     const resolver = new BreadPropertiesResolver<
-      BreadCollectionOperationInputPagination,
+      BreadOperationInputPagination<TPaginationType>,
       TRemoteParamsType
     >(this.toRemoteParamsMap);
 

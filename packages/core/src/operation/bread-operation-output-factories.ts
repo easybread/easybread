@@ -3,7 +3,6 @@ import { BreadSchema } from '@easybread/schemas';
 import { BreadException, ServiceException } from '../exception';
 import { BreadOperation } from './bread-operation';
 import {
-  BreadCollectionOperationOutputPagination,
   BreadCollectionOperationOutputWithPayload,
   BreadCollectionOperationOutputWithRawDataAndPayload,
   BreadFailedOperationRawPayload,
@@ -12,6 +11,10 @@ import {
   BreadOperationOutputWithRawData,
   BreadOperationOutputWithRawDataAndPayload
 } from './bread-operation-output';
+import {
+  BreadOperationOutputPagination,
+  BreadOperationPaginationType
+} from './bread-operation-pagination';
 
 export function createSuccessfulOutput<TName extends string>(
   name: TName
@@ -38,31 +41,6 @@ export function createSuccessfulOutputWithRawDataAndPayload<
     name,
     payload,
     rawPayload: { success: true, data }
-  };
-}
-
-export function createSuccessfulCollectionOutputWithRawDataAndPayload<
-  TName extends string,
-  TRawData extends object,
-  TPayload extends BreadSchema[]
->(
-  name: TName,
-  data: TRawData,
-  payload: TPayload,
-  pagination: BreadCollectionOperationOutputPagination | null = null
-): Omit<
-  BreadCollectionOperationOutputWithRawDataAndPayload<
-    TName,
-    TRawData,
-    TPayload
-  >,
-  'provider'
-> {
-  return {
-    name,
-    payload,
-    rawPayload: { success: true, data },
-    pagination
   };
 }
 
@@ -93,15 +71,52 @@ export function createSuccessfulOutputWithPayload<
   };
 }
 
+//  ------------------------------------
+
+export function createDisabledPagination(): BreadOperationOutputPagination<
+  'DISABLED'
+> {
+  return { type: 'DISABLED' };
+}
+
+export function createSuccessfulCollectionOutputWithRawDataAndPayload<
+  TName extends string,
+  TRawData extends object,
+  TPayload extends BreadSchema[],
+  TPaginationType extends BreadOperationPaginationType
+>(
+  name: TName,
+  data: TRawData,
+  payload: TPayload,
+  // TODO: make this optional without tsc complains
+  pagination: BreadOperationOutputPagination<TPaginationType>
+): Omit<
+  BreadCollectionOperationOutputWithRawDataAndPayload<
+    TName,
+    TRawData,
+    TPayload,
+    TPaginationType
+  >,
+  'provider'
+> {
+  return {
+    name,
+    payload,
+    rawPayload: { success: true, data },
+    pagination
+  };
+}
+
 export function createSuccessfulCollectionOutputWithPayload<
   TName extends string,
-  TPayload extends BreadSchema[]
+  TPayload extends BreadSchema[],
+  TPaginationType extends BreadOperationPaginationType
 >(
   name: TName,
   payload: TPayload,
-  pagination: BreadCollectionOperationOutputPagination
+  pagination: BreadOperationOutputPagination<TPaginationType>
 ): Omit<
-  BreadCollectionOperationOutputWithPayload<TName, TPayload>,
+  BreadCollectionOperationOutputWithPayload<TName, TPayload, TPaginationType>,
   'provider'
 > {
   return {
@@ -111,6 +126,8 @@ export function createSuccessfulCollectionOutputWithPayload<
     pagination
   };
 }
+
+//  ------------------------------------
 
 export function createFailedOutput<
   TName extends string,
