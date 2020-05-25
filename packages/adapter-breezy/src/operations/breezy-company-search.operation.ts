@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
-  BreadOperationInput,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadCollectionOperation,
+  BreadCollectionOperationInput,
+  BreadCollectionOperationOutputWithRawDataAndPayload
 } from '@easybread/core';
 import { OrganizationSchema } from '@easybread/schemas';
 
@@ -9,9 +9,9 @@ import { BreezyOperationName } from '../breezy.operation-name';
 import { BreezyCompany } from '../interfaces';
 
 export interface BreezyCompanySearchOperation
-  extends BreadOperation<BreezyOperationName.COMPANY_SEARCH> {
-  input: BreadOperationInput<BreezyOperationName.COMPANY_SEARCH>;
-  output: BreadOperationOutputWithRawDataAndPayload<
+  extends BreadCollectionOperation<BreezyOperationName.COMPANY_SEARCH> {
+  input: BreadCollectionOperationInput<BreezyOperationName.COMPANY_SEARCH>;
+  output: BreadCollectionOperationOutputWithRawDataAndPayload<
     BreezyOperationName.COMPANY_SEARCH,
     BreezyCompany[],
     OrganizationSchema[]

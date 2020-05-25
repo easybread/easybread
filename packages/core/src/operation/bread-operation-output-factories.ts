@@ -3,6 +3,9 @@ import { BreadSchema } from '@easybread/schemas';
 import { BreadException, ServiceException } from '../exception';
 import { BreadOperation } from './bread-operation';
 import {
+  BreadCollectionOperationOutputPagination,
+  BreadCollectionOperationOutputWithPayload,
+  BreadCollectionOperationOutputWithRawDataAndPayload,
   BreadFailedOperationRawPayload,
   BreadOperationOutput,
   BreadOperationOutputWithPayload,
@@ -22,7 +25,7 @@ export function createSuccessfulOutput<TName extends string>(
 export function createSuccessfulOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
-  TPayload extends BreadSchema | BreadSchema[]
+  TPayload extends BreadSchema
 >(
   name: TName,
   data: TRawData,
@@ -35,6 +38,31 @@ export function createSuccessfulOutputWithRawDataAndPayload<
     name,
     payload,
     rawPayload: { success: true, data }
+  };
+}
+
+export function createSuccessfulCollectionOutputWithRawDataAndPayload<
+  TName extends string,
+  TRawData extends object,
+  TPayload extends BreadSchema[]
+>(
+  name: TName,
+  data: TRawData,
+  payload: TPayload,
+  pagination: BreadCollectionOperationOutputPagination | null = null
+): Omit<
+  BreadCollectionOperationOutputWithRawDataAndPayload<
+    TName,
+    TRawData,
+    TPayload
+  >,
+  'provider'
+> {
+  return {
+    name,
+    payload,
+    rawPayload: { success: true, data },
+    pagination
   };
 }
 
@@ -53,7 +81,7 @@ export function createSuccessfulOutputWithRawData<
 
 export function createSuccessfulOutputWithPayload<
   TName extends string,
-  TPayload extends BreadSchema | BreadSchema[]
+  TPayload extends BreadSchema
 >(
   name: TName,
   payload: TPayload
@@ -62,6 +90,25 @@ export function createSuccessfulOutputWithPayload<
     name,
     payload,
     rawPayload: { success: true }
+  };
+}
+
+export function createSuccessfulCollectionOutputWithPayload<
+  TName extends string,
+  TPayload extends BreadSchema[]
+>(
+  name: TName,
+  payload: TPayload,
+  pagination: BreadCollectionOperationOutputPagination
+): Omit<
+  BreadCollectionOperationOutputWithPayload<TName, TPayload>,
+  'provider'
+> {
+  return {
+    name,
+    payload,
+    rawPayload: { success: true },
+    pagination
   };
 }
 

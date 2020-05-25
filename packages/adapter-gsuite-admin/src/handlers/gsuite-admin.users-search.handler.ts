@@ -1,6 +1,6 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 
 import { GsuiteAdminUserMapper } from '../data-mappers';
@@ -33,7 +33,7 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
 
     const userMapper = new GsuiteAdminUserMapper();
 
-    return createSuccessfulOutputWithRawDataAndPayload(
+    return createSuccessfulCollectionOutputWithRawDataAndPayload(
       name,
       response.data,
       response.data.users.map(user => userMapper.toSchema(user))

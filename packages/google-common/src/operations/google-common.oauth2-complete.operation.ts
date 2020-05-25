@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
   BreadOperationInputWithPayload,
-  BreadOperationOutputWithRawData
+  BreadOperationOutputWithRawData,
+  BreadStandardOperation
 } from '@easybread/core';
 
 import { GoogleCommonAccessTokenCreateResponse } from '../interfaces';
@@ -9,7 +9,7 @@ import { GoogleCommonOauth2CompleteOperationInputPayload } from './google-common
 import { GoogleCommonOperationName } from './google-common.operation-name';
 
 export interface GoogleCommonOauth2CompleteOperation
-  extends BreadOperation<GoogleCommonOperationName.AUTH_FLOW_COMPLETE> {
+  extends BreadStandardOperation<GoogleCommonOperationName.AUTH_FLOW_COMPLETE> {
   input: BreadOperationInputWithPayload<
     GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
     GoogleCommonOauth2CompleteOperationInputPayload

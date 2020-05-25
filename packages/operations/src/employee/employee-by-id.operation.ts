@@ -1,14 +1,14 @@
 import {
-  BreadOperation,
   BreadOperationInputWithParams,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadOperationOutputWithRawDataAndPayload,
+  BreadStandardOperation
 } from '@easybread/core';
 import { BreadSchema, PersonSchema } from '@easybread/schemas';
 
 import { BreadOperationName } from '../bread.operation-name';
 
 export interface EmployeeByIdOperation<TOutputRawData extends object = {}>
-  extends BreadOperation<BreadOperationName.EMPLOYEE_BY_ID> {
+  extends BreadStandardOperation<BreadOperationName.EMPLOYEE_BY_ID> {
   input: BreadOperationInputWithParams<
     BreadOperationName.EMPLOYEE_BY_ID,
     // TODO: come up with an interface for that

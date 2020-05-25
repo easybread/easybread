@@ -1,6 +1,6 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 
 import { BreezyAuthStrategy } from '../breezy.auth-strategy';
@@ -23,7 +23,7 @@ export const BreezyCompanySearchHandler: BreadOperationHandler<
 
     const companyMapper = new BreezyCompanyMapper();
 
-    return createSuccessfulOutputWithRawDataAndPayload(
+    return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreezyOperationName.COMPANY_SEARCH,
       result.data,
       result.data.map(company => companyMapper.toSchema(company))

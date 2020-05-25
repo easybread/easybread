@@ -133,6 +133,7 @@ describe('Operations', () => {
 
       expect(output).toEqual({
         name: 'GSUITE_ADMIN/USERS/SEARCH',
+        pagination: null,
         payload: [
           {
             '@type': 'Person',
@@ -353,7 +354,8 @@ function invokeUsersSearch(
   return client.invoke<GsuiteAdminUsersSearchOperation>({
     name: GsuiteAdminOperationName.USERS_SEARCH,
     params: { query },
-    breadId: BREAD_ID
+    breadId: BREAD_ID,
+    pagination: null
   });
 }
 

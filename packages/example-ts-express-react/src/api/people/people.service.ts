@@ -43,7 +43,8 @@ export class PeopleService {
     return googleContactsClient.invoke<GoogleContactsPeopleSearchOperation>({
       name: GoogleContactsOperationName.PEOPLE_SEARCH,
       breadId,
-      params: { query }
+      params: { query },
+      pagination: null
     });
   }
 
@@ -54,7 +55,8 @@ export class PeopleService {
     return gsuiteAdminClient.invoke<GsuiteAdminUsersSearchOperation>({
       name: GsuiteAdminOperationName.USERS_SEARCH,
       breadId,
-      params: { query }
+      params: { query },
+      pagination: null
     });
   }
 
@@ -67,7 +69,8 @@ export class PeopleService {
     >({
       name: BreadOperationName.EMPLOYEE_SEARCH,
       breadId,
-      params: { query }
+      params: { query },
+      pagination: null
     });
   }
 

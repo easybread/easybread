@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
   BreadOperationInputWithPayload,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadOperationOutputWithRawDataAndPayload,
+  BreadStandardOperation
 } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
@@ -9,7 +9,7 @@ import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
 
 export interface GoogleContactsPeopleUpdateOperation
-  extends BreadOperation<GoogleContactsOperationName.PEOPLE_UPDATE> {
+  extends BreadStandardOperation<GoogleContactsOperationName.PEOPLE_UPDATE> {
   input: BreadOperationInputWithPayload<
     GoogleContactsOperationName.PEOPLE_UPDATE,
     PersonSchema

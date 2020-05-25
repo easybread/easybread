@@ -95,7 +95,8 @@ describe('Breezy', () => {
       > {
         return client.invoke<BreezyCompanySearchOperation>({
           breadId: USER_ID,
-          name: BreezyOperationName.COMPANY_SEARCH
+          name: BreezyOperationName.COMPANY_SEARCH,
+          pagination: null
         });
       }
 
