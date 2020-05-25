@@ -1,6 +1,6 @@
 import {
-  BreadCollectionOperationInputPagination,
-  BreadCollectionOperationOutputPagination
+  BreadOperationInputPagination,
+  BreadOperationOutputPagination
 } from '../operation';
 import { BreadDataMapDefinition } from './bread.data-map-definition.interface';
 import { BreadPaginationMapper } from './bread.pagination-mapper';
@@ -19,19 +19,21 @@ interface RemoteData {
 
 class TestPaginationMapper extends BreadPaginationMapper<
   RemoteParams,
-  RemoteData
+  RemoteData,
+  'SKIP_COUNT'
 > {
   protected readonly toOutputPaginationMap: BreadDataMapDefinition<
     RemoteData,
-    BreadCollectionOperationOutputPagination
+    BreadOperationOutputPagination<'SKIP_COUNT'>
   > = {
+    type: _ => 'SKIP_COUNT',
     count: 'pageSize',
     totalCount: ({ pageSize, pagesCount }) => pageSize * pagesCount,
     skip: ({ pageSize, page }) => pageSize * page
   };
 
   protected readonly toRemoteParamsMap: BreadDataMapDefinition<
-    BreadCollectionOperationInputPagination,
+    BreadOperationInputPagination<'SKIP_COUNT'>,
     RemoteParams
   > = {
     page: ({ count, skip }) => ~~(skip / count),
@@ -44,6 +46,7 @@ const testMapper = new TestPaginationMapper();
 it(`should calculate remote params correctly`, () => {
   expect(
     testMapper.toRemoteParams({
+      type: 'SKIP_COUNT',
       count: 20,
       skip: 0
     })
@@ -51,6 +54,7 @@ it(`should calculate remote params correctly`, () => {
 
   expect(
     testMapper.toRemoteParams({
+      type: 'SKIP_COUNT',
       count: 20,
       skip: 41
     })
@@ -66,6 +70,7 @@ it(`should calculate remote params correctly`, () => {
       pagesCount: 5
     })
   ).toEqual({
+    type: 'SKIP_COUNT',
     count: 20,
     skip: 0,
     totalCount: 100
@@ -73,6 +78,7 @@ it(`should calculate remote params correctly`, () => {
 
   expect(
     testMapper.toRemoteParams({
+      type: 'SKIP_COUNT',
       count: 20,
       skip: 41
     })

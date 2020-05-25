@@ -121,7 +121,8 @@ describe('Operations', () => {
         params: {
           customer: 'my_customer',
           maxResults: 300,
-          query: 'searchterm'
+          query: 'searchterm',
+          pageToken: 'requested_page'
         }
       });
     });
@@ -133,7 +134,10 @@ describe('Operations', () => {
 
       expect(output).toEqual({
         name: 'GSUITE_ADMIN/USERS/SEARCH',
-        pagination: null,
+        pagination: {
+          next: 'nextpagetoken',
+          type: 'PREV_NEXT'
+        },
         payload: [
           {
             '@type': 'Person',
@@ -355,7 +359,7 @@ function invokeUsersSearch(
     name: GsuiteAdminOperationName.USERS_SEARCH,
     params: { query },
     breadId: BREAD_ID,
-    pagination: null
+    pagination: { type: 'PREV_NEXT', page: 'requested_page' }
   });
 }
 

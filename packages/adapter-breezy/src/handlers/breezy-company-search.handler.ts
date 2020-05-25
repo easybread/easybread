@@ -1,5 +1,6 @@
 import {
   BreadOperationHandler,
+  createDisabledPagination,
   createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 
@@ -26,7 +27,8 @@ export const BreezyCompanySearchHandler: BreadOperationHandler<
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreezyOperationName.COMPANY_SEARCH,
       result.data,
-      result.data.map(company => companyMapper.toSchema(company))
+      result.data.map(company => companyMapper.toSchema(company)),
+      createDisabledPagination()
     );
   }
 };

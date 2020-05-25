@@ -10,14 +10,19 @@ import { GsuiteAdminUsersList } from '../interfaces';
 import { GsuiteAdminUsersSearchOperationInputParams } from './gsuite-admin.users-search.operation.input-params';
 
 export interface GsuiteAdminUsersSearchOperation
-  extends BreadCollectionOperation<GsuiteAdminOperationName.USERS_SEARCH> {
+  extends BreadCollectionOperation<
+    GsuiteAdminOperationName.USERS_SEARCH,
+    'PREV_NEXT'
+  > {
   input: BreadCollectionOperationInputWithParams<
     GsuiteAdminOperationName.USERS_SEARCH,
-    GsuiteAdminUsersSearchOperationInputParams
+    GsuiteAdminUsersSearchOperationInputParams,
+    'PREV_NEXT'
   >;
   output: BreadCollectionOperationOutputWithRawDataAndPayload<
     GsuiteAdminOperationName.USERS_SEARCH,
     GsuiteAdminUsersList,
-    PersonSchema[]
+    PersonSchema[],
+    'PREV_NEXT'
   >;
 }

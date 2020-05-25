@@ -3,7 +3,10 @@ import {
   createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 
-import { GsuiteAdminUserMapper } from '../data-mappers';
+import {
+  GsuiteAdminUserMapper,
+  GsuiteAdminUsersPaginationMapper
+} from '../data-mappers';
 import { GsuiteAdminAuthStrategy } from '../gsuite-admin.auth-strategy';
 import { GsuiteAdminOperationName } from '../gsuite-admin.operation-name';
 import { GsuiteAdminUsersList } from '../interfaces';
@@ -14,8 +17,10 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
   GsuiteAdminAuthStrategy
 > = {
   async handle(input, context) {
-    const { name, params } = input;
+    const { name, params, pagination } = input;
     const { query } = params;
+
+    const paginationMapper = new GsuiteAdminUsersPaginationMapper();
 
     const response = await context.httpRequest<GsuiteAdminUsersList>({
       method: 'GET',
@@ -27,7 +32,8 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
         // TODO: implement pagination handling
         // pageToken: 'token',
         // See https://developers.google.com/admin-sdk/directory/v1/guides/search-users
-        query
+        query,
+        ...paginationMapper.toRemoteParams(pagination)
       }
     });
 
@@ -36,7 +42,8 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       name,
       response.data,
-      response.data.users.map(user => userMapper.toSchema(user))
+      response.data.users.map(user => userMapper.toSchema(user)),
+      paginationMapper.toOutputPagination(response.data)
     );
   },
   name: GsuiteAdminOperationName.USERS_SEARCH

@@ -89,7 +89,7 @@ describe('usage', () => {
         breadId: BREAD_ID,
         name: BreadOperationName.EMPLOYEE_SEARCH,
         params: { query },
-        pagination: null
+        pagination: { type: 'DISABLED' }
       });
     }
 
@@ -110,7 +110,7 @@ describe('usage', () => {
       const employees = await invokeEmployeeSearch();
       expect(employees).toEqual({
         name: 'BREAD/EMPLOYEE/SEARCH',
-        pagination: null,
+        pagination: { type: 'DISABLED' },
         payload: [
           {
             '@type': 'Person',
@@ -153,7 +153,7 @@ describe('usage', () => {
       const employees = await invokeEmployeeSearch('employee2');
       expect(employees).toEqual({
         name: 'BREAD/EMPLOYEE/SEARCH',
-        pagination: null,
+        pagination: { type: 'DISABLED' },
         payload: [
           {
             '@type': 'Person',
