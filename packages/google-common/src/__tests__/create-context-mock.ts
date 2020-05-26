@@ -1,12 +1,10 @@
-import { BreadOperationContext } from '@easybread/core';
+import { BreadOperation, BreadOperationContext } from '@easybread/core';
 
 import { GoogleCommonOauth2AuthStrategy } from '../google-common.oauth2.auth-strategy';
-import { GoogleCommonOauth2CompleteOperation } from '../operations';
 
-export function createContextMock(): BreadOperationContext<
-  GoogleCommonOauth2CompleteOperation,
-  GoogleCommonOauth2AuthStrategy
-> {
+export function createContextMock<
+  TOperation extends BreadOperation<string>
+>(): BreadOperationContext<TOperation, GoogleCommonOauth2AuthStrategy> {
   const auth = {
     authenticate: jest.fn(),
     createAuthUri: jest.fn()
@@ -15,7 +13,7 @@ export function createContextMock(): BreadOperationContext<
   // trick typescript
   const context = { auth } as any;
   return context as BreadOperationContext<
-    GoogleCommonOauth2CompleteOperation,
+    TOperation,
     GoogleCommonOauth2AuthStrategy
   >;
 }

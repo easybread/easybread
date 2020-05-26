@@ -1,5 +1,8 @@
 import { GoogleCommonOauth2CompleteHandler } from '../handlers';
-import { GoogleCommonOperationName } from '../operations';
+import {
+  GoogleCommonOauth2CompleteOperation,
+  GoogleCommonOperationName
+} from '../operations';
 import { createContextMock } from './create-context-mock';
 
 describe('name', () => {
@@ -12,7 +15,7 @@ describe('name', () => {
 
 describe('handle', () => {
   it(`should call context.auth.authenticate`, async () => {
-    const context = createContextMock();
+    const context = createContextMock<GoogleCommonOauth2CompleteOperation>();
     await GoogleCommonOauth2CompleteHandler.handle(
       {
         payload: { code: '123' },
@@ -28,7 +31,8 @@ describe('handle', () => {
   });
 
   it(`should produce correct output with auth data in raw payload`, async () => {
-    const context = createContextMock();
+    const context = createContextMock<GoogleCommonOauth2CompleteOperation>();
+
     (context.auth.authenticate as jest.Mock).mockImplementationOnce(() => {
       return { foo: 'bar' };
     });
