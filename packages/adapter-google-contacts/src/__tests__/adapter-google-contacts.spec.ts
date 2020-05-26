@@ -218,7 +218,10 @@ describe('Google Plugin', () => {
           breadId: USER_ID,
           name: GoogleContactsOperationName.PEOPLE_SEARCH,
           params: { query },
-          pagination: null
+          pagination: {
+            skip: 0,
+            count: 25
+          }
         });
       }
 
@@ -232,7 +235,12 @@ describe('Google Plugin', () => {
         expect(axiosMock.request).toHaveBeenCalledWith({
           method: 'GET',
           url: 'https://www.google.com/m8/feeds/contacts/default/full',
-          params: { alt: 'json', maxResults: 20, q: '' },
+          params: {
+            alt: 'json',
+            'max-results': 25,
+            'start-index': 1,
+            q: ''
+          },
           headers: {
             'GData-Version': '3.0',
             accept: 'application/json',
@@ -246,7 +254,12 @@ describe('Google Plugin', () => {
         expect(axiosMock.request).toHaveBeenCalledWith({
           method: 'GET',
           url: 'https://www.google.com/m8/feeds/contacts/default/full',
-          params: { alt: 'json', maxResults: 20, q: 'test' },
+          params: {
+            alt: 'json',
+            'max-results': 25,
+            'start-index': 1,
+            q: 'test'
+          },
           headers: {
             'GData-Version': '3.0',
             accept: 'application/json',
@@ -323,6 +336,15 @@ describe('Google Plugin', () => {
         ]);
       });
 
+      it(`should return pagination info`, async () => {
+        const result = await invokePeopleSearch();
+        expect(result.pagination).toEqual({
+          count: 25,
+          skip: 0,
+          totalCount: 374
+        });
+      });
+
       it(`should refresh access token if it expired`, async () => {
         // simulate expired access token
         const oauth2DataStateKey = `google:auth-data:${USER_ID}`;
@@ -363,7 +385,12 @@ describe('Google Plugin', () => {
               accept: 'application/json',
               authorization: 'Bearer new-access-token'
             },
-            params: { alt: 'json', maxResults: 20, q: '' },
+            params: {
+              alt: 'json',
+              'max-results': 25,
+              'start-index': 1,
+              q: ''
+            },
             method: 'GET',
             url: 'https://www.google.com/m8/feeds/contacts/default/full'
           }
