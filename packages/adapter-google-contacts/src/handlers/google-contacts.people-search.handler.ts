@@ -3,7 +3,10 @@ import {
   createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 
-import { GoogleContactsContactMapper } from '../data-mappers';
+import {
+  GoogleContactsContactMapper,
+  GoogleContactsPaginationMapper
+} from '../data-mappers';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedResponse } from '../interfaces';
@@ -18,10 +21,20 @@ export const GoogleContactsPeopleSearchHandler: BreadOperationHandler<
   async handle(input, context) {
     const { query = '' } = input.params;
 
+    const paginationMapper = new GoogleContactsPaginationMapper();
+
+    const remotePaginationParams = input.pagination
+      ? paginationMapper.toRemoteParams(input.pagination)
+      : {};
+
     const result = await context.httpRequest<GoogleContactsFeedResponse>({
       method: 'GET',
       url: `https://www.google.com/m8/feeds/contacts/default/full`,
-      params: { alt: 'json', maxResults: 20, q: query },
+      params: {
+        alt: 'json',
+        q: query,
+        ...remotePaginationParams
+      },
       headers: {
         'GData-Version': '3.0',
         accept: 'application/json'
@@ -33,7 +46,8 @@ export const GoogleContactsPeopleSearchHandler: BreadOperationHandler<
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_SEARCH,
       result.data,
-      result.data.feed.entry.map(entry => contactMapper.toSchema(entry))
+      result.data.feed.entry.map(entry => contactMapper.toSchema(entry)),
+      paginationMapper.toOutputPagination(result.data)
     );
   }
 };
