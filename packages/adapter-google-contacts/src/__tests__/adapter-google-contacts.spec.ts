@@ -330,7 +330,7 @@ describe('Google Plugin', () => {
           GoogleCommonOauth2StateData
         >(oauth2DataStateKey)) as GoogleCommonOauth2StateData;
 
-        currentAuthData.expiresAt = new Date().toISOString();
+        currentAuthData.expiresAt = new Date(Date.now() - 1000).toISOString();
 
         await stateAdapter.write(oauth2DataStateKey, currentAuthData);
 
@@ -341,7 +341,6 @@ describe('Google Plugin', () => {
         // run people search
         await invokePeopleSearch();
 
-        expect((axiosMock.request as Mock).mock.calls.length).toBe(2);
         // check refresh uri was called
         expect((axiosMock.request as Mock).mock.calls[0]).toEqual([
           {
@@ -369,6 +368,8 @@ describe('Google Plugin', () => {
             url: 'https://www.google.com/m8/feeds/contacts/default/full'
           }
         ]);
+
+        expect((axiosMock.request as Mock).mock.calls.length).toBe(2);
 
         // check auth data updated
         const updatedAuthData = await stateAdapter.read<
