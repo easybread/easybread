@@ -1,29 +1,36 @@
 import { BreadAuthStrategy } from '../auth-strategy';
-import { BreadOperation, BreadOperationContext } from '../operation';
+import {
+  BreadCollectionOperation,
+  BreadCollectionOperationInputPagination,
+  BreadOperation,
+  BreadOperationContext
+} from '../operation';
 import { BreadServiceAdapter } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
 
 /**
  * Main library class.
  *
- * @template T Defines Operations the client can handle.
- *
- * @param stateAdapter state adapter to use for persistence (save tokens & etc)
- *
- * @param serviceAdapter a "plugin" service adapter.
- *                       Provides logic for requesting and transforming data
+ * @template TOperation Defines Operations the client can handle.
+ * @template A Defines Auth Strategy the client is going to use.
  */
 export class EasyBreadClient<
-  T extends BreadOperation<string>,
-  A extends BreadAuthStrategy<object>
+  TOperation extends BreadOperation<string>,
+  TAuth extends BreadAuthStrategy<object>
 > {
+  /**
+   * @param stateAdapter state adapter to use for persistence (save tokens & etc)
+   * @param serviceAdapter a "plugin" service adapter.
+   *                       Provides logic for requesting and transforming data
+   * @param authStrategy an Auth strategy to use
+   */
   constructor(
     private readonly stateAdapter: BreadStateAdapter,
-    private readonly serviceAdapter: BreadServiceAdapter<T, A>,
-    private readonly authStrategy: A
+    private readonly serviceAdapter: BreadServiceAdapter<TOperation, TAuth>,
+    private readonly authStrategy: TAuth
   ) {}
 
-  async invoke<O extends T>(input: O['input']): Promise<O['output']> {
+  async invoke<O extends TOperation>(input: O['input']): Promise<O['output']> {
     const context = this.createContext(input.breadId);
 
     return this.preProcess(input, context)
@@ -31,7 +38,37 @@ export class EasyBreadClient<
       .then(output => this.postProcess(output, context));
   }
 
-  private createContext(breadId: string): BreadOperationContext<T, A> {
+  async *allPages<
+    O extends Extract<TOperation, BreadCollectionOperation<string>>
+  >(
+    input: Omit<O['input'], 'pagination'>,
+    pageSize = 50
+  ): AsyncGenerator<TOperation['output'], void, unknown> {
+    let page = 0;
+
+    while (true) {
+      const pagination: BreadCollectionOperationInputPagination = {
+        skip: page++ * pageSize,
+        count: pageSize
+      };
+
+      const result = await this.invoke<O>({ ...input, pagination });
+
+      yield result;
+
+      // pagination is not supported
+      if (result.pagination === null) return;
+
+      const { count, skip, totalCount } = result.pagination;
+
+      // reached the end of the collection
+      if (skip + count >= totalCount) return;
+    }
+  }
+
+  private createContext(
+    breadId: string
+  ): BreadOperationContext<TOperation, TAuth> {
     return new BreadOperationContext({
       state: this.stateAdapter,
       auth: this.authStrategy,
@@ -40,23 +77,23 @@ export class EasyBreadClient<
     });
   }
 
-  private async process<O extends T>(
+  private async process<O extends TOperation>(
     input: O['input'],
-    context: BreadOperationContext<T, A>
+    context: BreadOperationContext<TOperation, TAuth>
   ): Promise<O['output']> {
     return await this.serviceAdapter.processOperation(input, context);
   }
 
-  private async preProcess<I extends T['input']>(
+  private async preProcess<I extends TOperation['input']>(
     input: I,
-    _context: BreadOperationContext<T, A>
+    _context: BreadOperationContext<TOperation, TAuth>
   ): Promise<I> {
     return input;
   }
 
-  private async postProcess<O extends T['output']>(
+  private async postProcess<O extends TOperation['output']>(
     output: O,
-    _context: BreadOperationContext<T, A>
+    _context: BreadOperationContext<TOperation, TAuth>
   ): Promise<O> {
     return output;
   }
