@@ -1,5 +1,8 @@
 import { GoogleCommonOauth2StartHandler } from '../handlers';
-import { GoogleCommonOperationName } from '../operations';
+import {
+  GoogleCommonOauth2StartOperation,
+  GoogleCommonOperationName
+} from '../operations';
 import { createContextMock } from './create-context-mock';
 
 describe('name', () => {
@@ -12,7 +15,7 @@ describe('name', () => {
 
 describe('handle()', () => {
   it(`should call context.auth.createAuthUri()`, () => {
-    const context = createContextMock();
+    const context = createContextMock<GoogleCommonOauth2StartOperation>();
     GoogleCommonOauth2StartHandler.handle(
       {
         name: GoogleCommonOperationName.AUTH_FLOW_START,
@@ -37,10 +40,12 @@ describe('handle()', () => {
   });
 
   it(`should produce correct output with authUrl in raw payload `, async () => {
-    const context = createContextMock();
+    const context = createContextMock<GoogleCommonOauth2StartOperation>();
+
     (context.auth.createAuthUri as jest.Mock).mockImplementationOnce(
       () => 'http://authurl'
     );
+
     const output = await GoogleCommonOauth2StartHandler.handle(
       {
         name: GoogleCommonOperationName.AUTH_FLOW_START,
