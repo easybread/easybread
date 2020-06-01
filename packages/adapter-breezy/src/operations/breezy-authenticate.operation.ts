@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
   BreadOperationInputWithPayload,
-  BreadOperationOutputWithRawData
+  BreadOperationOutputWithRawData,
+  BreadStandardOperation
 } from '@easybread/core';
 
 import { BreezyOperationName } from '../breezy.operation-name';
@@ -11,7 +11,7 @@ import {
 } from '../interfaces';
 
 export interface BreezyAuthenticateOperation
-  extends BreadOperation<BreezyOperationName.AUTHENTICATE> {
+  extends BreadStandardOperation<BreezyOperationName.AUTHENTICATE> {
   input: BreadOperationInputWithPayload<
     BreezyOperationName.AUTHENTICATE,
     BreezyAuthenticatePayload

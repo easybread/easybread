@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
   BreadOperationInputWithPayload,
-  BreadOperationOutputWithRawData
+  BreadOperationOutputWithRawData,
+  BreadStandardOperation
 } from '@easybread/core';
 
 import { GoogleCommonOauth2StartOperationInputPayload } from './google-common.oauth2-start.operation.input-payload';
@@ -10,7 +10,7 @@ import { GoogleCommonOperationName } from './google-common.operation-name';
 
 export interface GoogleCommonOauth2StartOperation<
   TScopes extends string = string
-> extends BreadOperation<GoogleCommonOperationName.AUTH_FLOW_START> {
+> extends BreadStandardOperation<GoogleCommonOperationName.AUTH_FLOW_START> {
   input: BreadOperationInputWithPayload<
     GoogleCommonOperationName.AUTH_FLOW_START,
     GoogleCommonOauth2StartOperationInputPayload<TScopes>

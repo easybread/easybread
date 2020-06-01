@@ -50,17 +50,40 @@ export interface BreadOperationOutputWithRawData<
 
 export interface BreadOperationOutputWithPayload<
   TName extends string,
-  TPayload extends BreadSchema | BreadSchema[]
+  TPayload extends BreadSchema
 > extends BreadOperationOutputBase<TName> {
   rawPayload: BreadOperationOutputRawPayload;
   payload: TPayload;
 }
 
-//  ------------------------------------
-
 export type BreadOperationOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
-  TPayload extends BreadSchema | BreadSchema[]
+  TPayload extends BreadSchema
 > = BreadOperationOutputWithRawData<TName, TRawData> &
   BreadOperationOutputWithPayload<TName, TPayload>;
+
+// COLLECTION OPERATION RELATED STUFF
+// ------------------------------------
+
+export interface BreadCollectionOperationOutputPagination {
+  skip: number;
+  count: number;
+  totalCount: number;
+}
+
+export interface BreadCollectionOperationOutputWithPayload<
+  TName extends string,
+  TPayload extends BreadSchema[]
+> extends BreadOperationOutputBase<TName> {
+  rawPayload: BreadOperationOutputRawPayload;
+  payload: TPayload;
+  pagination: BreadCollectionOperationOutputPagination | null;
+}
+
+export type BreadCollectionOperationOutputWithRawDataAndPayload<
+  TName extends string,
+  TRawData extends object,
+  TPayload extends BreadSchema[]
+> = BreadOperationOutputWithRawData<TName, TRawData> &
+  BreadCollectionOperationOutputWithPayload<TName, TPayload>;

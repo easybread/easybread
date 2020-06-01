@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
   BreadOperationInputWithPayload,
-  BreadOperationOutput
+  BreadOperationOutput,
+  BreadStandardOperation
 } from '@easybread/core';
 
 import { BreadOperationName } from '../bread.operation-name';
@@ -13,7 +13,7 @@ export interface SetupBasicAuthInputPayload {
 
 export interface SetupBasicAuthOperation<
   T extends object = SetupBasicAuthInputPayload
-> extends BreadOperation<BreadOperationName.SETUP_BASIC_AUTH> {
+> extends BreadStandardOperation<BreadOperationName.SETUP_BASIC_AUTH> {
   input: BreadOperationInputWithPayload<BreadOperationName.SETUP_BASIC_AUTH, T>;
   output: BreadOperationOutput<BreadOperationName.SETUP_BASIC_AUTH>;
 }

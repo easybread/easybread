@@ -1,6 +1,6 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 
 import { GoogleContactsContactMapper } from '../data-mappers';
@@ -30,7 +30,7 @@ export const GoogleContactsPeopleSearchHandler: BreadOperationHandler<
 
     const contactMapper = new GoogleContactsContactMapper();
 
-    return createSuccessfulOutputWithRawDataAndPayload(
+    return createSuccessfulCollectionOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_SEARCH,
       result.data,
       result.data.feed.entry.map(entry => contactMapper.toSchema(entry))

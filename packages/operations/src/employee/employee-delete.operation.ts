@@ -1,13 +1,13 @@
 import {
-  BreadOperation,
   BreadOperationInputWithParams,
-  BreadOperationOutputWithRawData
+  BreadOperationOutputWithRawData,
+  BreadStandardOperation
 } from '@easybread/core';
 
 import { BreadOperationName } from '../bread.operation-name';
 
 export interface EmployeeDeleteOperation
-  extends BreadOperation<BreadOperationName.EMPLOYEE_DELETE> {
+  extends BreadStandardOperation<BreadOperationName.EMPLOYEE_DELETE> {
   input: BreadOperationInputWithParams<
     BreadOperationName.EMPLOYEE_DELETE,
     // TODO: consider using schema entity here as well

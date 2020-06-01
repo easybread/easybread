@@ -39,8 +39,7 @@ export abstract class BreadOAuth2AuthStrategy<
 
   protected isExpired(authData: BreadOauth2StateData): boolean {
     const { expiresAt } = authData;
-    // if now + 1minute is later than expire date, the token has expired
-    return new Date(Date.now() + 1000 * 60) > new Date(expiresAt);
+    return new Date(Date.now()) > new Date(expiresAt);
   }
 
   protected createExpirationDate(expireTimeInMS: number): string {

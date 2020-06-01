@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
   BreadOperationInputWithParams,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadOperationOutputWithRawDataAndPayload,
+  BreadStandardOperation
 } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
@@ -9,7 +9,7 @@ import { GsuiteAdminOperationName } from '../gsuite-admin.operation-name';
 import { GsuiteAdminUser } from '../interfaces';
 
 export interface GsuiteAdminUsersByIdOperation
-  extends BreadOperation<GsuiteAdminOperationName.USERS_BY_ID> {
+  extends BreadStandardOperation<GsuiteAdminOperationName.USERS_BY_ID> {
   input: BreadOperationInputWithParams<
     GsuiteAdminOperationName.USERS_BY_ID,
     Pick<PersonSchema, 'identifier'>

@@ -88,7 +88,8 @@ describe('usage', () => {
       return client.invoke<EmployeeSearchOperation<BambooEmployeesDirectory>>({
         breadId: BREAD_ID,
         name: BreadOperationName.EMPLOYEE_SEARCH,
-        params: { query }
+        params: { query },
+        pagination: null
       });
     }
 
@@ -109,6 +110,7 @@ describe('usage', () => {
       const employees = await invokeEmployeeSearch();
       expect(employees).toEqual({
         name: 'BREAD/EMPLOYEE/SEARCH',
+        pagination: null,
         payload: [
           {
             '@type': 'Person',
@@ -151,6 +153,7 @@ describe('usage', () => {
       const employees = await invokeEmployeeSearch('employee2');
       expect(employees).toEqual({
         name: 'BREAD/EMPLOYEE/SEARCH',
+        pagination: null,
         payload: [
           {
             '@type': 'Person',

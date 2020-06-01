@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
-  BreadOperationInputWithParams,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadCollectionOperation,
+  BreadCollectionOperationInputWithParams,
+  BreadCollectionOperationOutputWithRawDataAndPayload
 } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
@@ -10,12 +10,12 @@ import { GsuiteAdminUsersList } from '../interfaces';
 import { GsuiteAdminUsersSearchOperationInputParams } from './gsuite-admin.users-search.operation.input-params';
 
 export interface GsuiteAdminUsersSearchOperation
-  extends BreadOperation<GsuiteAdminOperationName.USERS_SEARCH> {
-  input: BreadOperationInputWithParams<
+  extends BreadCollectionOperation<GsuiteAdminOperationName.USERS_SEARCH> {
+  input: BreadCollectionOperationInputWithParams<
     GsuiteAdminOperationName.USERS_SEARCH,
     GsuiteAdminUsersSearchOperationInputParams
   >;
-  output: BreadOperationOutputWithRawDataAndPayload<
+  output: BreadCollectionOperationOutputWithRawDataAndPayload<
     GsuiteAdminOperationName.USERS_SEARCH,
     GsuiteAdminUsersList,
     PersonSchema[]

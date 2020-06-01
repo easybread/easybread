@@ -1,6 +1,6 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload
 } from '@easybread/core';
 import {
   BreadOperationName,
@@ -68,7 +68,7 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
       .map(e => dataMapper.toSchema(e))
       .filter(searchFilter);
 
-    return createSuccessfulOutputWithRawDataAndPayload(
+    return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreadOperationName.EMPLOYEE_SEARCH,
       result.data,
       payload

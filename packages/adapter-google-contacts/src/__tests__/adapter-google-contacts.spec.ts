@@ -217,7 +217,8 @@ describe('Google Plugin', () => {
         return client.invoke<GoogleContactsPeopleSearchOperation>({
           breadId: USER_ID,
           name: GoogleContactsOperationName.PEOPLE_SEARCH,
-          params: { query }
+          params: { query },
+          pagination: null
         });
       }
 

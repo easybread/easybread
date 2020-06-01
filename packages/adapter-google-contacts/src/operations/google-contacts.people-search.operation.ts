@@ -1,7 +1,7 @@
 import {
-  BreadOperation,
-  BreadOperationInputWithParams,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadCollectionOperation,
+  BreadCollectionOperationInputWithParams,
+  BreadCollectionOperationOutputWithRawDataAndPayload
 } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
@@ -10,12 +10,12 @@ import { GoogleContactsFeedResponse } from '../interfaces';
 import { GoogleContactsPeopleSearchOperationInputParams } from './google-contacts.people-search.operation.input-params';
 
 export interface GoogleContactsPeopleSearchOperation
-  extends BreadOperation<GoogleContactsOperationName.PEOPLE_SEARCH> {
-  input: BreadOperationInputWithParams<
+  extends BreadCollectionOperation<GoogleContactsOperationName.PEOPLE_SEARCH> {
+  input: BreadCollectionOperationInputWithParams<
     GoogleContactsOperationName.PEOPLE_SEARCH,
     GoogleContactsPeopleSearchOperationInputParams
   >;
-  output: BreadOperationOutputWithRawDataAndPayload<
+  output: BreadCollectionOperationOutputWithRawDataAndPayload<
     GoogleContactsOperationName.PEOPLE_SEARCH,
     GoogleContactsFeedResponse,
     PersonSchema[]
