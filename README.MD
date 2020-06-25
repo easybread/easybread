@@ -28,3 +28,20 @@ $ yarn start:server
 ```
 
 This should start the server on `http://localhost:8080`;
+
+# Publish monorepo packages manually
+
+Install dependencies if you didn't:
+
+```bash
+$ yarn install
+$ yarn bootstrap
+```
+
+Run publish:
+
+```bash
+$ yarn publish
+```
+
+follow the wizard.
