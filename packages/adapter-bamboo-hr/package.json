@@ -1,6 +1,6 @@
 {
   "name": "@easybread/adapter-bamboo-hr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TODO add description",
   "author": {
     "name": "Easybread",
@@ -67,15 +67,15 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.2",
-    "@easybread/core": "^0.0.2",
-    "@easybread/operations": "^0.0.2",
-    "@easybread/schemas": "^0.0.2",
+    "@easybread/common": "^0.0.3",
+    "@easybread/core": "^0.0.3",
+    "@easybread/operations": "^0.0.3",
+    "@easybread/schemas": "^0.0.3",
     "axios": "^0.19.2",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.2",
+    "@easybread/test-utils": "^0.0.3",
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.149",
     "husky": "^4.2.3",

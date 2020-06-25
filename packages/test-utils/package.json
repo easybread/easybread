@@ -1,6 +1,6 @@
 {
   "name": "@easybread/test-utils",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "> TODO: description",
   "author": {
     "name": "Easybread",
@@ -9,10 +9,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "contributors": [{
-    "name": "Alexander Cherednichenko",
-    "email": "alexandr2110pro@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Alexander Cherednichenko",
+      "email": "alexandr2110pro@gmail.com"
+    }
+  ],
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
