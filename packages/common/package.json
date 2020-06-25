@@ -75,5 +75,6 @@
     "@types/uuid": "^7.0.2",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
-  }
+  },
+  "gitHead": "15d59373d2c84e00a32e694cc5ef7606a7ea847a"
 }
