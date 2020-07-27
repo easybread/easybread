@@ -1046,6 +1046,87 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@easybread/adapter-bamboo-hr@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/adapter-bamboo-hr/-/adapter-bamboo-hr-0.0.3.tgz#c0f8367471f08345f631de82de99335e9a634bde"
+  integrity sha512-Sxvyjd+1DwwT+2Xgo50oaStZdPmcKeWAjkGiHyefFG9u9/yQcqC2WipxF8fHDujPExpB7/AbigqXcA3zAp5Vpg==
+  dependencies:
+    "@easybread/common" "^0.0.3"
+    "@easybread/core" "^0.0.3"
+    "@easybread/operations" "^0.0.3"
+    "@easybread/schemas" "^0.0.3"
+    axios "^0.19.2"
+    lodash "^4.17.15"
+
+"@easybread/adapter-google-contacts@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/adapter-google-contacts/-/adapter-google-contacts-0.0.3.tgz#00f1ec39450a6d39c9215c49586286d5e67c57e0"
+  integrity sha512-5u/L4sm5i26gEqUWzoXT3JjvM3ktIL5JWz+q6TqKCmLq2NBaXAc2R/f6sZZebsSgXRSPLOp3jvZbq6A3hAG6Nw==
+  dependencies:
+    "@easybread/common" "^0.0.3"
+    "@easybread/core" "^0.0.3"
+    "@easybread/google-common" "^0.0.3"
+    "@easybread/operations" "^0.0.3"
+    "@easybread/schemas" "^0.0.3"
+    axios "^0.19.2"
+    lodash "^4.17.15"
+
+"@easybread/adapter-gsuite-admin@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/adapter-gsuite-admin/-/adapter-gsuite-admin-0.0.3.tgz#bc06d73acf29bb145545311c1f895e7e2ec37638"
+  integrity sha512-yFCtdSW1rqItEKVEhcHSDOIyS+VF2vLCmWjiRs2V5igqdJowL5OmEd42cKz0MXYoTK5VFkEM38FMwJJWF/mNfg==
+  dependencies:
+    "@easybread/common" "^0.0.3"
+    "@easybread/core" "^0.0.3"
+    "@easybread/google-common" "^0.0.3"
+    "@easybread/operations" "^0.0.3"
+    "@easybread/schemas" "^0.0.3"
+    axios "^0.19.2"
+    lodash "^4.17.15"
+
+"@easybread/common@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/common/-/common-0.0.3.tgz#3c3c799f84816ec6f6f10945e53bd0a35a19a0a5"
+  integrity sha512-s5dyTQlaSWte1k2+PNcRfq3ZAqWD1d26UDg5mWHGNZ72VeKkHjAWb/WR/fH0lQBMUChJvGaNK15W+mbVIGS2+A==
+  dependencies:
+    lodash "^4.17.15"
+
+"@easybread/core@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/core/-/core-0.0.3.tgz#1110fa1b06ddf910434d1e231cc789a9f4829cfd"
+  integrity sha512-/hR2FrbVv9V9tTxG43Der3yo909YwP6Db/Wtno7u09qd1JXmq6xxaTi03t6J3Rq6pvZSTFj1KPmmyYGIcRLL4w==
+  dependencies:
+    "@easybread/common" "^0.0.3"
+    "@easybread/schemas" "^0.0.3"
+    axios "^0.19.2"
+    lodash "^4.17.15"
+
+"@easybread/google-common@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/google-common/-/google-common-0.0.3.tgz#a415ff923ed14544e5b03a5254cfc9f004c0ebd8"
+  integrity sha512-+MhZarkOGqdfohyznJMv42cq+q4ldnLCPZb6N+eC/u/oxdx9xZG8/NjB+o+vy397cUhHosIejokWjzzTr8ZKYg==
+  dependencies:
+    "@easybread/common" "^0.0.3"
+    "@easybread/core" "^0.0.3"
+    "@easybread/operations" "^0.0.3"
+    "@easybread/schemas" "^0.0.3"
+    axios "^0.19.2"
+    lodash "^4.17.15"
+
+"@easybread/operations@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/operations/-/operations-0.0.3.tgz#87bf2252d4dad55a2a25f1bd95219da4d2903693"
+  integrity sha512-4N70/ar19ibIa2TNh7avfvA/PGjyPYSUyy5MDhKkrIqEcKgpi7ufRBFFss9MPmZtQo3ZMsGK+deQNJWO6nbNtg==
+  dependencies:
+    "@easybread/common" "^0.0.3"
+    "@easybread/core" "^0.0.3"
+    "@easybread/schemas" "^0.0.3"
+
+"@easybread/schemas@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@easybread/schemas/-/schemas-0.0.3.tgz#3de325cce941cdf6fc3ce2c561ab643bc7e790dc"
+  integrity sha512-OZAIG4nZ/HjGMK26pkxH8bqsTuHGkUVCNa/qKKRw8vWWJoCHsFBiPn2fDIGc2Hqou+u024SQgMTLncs5GrkMbQ==
+
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
@@ -11372,9 +11453,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   version "1.0.5"
