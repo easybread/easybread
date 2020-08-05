@@ -1,6 +1,6 @@
 {
   "name": "@easybread/adapter-google-contacts",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "TODO add description",
   "author": {
     "name": "Easybread",
@@ -67,19 +67,20 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.1",
-    "@easybread/core": "^0.0.1",
-    "@easybread/google-common": "^0.0.1",
-    "@easybread/operations": "^0.0.1",
-    "@easybread/schemas": "^0.0.1",
+    "@easybread/common": "^0.0.3",
+    "@easybread/core": "^0.0.3",
+    "@easybread/google-common": "^0.0.3",
+    "@easybread/operations": "^0.0.3",
+    "@easybread/schemas": "^0.0.3",
     "axios": "^0.19.2",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.1",
+    "@easybread/test-utils": "^0.0.3",
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.149",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
-  }
+  },
+  "gitHead": "15d59373d2c84e00a32e694cc5ef7606a7ea847a"
 }
