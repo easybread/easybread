@@ -1,30 +1,6 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/easybread/easybread.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/easybread/easybread/context:javascript)
 
-# Install & Run sample app
+# The EasyBREAD Monorepo root.
 
-Make sure you've got the latest stable node and yarn installed.
-
-Run from project root:
-
-```bash
-$ yarn install
-$ yarn bootstrap
-$ yarn build
-```
-
-Then, go to `packages/example-ts-express-react` and create `.env` file from the template:
-
-```bash
-$ cp ./.env.example ./.env
-```
-
-Then, edit it following recommendations in the comments.
-
-After that, start the server:
-
-(in the same `packages/example-ts-express-react` dir)
-```bash
-$ yarn start:server 
-```
-
-This should start the server on `http://localhost:8080`;
+Please see our work in progress [WIKI](https://github.com/easybread/easybread/wiki)  

@@ -1,1 +1,0 @@
-export { AdapterContainer } from './AdapterContainer';
