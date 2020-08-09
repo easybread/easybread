@@ -40,16 +40,21 @@ export abstract class BreadAuthStrategy<TStateData extends object> {
     );
   }
 
+  protected setHeaders(
+    requestConfig: AxiosRequestConfig,
+    headers: Record<string, string>
+  ): AxiosRequestConfig {
+    return {
+      ...requestConfig,
+      headers: this.mergeHeaders(requestConfig.headers, headers)
+    };
+  }
+
   protected addAuthorizationHeader(
     requestConfig: AxiosRequestConfig,
     authorization: string
   ): AxiosRequestConfig {
-    return {
-      ...requestConfig,
-      headers: this.mergeHeaders(requestConfig.headers, {
-        authorization
-      })
-    };
+    return this.setHeaders(requestConfig, { authorization });
   }
 
   protected mergeHeaders(
