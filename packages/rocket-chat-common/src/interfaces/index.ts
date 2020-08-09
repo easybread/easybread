@@ -1,5 +1,7 @@
 export { RocketChatAuthStateData } from './rocket-chat.auth-state-data';
 
+export { RocketChatBanner } from './rocket-chat.banner';
+
 export { RocketChatPaginationData } from './rocket-chat.pagination-data';
 export { RocketChatPaginationParams } from './rocket-chat.pagination-params';
 

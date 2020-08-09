@@ -7,3 +7,5 @@ export { RocketChatOperation } from './rocket-chat.operation';
 export { RocketChatOperationName } from './rocket-chat.operation-name';
 
 export { RocketChatAuthStrategy } from './rocket-chat.auth-strategy';
+
+export { RocketChatServiceAdapterOptions } from './rocket-chat.service-adapter.options';

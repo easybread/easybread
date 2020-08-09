@@ -1,12 +1,11 @@
+import { RocketChatBanner } from './rocket-chat.banner';
 import { RocketChatUserEmail } from './rocket-chat.user-email';
 import { RocketChatUserServices } from './rocket-chat.user-services';
 import { RocketChatUserSettings } from './rocket-chat.user-settings';
 
 export interface RocketChatUser {
   _id: string;
-  statusText?: string;
-  createdAt?: Date;
-  roles?: string[];
+
   type: string;
   active: boolean;
   username?: string;
@@ -31,7 +30,17 @@ export interface RocketChatUser {
   };
   requirePasswordChange?: boolean;
   customFields?: {
-    [key: string]: unknown;
+    [key: string]: any;
   };
   settings?: RocketChatUserSettings;
+
+  // seem to be optional in real API response but required in RC docs:
+  createdAt?: Date;
+  roles?: string[];
+
+  // not present in RC docs:
+  __rooms: string[];
+  appId?: string;
+  statusText?: string;
+  banners?: Record<string, RocketChatBanner>;
 }

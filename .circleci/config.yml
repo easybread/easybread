@@ -80,36 +80,36 @@ jobs:
 
       # ---------------------
 
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-bamboo-hr/reports/junit
           destination: test-results/adapter-bamboo-hr
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-breezy/reports/junit
           destination: test-results/adapter-breezy
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-google-contacts/reports/junit
           destination: test-results/adapter-google-contacts
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-gsuite-admin/reports/junit
           destination: test-results/adapter-gsuite-admin
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-rocket-chat-users/reports/junit
           destination: test-results/adapter-rocket-chat-users
 
-      - store-artefacts:
+      - store_artefacts:
           path: packages/google-common/reports/junit
           destination: test-results/google-common
-      - store-artefacts:
+      - store_artefacts:
           path: packages/rocket-chat-common/reports/junit
           destination: test-results/rocket-chat-common
 
-      - store-artefacts:
+      - store_artefacts:
           path: packages/common/reports/junit
           destination: test-results/common
-      - store-artefacts:
+      - store_artefacts:
           path: packages/core/reports/junit
           destination: test-results/core
-      - store-artefacts:
+      - store_artefacts:
           path: packages/operations/reports/junit
           destination: test-results/operations
 
@@ -119,36 +119,36 @@ jobs:
 
       # ---------------------
 
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-bamboo-hr/coverage
           destination: coverage/adapter-bamboo-hr
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-breezy/coverage
           destination: coverage/adapter-breezy
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-google-contacts/coverage
           destination: coverage/adapter-google-contacts
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-gsuite-admin/coverage
           destination: coverage/adapter-gsuite-admin
-      - store-artefacts:
+      - store_artefacts:
           path: packages/adapter-rocket-chat-users/coverage
           destination: coverage/adapter-rocket-chat-users
 
-      - store-artefacts:
+      - store_artefacts:
           path: packages/google-common/coverage
           destination: coverage/google-common
-      - store-artefacts:
+      - store_artefacts:
           path: packages/rocket-chat-common/coverage
           destination: coverage/rocket-chat-common
 
-      - store-artefacts:
+      - store_artefacts:
           path: packages/common/coverage
           destination: coverage/common
-      - store-artefacts:
+      - store_artefacts:
           path: packages/core/coverage
           destination: coverage/core
-      - store-artefacts:
+      - store_artefacts:
           path: packages/operations/coverage
           destination: coverage/operations
 
