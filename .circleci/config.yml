@@ -54,12 +54,23 @@ jobs:
           name: "Test"
           command: yarn test:ci
 
+      # TODO: improve the below
       - store_test_results:
           path: packages/adapter-bamboo-hr/reports/junit
       - store_test_results:
           path: packages/adapter-breezy/reports/junit
       - store_test_results:
-          path: packages/adapter-google/reports/junit
+          path: packages/adapter-google-contacts/reports/junit
+      - store_test_results:
+          path: packages/adapter-gsuite-admin/reports/junit
+      - store_test_results:
+          path: packages/adapter-rocket-chat-users/reports/junit
+
+      - store_test_results:
+          path: packages/google-common/reports/junit
+      - store_test_results:
+          path: packages/rocket-chat-common/reports/junit
+
       - store_test_results:
           path: packages/common/reports/junit
       - store_test_results:
@@ -67,41 +78,77 @@ jobs:
       - store_test_results:
           path: packages/operations/reports/junit
 
-      - store_artifacts:
+      # ---------------------
+
+      - store-artefacts:
           path: packages/adapter-bamboo-hr/reports/junit
           destination: test-results/adapter-bamboo-hr
-      - store_artifacts:
+      - store-artefacts:
           path: packages/adapter-breezy/reports/junit
           destination: test-results/adapter-breezy
-      - store_artifacts:
-          path: packages/adapter-google/reports/junit
-          destination: test-results/adapter-google
-      - store_artifacts:
+      - store-artefacts:
+          path: packages/adapter-google-contacts/reports/junit
+          destination: test-results/adapter-google-contacts
+      - store-artefacts:
+          path: packages/adapter-gsuite-admin/reports/junit
+          destination: test-results/adapter-gsuite-admin
+      - store-artefacts:
+          path: packages/adapter-rocket-chat-users/reports/junit
+          destination: test-results/adapter-rocket-chat-users
+
+      - store-artefacts:
+          path: packages/google-common/reports/junit
+          destination: test-results/google-common
+      - store-artefacts:
+          path: packages/rocket-chat-common/reports/junit
+          destination: test-results/rocket-chat-common
+
+      - store-artefacts:
           path: packages/common/reports/junit
           destination: test-results/common
-      - store_artifacts:
+      - store-artefacts:
           path: packages/core/reports/junit
           destination: test-results/core
-      - store_artifacts:
+      - store-artefacts:
           path: packages/operations/reports/junit
           destination: test-results/operations
 
       - store_artifacts:
+          path: packages/operations/reports/junit
+          destination: test-results/operations
+
+      # ---------------------
+
+      - store-artefacts:
           path: packages/adapter-bamboo-hr/coverage
           destination: coverage/adapter-bamboo-hr
-      - store_artifacts:
+      - store-artefacts:
           path: packages/adapter-breezy/coverage
           destination: coverage/adapter-breezy
-      - store_artifacts:
-          path: packages/adapter-google/coverage
-          destination: coverage/adapter-google
-      - store_artifacts:
+      - store-artefacts:
+          path: packages/adapter-google-contacts/coverage
+          destination: coverage/adapter-google-contacts
+      - store-artefacts:
+          path: packages/adapter-gsuite-admin/coverage
+          destination: coverage/adapter-gsuite-admin
+      - store-artefacts:
+          path: packages/adapter-rocket-chat-users/coverage
+          destination: coverage/adapter-rocket-chat-users
+
+      - store-artefacts:
+          path: packages/google-common/coverage
+          destination: coverage/google-common
+      - store-artefacts:
+          path: packages/rocket-chat-common/coverage
+          destination: coverage/rocket-chat-common
+
+      - store-artefacts:
           path: packages/common/coverage
           destination: coverage/common
-      - store_artifacts:
+      - store-artefacts:
           path: packages/core/coverage
           destination: coverage/core
-      - store_artifacts:
+      - store-artefacts:
           path: packages/operations/coverage
           destination: coverage/operations
 
