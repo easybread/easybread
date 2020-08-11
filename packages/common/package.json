@@ -51,9 +51,9 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint:ci": "yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
-    "test": "jest --passWithNoTests",
+    "test": "node --expose-gc ./../../node_modules/.bin/jest --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
-    "test:ci": "jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
+    "test:ci": "node --expose-gc ./../../node_modules/.bin/jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
     "test:watch": "jest --coverage --passWithNoTests --watchAll"
   },
   "husky": {

@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
   roots: ['<rootDir>/src'],
-  verbose: true,
+  verbose: false,
   testRegex: '.(spec|test).tsx?$',
   coverageDirectory: './coverage',
   testEnvironment: 'node',

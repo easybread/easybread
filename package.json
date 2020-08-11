@@ -9,7 +9,7 @@
     "check-types": "./node_modules/.bin/lerna run check-types",
     "lint": "./node_modules/.bin/lerna run lint",
     "lint:ci": "./node_modules/.bin/lerna run lint:ci",
-    "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run test:ci -- --logHeapUsage"
+    "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run --stream test:ci -- --logHeapUsage"
   },
   "husky": {
     "hooks": {
