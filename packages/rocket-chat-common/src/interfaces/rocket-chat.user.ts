@@ -19,9 +19,7 @@ export interface RocketChatUser {
   utcOffset?: number;
   language?: string;
   statusDefault?: string;
-  oauth?: {
-    authorizedClients: string[];
-  };
+  oauth?: { authorizedClients: string[] };
   _updatedAt?: Date;
   statusLivechat?: string;
   e2e?: {
@@ -39,7 +37,7 @@ export interface RocketChatUser {
   roles?: string[];
 
   // not present in RC docs:
-  __rooms: string[];
+  __rooms?: string[];
   appId?: string;
   statusText?: string;
   banners?: Record<string, RocketChatBanner>;
