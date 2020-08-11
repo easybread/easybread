@@ -22,7 +22,8 @@ describe('handle', () => {
         name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
         breadId: '1'
       },
-      context
+      context,
+      null
     );
 
     expect(context.auth.authenticate as jest.Mock).toHaveBeenCalledWith('1', {
@@ -42,7 +43,8 @@ describe('handle', () => {
         name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
         breadId: '1'
       },
-      context
+      context,
+      null
     );
 
     expect(output).toEqual({

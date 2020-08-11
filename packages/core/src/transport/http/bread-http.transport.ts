@@ -8,12 +8,12 @@ export class BreadHttpTransport {
       .request<T, AxiosResponse<T>>(requestConfig)
       .then(r => {
         // eslint-disable-next-line no-console
-        console.log('REQUEST FINISHED:\n%s', r.data);
+        // console.log('REQUEST FINISHED:\n%s', r.data);
         return r;
       })
       .catch(err => {
         // eslint-disable-next-line no-console
-        console.log('REQUEST FAILED:\n%s', err.response?.data);
+        // console.log('REQUEST FAILED:\n%s', err.response?.data);
         throw err;
       });
   }

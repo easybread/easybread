@@ -28,7 +28,8 @@ describe('handle()', () => {
           state: 'teststate=testval'
         }
       },
-      context
+      context,
+      null
     );
     expect(context.auth.createAuthUri).toHaveBeenCalledWith('1', {
       includeGrantedScopes: true,
@@ -58,7 +59,8 @@ describe('handle()', () => {
           state: 'teststate=testval'
         }
       },
-      context
+      context,
+      null
     );
 
     expect(output).toEqual({

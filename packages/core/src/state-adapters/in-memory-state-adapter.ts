@@ -10,10 +10,6 @@ export class InMemoryStateAdapter extends BreadStateAdapter {
 
   async write<T>(key: string, value: T): Promise<T> {
     this.db.set(key, value);
-    // eslint-disable-next-line no-console
-    console.log('STATE WRITE:');
-    // eslint-disable-next-line no-console
-    console.log(key, value);
     return value;
   }
 

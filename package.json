@@ -5,11 +5,11 @@
     "bootstrap": "./node_modules/.bin/lerna bootstrap",
     "bootstrap:no-scripts": "yarn bootstrap --ignore-scripts",
     "build": "./node_modules/.bin/lerna run build",
-    "test": "./node_modules/.bin/lerna run test",
+    "test": "./node_modules/.bin/lerna run test -- --logHeapUsage",
     "check-types": "./node_modules/.bin/lerna run check-types",
     "lint": "./node_modules/.bin/lerna run lint",
     "lint:ci": "./node_modules/.bin/lerna run lint:ci",
-    "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run test:ci"
+    "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run test:ci -- --logHeapUsage"
   },
   "husky": {
     "hooks": {
@@ -17,7 +17,7 @@
     }
   },
   "devDependencies": {
-    "@types/jest": "^24.9.0",
+    "@types/jest": "^26.0.9",
     "@types/node": "^13.9.0",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
@@ -26,12 +26,12 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-simple-import-sort": "^5.0.2",
     "husky": "^4.2.5",
-    "jest": "^24.9.0",
-    "jest-junit": "^10.0.0",
-    "lerna": "^3.20.2",
+    "jest": "^26.3.0",
+    "jest-junit": "^11.1.0",
+    "lerna": "^3.22.1",
     "prettier": "^2.0.4",
     "rimraf": "^3.0.2",
-    "ts-jest": "^25.2.1",
+    "ts-jest": "^26.2.0",
     "typescript": "^3.8.3"
   }
 }
