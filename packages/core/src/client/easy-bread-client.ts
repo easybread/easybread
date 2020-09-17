@@ -1,4 +1,5 @@
 import { BreadAuthStrategy } from '../auth-strategy';
+import { BreadServiceAdapterOptions } from '../common-interfaces';
 import {
   BreadCollectionOperation,
   BreadOperation,
@@ -16,7 +17,8 @@ import { AllPagesGenerator } from './all-pages-generator';
  */
 export class EasyBreadClient<
   TOperation extends BreadOperation<string>,
-  TAuth extends BreadAuthStrategy<object>
+  TAuth extends BreadAuthStrategy<object>,
+  TOptions extends BreadServiceAdapterOptions | null = null
 > {
   allPagesGenerator: AllPagesGenerator;
 
@@ -28,7 +30,11 @@ export class EasyBreadClient<
    */
   constructor(
     private readonly stateAdapter: BreadStateAdapter,
-    private readonly serviceAdapter: BreadServiceAdapter<TOperation, TAuth>,
+    private readonly serviceAdapter: BreadServiceAdapter<
+      TOperation,
+      TAuth,
+      TOptions
+    >,
     private readonly authStrategy: TAuth
   ) {
     this.allPagesGenerator = new AllPagesGenerator(input => this.invoke(input));
@@ -56,7 +62,7 @@ export class EasyBreadClient<
 
   private createContext(
     breadId: string
-  ): BreadOperationContext<TOperation, TAuth> {
+  ): BreadOperationContext<TOperation, TAuth, TOptions> {
     return new BreadOperationContext({
       state: this.stateAdapter,
       auth: this.authStrategy,
@@ -67,21 +73,21 @@ export class EasyBreadClient<
 
   private async process<O extends TOperation>(
     input: O['input'],
-    context: BreadOperationContext<TOperation, TAuth>
+    context: BreadOperationContext<TOperation, TAuth, TOptions>
   ): Promise<O['output']> {
     return await this.serviceAdapter.processOperation(input, context);
   }
 
   private async preProcess<I extends TOperation['input']>(
     input: I,
-    _context: BreadOperationContext<TOperation, TAuth>
+    _context: BreadOperationContext<TOperation, TAuth, TOptions>
   ): Promise<I> {
     return input;
   }
 
   private async postProcess<O extends TOperation['output']>(
     output: O,
-    _context: BreadOperationContext<TOperation, TAuth>
+    _context: BreadOperationContext<TOperation, TAuth, TOptions>
   ): Promise<O> {
     return output;
   }

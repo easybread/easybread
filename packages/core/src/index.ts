@@ -1,5 +1,6 @@
 export * from './auth-strategy';
 export * from './client';
+export * from './common-interfaces';
 export * from './exception';
 export * from './operation';
 export * from './service-adapter';

@@ -1,15 +1,18 @@
 import { BreadAuthStrategy } from '../auth-strategy';
+import { BreadServiceAdapterOptions } from '../common-interfaces';
 import { BreadOperation } from './bread-operation';
 import { BreadOperationContext } from './bread-operation-context';
 
 export interface BreadOperationHandler<
-  T extends BreadOperation<string>,
-  A extends BreadAuthStrategy<object>
+  TOperation extends BreadOperation<string>,
+  TAuthStrategy extends BreadAuthStrategy<object>,
+  TOptions extends BreadServiceAdapterOptions | null = null
 > {
-  name: T['name'];
+  name: TOperation['name'];
 
   handle(
-    input: T['input'],
-    context: BreadOperationContext<T, A>
-  ): Promise<Omit<T['output'], 'provider'>>;
+    input: TOperation['input'],
+    context: BreadOperationContext<TOperation, TAuthStrategy, TOptions>,
+    options: TOptions
+  ): Promise<Omit<TOperation['output'], 'provider'>>;
 }

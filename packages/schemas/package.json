@@ -51,9 +51,9 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint:ci": "yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
-    "test": "jest --passWithNoTests",
+    "test": "node --expose-gc ./../../node_modules/.bin/jest --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
-    "test:ci": "jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
+    "test:ci": "node --expose-gc ./../../node_modules/.bin/jest --ci --passWithNoTests --coverage --bail --reporters=default --reporters=jest-junit",
     "test:watch": "jest --coverage --passWithNoTests --watchAll"
   },
   "husky": {
@@ -69,6 +69,5 @@
   "devDependencies": {
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
-  },
-  "gitHead": "15d59373d2c84e00a32e694cc5ef7606a7ea847a"
+  }
 }

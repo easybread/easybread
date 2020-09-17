@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 
 import { BreadAuthStrategy } from '../auth-strategy';
+import { BreadServiceAdapterOptions } from '../common-interfaces';
 import {
   BreadException,
   NotImplementedException,
@@ -16,24 +17,39 @@ import {
 /**
  * Service adapter provides the logic for accessing the 3rd party service api
  *
- * @template T defines operation interfaces union type the adapter can handle
- * @template A defines the AuthStrategy used by the service
+ * @template TOperation defines operation interfaces union type the adapter can handle
+ * @template TAuthStrategy defines the AuthStrategy used by the service
+ * @template [TOptions] defines the type of options that will be passed to every handler
+ * @template [THandler] type alias for Operation Handler type that is this adapter can register
  */
 export abstract class BreadServiceAdapter<
-  T extends BreadOperation<string>,
-  A extends BreadAuthStrategy<object>
+  TOperation extends BreadOperation<string>,
+  TAuthStrategy extends BreadAuthStrategy<object>,
+  TOptions extends BreadServiceAdapterOptions | null = null,
+  THandler extends BreadOperationHandler<
+    TOperation,
+    TAuthStrategy,
+    TOptions
+  > = BreadOperationHandler<TOperation, TAuthStrategy, TOptions>
 > {
-  private handlers: Map<T['name'], BreadOperationHandler<T, A>> = new Map();
+  protected options: TOptions;
+
+  private handlers: Map<TOperation['name'], THandler> = new Map();
 
   abstract provider: string;
 
-  async processOperation<O extends T>(
+  // TODO: remove " = null as TOptions"
+  constructor(options: TOptions = null as TOptions) {
+    this.options = options;
+  }
+
+  async processOperation<O extends TOperation>(
     input: O['input'],
-    context: BreadOperationContext<T, A>
+    context: BreadOperationContext<TOperation, TAuthStrategy, TOptions>
   ): Promise<O['output']> {
     try {
       const handler = this.findHandler(input.name);
-      const output = await handler.handle(input, context);
+      const output = await handler.handle(input, context, this.options);
       return this.setProviderToOutput(output);
     } catch (error) {
       return createFailedOperationOutput<O>(
@@ -72,23 +88,21 @@ export abstract class BreadServiceAdapter<
   }
 
   protected setProviderToOutput(
-    outputWithoutProvider: Omit<T['output'], 'provider'>
-  ): T['output'] {
+    outputWithoutProvider: Omit<TOperation['output'], 'provider'>
+  ): TOperation['output'] {
     return {
       ...outputWithoutProvider,
       provider: this.provider
     };
   }
 
-  protected registerOperationHandlers(
-    ...operationHandlers: BreadOperationHandler<T, A>[]
-  ): void {
+  protected registerOperationHandlers(...operationHandlers: THandler[]): void {
     operationHandlers.map(h => this.registerOperationHandler(h.name, h));
   }
 
   protected registerOperationHandler(
-    operationName: T['name'],
-    operationHandler: BreadOperationHandler<T, A>
+    operationName: TOperation['name'],
+    operationHandler: THandler
   ): void {
     // TODO: do something if exists
     if (this.handlers.has(operationName)) return;
@@ -96,11 +110,12 @@ export abstract class BreadServiceAdapter<
     this.handlers.set(operationName, operationHandler);
   }
 
-  protected findHandler(operationName: T['name']): BreadOperationHandler<T, A> {
-    if (!this.handlers.has(operationName)) {
+  protected findHandler(operationName: TOperation['name']): THandler {
+    const handler = this.handlers.get(operationName);
+    if (!handler) {
       throw new NotImplementedException();
     }
-    return this.handlers.get(operationName) as BreadOperationHandler<T, A>;
+    return handler;
   }
 
   private isAxiosError(arg: Error | AxiosError): arg is AxiosError {

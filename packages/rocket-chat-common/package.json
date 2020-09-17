@@ -1,0 +1,80 @@
+{
+  "name": "@easybread/rocket-chat-common",
+  "version": "0.0.3",
+  "description": "TODO add description",
+  "author": {
+    "name": "Easybread",
+    "url": "https://easybread.io/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/easybread/easybread.git",
+    "directory": "packages/rocket-chat-common"
+  },
+  "homepage": "https://easybread.io",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    {
+      "name": "William Reiske",
+      "email": "wreiske@mieweb.com"
+    },
+    {
+      "name": "Alexander Cherednichenko",
+      "email": "alexandr2110pro@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "yarn lint:fix && rimraf ./lib",
+    "build": "tsc",
+    "prepublish": "yarn build",
+    "check-types": "tsc --noEmit",
+    "prettier:write": "prettier 'src/**/*.ts' --write",
+    "prettier:check": "prettier 'src/**/*.ts' --check",
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:ci": "yarn lint --quiet --format junit -o reports/junit/js-lint-results.xml",
+    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "test": "node --expose-gc ./../../node_modules/.bin/jest",
+    "test:cov": "jest --coverage",
+    "test:ci": "node --expose-gc ./../../node_modules/.bin/jest --ci --coverage --bail --reporters=default --reporters=jest-junit",
+    "test:watch": "jest --coverage --passWithNoTests --watchAll"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn check-types && lint-staged && yarn test"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "yarn lint:fix"
+    ]
+  },
+  "dependencies": {
+    "@easybread/common": "^0.0.3",
+    "@easybread/core": "^0.0.3",
+    "@easybread/operations": "^0.0.3",
+    "@easybread/schemas": "^0.0.3",
+    "axios": "^0.19.2",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@easybread/test-utils": "^0.0.3",
+    "@types/axios": "^0.14.0",
+    "@types/lodash": "^4.14.149",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8"
+  }
+}

@@ -1,8 +1,12 @@
+import { Bcp47LanguageCode } from './bcp47-language-code';
 import { BreadSchema } from './bread.schema';
 import { OrganizationSchema } from './organization.schema';
 
 export interface PersonSchema extends BreadSchema {
   '@type': 'Person';
+  // TODO: thnk about allowing any string
+  knowsLanguage?: Bcp47LanguageCode;
+  alternateName?: string;
   password?: string;
   identifier?: string;
   gender?: string;

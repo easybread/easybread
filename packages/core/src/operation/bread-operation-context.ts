@@ -2,27 +2,30 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { BreadAuthStrategy } from '../auth-strategy';
 import { EasyBreadClient } from '../client';
+import { BreadServiceAdapterOptions } from '../common-interfaces';
 import { BreadStateAdapter } from '../state';
 import { BreadHttpTransport } from '../transport/http';
 import { BreadOperation } from './bread-operation';
 
 interface BreadOperationContextOptions<
-  T extends BreadOperation<string>,
-  A extends BreadAuthStrategy<object>
+  TOperations extends BreadOperation<string>,
+  TAuthStrategy extends BreadAuthStrategy<object>,
+  TOptions extends BreadServiceAdapterOptions | null = null
 > {
   readonly state: BreadStateAdapter;
-  readonly client: EasyBreadClient<T, A>;
-  readonly auth: A;
+  readonly client: EasyBreadClient<TOperations, TAuthStrategy, TOptions>;
+  readonly auth: TAuthStrategy;
   readonly breadId: string;
 }
 
 export class BreadOperationContext<
-  T extends BreadOperation<string>,
-  A extends BreadAuthStrategy<object>
+  TOperation extends BreadOperation<string>,
+  TAuthStrategy extends BreadAuthStrategy<object>,
+  TOptions extends BreadServiceAdapterOptions | null = null
 > {
   readonly state: BreadStateAdapter;
-  readonly client: EasyBreadClient<T, A>;
-  readonly auth: A;
+  readonly client: EasyBreadClient<TOperation, TAuthStrategy, TOptions>;
+  readonly auth: TAuthStrategy;
   readonly http: BreadHttpTransport;
   readonly breadId: string;
 
@@ -31,7 +34,7 @@ export class BreadOperationContext<
     client,
     auth,
     breadId
-  }: BreadOperationContextOptions<T, A>) {
+  }: BreadOperationContextOptions<TOperation, TAuthStrategy, TOptions>) {
     this.state = state;
     this.client = client;
     this.auth = auth;
@@ -51,7 +54,7 @@ export class BreadOperationContext<
     );
   }
 
-  async invoke<O extends T>(input: O['input']): Promise<O['output']> {
+  async invoke<O extends TOperation>(input: O['input']): Promise<O['output']> {
     return this.client.invoke<O>(input);
   }
 
