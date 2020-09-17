@@ -1,6 +1,6 @@
 {
   "name": "@easybread/operations",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "> TODO: description",
   "author": {
     "name": "Easybread",
@@ -67,12 +67,12 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.3",
-    "@easybread/core": "^0.0.3",
-    "@easybread/schemas": "^0.0.3"
+    "@easybread/common": "^0.0.4",
+    "@easybread/core": "^0.0.4",
+    "@easybread/schemas": "^0.0.4"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.3",
+    "@easybread/test-utils": "^0.0.4",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
   }

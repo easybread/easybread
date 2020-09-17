@@ -1,6 +1,6 @@
 {
   "name": "@easybread/adapter-rocket-chat-users",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "> TODO: description",
   "author": {
     "name": "Easybread",
@@ -62,16 +62,16 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.3",
-    "@easybread/core": "^0.0.3",
-    "@easybread/operations": "^0.0.3",
-    "@easybread/rocket-chat-common": "^0.0.3",
-    "@easybread/schemas": "^0.0.3",
+    "@easybread/common": "^0.0.4",
+    "@easybread/core": "^0.0.4",
+    "@easybread/operations": "^0.0.4",
+    "@easybread/rocket-chat-common": "^0.0.4",
+    "@easybread/schemas": "^0.0.4",
     "axios": "^0.19.2",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.3",
+    "@easybread/test-utils": "^0.0.4",
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.149",
     "husky": "^4.2.3",
