@@ -70,14 +70,17 @@
     "@easybread/common": "^0.0.4",
     "@easybread/schemas": "^0.0.4",
     "axios": "^0.19.2",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "mongodb": "^3.6.2"
   },
   "devDependencies": {
     "@easybread/test-utils": "^0.0.4",
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.149",
+    "@types/mongodb": "^3.5.27",
     "@types/uuid": "^7.0.2",
     "husky": "^4.2.3",
-    "lint-staged": "^10.0.8"
+    "lint-staged": "^10.0.8",
+    "mongo-unit": "^2.0.1"
   }
 }
