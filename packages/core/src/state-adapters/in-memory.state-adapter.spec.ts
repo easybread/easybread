@@ -1,4 +1,4 @@
-import { InMemoryStateAdapter } from './in-memory-state-adapter';
+import { InMemoryStateAdapter } from './in-memory.state-adapter';
 
 describe('InMemoryStateAdapter', () => {
   let adapter: InMemoryStateAdapter;
