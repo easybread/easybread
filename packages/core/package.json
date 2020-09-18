@@ -1,6 +1,6 @@
 {
   "name": "@easybread/core",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Easily browse, read, edit, add, and delete (BREAD) data from third-party providers",
   "homepage": "https://github.com/easybread/easybread#readme",
   "author": {
@@ -67,14 +67,14 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.4",
-    "@easybread/schemas": "^0.0.4",
+    "@easybread/common": "^0.0.5",
+    "@easybread/schemas": "^0.0.5",
     "axios": "^0.19.2",
     "lodash": "^4.17.15",
     "mongodb": "^3.6.2"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.4",
+    "@easybread/test-utils": "^0.0.5",
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.149",
     "@types/mongodb": "^3.5.27",
