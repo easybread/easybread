@@ -20,6 +20,8 @@ export const USERS_BY_ID_MOCK: GsuiteAdminUser = {
   archived: false,
   changePasswordAtNextLogin: false,
   ipWhitelisted: false,
+  addresses: [{ type: 'home', formatted: '123 Street Address' }],
+  phones: [{ value: '12345678', type: 'home' }],
   emails: [
     { address: 'alex@easybread.io', primary: true },
     { address: 'alex@easybread.io.test-google-a.com' },

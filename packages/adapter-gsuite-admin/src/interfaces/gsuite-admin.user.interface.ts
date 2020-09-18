@@ -1,3 +1,5 @@
+import { GsuiteAdminAddress } from './gsuite-admin.address.interface';
+
 export interface GsuiteAdminUser {
   kind: 'admin#directory#user';
   id?: string;
@@ -45,21 +47,7 @@ export interface GsuiteAdminUser {
     type?: string;
     customType?: string;
   }[];
-  addresses?: {
-    type?: string;
-    customType?: string;
-    sourceIsStructured?: boolean;
-    formatted?: string;
-    poBox?: string;
-    extendedAddress?: string;
-    streetAddress?: string;
-    locality?: string;
-    region?: string;
-    postalCode?: string;
-    country?: string;
-    primary?: boolean;
-    countryCode?: string;
-  }[];
+  addresses?: GsuiteAdminAddress[];
   organizations?: {
     name?: string;
     title?: string;
