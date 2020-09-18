@@ -183,11 +183,13 @@ describe('Operations', () => {
         name: 'GSUITE_ADMIN/USERS/BY_ID',
         payload: {
           '@type': 'Person',
+          address: '123 Street Address',
           email: 'alex@easybread.io',
           familyName: 'Cherednichenko',
           givenName: 'Alexandr',
           identifier: '114190879825460327746',
-          name: 'Alexandr Cherednichenko'
+          name: 'Alexandr Cherednichenko',
+          telephone: '12345678'
         },
         provider: 'gsuiteAdmin',
         rawPayload: {
@@ -212,6 +214,8 @@ describe('Operations', () => {
           'https://www.googleapis.com/admin/directory/v1/users/114190879825460327746',
         headers: { authorization: 'Bearer access-token' },
         data: {
+          addresses: [],
+          phones: [],
           id: '114190879825460327746',
           kind: 'admin#directory#user',
           name: { givenName: 'updated' }
@@ -234,11 +238,13 @@ describe('Operations', () => {
         name: 'GSUITE_ADMIN/USERS/UPDATE',
         payload: {
           '@type': 'Person',
+          address: '123 Street Address',
           email: 'alex@easybread.io',
           familyName: 'Cherednichenko',
           givenName: 'updated',
           identifier: '114190879825460327746',
-          name: 'Alexandr Cherednichenko'
+          name: 'Alexandr Cherednichenko',
+          telephone: '12345678'
         },
         provider: 'gsuiteAdmin',
         rawPayload: {
@@ -261,6 +267,8 @@ describe('Operations', () => {
         data: {
           kind: 'admin#directory#user',
           name: { familyName: 'Test', givenName: 'Test' },
+          addresses: [],
+          phones: [],
           password: 'test-pass'
         },
         method: 'POST',
@@ -281,11 +289,13 @@ describe('Operations', () => {
         name: 'GSUITE_ADMIN/USERS/CREATE',
         payload: {
           '@type': 'Person',
+          address: '123 Street Address',
           email: 'alex@easybread.io',
           familyName: 'Cherednichenko',
           givenName: 'Alexandr',
           identifier: '114190879825460327746',
-          name: 'Alexandr Cherednichenko'
+          name: 'Alexandr Cherednichenko',
+          telephone: '12345678'
         },
         provider: 'gsuiteAdmin',
         rawPayload: {
