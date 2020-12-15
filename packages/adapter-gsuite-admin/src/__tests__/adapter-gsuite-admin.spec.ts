@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   GoogleCommonAccessTokenCreateResponse,

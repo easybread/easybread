@@ -11,7 +11,7 @@ export function createContextMock<
   };
 
   // trick typescript
-  const context = { auth } as any;
+  const context = { auth } as unknown;
   return context as BreadOperationContext<
     TOperation,
     GoogleCommonOauth2AuthStrategy

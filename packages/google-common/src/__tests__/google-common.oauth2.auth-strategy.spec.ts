@@ -29,17 +29,24 @@ const AUTH_SCOPES: TestScopes[] = [
 ];
 
 const ACCESS_TOKEN_CREATE_RESPONSE_DATA: GoogleCommonAccessTokenCreateResponse = {
+  // eslint-disable-next-line @typescript-eslint/camelcase
   expires_in: 3920,
+  // eslint-disable-next-line @typescript-eslint/camelcase
   refresh_token: 'refresh-token',
+  // eslint-disable-next-line @typescript-eslint/camelcase
   access_token: 'access-token',
   scope: AUTH_SCOPES.join(' '),
+  // eslint-disable-next-line @typescript-eslint/camelcase
   token_type: 'Bearer'
 };
 
 const REFRESH_TOKEN_RESPONSE_DATA: GoogleCommonAccessTokenRefreshResponse = {
+  // eslint-disable-next-line @typescript-eslint/camelcase
   access_token: 'new-access-token',
+  // eslint-disable-next-line @typescript-eslint/camelcase
   expires_in: 3690,
   scope: AUTH_SCOPES.join(' '),
+  // eslint-disable-next-line @typescript-eslint/camelcase
   token_type: 'Bearer'
 };
 
@@ -119,11 +126,15 @@ describe('authenticate()', () => {
       code: 'testcode'
     });
     expect(actual).toEqual({
+      // eslint-disable-next-line @typescript-eslint/camelcase
       access_token: 'access-token',
+      // eslint-disable-next-line @typescript-eslint/camelcase
       expires_in: 3920,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       refresh_token: 'refresh-token',
       scope:
         'https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly',
+      // eslint-disable-next-line @typescript-eslint/camelcase
       token_type: 'Bearer'
     });
   });

@@ -17,4 +17,6 @@ report.*.json
 .idea
 .DS_Store
 .cache/
+globalConfig.json
 
+junit.xml
