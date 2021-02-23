@@ -67,7 +67,7 @@
     "@easybread/google-common": "^0.0.5",
     "@easybread/operations": "^0.0.5",
     "@easybread/schemas": "^0.0.5",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
