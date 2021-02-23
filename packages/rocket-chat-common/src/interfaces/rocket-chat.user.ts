@@ -28,7 +28,7 @@ export interface RocketChatUser {
   };
   requirePasswordChange?: boolean;
   customFields?: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
   settings?: RocketChatUserSettings;
 

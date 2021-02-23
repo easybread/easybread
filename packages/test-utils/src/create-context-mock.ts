@@ -7,6 +7,6 @@ export function createContextMock<
   };
 
   // trick typescript
-  const context = { auth } as any;
+  const context = { auth } as unknown;
   return context as TBreadOperationContext;
 }

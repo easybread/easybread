@@ -81,9 +81,13 @@ export class GoogleCommonOauth2AuthStrategy<
     const { clientId, clientSecret, redirectUri } = this.options;
 
     const data: GoogleCommonAccessTokenCreateRequestData = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       client_id: clientId,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       client_secret: clientSecret,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       redirect_uri: redirectUri,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       grant_type: 'authorization_code',
       code
     };
@@ -98,11 +102,15 @@ export class GoogleCommonOauth2AuthStrategy<
     });
 
     // save token
+    // eslint-disable-next-line @typescript-eslint/camelcase
     const { access_token, expires_in, refresh_token } = result.data;
 
     await this.writeAuthData(breadId, {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       accessToken: access_token,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       refreshToken: refresh_token,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       expiresAt: this.createExpirationDate(expires_in * 1000)
     });
 
@@ -114,9 +122,13 @@ export class GoogleCommonOauth2AuthStrategy<
     const { clientSecret, clientId } = this.options;
 
     const data: GoogleCommonAccessTokenRefreshRequestData = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       client_id: clientId,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       client_secret: clientSecret,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       grant_type: 'refresh_token',
+      // eslint-disable-next-line @typescript-eslint/camelcase
       refresh_token: refreshToken
     };
 
@@ -129,12 +141,15 @@ export class GoogleCommonOauth2AuthStrategy<
       data: queryString.encode(data)
     });
 
+    // eslint-disable-next-line @typescript-eslint/camelcase
     const { expires_in, access_token } = result.data;
 
     // TODO: handle failed refresh
 
     await this.writeAuthData(breadId, {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       accessToken: access_token,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       expiresAt: this.createExpirationDate(expires_in * 1000),
       refreshToken
     });

@@ -1,8 +1,7 @@
 {
-  "name": "@easybread/core",
+  "name": "@easybread/state-adapter-mongo",
   "version": "0.0.5",
-  "description": "Easily browse, read, edit, add, and delete (BREAD) data from third-party providers",
-  "homepage": "https://github.com/easybread/easybread#readme",
+  "description": "TODO add description",
   "author": {
     "name": "Easybread",
     "url": "https://easybread.io/"
@@ -10,8 +9,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/easybread/easybread.git",
-    "directory": "packages/core"
+    "directory": "packages/state-adapter-mongo"
   },
+  "homepage": "https://easybread.io",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "directories": {
@@ -27,10 +27,6 @@
     "access": "public"
   },
   "contributors": [
-    {
-      "name": "Idris Adamjy",
-      "email": "adamjyidris@gmail.com"
-    },
     {
       "name": "William Reiske",
       "email": "wreiske@mieweb.com"
@@ -67,16 +63,18 @@
     ]
   },
   "dependencies": {
-    "@easybread/common": "^0.0.5",
-    "@easybread/schemas": "^0.0.5",
-    "axios": "^0.19.2",
-    "lodash": "^4.17.15"
+    "@easybread/common": "^0.0.4",
+    "@easybread/core": "^0.0.4",
+    "@easybread/operations": "^0.0.4",
+    "@easybread/schemas": "^0.0.4",
+    "@types/mongodb": "^3.6.3",
+    "lodash": "^4.17.15",
+    "mongodb": "^3.6.3"
   },
   "devDependencies": {
-    "@easybread/test-utils": "^0.0.5",
-    "@types/axios": "^0.14.0",
+    "@easybread/test-utils": "^0.0.4",
+    "@shelf/jest-mongodb": "^1.2.3",
     "@types/lodash": "^4.14.149",
-    "@types/uuid": "^7.0.2",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8"
   }
