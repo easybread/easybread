@@ -1,3 +1,0 @@
-# `@easybread/common`
-
-> TODO: description

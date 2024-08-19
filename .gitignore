@@ -20,3 +20,5 @@ report.*.json
 globalConfig.json
 
 junit.xml
+
+tmp/

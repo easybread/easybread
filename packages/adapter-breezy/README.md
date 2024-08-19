@@ -1,3 +1,0 @@
-# `adapter-breezy`
-
-> TODO: description

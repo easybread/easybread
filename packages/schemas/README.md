@@ -1,3 +1,0 @@
-# `@easybread/schema`
-
-> TODO: description
