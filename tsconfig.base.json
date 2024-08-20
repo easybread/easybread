@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@easybread/common": ["packages/common/src/index.ts"]
+      "@easybread/common": ["packages/common/src/index.ts"],
+      "@easybread/test-utils": ["packages/test-utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
