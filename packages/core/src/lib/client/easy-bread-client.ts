@@ -3,7 +3,7 @@ import { BreadServiceAdapterOptions } from '../common-interfaces';
 import {
   BreadCollectionOperation,
   BreadOperation,
-  BreadOperationContext
+  BreadOperationContext,
 } from '../operation';
 import { BreadServiceAdapter } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
@@ -37,15 +37,17 @@ export class EasyBreadClient<
     >,
     private readonly authStrategy: TAuth
   ) {
-    this.allPagesGenerator = new AllPagesGenerator(input => this.invoke(input));
+    this.allPagesGenerator = new AllPagesGenerator((input) =>
+      this.invoke(input)
+    );
   }
 
   async invoke<O extends TOperation>(input: O['input']): Promise<O['output']> {
     const context = this.createContext(input.breadId);
 
     return this.preProcess(input, context)
-      .then(input => this.process(input, context))
-      .then(output => this.postProcess(output, context));
+      .then((input) => this.process(input, context))
+      .then((output) => this.postProcess(output, context));
   }
 
   allPages<
@@ -67,7 +69,7 @@ export class EasyBreadClient<
       state: this.stateAdapter,
       auth: this.authStrategy,
       client: this,
-      breadId
+      breadId,
     });
   }
 

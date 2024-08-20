@@ -33,7 +33,7 @@ export class BreadOperationContext<
     state,
     client,
     auth,
-    breadId
+    breadId,
   }: BreadOperationContextOptions<TOperation, TAuthStrategy, TOptions>) {
     this.state = state;
     this.client = client;
@@ -45,7 +45,7 @@ export class BreadOperationContext<
 
   async httpRequest<T>(
     requestConfig: AxiosRequestConfig,
-    skipAuthorization: boolean = false
+    skipAuthorization = false
   ): Promise<AxiosResponse<T>> {
     return this.http.request<T>(
       skipAuthorization
