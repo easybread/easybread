@@ -11,6 +11,9 @@
     "lint:ci": "./node_modules/.bin/lerna run lint:ci",
     "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run --stream test:ci -- --logHeapUsage --maxWorkers=2"
   },
+  "engines": {
+    "node": ">=20.16.0"
+  },
   "devDependencies": {
     "@nx/eslint": "19.6.1",
     "@nx/eslint-plugin": "19.6.1",
