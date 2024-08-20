@@ -1,0 +1,10 @@
+{
+  "name": "@easybread/state-adapter-mongo",
+  "version": "0.0.1",
+  "dependencies": {
+    "@easybread/core": "0.0.1",
+    "mongodb": "^6.8.0"
+  },
+  "main": "./index.cjs",
+  "module": "./index.js"
+}

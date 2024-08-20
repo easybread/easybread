@@ -19,6 +19,9 @@
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/operations": ["packages/operations/src/index.ts"],
       "@easybread/schemas": ["packages/schemas/src/index.ts"],
+      "@easybread/state-adapter-mongo": [
+        "packages/state-adapter-mongo/src/index.ts"
+      ],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"]
     }
   },
