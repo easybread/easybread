@@ -12,7 +12,8 @@
     "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run --stream test:ci -- --logHeapUsage --maxWorkers=2"
   },
   "devDependencies": {
-    "husky": "^4.2.5",
-    "typescript": "^5.5.4"
+    "husky": "^9.1.4",
+    "typescript": "^5.5.4",
+    "nx": "19.6.1"
   }
 }
