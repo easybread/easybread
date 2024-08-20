@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@easybread/common": ["packages/common/src/index.ts"],
+      "@easybread/schemas": ["packages/schemas/src/index.ts"],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"]
     }
   },
