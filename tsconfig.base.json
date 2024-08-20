@@ -18,6 +18,12 @@
       "@easybread/adapter-breezy": [
         "packages/service-adapters/breezy/src/index.ts"
       ],
+      "@easybread/adapter-google-contacts": [
+        "packages/service-adapters/google-contacts/src/index.ts"
+      ],
+      "@easybread/adapter-gsuite-admin": [
+        "packages/service-adapters/gsuite-admin/src/index.ts"
+      ],
       "@easybread/adapter-rocket-chat-users": [
         "packages/service-adapters/rocket-chat-users/src/index.ts"
       ],
