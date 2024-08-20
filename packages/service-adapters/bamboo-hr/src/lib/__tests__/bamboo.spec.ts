@@ -267,7 +267,6 @@ describe('usage', () => {
   describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
     beforeEach(async () => {
       (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
-        // TODO: fix ts error
         Promise.resolve({
           status: 201,
           headers: {
@@ -275,7 +274,8 @@ describe('usage', () => {
             location:
               'https://api.bamboohr.com/api/gateway.php/mietest/v1/employees/27',
           },
-        } as AxiosResponse)
+          // TODO: remove as unknown and fix ts error
+        } as unknown as AxiosResponse)
       );
     });
 
@@ -351,7 +351,8 @@ describe('usage', () => {
           },
           data: '',
         },
-      } as AxiosError);
+        // TODO: remove as unknown and fix ts error
+      } as unknown as AxiosError);
 
       (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
         Promise.reject(error)

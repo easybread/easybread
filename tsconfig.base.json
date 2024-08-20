@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@easybread/adapter-breezy": [
+        "packages/service-adapters/breezy/src/index.ts"
+      ],
       "@easybread/common": ["packages/common/src/index.ts"],
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/operations": ["packages/operations/src/index.ts"],
