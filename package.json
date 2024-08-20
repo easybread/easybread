@@ -12,7 +12,40 @@
     "test:ci": "JEST_JUNIT_OUTPUT_DIR=reports/junit ./node_modules/.bin/lerna run --stream test:ci -- --logHeapUsage --maxWorkers=2"
   },
   "devDependencies": {
-    "husky": "^4.2.5",
-    "typescript": "^5.5.4"
+    "@nx/eslint": "19.6.1",
+    "@nx/eslint-plugin": "19.6.1",
+    "@nx/jest": "19.6.1",
+    "@nx/js": "19.6.1",
+    "@nx/rollup": "19.6.1",
+    "@swc-node/register": "~1.9.1",
+    "@swc/cli": "~0.3.12",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@swc/jest": "~0.2.36",
+    "@types/jest": "^29.5.12",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "18.16.9",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "eslint": "~8.57.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^9.1.4",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "nx": "19.6.1",
+    "prettier": "^2.6.2",
+    "rollup": "^4.14.0",
+    "swc-loader": "0.1.15",
+    "ts-jest": "^29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "^5.5.4",
+    "verdaccio": "^5.0.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "tslib": "^2.3.0"
+  },
+  "nx": {
+    "includedScripts": []
   }
 }

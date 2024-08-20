@@ -1,6 +1,6 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "strict": true,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -10,9 +10,13 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["ESNext", "dom"],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": "."
-  }
+    "baseUrl": ".",
+    "paths": {
+      "@easybread/common": ["packages/common/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
 }
