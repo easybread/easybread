@@ -18,9 +18,15 @@
       "@easybread/adapter-breezy": [
         "packages/service-adapters/breezy/src/index.ts"
       ],
+      "@easybread/adapter-rocket-chat-users": [
+        "packages/service-adapters/rocket-chat-users/src/index.ts"
+      ],
       "@easybread/common": ["packages/common/src/index.ts"],
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/operations": ["packages/operations/src/index.ts"],
+      "@easybread/rocket-chat-common": [
+        "packages/rocket-chat-common/src/index.ts"
+      ],
       "@easybread/schemas": ["packages/schemas/src/index.ts"],
       "@easybread/state-adapter-mongo": [
         "packages/state-adapter-mongo/src/index.ts"
