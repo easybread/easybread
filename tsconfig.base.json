@@ -23,6 +23,7 @@
       ],
       "@easybread/common": ["packages/common/src/index.ts"],
       "@easybread/core": ["packages/core/src/index.ts"],
+      "@easybread/google-common": ["packages/google-common/src/index.ts"],
       "@easybread/operations": ["packages/operations/src/index.ts"],
       "@easybread/rocket-chat-common": [
         "packages/rocket-chat-common/src/index.ts"
