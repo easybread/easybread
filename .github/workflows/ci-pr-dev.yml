@@ -5,8 +5,6 @@ on:
     branches:
       - develop
   pull_request:
-    branches:
-      - develop
 
 permissions:
   actions: read
@@ -22,7 +20,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       # This enables task distribution via Nx Cloud
       # Run this command as early as possible, before dependencies are installed
@@ -36,14 +34,24 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
 
-      - name: Nx set SHAs
-        uses: nrwl/nx-set-shas@v4.0.4
-
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
 
       - run: pnpm install --frozen-lockfile
+
+      - name: List all remotes
+        run: git remote -v
+
+      - name: List all branches
+        run: git branch -a --no-color
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - run: pnpm exec nx affected -t lint test build --verbose
+        env:
+          NX_BASE: origin/develop
