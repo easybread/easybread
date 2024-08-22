@@ -1,18 +1,18 @@
 import { PersonSchema } from '@easybread/schemas';
 import { AxiosRequestConfig } from 'axios';
 
-import { BreadAuthStrategy } from '../auth-strategy';
 import {
+  BreadAuthStrategy,
   BreadCollectionOperation,
   BreadCollectionOperationInput,
-  BreadCollectionOperationOutputWithPayload
-} from '../operation';
-import { BreadServiceAdapter } from '../service-adapter';
-import { BreadStateAdapter } from '../state';
-import { InMemoryStateAdapter } from '../state-adapters';
-import { EasyBreadClient } from './easy-bread-client';
+  BreadCollectionOperationOutputWithPayload,
+  BreadServiceAdapter,
+  BreadStateAdapter,
+  EasyBreadClient,
+  InMemoryStateAdapter,
+} from '../..';
 
-class TestAuthStrategy extends BreadAuthStrategy<{}> {
+class TestAuthStrategy extends BreadAuthStrategy<object> {
   constructor(state: BreadStateAdapter) {
     super(state, 'test');
   }
@@ -76,15 +76,19 @@ describe('allPages() async generator function', () => {
       jest.restoreAllMocks();
       jest.spyOn(client, 'invoke').mockImplementation(
         // TODO: find out why ts complains
-        // @ts-ignore
-        async (input: TestSkipCountOperation['input']) => {
+        async (input: OperationTypes['input']) => {
+          if (input.pagination.type === 'PREV_NEXT') {
+            throw new Error('PREV_NEXT not supported in this test');
+          }
+
           const { pagination, name } = input;
+
           return {
             name,
             pagination: { ...pagination, totalCount },
             provider: 'Test',
             payload: [],
-            rawPayload: { success: true }
+            rawPayload: { success: true },
           };
         }
       );
@@ -95,20 +99,20 @@ describe('allPages() async generator function', () => {
         pagination: {
           type: 'SKIP_COUNT',
           count: 120,
-          skip: 0
+          skip: 0,
         },
         name: 'TEST',
-        breadId: '1'
+        breadId: '1',
       });
 
       const actual = client.allPages<TestSkipCountOperation>({
         pagination: {
           type: 'SKIP_COUNT',
           count: 120,
-          skip: 0
+          skip: 0,
         },
         name: 'TEST',
-        breadId: '1'
+        breadId: '1',
       });
 
       expect(actual[Symbol.asyncIterator]).toBeDefined();
@@ -121,10 +125,10 @@ describe('allPages() async generator function', () => {
         pagination: {
           type: 'SKIP_COUNT',
           count: 120,
-          skip: 0
+          skip: 0,
         },
         name: 'TEST',
-        breadId: '1'
+        breadId: '1',
       })) {
         results.push(result);
       }
@@ -134,30 +138,30 @@ describe('allPages() async generator function', () => {
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { count: 120, skip: 0, type: 'SKIP_COUNT' }
-          }
+            pagination: { count: 120, skip: 0, type: 'SKIP_COUNT' },
+          },
         ],
         [
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { count: 120, skip: 120, type: 'SKIP_COUNT' }
-          }
+            pagination: { count: 120, skip: 120, type: 'SKIP_COUNT' },
+          },
         ],
         [
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { count: 120, skip: 240, type: 'SKIP_COUNT' }
-          }
+            pagination: { count: 120, skip: 240, type: 'SKIP_COUNT' },
+          },
         ],
         [
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { count: 120, skip: 360, type: 'SKIP_COUNT' }
-          }
-        ]
+            pagination: { count: 120, skip: 360, type: 'SKIP_COUNT' },
+          },
+        ],
       ]);
 
       expect(results).toEqual([
@@ -167,11 +171,11 @@ describe('allPages() async generator function', () => {
             count: 120,
             skip: 0,
             totalCount: 378,
-            type: 'SKIP_COUNT'
+            type: 'SKIP_COUNT',
           },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
+          rawPayload: { success: true },
         },
         {
           name: 'TEST',
@@ -179,11 +183,11 @@ describe('allPages() async generator function', () => {
             count: 120,
             skip: 120,
             totalCount: 378,
-            type: 'SKIP_COUNT'
+            type: 'SKIP_COUNT',
           },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
+          rawPayload: { success: true },
         },
         {
           name: 'TEST',
@@ -191,11 +195,11 @@ describe('allPages() async generator function', () => {
             count: 120,
             skip: 240,
             totalCount: 378,
-            type: 'SKIP_COUNT'
+            type: 'SKIP_COUNT',
           },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
+          rawPayload: { success: true },
         },
         {
           name: 'TEST',
@@ -203,12 +207,12 @@ describe('allPages() async generator function', () => {
             count: 120,
             skip: 360,
             totalCount: 378,
-            type: 'SKIP_COUNT'
+            type: 'SKIP_COUNT',
           },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
-        }
+          rawPayload: { success: true },
+        },
       ]);
     });
   });
@@ -227,10 +231,13 @@ describe('allPages() async generator function', () => {
       };
 
       jest.restoreAllMocks();
-      jest.spyOn(client, 'invoke').mockImplementation(
-        // TODO: find out why ts complains
-        // @ts-ignore
-        async (input: TestPrevNextOperation['input']) => {
+      jest
+        .spyOn(client, 'invoke')
+        .mockImplementation(async (input: OperationTypes['input']) => {
+          if (input.pagination.type === 'SKIP_COUNT') {
+            throw new Error('PREV_NEXT not supported in this test');
+          }
+
           const { pagination, name } = input;
           const next = createNextPage(pagination.page);
           return {
@@ -238,10 +245,9 @@ describe('allPages() async generator function', () => {
             pagination: { type: 'PREV_NEXT', next },
             provider: 'Test',
             payload: [],
-            rawPayload: { success: true }
+            rawPayload: { success: true },
           };
-        }
-      );
+        });
     });
 
     it(`should fetch the entire collection`, async () => {
@@ -250,7 +256,7 @@ describe('allPages() async generator function', () => {
       for await (const result of client.allPages<TestPrevNextOperation>({
         pagination: { type: 'PREV_NEXT' },
         name: 'TEST',
-        breadId: '1'
+        breadId: '1',
       })) {
         results.push(result);
       }
@@ -260,30 +266,30 @@ describe('allPages() async generator function', () => {
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { type: 'PREV_NEXT' }
-          }
+            pagination: { type: 'PREV_NEXT' },
+          },
         ],
         [
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { page: 1, type: 'PREV_NEXT' }
-          }
+            pagination: { page: 1, type: 'PREV_NEXT' },
+          },
         ],
         [
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { page: 2, type: 'PREV_NEXT' }
-          }
+            pagination: { page: 2, type: 'PREV_NEXT' },
+          },
         ],
         [
           {
             breadId: '1',
             name: 'TEST',
-            pagination: { page: 3, type: 'PREV_NEXT' }
-          }
-        ]
+            pagination: { page: 3, type: 'PREV_NEXT' },
+          },
+        ],
       ]);
 
       expect(results).toEqual([
@@ -292,29 +298,29 @@ describe('allPages() async generator function', () => {
           pagination: { next: 1, type: 'PREV_NEXT' },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
+          rawPayload: { success: true },
         },
         {
           name: 'TEST',
           pagination: { next: 2, type: 'PREV_NEXT' },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
+          rawPayload: { success: true },
         },
         {
           name: 'TEST',
           pagination: { next: 3, type: 'PREV_NEXT' },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
+          rawPayload: { success: true },
         },
         {
           name: 'TEST',
           pagination: { type: 'PREV_NEXT' },
           payload: [],
           provider: 'Test',
-          rawPayload: { success: true }
-        }
+          rawPayload: { success: true },
+        },
       ]);
     });
   });

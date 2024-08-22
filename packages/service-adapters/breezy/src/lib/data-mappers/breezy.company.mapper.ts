@@ -12,20 +12,19 @@ export class BreezyCompanyMapper extends BreadDataMapper<
     BreezyCompany
   > = {
     _id: 'identifier',
-    // eslint-disable-next-line @typescript-eslint/camelcase
     member_count: 'numberOfEmployees',
     initial: 'alternateName',
-    name: 'name'
+    name: 'name',
   };
 
   protected readonly toSchemaMap: BreadDataMapDefinition<
     BreezyCompany,
     OrganizationSchema
   > = {
-    '@type': _ => 'Organization',
+    '@type': (_) => 'Organization',
     identifier: '_id',
     name: 'name',
     alternateName: 'initial',
-    numberOfEmployees: 'member_count'
+    numberOfEmployees: 'member_count',
   };
 }

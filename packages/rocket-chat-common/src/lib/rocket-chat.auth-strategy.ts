@@ -3,10 +3,8 @@ import { AxiosRequestConfig } from 'axios';
 
 import { RocketChatAuthStateData } from './interfaces';
 
-export class RocketChatAuthStrategy extends BreadAuthStrategy<
-  RocketChatAuthStateData
-> {
-  constructor(state: BreadStateAdapter, provider: string = 'ROCKET_CHAT') {
+export class RocketChatAuthStrategy extends BreadAuthStrategy<RocketChatAuthStateData> {
+  constructor(state: BreadStateAdapter, provider = 'ROCKET_CHAT') {
     super(state, provider);
   }
 
@@ -24,7 +22,7 @@ export class RocketChatAuthStrategy extends BreadAuthStrategy<
     const { authToken, userId } = await this.readAuthData(breadId);
     return this.setHeaders(requestConfig, {
       'X-Auth-Token': authToken,
-      'X-User-Id': userId
+      'X-User-Id': userId,
     });
   }
 }
