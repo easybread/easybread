@@ -1,3 +1,3 @@
-export * from './schema-utils';
-export * from './inerfaces';
-export * from './misc-utils';
+export * from './lib/schema-utils';
+export * from './lib/inerfaces';
+export * from './lib/misc-utils';

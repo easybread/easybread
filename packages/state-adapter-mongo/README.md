@@ -1,6 +1,11 @@
-# `@easybread/state-adapter-mongo`
+# state-adapter-mongo
 
-Provides MongoDB support for EasyBREAD 
+This library was generated with [Nx](https://nx.dev).
 
-> TODO: description
+## Building
 
+Run `nx build state-adapter-mongo` to build the library.
+
+## Running unit tests
+
+Run `nx test state-adapter-mongo` to execute the unit tests via [Jest](https://jestjs.io).

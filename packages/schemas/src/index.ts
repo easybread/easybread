@@ -1,4 +1,5 @@
-export type { BreadSchema } from './bread.schema';
-export type { OrganizationSchema } from './organization.schema';
-export type { PersonSchema } from './person.schema';
-export type { AddressSchema } from './address.schema';
+export * from './lib/bread.schema';
+export * from './lib/organization.schema';
+export * from './lib/person.schema';
+export * from './lib/address.schema';
+export * from './lib/bcp47-language-code';

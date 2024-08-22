@@ -1,1 +1,1 @@
-export { StateAdapterMongo } from './state-adapter.mongo';
+export { StateAdapterMongo } from './lib/state-adapter.mongo';

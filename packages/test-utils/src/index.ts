@@ -1,3 +1,3 @@
-export * from './expect-utils';
-export * from './setup-utils';
-export { createContextMock } from './create-context-mock';
+export * from './lib/expect-utils';
+export * from './lib/setup-utils';
+export * from './lib/create-context-mock';

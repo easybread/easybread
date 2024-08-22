@@ -1,7 +1,6 @@
 node_modules/
 build/
 dist/
-lib/
 coverage/
 reports/
 docs/
@@ -20,3 +19,12 @@ report.*.json
 globalConfig.json
 
 junit.xml
+
+tmp/
+
+.nx/cache
+.nx/workspace-data
+
+.env
+*.env
+.env.*

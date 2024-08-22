@@ -1,0 +1,48 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@easybread/adapter-breezy": [
+        "packages/service-adapters/breezy/src/index.ts"
+      ],
+      "@easybread/adapter-google-contacts": [
+        "packages/service-adapters/google-contacts/src/index.ts"
+      ],
+      "@easybread/adapter-gsuite-admin": [
+        "packages/service-adapters/gsuite-admin/src/index.ts"
+      ],
+      "@easybread/adapter-rocket-chat-users": [
+        "packages/service-adapters/rocket-chat-users/src/index.ts"
+      ],
+      "@easybread/common": ["packages/common/src/index.ts"],
+      "@easybread/core": ["packages/core/src/index.ts"],
+      "@easybread/google-common": ["packages/google-common/src/index.ts"],
+      "@easybread/operations": ["packages/operations/src/index.ts"],
+      "@easybread/rocket-chat-common": [
+        "packages/rocket-chat-common/src/index.ts"
+      ],
+      "@easybread/schemas": ["packages/schemas/src/index.ts"],
+      "@easybread/state-adapter-mongo": [
+        "packages/state-adapter-mongo/src/index.ts"
+      ],
+      "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
+      "service-adapters/bamboo-hr": [
+        "packages/service-adapters/bamboo-hr/src/index.ts"
+      ]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

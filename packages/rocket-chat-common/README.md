@@ -1,6 +1,11 @@
-# `@easybread/rocket-chat-common`
+# rocket-chat-common
 
-Common components used in adapters for rocket-chat services. 
+This library was generated with [Nx](https://nx.dev).
 
-> TODO: description
+## Building
 
+Run `nx build rocket-chat-common` to build the library.
+
+## Running unit tests
+
+Run `nx test rocket-chat-common` to execute the unit tests via [Jest](https://jestjs.io).
