@@ -34,6 +34,14 @@
     }
   ],
   "namedInputs": {
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci-pr-dev.yml"]
+    "sharedGlobals": [
+      "{workspaceRoot}/.github/workflows/ci-pr-dev.yml",
+      "{workspaceRoot}/.github/workflows/ci-release.yml"
+    ]
+  },
+  "pluginsConfig": {
+    "@nx/js": {
+      "projectsAffectedByDependencyUpdates": "auto"
+    }
   }
 }
