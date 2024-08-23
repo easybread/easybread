@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Package",
+  "title": "EasyBREAD Package Generator",
+  "description": "Generate a new publishable library `@easybread/<package-name>`",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The package name will be `@easybread/<name>`",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Name of the package without the namespace (e.g. my-package)"
+    },
+    "directory": {
+      "type": "string",
+      "description": "An optional directory for the package relative to `packages` dir. The default is the name of the package.",
+      "default": "",
+      "x-prompt": "[OPTIONAL] Directory relative to `packages` dir."
+    }
+  },
+  "required": ["name"]
+}

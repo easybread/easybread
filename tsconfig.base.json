@@ -39,6 +39,7 @@
         "packages/state-adapter-mongo/src/index.ts"
       ],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
+      "@easybread/recommended": ["tools/recommended/src/index.ts"],
       "service-adapters/bamboo-hr": [
         "packages/service-adapters/bamboo-hr/src/index.ts"
       ]
