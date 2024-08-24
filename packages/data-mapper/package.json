@@ -1,0 +1,9 @@
+{
+  "name": "@easybread/data-mapper",
+  "version": "0.0.1",
+  "dependencies": {
+    "@easybread/common": "0.0.1"
+  },
+  "main": "./index.cjs",
+  "module": "./index.js"
+}

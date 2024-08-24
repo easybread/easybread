@@ -1,6 +1,6 @@
 import { BreadSchema } from './bread.schema';
 
-export interface AddressSchema extends BreadSchema {
+export type AddressSchema = BreadSchema & {
   '@type': 'PostalAddress';
   streetAddress?: string;
   postalCode?: string;
@@ -8,4 +8,4 @@ export interface AddressSchema extends BreadSchema {
   addressCountry?: string;
   addressRegion?: string;
   addressLocality?: string;
-}
+};

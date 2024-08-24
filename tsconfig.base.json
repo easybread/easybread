@@ -8,9 +8,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2023",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2023", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -29,8 +29,10 @@
       ],
       "@easybread/common": ["packages/common/src/index.ts"],
       "@easybread/core": ["packages/core/src/index.ts"],
+      "@easybread/data-mapper": ["packages/data-mapper/src/index.ts"],
       "@easybread/google-common": ["packages/google-common/src/index.ts"],
       "@easybread/operations": ["packages/operations/src/index.ts"],
+      "@easybread/recommended": ["tools/recommended/src/index.ts"],
       "@easybread/rocket-chat-common": [
         "packages/rocket-chat-common/src/index.ts"
       ],
@@ -39,7 +41,6 @@
         "packages/state-adapter-mongo/src/index.ts"
       ],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
-      "@easybread/recommended": ["tools/recommended/src/index.ts"],
       "service-adapters/bamboo-hr": [
         "packages/service-adapters/bamboo-hr/src/index.ts"
       ]

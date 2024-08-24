@@ -1,6 +1,4 @@
-export interface BreadSchema {
-  [key: string]: string | boolean | number | undefined | BreadSchema;
-  '@type': string;
+export type BreadSchema = {
   identifier?: string;
   name?: string;
-}
+};
