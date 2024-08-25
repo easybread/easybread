@@ -88,7 +88,7 @@ export class BreadDataMapper<
     I extends BreadDataMapIOConstraint,
     R extends BreadDataMapValueResolverDefinition<I, O>,
     O
-  >(input: I, resolverDef: R) {
+  >(input: I, resolverDef: R): O {
     if (resolverDef === null) return null;
 
     if (typeof resolverDef === 'string') {
