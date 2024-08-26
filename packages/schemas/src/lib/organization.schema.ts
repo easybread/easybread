@@ -1,7 +1,7 @@
 import { BreadSchema } from './bread.schema';
 
-export interface OrganizationSchema extends BreadSchema {
+export type OrganizationSchema = BreadSchema & {
   '@type': 'Organization';
   alternateName?: string;
   numberOfEmployees?: number;
-}
+};
