@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@easybread/adapter-bamboo-hr": [
+        "packages/service-adapters/bamboo-hr/src/index.ts"
+      ],
       "@easybread/adapter-breezy": [
         "packages/service-adapters/breezy/src/index.ts"
       ],
@@ -42,9 +45,12 @@
         "packages/state-adapter-mongo/src/index.ts"
       ],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
-      "service-adapters/bamboo-hr": [
-        "packages/service-adapters/bamboo-hr/src/index.ts"
-      ]
+      "@example-next/components": ["example/next/components/src/index.ts"],
+      "@example-next/components/server": [
+        "example/next/components/src/server.ts"
+      ],
+      "@example-next/easybread": ["example/next/easybread/src/index.ts"],
+      "@example-next/service": ["example/next/service/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

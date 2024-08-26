@@ -36,6 +36,15 @@
       "options": {
         "targetName": "test"
       }
+    },
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "startTargetName": "start",
+        "buildTargetName": "build",
+        "devTargetName": "dev",
+        "serveStaticTargetName": "serve-static"
+      }
     }
   ],
   "namedInputs": {
@@ -47,6 +56,17 @@
   "pluginsConfig": {
     "@nx/js": {
       "projectsAffectedByDependencyUpdates": "auto"
+    }
+  },
+  "generators": {
+    "@nx/next": {
+      "application": {
+        "style": "tailwind",
+        "linter": "eslint"
+      }
+    },
+    "@nx/react": {
+      "library": {}
     }
   }
 }
