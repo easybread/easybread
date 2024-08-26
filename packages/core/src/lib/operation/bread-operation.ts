@@ -8,7 +8,7 @@ import {
   BreadOperationInput,
   BreadOperationInputWithParams,
   BreadOperationInputWithParamsAndPayload,
-  BreadOperationInputWithPayload
+  BreadOperationInputWithPayload,
 } from './bread-operation-input';
 import {
   BreadCollectionOperationOutputWithPayload,
@@ -16,7 +16,7 @@ import {
   BreadOperationOutput,
   BreadOperationOutputWithPayload,
   BreadOperationOutputWithRawData,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadOperationOutputWithRawDataAndPayload,
 } from './bread-operation-output';
 import { BreadOperationPaginationType } from './bread-operation-pagination';
 
