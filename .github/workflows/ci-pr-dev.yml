@@ -55,3 +55,13 @@ jobs:
       - run: pnpm exec nx affected -t lint test build --verbose
         env:
           NX_BASE: origin/develop
+
+      - name: Notify Discord
+        uses: sarisia/actions-status-discord@v1.14.6
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_ACTIONS_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "CI PR Dev - ${{ github.workflow }}"
+          description: "Branch: ${{ github.ref }} - Commit: ${{ github.sha }}"
+          color: ${{ job.status == 'success' && '0x25E565' || '0xEF4650' }}

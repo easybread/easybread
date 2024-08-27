@@ -2,11 +2,15 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultBase": "develop",
   "release": {
+    "projects": ["packages/**"],
     "version": {
       "preVersionCommand": "pnpm dlx nx run-many -t build"
     }
   },
   "targetDefaults": {
+    "nx-release-publish": {
+      "dependsOn": ["build", "^build"]
+    },
     "test": {
       "options": {
         "args": ["--passWithNoTests"]
