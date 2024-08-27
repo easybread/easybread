@@ -43,9 +43,43 @@ jobs:
         run: pnpm dlx nx report
         shell: bash
 
+      - name: Print Version
+        run: { echo Version: "${{ github.ref_name }}" }
+
+      # For some reason, `nx release publish` doesn't build the packages (`nx release` does)
+      # even if we set `"dependsOn": [ "build" ]` in the nx.json file for the `nx-release-publish` target.
+      # So we build manually
+      - name: Build packages
+
+        run: pnpm dlx nx run-many -t build
+        shell: bash
+
       - name: Publish packages
+        id: publish
         run: pnpm dlx nx release publish
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+
+      - name: Notify Success to Discord
+        uses: sarisia/actions-status-discord@v1.14.6
+        if: ${{ steps.publish.outcome == 'success' }}
+        with:
+          webhook: ${{ secrets.DISCORD_ACTIONS_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "Release - ${{ github.workflow }}"
+          description: "Tag: ${{ github.ref }} - Commit: ${{ github.sha }}"
+          content: "Release Job successful!"
+          color: 0x25e565
+
+      - name: Notify Failure to Discord
+        uses: sarisia/actions-status-discord@v1.14.6
+        if: ${{ job.status == 'failure' }}
+        with:
+          webhook: ${{ secrets.DISCORD_ACTIONS_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "Release - ${{ github.workflow }}"
+          description: "Tag: ${{ github.ref }} - Commit: ${{ github.sha }}"
+          content: "Release Job Failed!"
+          color: 0xEF4650
