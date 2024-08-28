@@ -3,16 +3,18 @@
  *
  * @template T type to check
  */
-export type IsLiteral<T> = T extends string | number | boolean
-  ? string extends T
+export type IsLiteral<T> = [T] extends [
+  string | number | bigint | boolean | symbol
+]
+  ? [string] extends [T]
     ? false
-    : number extends T
+    : [number] extends [T]
     ? false
-    : boolean extends T
+    : [bigint] extends [T]
     ? false
-    : bigint extends T
+    : [boolean] extends [T]
     ? false
-    : symbol extends T
+    : [symbol] extends [T]
     ? false
     : true
   : false;

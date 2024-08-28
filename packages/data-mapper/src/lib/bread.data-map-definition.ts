@@ -8,12 +8,17 @@ import { IsLiteral, KeysByValueType } from '@easybread/common';
  */
 export type BreadValueFactory<I extends object, O> = (input: I) => O;
 
+/**
+ * Value factory for producing a literal value of a certain type
+ *
+ * @template O output type
+ */
 export type BreadLiteralFactory<O> = () => O;
 
 /**
  * Constraint for the input and output types of a BreadDataMapper.
  */
-export type BreadDataMapIOConstraint = Record<string, unknown>;
+export type BreadDataMapIOConstraint = Record<string | symbol, unknown>;
 
 export type BreadDataMapperClass<
   TInput extends BreadDataMapIOConstraint,
@@ -34,18 +39,18 @@ export type BreadDataMapValueResolverDefinition<
 > =
   | (O extends Array<unknown> ? BreadValueFactory<I, O> : never)
   // if the output[key] is an object, then map recursively.
-  | (O extends Record<string, unknown>
+  | (O extends Record<string | symbol, unknown>
       ? BreadDataMapDefinition<I, O> | BreadDataMapperClass<I, O>
       : never)
-  // if the output[key] is a literal type, then a Factory Producing the literal
-  | (IsLiteral<O> extends true ? BreadLiteralFactory<O> : never)
-  // keys of input whose values have same type as the output[key]
-  | KeysByValueType<I, O>
-  // a function to create the output value from the input
-  | BreadValueFactory<I, O>
-  // null is a special case. It means that the property is not mapped.
-  | null;
-
+  | (IsLiteral<O> extends true
+      ? // if the output[key] is a literal type, then a Factory Producing the literal
+        BreadLiteralFactory<O>
+      : // keys of input whose values have same type as the output[key]
+        | KeysByValueType<I, O>
+          // a function to create the output value from the input
+          | BreadValueFactory<I, O>
+          // null is a special case. It means that the property is not mapped.
+          | null);
 /**
  * Map definition for mapping data from one type to another.
  *
@@ -56,6 +61,5 @@ export type BreadDataMapDefinition<
   I extends BreadDataMapIOConstraint,
   O extends BreadDataMapIOConstraint
 > = {
-  // [K in keyof O]: BreadDataMapValueResolverDefinition<I, O[K]>;
   [K in keyof O]: BreadDataMapValueResolverDefinition<I, O[K]>;
 };

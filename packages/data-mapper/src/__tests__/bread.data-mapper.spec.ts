@@ -210,3 +210,26 @@ it(`should work with missing properties`, async () => {
     d: null,
   } satisfies Partial<Output>);
 });
+
+it(`should work with optional properties`, async () => {
+  type Input = { a: string; b?: string; type: 'Input' };
+  type Output = { a: string; b?: string; __type: 'Output' };
+
+  const mapper = BreadDataMapper.create<Input, Output>({
+    a: 'a',
+    b: 'b',
+    __type: () => 'Output',
+  });
+
+  expect(
+    mapper.map({
+      a: '1',
+      b: '2',
+      type: 'Input',
+    })
+  ).toEqual({
+    a: '1',
+    b: '2',
+    __type: 'Output',
+  } satisfies Output);
+});
