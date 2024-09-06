@@ -1,4 +1,4 @@
-export interface RocketChatUserEmailCode {
+export type RocketChatUserEmailCode = {
   code: string;
   expire: Date;
-}
+};

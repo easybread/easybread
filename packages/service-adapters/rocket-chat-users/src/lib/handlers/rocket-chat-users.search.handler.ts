@@ -1,12 +1,12 @@
 import {
   BreadOperationHandler,
-  createSuccessfulCollectionOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
 import {
   RocketChatAuthStrategy,
-  RocketChatPaginationMapper,
+  rocketChatPaginationAdapter,
   RocketChatServiceAdapterOptions,
-  RocketChatUserMapper
+  rocketChatUserAdapter,
 } from '@easybread/rocket-chat-common';
 import { resolve } from 'url';
 
@@ -24,26 +24,19 @@ export const RocketChatUsersSearchHandler: BreadOperationHandler<
     const { name, pagination } = input;
     const { serverUrl } = options;
 
-    const userMapper = new RocketChatUserMapper();
-    const paginationMapper = new RocketChatPaginationMapper();
-
-    const remotePaginationParams = paginationMapper.toRemoteParams(pagination);
-
     const result = await context.httpRequest<RocketChatUsersList>({
       method: 'GET',
       url: resolve(serverUrl, '/api/v1/users.list'),
-      params: remotePaginationParams
+      params: rocketChatPaginationAdapter.toExternalParams(pagination),
     });
 
-    if (!result.data.success) {
-      throw new Error(JSON.stringify(result.data));
-    }
+    if (!result.data.success) throw new Error(JSON.stringify(result.data));
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       name,
       result.data,
-      result.data.users.map(user => userMapper.toSchema(user)),
-      paginationMapper.toOutputPagination(result.data)
+      result.data.users.map((user) => rocketChatUserAdapter.toInternal(user)),
+      rocketChatPaginationAdapter.toInternalData(result.data)
     );
-  }
+  },
 };

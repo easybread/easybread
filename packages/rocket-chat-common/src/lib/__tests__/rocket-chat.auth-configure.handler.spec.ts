@@ -33,7 +33,7 @@ it(`should call RocketChatAuthStrategy.authenticate with token and user id`, asy
     { serverUrl: 'doesnt-matter' }
   );
 
-  expect((context.auth.authenticate as jest.Mock).mock.calls).toEqual([
+  expect(jest.mocked(context.auth.authenticate).mock.calls).toEqual([
     ['1', { authToken: 'token', userId: 'user id' }],
   ]);
 });

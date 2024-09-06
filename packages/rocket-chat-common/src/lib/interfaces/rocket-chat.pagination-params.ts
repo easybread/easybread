@@ -1,4 +1,4 @@
-export interface RocketChatPaginationParams {
+export type RocketChatPaginationParams = {
   offset: number;
   count: number;
-}
+};

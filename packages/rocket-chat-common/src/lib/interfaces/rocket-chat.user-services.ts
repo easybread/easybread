@@ -2,7 +2,7 @@ import { RocketChatLoginTokenUnion } from './rocket-chat.login-token-union';
 import { RocketChatUserEmailCode } from './rocket-chat.user-email-code';
 import { RocketChatUserEmailVerificationToken } from './rocket-chat.user-email-verification-token';
 
-export interface RocketChatUserServices {
+export type RocketChatUserServices = {
   password?: {
     bcrypt: string;
   };
@@ -25,4 +25,4 @@ export interface RocketChatUserServices {
     changedAt: Date;
   };
   emailCode: RocketChatUserEmailCode[];
-}
+};

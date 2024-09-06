@@ -1,7 +1,7 @@
 import {
   BreadOperationInputWithParams,
   BreadOperationOutput,
-  BreadStandardOperation
+  BreadStandardOperation,
 } from '@easybread/core';
 
 import { RocketChatOperationName } from '../rocket-chat.operation-name';

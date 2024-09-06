@@ -1,4 +1,4 @@
-export interface RocketChatBanner {
+export type RocketChatBanner = {
   id: string;
   priority: number;
   title: string;
@@ -7,4 +7,4 @@ export interface RocketChatBanner {
   modifiers: unknown[];
   link: string;
   read?: boolean;
-}
+};

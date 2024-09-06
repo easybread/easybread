@@ -1,4 +1,4 @@
-export interface RocketChatAuthStateData {
+export type RocketChatAuthStateData = {
   authToken: string;
   userId: string;
-}
+};

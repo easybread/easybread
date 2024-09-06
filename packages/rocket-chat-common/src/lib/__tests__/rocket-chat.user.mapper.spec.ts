@@ -1,13 +1,11 @@
 import { PersonSchema } from '@easybread/schemas';
 
-import { RocketChatUserMapper } from '../..';
+import { rocketChatUserAdapter } from '../..';
 import { USER_MOCK } from './user.mock';
-
-const mapper = new RocketChatUserMapper();
 
 describe('toRemoteMap()', () => {
   it(`should correctly map from bread schema to remote type`, async () => {
-    const result = mapper.toRemote({
+    const result = rocketChatUserAdapter.toExternal({
       '@type': 'Person',
       knowsLanguage: 'en',
       identifier: '111',
@@ -20,19 +18,21 @@ describe('toRemoteMap()', () => {
       language: 'en',
       name: 'User Name',
       username: 'user.name',
+      type: null,
+      active: null,
     });
   });
 });
 
 describe('toSchemaMap()', () => {
   it(`should correctly map from remote type to bread schema`, async () => {
-    const result = mapper.toSchema(USER_MOCK);
+    const result = rocketChatUserAdapter.toInternal(USER_MOCK);
     expect(result).toEqual({
       '@type': 'Person',
       knowsLanguage: 'en',
       identifier: '111',
       name: 'User Name',
       additionalName: 'user.name',
-    } as PersonSchema);
+    } satisfies PersonSchema);
   });
 });
