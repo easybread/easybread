@@ -1,4 +1,4 @@
-export interface BambooEmployee {
+export type BambooEmployee = {
   id?: string;
   canUploadPhoto?: boolean | number;
   department?: string | null;
@@ -17,4 +17,4 @@ export interface BambooEmployee {
   workEmail?: string | null;
   workPhone?: string | null;
   workPhoneExtension?: string | null;
-}
+};

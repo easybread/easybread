@@ -8,8 +8,8 @@ import {
 } from '@easybread/operations';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { BambooEmployeeMapper } from '../data-mappers';
 import { BambooEmployee } from '../interfaces';
+import { bambooEmployeeAdapter } from '../data-adapters';
 
 export const BambooEmployeeByIdHandler: BreadOperationHandler<
   EmployeeByIdOperation<BambooEmployee>,
@@ -54,12 +54,10 @@ export const BambooEmployeeByIdHandler: BreadOperationHandler<
       },
     });
 
-    const dataMapper = new BambooEmployeeMapper();
-
     return createSuccessfulOutputWithRawDataAndPayload(
       BreadOperationName.EMPLOYEE_BY_ID,
       response.data,
-      dataMapper.toSchema(response.data)
+      bambooEmployeeAdapter.toInternal(response.data)
     );
   },
 };

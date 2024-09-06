@@ -8,7 +8,7 @@ import {
 } from '@easybread/operations';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { BambooEmployeeMapper } from '../data-mappers';
+import { bambooEmployeeAdapter } from '../data-adapters';
 
 export const BambooEmployeeUpdateHandler: BreadOperationHandler<
   EmployeeUpdateOperation,
@@ -19,8 +19,6 @@ export const BambooEmployeeUpdateHandler: BreadOperationHandler<
 
     const { companyName } = await context.auth.readAuthData(breadId);
 
-    const dataMapper = new BambooEmployeeMapper();
-
     await context.httpRequest<undefined>({
       method: 'POST',
       url: `https://api.bamboohr.com/api/gateway.php/${companyName}/v1/employees/${payload.identifier}`,
@@ -28,7 +26,7 @@ export const BambooEmployeeUpdateHandler: BreadOperationHandler<
         accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      data: dataMapper.toRemote(payload),
+      data: bambooEmployeeAdapter.toExternal(payload),
     });
 
     return createSuccessfulOutputWithRawDataAndPayload(

@@ -7,7 +7,8 @@
     "@easybread/test-utils": "0.0.1",
     "@easybread/schemas": "0.0.1",
     "axios": "^1.7.4",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "@easybread/data-adapter": "0.0.1"
   },
   "main": "./index.cjs",
   "module": "./index.js"

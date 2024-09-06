@@ -11,7 +11,7 @@ import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
 import { find, isNumber, isObject, isString, pick } from 'lodash';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { BambooEmployeeMapper } from '../data-mappers';
+import { bambooEmployeeAdapter } from '../data-adapters';
 import { BambooEmployeesDirectory } from '../interfaces';
 
 export const BambooEmployeeSearchHandler: BreadOperationHandler<
@@ -62,11 +62,9 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
       );
     };
 
-    const dataMapper = new BambooEmployeeMapper();
-
     // bamboo-hr doesn't provide search API. But we can search with filter
     const payload = result.data.employees
-      .map((e) => dataMapper.toSchema(e))
+      .map((e) => bambooEmployeeAdapter.toInternal(e))
       .filter(searchFilter);
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
