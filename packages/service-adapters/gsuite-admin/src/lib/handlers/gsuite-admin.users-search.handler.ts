@@ -1,12 +1,12 @@
 import {
   BreadOperationHandler,
-  createSuccessfulCollectionOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
 import {
-  GsuiteAdminUserMapper,
-  GsuiteAdminUsersPaginationMapper
-} from '../data-mappers';
+  gsuiteAdminPaginationAdapter,
+  gsuiteAdminUserAdapter,
+} from '../data-adapters';
 import { GsuiteAdminAuthStrategy } from '../gsuite-admin.auth-strategy';
 import { GsuiteAdminOperationName } from '../gsuite-admin.operation-name';
 import { GsuiteAdminUsersList } from '../interfaces';
@@ -20,8 +20,6 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
     const { name, params, pagination } = input;
     const { query } = params;
 
-    const paginationMapper = new GsuiteAdminUsersPaginationMapper();
-
     const response = await context.httpRequest<GsuiteAdminUsersList>({
       method: 'GET',
       url: 'https://www.googleapis.com/admin/directory/v1/users',
@@ -33,18 +31,16 @@ export const GsuiteAdminUsersSearchHandler: BreadOperationHandler<
         // pageToken: 'token',
         // See https://developers.google.com/admin-sdk/directory/v1/guides/search-users
         query,
-        ...paginationMapper.toRemoteParams(pagination)
-      }
+        ...gsuiteAdminPaginationAdapter.toExternalParams(pagination),
+      },
     });
-
-    const userMapper = new GsuiteAdminUserMapper();
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       name,
       response.data,
-      response.data.users.map(user => userMapper.toSchema(user)),
-      paginationMapper.toOutputPagination(response.data)
+      response.data.users.map(gsuiteAdminUserAdapter.toInternal),
+      gsuiteAdminPaginationAdapter.toInternalData(response.data)
     );
   },
-  name: GsuiteAdminOperationName.USERS_SEARCH
+  name: GsuiteAdminOperationName.USERS_SEARCH,
 };

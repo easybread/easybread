@@ -1,9 +1,9 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
-import { GsuiteAdminUserMapper } from '../data-mappers';
+import { gsuiteAdminUserAdapter } from '../data-adapters';
 import { GsuiteAdminAuthStrategy } from '../gsuite-admin.auth-strategy';
 import { GsuiteAdminOperationName } from '../gsuite-admin.operation-name';
 import { GsuiteAdminUser } from '../interfaces';
@@ -16,20 +16,18 @@ export const GsuiteAdminUsersCreateHandler: BreadOperationHandler<
   async handle(input, context) {
     const { name, payload } = input;
 
-    const mapper = new GsuiteAdminUserMapper();
-
     const response = await context.httpRequest<GsuiteAdminUser>({
       method: 'POST',
       url: 'https://www.googleapis.com/admin/directory/v1/users',
-      data: mapper.toRemote(payload)
+      data: gsuiteAdminUserAdapter.toExternal(payload),
     });
 
     return createSuccessfulOutputWithRawDataAndPayload(
       name,
       response.data,
-      mapper.toSchema(response.data)
+      gsuiteAdminUserAdapter.toInternal(response.data)
     );
   },
 
-  name: GsuiteAdminOperationName.USERS_CREATE
+  name: GsuiteAdminOperationName.USERS_CREATE,
 };
