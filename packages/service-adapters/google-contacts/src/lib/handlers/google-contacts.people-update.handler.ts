@@ -1,16 +1,16 @@
 import {
   BreadOperationHandler,
   createSuccessfulOutputWithRawDataAndPayload,
-  ServiceException
+  ServiceException,
 } from '@easybread/core';
 
-import { GoogleContactsContactMapper } from '../data-mappers';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 import { GOOGLE_PROVIDER_NAME } from '../google-contacts.constants';
 import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
 import { GoogleContactsPeopleUpdateOperation } from '../operations';
 import { googleContactsUpdateContactTransform } from '../transform';
+import { googleContactsContactAdapter } from '../data-adapters';
 
 export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
   GoogleContactsPeopleUpdateOperation,
@@ -29,21 +29,19 @@ export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
     //  "To update a contact, first retrieve the contact entry,
     //   modify the data and send an authorized PUT request
     //   to the contact's edit URL with the modified contact entry in the body."
-    const contactBase = await context.httpRequest<
-      GoogleContactsFeedEntryResponse
-    >({
-      method: 'GET',
-      url: entryUrl,
-      params: { alt: 'json' },
-      headers: {
-        'GData-Version': '3.0',
-        accept: 'application/json'
-      }
-    });
+    const contactBase =
+      await context.httpRequest<GoogleContactsFeedEntryResponse>({
+        method: 'GET',
+        url: entryUrl,
+        params: { alt: 'json' },
+        headers: {
+          'GData-Version': '3.0',
+          accept: 'application/json',
+        },
+      });
 
-    const dataMapper = new GoogleContactsContactMapper();
-
-    const contactEntryChange = dataMapper.toRemote(personChange);
+    const contactEntryChange =
+      googleContactsContactAdapter.toExternal(personChange);
 
     // TODO: replace this with data mapper too.
     const contactUpdatedEntry = googleContactsUpdateContactTransform(
@@ -60,14 +58,14 @@ export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
         'GData-Version': '3.0',
         'Content-Type': 'application/json',
         'If-Match': contactBase.data.entry.gd$etag,
-        accept: 'application/json'
-      }
+        accept: 'application/json',
+      },
     });
 
     return createSuccessfulOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_UPDATE,
       result.data,
-      dataMapper.toSchema(result.data.entry)
+      googleContactsContactAdapter.toInternal(result.data.entry)
     );
-  }
+  },
 };

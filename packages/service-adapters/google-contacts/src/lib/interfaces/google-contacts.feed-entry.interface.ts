@@ -7,12 +7,12 @@ import {
   GdataName,
   GdataOrganization,
   GdataPhoneNumber,
-  GdataText
+  GdataText,
 } from './gdata';
 
 // This interface does not reflect some properties
 // that might appear on this entity
-export interface GoogleContactsFeedEntry {
+export type GoogleContactsFeedEntry = {
   id?: GdataText;
   title?: GdataText;
   link?: GdataLink[];
@@ -24,4 +24,4 @@ export interface GoogleContactsFeedEntry {
   gd$extendedProperty?: GdataExtendedProperty[];
   gContact$website?: GContactWebsite[];
   gd$phoneNumber?: GdataPhoneNumber[];
-}
+};

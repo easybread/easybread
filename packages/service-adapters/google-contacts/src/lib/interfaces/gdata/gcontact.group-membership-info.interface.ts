@@ -1,6 +1,6 @@
 import { GdataBoolean } from './gdata.boolean.interface';
 
-export interface GcontactGroupMembershipInfo {
+export type GcontactGroupMembershipInfo = {
   deleted: GdataBoolean;
   href: string;
-}
+};
