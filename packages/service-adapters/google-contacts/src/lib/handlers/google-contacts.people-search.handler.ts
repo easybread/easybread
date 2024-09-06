@@ -1,12 +1,12 @@
 import {
   BreadOperationHandler,
-  createSuccessfulCollectionOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
 import {
-  GoogleContactsContactMapper,
-  GoogleContactsPaginationMapper
-} from '../data-mappers';
+  googleContactsContactAdapter,
+  googleContactsPaginationAdapter,
+} from '../data-adapters';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedResponse } from '../interfaces';
@@ -21,10 +21,8 @@ export const GoogleContactsPeopleSearchHandler: BreadOperationHandler<
   async handle(input, context) {
     const { query = '' } = input.params;
 
-    const paginationMapper = new GoogleContactsPaginationMapper();
-
     const remotePaginationParams = input.pagination
-      ? paginationMapper.toRemoteParams(input.pagination)
+      ? googleContactsPaginationAdapter.toExternalParams(input.pagination)
       : {};
 
     const result = await context.httpRequest<GoogleContactsFeedResponse>({
@@ -33,21 +31,19 @@ export const GoogleContactsPeopleSearchHandler: BreadOperationHandler<
       params: {
         alt: 'json',
         q: query,
-        ...remotePaginationParams
+        ...remotePaginationParams,
       },
       headers: {
         'GData-Version': '3.0',
-        accept: 'application/json'
-      }
+        accept: 'application/json',
+      },
     });
-
-    const contactMapper = new GoogleContactsContactMapper();
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_SEARCH,
       result.data,
-      result.data.feed.entry.map(entry => contactMapper.toSchema(entry)),
-      paginationMapper.toOutputPagination(result.data)
+      result.data.feed.entry.map(googleContactsContactAdapter.toInternal),
+      googleContactsPaginationAdapter.toInternalData(result.data)
     );
-  }
+  },
 };

@@ -1,7 +1,6 @@
 import { ParsedUrlQueryInput } from 'node:querystring';
 
-export interface GoogleCommonAuthorizationParameters
-  extends ParsedUrlQueryInput {
+export type GoogleCommonAuthorizationParameters = ParsedUrlQueryInput & {
   access_type: string;
   scope: string;
   response_type: string;
@@ -12,4 +11,4 @@ export interface GoogleCommonAuthorizationParameters
   login_hint?: string;
   prompt?: 'none' | ('consent' | 'select_account')[];
   alt: 'json';
-}
+};

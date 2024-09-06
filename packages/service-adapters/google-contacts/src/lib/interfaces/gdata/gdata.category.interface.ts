@@ -1,4 +1,4 @@
-export interface GdataCategory {
+export type GdataCategory = {
   scheme: string;
   term: string;
-}
+};

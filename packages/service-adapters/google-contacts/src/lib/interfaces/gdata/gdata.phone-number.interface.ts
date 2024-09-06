@@ -1,7 +1,7 @@
 import { GdataBoolean } from './gdata.boolean.interface';
 import { GdataText } from './gdata.text.interface';
 
-export interface GdataPhoneNumber extends GdataText {
+export type GdataPhoneNumber = GdataText & {
   label?: string;
   rel?:
     | 'http://schemas.google.com/g/2005#fax'
@@ -14,4 +14,4 @@ export interface GdataPhoneNumber extends GdataText {
     | 'http://schemas.google.com/g/2005#work_fax';
   uri?: string;
   primary?: GdataBoolean;
-}
+};

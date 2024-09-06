@@ -1,7 +1,7 @@
 import { GoogleContactsFeed } from './google-contacts.feed.interface';
 
-export interface GoogleContactsFeedResponse {
+export type GoogleContactsFeedResponse = {
   version: string;
   encoding: string;
   feed: GoogleContactsFeed;
-}
+};

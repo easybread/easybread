@@ -1,5 +1,5 @@
 // TODO: figure out the full schema
-export interface GContactWebsite {
+export type GContactWebsite = {
   href: string;
   rel: 'profile' | string;
-}
+};

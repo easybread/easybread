@@ -1,9 +1,9 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
-import { GoogleContactsContactMapper } from '../data-mappers';
+import { googleContactsContactAdapter } from '../data-adapters';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
@@ -23,16 +23,14 @@ export const GoogleContactsPeopleByIdHandler: BreadOperationHandler<
       params: { alt: 'json' },
       headers: {
         'GData-Version': '3.0',
-        accept: 'application/json'
-      }
+        accept: 'application/json',
+      },
     });
-
-    const contactMapper = new GoogleContactsContactMapper();
 
     return createSuccessfulOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_BY_ID,
       result.data,
-      contactMapper.toSchema(result.data.entry)
+      googleContactsContactAdapter.toInternal(result.data.entry)
     );
-  }
+  },
 };
