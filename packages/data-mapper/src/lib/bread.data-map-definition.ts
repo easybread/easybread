@@ -42,11 +42,12 @@ export type BreadDataMapValueResolverDefinition<
   | (O extends Record<string | symbol, unknown>
       ? BreadDataMapDefinition<I, O> | BreadDataMapperClass<I, O>
       : never)
+  // if the output[key] is a literal type, then a Factory Producing the literal
   | (IsLiteral<O> extends true
-      ? // if the output[key] is a literal type, then a Factory Producing the literal
+      ? // keys of input whose values have same type as the output[key]
         BreadLiteralFactory<O>
-      : // keys of input whose values have same type as the output[key]
-        | KeysByValueType<I, O>
+      :
+          | KeysByValueType<I, O>
           // a function to create the output value from the input
           | BreadValueFactory<I, O>
           // null is a special case. It means that the property is not mapped.

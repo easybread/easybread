@@ -1,9 +1,7 @@
-import { RocketChatPaginationMapper } from '../..';
-
-const mapper = new RocketChatPaginationMapper();
+import { rocketChatPaginationAdapter } from '../..';
 
 it(`should map to remote params correctly`, () => {
-  const result = mapper.toRemoteParams({
+  const result = rocketChatPaginationAdapter.toExternalParams({
     type: 'SKIP_COUNT',
     skip: 2,
     count: 10,
@@ -14,7 +12,7 @@ it(`should map to remote params correctly`, () => {
   });
 });
 it(`should map data to output pagination correctly`, () => {
-  const result = mapper.toOutputPagination({
+  const result = rocketChatPaginationAdapter.toInternalData({
     total: 30,
     offset: 2,
     count: 10,

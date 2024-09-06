@@ -3,10 +3,8 @@ export function createContextMock<
 >(): TBreadOperationContext {
   const auth = {
     authenticate: jest.fn(),
-    createAuthUri: jest.fn()
+    createAuthUri: jest.fn(),
   };
 
-  // trick typescript
-  const context = { auth } as unknown;
-  return context as TBreadOperationContext;
+  return { auth } as unknown as TBreadOperationContext;
 }

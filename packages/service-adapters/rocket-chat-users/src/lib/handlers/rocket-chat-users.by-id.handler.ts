@@ -1,11 +1,11 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload
+  createSuccessfulOutputWithRawDataAndPayload,
 } from '@easybread/core';
 import {
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions,
-  RocketChatUserMapper
+  rocketChatUserAdapter,
 } from '@easybread/rocket-chat-common';
 import { resolve } from 'url';
 
@@ -23,12 +23,13 @@ export const RocketChatUsersByIdHandler: BreadOperationHandler<
     const { name, params } = input;
     const { serverUrl } = options;
 
-    const userMapper = new RocketChatUserMapper();
-
     const result = await context.httpRequest<RocketChatUsersInfo>({
       method: 'GET',
       url: resolve(serverUrl, '/api/v1/users.info'),
-      params: userMapper.toRemote({ '@type': 'Person', ...params })
+      params: rocketChatUserAdapter.toExternal({
+        '@type': 'Person',
+        ...params,
+      }),
     });
 
     if (!result.data.success) {
@@ -38,7 +39,7 @@ export const RocketChatUsersByIdHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       name,
       result.data,
-      userMapper.toSchema(result.data.user)
+      rocketChatUserAdapter.toInternal(result.data.user)
     );
-  }
+  },
 };

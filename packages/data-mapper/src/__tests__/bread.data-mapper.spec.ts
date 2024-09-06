@@ -21,9 +21,10 @@ it(`should work with plain objects with primitive types`, async () => {
   const mapper = BreadDataMapper.create<Input, Output>({
     str: 'a',
     num: 'b',
-    bool: 'c',
     bigInt: 'd',
     symbol: 'e',
+    // bool: () => true,
+    bool: 'c',
   });
 
   const actual = mapper.map({

@@ -3,8 +3,8 @@ import { RocketChatUserEmail } from './rocket-chat.user-email';
 import { RocketChatUserServices } from './rocket-chat.user-services';
 import { RocketChatUserSettings } from './rocket-chat.user-settings';
 
-export interface RocketChatUser {
-  _id: string;
+export type RocketChatUser = {
+  _id?: string;
 
   type: string;
   active: boolean;
@@ -41,4 +41,4 @@ export interface RocketChatUser {
   appId?: string;
   statusText?: string;
   banners?: Record<string, RocketChatBanner>;
-}
+};

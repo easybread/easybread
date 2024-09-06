@@ -101,7 +101,7 @@ describe('Operations', () => {
             '@type': 'Person',
             additionalName: 'user.two',
             identifier: 'id3',
-            knowsLanguage: '',
+            knowsLanguage: undefined,
             name: 'User Two',
           },
         ],
@@ -118,12 +118,12 @@ describe('Operations', () => {
 
     it(`should call GET https://testserver.io/api/users.info with expected query params`, async () => {
       await invokeUsersById({ identifier: 'id1' });
-      expect((axiosMock.request as jest.Mock).mock.calls).toEqual([
+      expect(jest.mocked(axiosMock.request).mock.calls).toEqual([
         [
           {
             headers: { 'X-Auth-Token': AUTH_TOKEN, 'X-User-Id': USER_ID },
             method: 'GET',
-            params: { _id: 'id1' },
+            params: { _id: 'id1', active: null, type: null },
             url: 'https://testserver.io/api/v1/users.info',
           },
         ],
@@ -139,7 +139,7 @@ describe('Operations', () => {
           '@type': 'Person',
           additionalName: 'user.one',
           identifier: 'id1',
-          knowsLanguage: '',
+          knowsLanguage: undefined,
           name: 'User One',
         },
         provider: 'rocket-chat/users',

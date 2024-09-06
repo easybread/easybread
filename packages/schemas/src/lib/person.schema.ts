@@ -15,7 +15,6 @@ export type PersonSchema = BreadSchema & {
   honorificPrefix?: string;
   honorificSuffix?: string;
   password?: string;
-  identifier?: string;
   gender?: string;
   jobTitle?: string;
   telephone?: string;
