@@ -1,6 +1,6 @@
 import { GsuiteAdminAddress } from './gsuite-admin.address.interface';
 
-export interface GsuiteAdminUser {
+export type GsuiteAdminUser = {
   kind: 'admin#directory#user';
   id?: string;
   etag?: string;
@@ -135,4 +135,4 @@ export interface GsuiteAdminUser {
       (key: string): unknown;
     };
   };
-}
+};

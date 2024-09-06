@@ -1,3 +1,3 @@
-export interface GsuiteAdminUsersListPaginationParams {
+export type GsuiteAdminUsersListPaginationParams = {
   pageToken: string;
-}
+};

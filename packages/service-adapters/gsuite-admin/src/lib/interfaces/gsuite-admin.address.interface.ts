@@ -1,4 +1,4 @@
-export interface GsuiteAdminAddress {
+export type GsuiteAdminAddress = {
   type?: string;
   customType?: string;
   sourceIsStructured?: boolean;
@@ -12,4 +12,4 @@ export interface GsuiteAdminAddress {
   country?: string;
   primary?: boolean;
   countryCode?: string;
-}
+};

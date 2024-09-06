@@ -1,19 +1,14 @@
-import { BreadDataMapDefinition, BreadDataMapper } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 
 import { GsuiteAdminUser } from '../interfaces';
-import { GsuiteAdminAddressMapper } from './gsuite-admin.address.mapper';
+import { breadDataAdapter } from '@easybread/data-adapter';
+import { gsuiteAdminAddressAdapter } from './gsuite-admin.address.adapter';
 
-const addressMapper = new GsuiteAdminAddressMapper();
-
-export class GsuiteAdminUserMapper extends BreadDataMapper<
-  GsuiteAdminUser,
-  PersonSchema
-> {
-  protected readonly toRemoteMap: BreadDataMapDefinition<
-    PersonSchema,
-    GsuiteAdminUser
-  > = {
+export const gsuiteAdminUserAdapter = breadDataAdapter<
+  PersonSchema,
+  GsuiteAdminUser
+>({
+  toExternal: {
     id: 'identifier',
     password: 'password',
     kind: () => 'admin#directory#user',
@@ -25,62 +20,58 @@ export class GsuiteAdminUserMapper extends BreadDataMapper<
       return {
         givenName,
         familyName,
-        fullName: name
+        fullName: name,
       };
     },
 
-    phones: input => {
+    phones: (input) => {
       if (!input.telephone) return [];
       return [{ value: input.telephone }];
     },
 
-    addresses: input => {
+    addresses: (input) => {
       if (!input.address) return [];
 
       if (typeof input.address === 'string') {
         return [
           {
             type: 'home',
-            formatted: input.address
-          }
+            formatted: input.address,
+          },
         ];
       }
 
-      return [addressMapper.toRemote(input.address)];
-    }
-  };
-
-  protected readonly toSchemaMap: BreadDataMapDefinition<
-    GsuiteAdminUser,
-    PersonSchema
-  > = {
+      return [gsuiteAdminAddressAdapter.toExternal(input.address)];
+    },
+  },
+  toInternal: {
     '@type': () => 'Person',
     identifier: 'id',
-    name: input => input.name?.fullName,
-    familyName: input => input.name?.familyName,
-    givenName: input => input.name?.givenName,
+    name: (input) => input.name?.fullName,
+    familyName: (input) => input.name?.familyName,
+    givenName: (input) => input.name?.givenName,
     email: 'primaryEmail',
 
-    telephone: input => {
+    telephone: (input) => {
       if (!input.phones || input.phones.length === 0) return undefined;
 
-      let phone = input.phones.find(p => p.primary);
+      let phone = input.phones.find((p) => p.primary);
 
       if (!phone) phone = input.phones[0];
 
       return phone.value;
     },
 
-    address: input => {
+    address: (input) => {
       if (!input.addresses || input.addresses.length === 0) return undefined;
 
-      let address = input?.addresses?.find(a => a.primary);
+      let address = input?.addresses?.find((a) => a.primary);
 
       if (!address) address = input?.addresses[0];
 
       if (!address.streetAddress && address.formatted) return address.formatted;
 
-      return addressMapper.toSchema(address);
-    }
-  };
-}
+      return gsuiteAdminAddressAdapter.toInternal(address);
+    },
+  },
+});
