@@ -9,7 +9,7 @@ import {
 import { AxiosResponse } from 'axios';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { BambooEmployeeMapper } from '../data-mappers';
+import { bambooEmployeeAdapter } from '../data-adapters';
 
 export const BambooEmployeeCreateHandler: BreadOperationHandler<
   EmployeeCreateOperation,
@@ -21,7 +21,6 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
 
     const { companyName } = await context.auth.readAuthData(breadId);
 
-    const dataMapper = new BambooEmployeeMapper();
     const response = await context.httpRequest<undefined>({
       method: 'POST',
       url: `https://api.bamboohr.com/api/gateway.php/${companyName}/v1/employees`,
@@ -29,7 +28,7 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
         accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      data: dataMapper.toRemote(payload),
+      data: bambooEmployeeAdapter.toExternal(payload),
     });
 
     return createSuccessfulOutputWithRawDataAndPayload(

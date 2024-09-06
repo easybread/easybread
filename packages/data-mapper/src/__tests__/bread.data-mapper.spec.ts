@@ -234,3 +234,33 @@ it(`should work with optional properties`, async () => {
     __type: 'Output',
   } satisfies Output);
 });
+
+it(`should work with optional fields on internal type`, async () => {
+  type Input = { a?: string; b?: number };
+  type Output = { a: string; b: number; c?: string };
+
+  const mapper = BreadDataMapper.create<Input, Output>({
+    a: 'a',
+    b: 'b',
+  });
+
+  expect(mapper.map({ a: 'val', b: 15 })).toEqual({
+    a: 'val',
+    b: 15,
+  });
+});
+
+it(`should work with optional fields on external type`, async () => {
+  type Input = { a: string; b: number };
+  type Output = { a?: string; b?: number };
+
+  const mapper = BreadDataMapper.create<Input, Output>({
+    a: 'a',
+    b: 'b',
+  });
+
+  expect(mapper.map({ a: 'val', b: 15 })).toEqual({
+    a: 'val',
+    b: 15,
+  });
+});

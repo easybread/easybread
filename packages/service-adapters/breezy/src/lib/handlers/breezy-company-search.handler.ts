@@ -1,12 +1,12 @@
 import {
   BreadOperationHandler,
   createDisabledPagination,
-  createSuccessfulCollectionOutputWithRawDataAndPayload
+  createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
 import { BreezyAuthStrategy } from '../breezy.auth-strategy';
 import { BreezyOperationName } from '../breezy.operation-name';
-import { BreezyCompanyMapper } from '../data-mappers';
+import { breezyCompanyAdapter } from '../data-adapters';
 import { BreezyCompany } from '../interfaces';
 import { BreezyCompanySearchOperation } from '../operations';
 
@@ -19,16 +19,14 @@ export const BreezyCompanySearchHandler: BreadOperationHandler<
   async handle(_input, context) {
     const result = await context.httpRequest<BreezyCompany[]>({
       method: 'GET',
-      url: 'https://api.breezy.hr/v3/companies'
+      url: 'https://api.breezy.hr/v3/companies',
     });
-
-    const companyMapper = new BreezyCompanyMapper();
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreezyOperationName.COMPANY_SEARCH,
       result.data,
-      result.data.map(company => companyMapper.toSchema(company)),
+      result.data.map((company) => breezyCompanyAdapter.toInternal(company)),
       createDisabledPagination()
     );
-  }
+  },
 };

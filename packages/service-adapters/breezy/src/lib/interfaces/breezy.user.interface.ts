@@ -1,4 +1,4 @@
-export interface BreezyUser {
+export type BreezyUser = {
   _id: string;
   email_address: string;
   name: string;
@@ -7,4 +7,4 @@ export interface BreezyUser {
   creation_date: string;
   verified_email: boolean;
   updated_date: string;
-}
+};

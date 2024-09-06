@@ -60,13 +60,12 @@ export class BreadDataMapper<
       if (!Object.hasOwn(mapDefinition, key)) continue;
 
       const resolver = mapDefinition[key];
-      const value = this.resolveValue<
+
+      output[key] = this.resolveValue<
         I,
         BreadDataMapDefinition<I, O>[typeof key],
         O[typeof key]
       >(input, resolver);
-
-      output[key] = value;
     }
 
     return output;
