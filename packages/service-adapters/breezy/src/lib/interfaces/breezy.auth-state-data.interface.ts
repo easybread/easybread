@@ -1,3 +1,3 @@
-export interface BreezyAuthStateData {
+export type BreezyAuthStateData = {
   accessToken: string;
-}
+};

@@ -1,4 +1,4 @@
-export interface BreezyAuthenticatePayload {
+export type BreezyAuthenticatePayload = {
   email: string;
   password: string;
-}
+};
