@@ -15,39 +15,41 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@easybread/adapter-bamboo-hr": [
+        "packages/service-adapters/bamboo-hr/src/index.ts"
+      ],
       "@easybread/adapter-breezy": [
         "packages/service-adapters/breezy/src/index.ts"
       ],
-      "@easybread/adapter-google-contacts": [
-        "packages/service-adapters/google-contacts/src/index.ts"
+      "@easybread/adapter-google-admin-directory": [
+        "packages/service-adapters/google/admin-directory/src/index.ts"
       ],
-      "@easybread/adapter-gsuite-admin": [
-        "packages/service-adapters/gsuite-admin/src/index.ts"
+      "@easybread/adapter-google-common": [
+        "packages/service-adapters/google/common/src/index.ts"
+      ],
+      "@easybread/adapter-google-contacts": [
+        "packages/service-adapters/google/contacts/src/index.ts"
+      ],
+      "@easybread/adapter-rocket-chat-common": [
+        "packages/service-adapters/rocket-chat/common/src/index.ts"
       ],
       "@easybread/adapter-rocket-chat-users": [
-        "packages/service-adapters/rocket-chat-users/src/index.ts"
+        "packages/service-adapters/rocket-chat/users/src/index.ts"
       ],
       "@easybread/common": ["packages/common/src/index.ts"],
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/data-adapter": ["packages/data-adapter/src/index.ts"],
       "@easybread/data-mapper": ["packages/data-mapper/src/index.ts"],
-      "@easybread/google-common": ["packages/google-common/src/index.ts"],
       "@easybread/operations": ["packages/operations/src/index.ts"],
       "@easybread/pagination-adapter": [
         "packages/pagination-adapter/src/index.ts"
       ],
       "@easybread/recommended": ["tools/recommended/src/index.ts"],
-      "@easybread/rocket-chat-common": [
-        "packages/rocket-chat-common/src/index.ts"
-      ],
       "@easybread/schemas": ["packages/schemas/src/index.ts"],
       "@easybread/state-adapter-mongo": [
         "packages/state-adapter-mongo/src/index.ts"
       ],
-      "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
-      "service-adapters/bamboo-hr": [
-        "packages/service-adapters/bamboo-hr/src/index.ts"
-      ]
+      "@easybread/test-utils": ["packages/test-utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
