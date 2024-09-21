@@ -2,7 +2,7 @@ import { BreadSchema } from '@easybread/schemas';
 
 import {
   BreadOperationOutputPagination,
-  BreadOperationPaginationType
+  BreadOperationPaginationType,
 } from './bread-operation-pagination';
 
 /*
@@ -15,22 +15,22 @@ export interface BreadFailedOperationRawPayload {
   error: Error | string | object;
 }
 
-interface BreadSuccessOperationRawPayload {
+export interface BreadSuccessOperationRawPayload {
   success: true;
 }
 
-interface BreadSuccessOperationRawPayloadWithData<TData> {
+export interface BreadSuccessOperationRawPayloadWithData<TData> {
   success: true;
   data: TData;
 }
 
 //  ------------------------------------
 
-type BreadOperationOutputRawPayload =
+export type BreadOperationOutputRawPayload =
   | BreadFailedOperationRawPayload
   | BreadSuccessOperationRawPayload;
 
-type BreadOperationOutputRawPayloadWithData<TData> =
+export type BreadOperationOutputRawPayloadWithData<TData> =
   | BreadFailedOperationRawPayload
   | BreadSuccessOperationRawPayloadWithData<TData>;
 

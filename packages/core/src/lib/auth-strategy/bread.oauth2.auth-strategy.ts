@@ -1,40 +1,67 @@
-import { PausableExecution } from '@easybread/common';
 import { AxiosRequestConfig } from 'axios';
 
 import { BreadAuthStrategy } from './bread.auth-strategy';
 import { BreadOauth2StateData } from './interfaces';
+import { BreadAuthenticationLostEvent } from './events/bread.authentication-lost.event';
 
 export abstract class BreadOAuth2AuthStrategy<
   TStateData extends BreadOauth2StateData
 > extends BreadAuthStrategy<TStateData> {
-  private authorizeHttpPausableExecution = new PausableExecution();
+  private refreshPromise: Promise<void> | null = null;
 
   async authorizeHttp(
     breadId: string,
     requestConfig: AxiosRequestConfig
   ): Promise<AxiosRequestConfig> {
-    const authData = await this.readAuthData(breadId);
+    console.log('BreadAuthStrategy.authorizeHttp');
 
-    if (
-      this.isExpired(authData) &&
-      !this.authorizeHttpPausableExecution.isPaused
-    ) {
-      this.authorizeHttpPausableExecution.pause();
-      await this.refreshToken(breadId);
+    const authData = await this.getActiveAuthData(breadId);
 
-      this.authorizeHttpPausableExecution.resume();
-      // retry
-      return this.authorizeHttp(breadId, requestConfig);
+    return this.addAuthorizationHeader(
+      requestConfig,
+      `Bearer ${authData.accessToken}`
+    );
+  }
+
+  protected async getActiveAuthData(
+    breadId: string
+  ): Promise<BreadOauth2StateData> {
+    try {
+      const authData = await this.readAuthData(breadId);
+
+      if (!this.isExpired(authData)) return authData;
+
+      // Token is expired, check if a refresh is already in progress
+      // and if not, start a new refresh process
+      if (!this.refreshPromise) {
+        this.refreshPromise = this.refreshToken(breadId).finally(() => {
+          this.refreshPromise = null;
+        });
+      }
+
+      // Wait for the refresh operation to complete
+      await this.refreshPromise;
+
+      // After refresh, read the auth data again
+      return await this.readAuthData(breadId);
+    } catch (error) {
+      await this.handleGetActiveAuthDataFailed(breadId, error);
+      throw error;
     }
+  }
 
-    return this.authorizeHttpPausableExecution.add(async () => {
-      // TODO: optimize. We don't need to read it twice when the token is not expired.
-      const { accessToken } = await this.readAuthData(breadId);
-      return this.addAuthorizationHeader(
-        requestConfig,
-        `Bearer ${accessToken}`
-      );
-    });
+  protected async handleGetActiveAuthDataFailed(
+    breadId: string,
+    error: unknown
+  ) {
+    await this.clearAuthData(breadId);
+    this.publish(
+      new BreadAuthenticationLostEvent({
+        provider: this.provider,
+        breadId,
+        error,
+      })
+    );
   }
 
   protected isExpired(authData: BreadOauth2StateData): boolean {

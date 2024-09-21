@@ -3,8 +3,12 @@ import { AxiosRequestConfig } from 'axios';
 import { NoAuthDataException } from '../exception';
 import { BreadStateAdapter } from '../state';
 import { BreadHttpTransport } from '../transport/http';
+import { BreadEventBus } from '../event-bus/bread-event.bus';
+import type { BreadAuthStrategyEvent } from './events/bread.auth-strategy.event';
 
-export abstract class BreadAuthStrategy<TStateData extends object> {
+export abstract class BreadAuthStrategy<
+  TStateData extends object
+> extends BreadEventBus<BreadAuthStrategyEvent> {
   readonly http: BreadHttpTransport;
 
   protected constructor(
@@ -12,6 +16,8 @@ export abstract class BreadAuthStrategy<TStateData extends object> {
     protected readonly provider: string
   ) {
     if (!provider) throw new Error('provider is not specified');
+
+    super();
 
     this.http = new BreadHttpTransport();
   }
@@ -24,6 +30,11 @@ export abstract class BreadAuthStrategy<TStateData extends object> {
     if (!authData) throw new NoAuthDataException(breadId);
 
     return authData;
+  }
+
+  public async unAuthenticate(breadId: string): Promise<void> {
+    await this.clearAuthData(breadId);
+    // subclass might decide to do something else on top of this.
   }
 
   protected createAuthDataStateKey(breadId: string): string {
@@ -40,13 +51,19 @@ export abstract class BreadAuthStrategy<TStateData extends object> {
     );
   }
 
+  protected async clearAuthData(breadId: string): Promise<void> {
+    await this.state
+      .remove(this.createAuthDataStateKey(breadId))
+      .catch((_) => undefined);
+  }
+
   protected setHeaders(
     requestConfig: AxiosRequestConfig,
     headers: Partial<AxiosRequestConfig['headers']>
   ): AxiosRequestConfig {
     return {
       ...requestConfig,
-      headers: this.mergeHeaders(requestConfig.headers, headers)
+      headers: this.mergeHeaders(requestConfig.headers, headers),
     };
   }
 
@@ -63,7 +80,7 @@ export abstract class BreadAuthStrategy<TStateData extends object> {
   ): Record<string, string> {
     return {
       ...(originalHeaders ?? {}),
-      ...(newHeaders ?? {})
+      ...(newHeaders ?? {}),
     };
   }
 
@@ -71,8 +88,7 @@ export abstract class BreadAuthStrategy<TStateData extends object> {
     return Buffer.from(input).toString('base64');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  abstract authenticate(breadId: string, payload?: object): Promise<any>;
+  abstract authenticate(breadId: string, payload?: object): Promise<unknown>;
 
   abstract authorizeHttp(
     breadId: string,
