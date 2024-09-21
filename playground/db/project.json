@@ -1,0 +1,9 @@
+{
+  "name": "playground-db",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "playground/db/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project playground-db --web",
+  "targets": {}
+}

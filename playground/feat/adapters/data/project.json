@@ -1,0 +1,9 @@
+{
+  "name": "playground-feat-adapters-data",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "playground/feat/adapters/data/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project playground-feat-adapters-data --web",
+  "targets": {}
+}
