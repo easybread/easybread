@@ -28,3 +28,9 @@ tmp/
 .env
 *.env
 .env.*
+
+# Next.js
+.next
+out
+
+/local
