@@ -1,9 +1,9 @@
-import { GsuiteAdminUsersList } from '../interfaces';
+import { GoogleAdminDirectoryUsersList } from '../interfaces';
 
 // taken from
 // https://developers.google.com/admin-sdk/directory/v1/guides/manage-users#json-response_2
 // required some modifications to accommodate the interface.
-export const USERS_LIST_MOCK: GsuiteAdminUsersList = {
+export const USERS_LIST_MOCK: GoogleAdminDirectoryUsersList = {
   kind: 'admin#directory#users',
   etag: '"s3sxUbiDZrO_w5pDMy1k-DjAn3hLQ_44DzW8eoBN_pY/Kp6E-E4tFIQl79mPj4J6XhPmaEo"',
   nextPageToken: 'nextpagetoken',

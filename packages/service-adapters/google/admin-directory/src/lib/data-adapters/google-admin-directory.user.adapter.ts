@@ -1,12 +1,12 @@
 import { PersonSchema } from '@easybread/schemas';
 
-import { GsuiteAdminUser } from '../interfaces';
+import { GoogleAdminDirectoryUser } from '../interfaces';
 import { breadDataAdapter } from '@easybread/data-adapter';
-import { gsuiteAdminAddressAdapter } from './gsuite-admin.address.adapter';
+import { googleAdminDirectoryAddressAdapter } from './google-admin-directory.address.adapter';
 
-export const gsuiteAdminUserAdapter = breadDataAdapter<
+export const googleAdminDirectoryUserAdapter = breadDataAdapter<
   PersonSchema,
-  GsuiteAdminUser
+  GoogleAdminDirectoryUser
 >({
   toExternal: {
     id: 'identifier',
@@ -41,7 +41,7 @@ export const gsuiteAdminUserAdapter = breadDataAdapter<
         ];
       }
 
-      return [gsuiteAdminAddressAdapter.toExternal(input.address)];
+      return [googleAdminDirectoryAddressAdapter.toExternal(input.address)];
     },
   },
   toInternal: {
@@ -71,7 +71,7 @@ export const gsuiteAdminUserAdapter = breadDataAdapter<
 
       if (!address.streetAddress && address.formatted) return address.formatted;
 
-      return gsuiteAdminAddressAdapter.toInternal(address);
+      return googleAdminDirectoryAddressAdapter.toInternal(address);
     },
   },
 });

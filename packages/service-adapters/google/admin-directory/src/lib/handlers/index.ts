@@ -1,5 +1,5 @@
-export { GsuiteAdminUsersSearchHandler } from './gsuite-admin.users-search.handler';
-export { GsuiteAdminUserByIdHandler } from './gsuite-admin.user-by-id.handler';
-export { GsuiteAdminUsersUpdateHandler } from './gsuite-admin.users-update.handler';
-export { GsuiteAdminUsersCreateHandler } from './gsuite-admin.users-create.handler';
-export { GsuiteAdminUsersDeleteHandler } from './gsuite-admin.users-delete.handler';
+export { GoogleAdminDirectoryUsersSearchHandler } from './google-admin-directory.users-search.handler';
+export { GoogleAdminDirectoryUserByIdHandler } from './google-admin-directory.user-by-id.handler';
+export { GoogleAdminDirectoryUsersUpdateHandler } from './google-admin-directory.users-update.handler';
+export { GoogleAdminDirectoryUsersCreateHandler } from './google-admin-directory.users-create.handler';
+export { GoogleAdminDirectoryUsersDeleteHandler } from './google-admin-directory.users-delete.handler';

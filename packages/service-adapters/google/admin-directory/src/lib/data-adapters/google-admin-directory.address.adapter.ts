@@ -1,11 +1,11 @@
 import { AddressSchema } from '@easybread/schemas';
-
-import { GsuiteAdminAddress } from '../interfaces';
 import { breadDataAdapter } from '@easybread/data-adapter';
 
-export const gsuiteAdminAddressAdapter = breadDataAdapter<
+import { GoogleAdminDirectoryAddress } from '../interfaces';
+
+export const googleAdminDirectoryAddressAdapter = breadDataAdapter<
   AddressSchema,
-  GsuiteAdminAddress
+  GoogleAdminDirectoryAddress
 >({
   toExternal: {
     country: 'addressCountry',

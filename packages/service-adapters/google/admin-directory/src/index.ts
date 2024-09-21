@@ -1,8 +1,8 @@
 export * from './lib/interfaces';
 export * from './lib/operations';
-export * from './lib/gsuite-admin.constants';
+export * from './lib/google-admin-directory.constants';
 
-export { GsuiteAdminAdapter } from './lib/gsuite-admin.adapter';
-export { GsuiteAdminAuthStrategy } from './lib/gsuite-admin.auth-strategy';
-export type { GsuiteAdminOperation } from './lib/gsuite-admin.operation';
-export { GsuiteAdminOperationName } from './lib/gsuite-admin.operation-name';
+export { GoogleAdminDirectoryAdapter } from './lib/google-admin-directory.adapter';
+export { GoogleAdminDirectoryAuthStrategy } from './lib/google-admin-directory.auth-strategy';
+export type { GoogleAdminDirectoryOperation } from './lib/google-admin-directory.operation';
+export { GoogleAdminDirectoryOperationName } from './lib/google-admin-directory.operation-name';
