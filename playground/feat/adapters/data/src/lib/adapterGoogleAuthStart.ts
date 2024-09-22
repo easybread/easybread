@@ -1,4 +1,4 @@
-import { clientGoogleAdminDirectory } from 'playground-easybread-clients';
+import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import {
   type GoogleCommonOauth2StartOperation,
   GoogleCommonOperationName,
@@ -13,8 +13,9 @@ import { authorize } from 'playground-feat-auth-data';
 export const adapterGoogleAuthStart = async () => {
   const authStatus = await authorize();
   const connectionToken = randomBytes(16).toString('hex');
+  const clientGoogleAdminDirectory = await clientGoogleAdminDirectoryGet();
 
-  await adapterCollection.updateOne(
+  await adapterCollection().updateOne(
     {
       userId: authStatus.data.userId,
       slug: ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY,

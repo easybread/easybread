@@ -1,1 +1,1 @@
-export * from './lib/client-google-admin-directory';
+export * from './lib/client-google-admin-directory-get';

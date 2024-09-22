@@ -1,4 +1,4 @@
-import { clientGoogleAdminDirectory } from 'playground-easybread-clients';
+import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import {
   GoogleAdminDirectoryOperationName,
   type GoogleAdminDirectoryUsersSearchOperation,
@@ -11,7 +11,13 @@ interface PeopleSearchParams {
   query?: string;
 }
 
-export function peopleSearch({ userId, adapter, query }: PeopleSearchParams) {
+export async function peopleSearch({
+  userId,
+  adapter,
+  query,
+}: PeopleSearchParams) {
+  const clientGoogleAdminDirectory = await clientGoogleAdminDirectoryGet();
+
   switch (adapter) {
     case ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY:
       return clientGoogleAdminDirectory.invoke<GoogleAdminDirectoryUsersSearchOperation>(

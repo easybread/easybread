@@ -9,4 +9,5 @@ export type Adapter = {
   isConnected: boolean;
 };
 
-export const adapterCollection = playgroundDb.collection<Adapter>('adapters');
+export const adapterCollection = () =>
+  playgroundDb().collection<Adapter>('adapters');

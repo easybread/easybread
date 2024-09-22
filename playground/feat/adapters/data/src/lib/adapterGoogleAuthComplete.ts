@@ -1,4 +1,4 @@
-import { clientGoogleAdminDirectory } from 'playground-easybread-clients';
+import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import {
   type GoogleCommonOauth2CompleteOperation,
   GoogleCommonOperationName,
@@ -20,8 +20,9 @@ export async function adapterGoogleAuthComplete({
   state,
 }: AdapterGoogleAuthCompleteParams) {
   if (!isAdapterName(slug)) throw new Error('invalid adapter name');
+  const clientGoogleAdminDirectory = await clientGoogleAdminDirectoryGet();
 
-  const adapter = await adapterCollection.findOne({
+  const adapter = await adapterCollection().findOne({
     slug,
     userId,
   });
@@ -47,7 +48,7 @@ export async function adapterGoogleAuthComplete({
     new Error('Google Auth Failed', { cause: results.rawPayload });
   }
 
-  await adapterCollection.updateOne(
+  await adapterCollection().updateOne(
     {
       slug,
       userId,

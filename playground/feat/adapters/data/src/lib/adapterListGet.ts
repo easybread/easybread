@@ -6,7 +6,7 @@ export async function adapterListGet() {
 
   if (!authData.authorized) return [];
 
-  return await adapterCollection
+  return await adapterCollection()
     .find({
       userId: authData.data.userId,
       isConnected: true,

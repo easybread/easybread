@@ -5,5 +5,5 @@ import { isAdapterName } from 'playground-common';
 
 export async function adapterStatusGet(slug: string) {
   if (!isAdapterName(slug)) throw new Error('invalid adapter name');
-  return adapterCollection.findOne({ slug });
+  return adapterCollection().findOne({ slug });
 }

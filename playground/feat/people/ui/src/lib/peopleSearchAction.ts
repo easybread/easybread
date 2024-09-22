@@ -14,7 +14,7 @@ export async function peopleSearchAction({
   adapter,
 }: PeopleSearchActionParams) {
   const authStatus = await authorize();
-  console.log('peopleSearchAction');
+
   return await peopleSearch({
     userId: authStatus.data.userId,
     query,

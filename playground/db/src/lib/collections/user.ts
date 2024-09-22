@@ -7,7 +7,7 @@ export type User = {
 
 export type UserSafe = Omit<User, 'passwordHash'>;
 
-export const userCollection = playgroundDb.collection<User>('users');
+export const userCollection = () => playgroundDb().collection<User>('users');
 
 export function safeUser(user: User): UserSafe {
   const { passwordHash: _, ...safeUser } = user;
