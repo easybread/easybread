@@ -1,5 +1,7 @@
-import { authStatusGet } from 'playground-feat-auth-data';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+import { isAdapterName } from 'playground-common';
+import { authStatusGet } from 'playground-feat-auth-data';
 import { adapterGoogleAuthComplete } from 'playground-feat-adapters-data';
 
 export type AuthCompleteProps = {
@@ -10,25 +12,31 @@ export type AuthCompleteProps = {
 export async function AdapterOauthCompleteGoogleAdmin(
   props: AuthCompleteProps
 ) {
+  const { code, state } = props.searchParams;
+  const { slug } = props;
+
+  if (!code || !state) {
+    return redirect(`/adapters`);
+  }
+
+  if (!isAdapterName(slug)) {
+    return redirect(`/adapters`);
+  }
+
   const authStatus = authStatusGet();
 
   if (!authStatus.authorized) {
     return redirect(`/login`);
   }
 
-  const { code, state } = props.searchParams;
-
-  if (!code || !state) {
-    console.log('code or state not found');
-    return redirect(`/adapters/${props.slug}`);
-  }
-
   await adapterGoogleAuthComplete({
     code,
     state,
-    slug: props.slug,
+    slug,
     userId: authStatus.data.userId,
   });
 
-  redirect(`/adapters`);
+  revalidatePath(`/`);
+
+  return redirect(`/adapters`);
 }

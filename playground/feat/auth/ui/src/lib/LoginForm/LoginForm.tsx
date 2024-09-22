@@ -5,7 +5,7 @@ export type LoginFormProps = {
   //
 };
 
-export function LoginForm(props: LoginFormProps) {
+export async function LoginForm(props: LoginFormProps) {
   return (
     <form action={loginAction} className="flex flex-col gap-4 min-w-72">
       <Input type="text" name="email" placeholder={'email'} />
