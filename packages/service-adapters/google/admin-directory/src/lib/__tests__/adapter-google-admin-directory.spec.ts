@@ -11,16 +11,17 @@ import axiosMock from 'axios';
 import { merge } from 'lodash';
 
 import {
-  GsuiteAdminAdapter,
-  GsuiteAdminAuthScope,
-  GsuiteAdminAuthStrategy,
-  GsuiteAdminOperationName,
-  GsuiteAdminUser,
-  GsuiteAdminUsersByIdOperation,
-  GsuiteAdminUsersCreateOperation,
-  GsuiteAdminUsersDeleteOperation,
-  GsuiteAdminUsersSearchOperation,
-  GsuiteAdminUsersUpdateOperation,
+  GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
+  GoogleAdminDirectoryAdapter,
+  GoogleAdminDirectoryAuthScope,
+  GoogleAdminDirectoryAuthStrategy,
+  GoogleAdminDirectoryOperationName,
+  GoogleAdminDirectoryUser,
+  GoogleAdminDirectoryUsersByIdOperation,
+  GoogleAdminDirectoryUsersCreateOperation,
+  GoogleAdminDirectoryUsersDeleteOperation,
+  GoogleAdminDirectoryUsersSearchOperation,
+  GoogleAdminDirectoryUsersUpdateOperation,
 } from '../..';
 import { USERS_BY_ID_MOCK } from './users-by-id.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
@@ -32,7 +33,7 @@ const CLIENT_ID = 'client-id';
 const CLIENT_SECRET = 'client-secret';
 const REDIRECT_URI = 'http://localhost:8080/accept-google-oauth2-code';
 
-const AUTH_SCOPES: GsuiteAdminAuthScope[] = [
+const AUTH_SCOPES: GoogleAdminDirectoryAuthScope[] = [
   'https://www.googleapis.com/auth/admin.directory.group',
   'https://www.googleapis.com/auth/admin.directory.group.member',
 ];
@@ -46,9 +47,9 @@ const ACCESS_TOKEN_CREATE_RESPONSE_DATA: GoogleCommonAccessTokenCreateResponse =
     token_type: 'Bearer',
   };
 
-const serviceAdapter = new GsuiteAdminAdapter();
+const serviceAdapter = new GoogleAdminDirectoryAdapter();
 const stateAdapter = new InMemoryStateAdapter();
-const authStrategy = new GsuiteAdminAuthStrategy(stateAdapter, {
+const authStrategy = new GoogleAdminDirectoryAuthStrategy(stateAdapter, {
   redirectUri: REDIRECT_URI,
   clientId: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
@@ -70,7 +71,7 @@ describe('Operations', () => {
     it(`should have the authUri in raw payload`, async () => {
       expect(await invokeStartAuth()).toEqual({
         name: 'GOOGLE_COMMON/AUTH_FLOW/START',
-        provider: 'gsuiteAdmin',
+        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: {
           data: {
             authUri:
@@ -113,7 +114,7 @@ describe('Operations', () => {
     });
   });
 
-  describe(GsuiteAdminOperationName.USERS_SEARCH, () => {
+  describe(GoogleAdminDirectoryOperationName.USERS_SEARCH, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersSearch('searchterm');
       expect(axiosMock.request).toHaveBeenCalledWith({
@@ -135,7 +136,7 @@ describe('Operations', () => {
       const output = await invokeUsersSearch();
 
       expect(output).toEqual({
-        name: 'GSUITE_ADMIN/USERS/SEARCH',
+        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/SEARCH',
         pagination: {
           next: 'nextpagetoken',
           type: 'PREV_NEXT',
@@ -158,7 +159,7 @@ describe('Operations', () => {
             name: 'William Reiske',
           },
         ],
-        provider: 'gsuiteAdmin',
+        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: {
           data: USERS_LIST_MOCK,
           success: true,
@@ -167,7 +168,7 @@ describe('Operations', () => {
     });
   });
 
-  describe(GsuiteAdminOperationName.USERS_BY_ID, () => {
+  describe(GoogleAdminDirectoryOperationName.USERS_BY_ID, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersById('114190879825460327746');
       expect(axiosMock.request).toHaveBeenCalledWith({
@@ -181,7 +182,7 @@ describe('Operations', () => {
       setupUsersByIdResponse();
       const output = await invokeUsersById('114190879825460327746');
       expect(output).toEqual({
-        name: 'GSUITE_ADMIN/USERS/BY_ID',
+        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/BY_ID',
         payload: {
           '@type': 'Person',
           address: '123 Street Address',
@@ -192,7 +193,7 @@ describe('Operations', () => {
           name: 'Alexandr Cherednichenko',
           telephone: '12345678',
         },
-        provider: 'gsuiteAdmin',
+        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: {
           data: USERS_BY_ID_MOCK,
           success: true,
@@ -201,7 +202,7 @@ describe('Operations', () => {
     });
   });
 
-  describe(GsuiteAdminOperationName.USERS_UPDATE, () => {
+  describe(GoogleAdminDirectoryOperationName.USERS_UPDATE, () => {
     it(`should call PUT https://www.googleapis.com/admin/directory/v1/users/userKey API`, async () => {
       await invokeUsersUpdate({
         '@type': 'Person',
@@ -235,7 +236,7 @@ describe('Operations', () => {
       });
 
       expect(output).toEqual({
-        name: 'GSUITE_ADMIN/USERS/UPDATE',
+        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/UPDATE',
         payload: {
           '@type': 'Person',
           address: '123 Street Address',
@@ -246,7 +247,7 @@ describe('Operations', () => {
           name: 'Alexandr Cherednichenko',
           telephone: '12345678',
         },
-        provider: 'gsuiteAdmin',
+        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: {
           data: updatedRawData,
           success: true,
@@ -255,7 +256,7 @@ describe('Operations', () => {
     });
   });
 
-  describe(GsuiteAdminOperationName.USERS_CREATE, () => {
+  describe(GoogleAdminDirectoryOperationName.USERS_CREATE, () => {
     it(`should call POST https://www.googleapis.com/admin/directory/v1/users API`, async () => {
       await invokeUsersCreate({
         '@type': 'Person',
@@ -286,7 +287,7 @@ describe('Operations', () => {
         familyName: 'Test',
       });
       expect(output).toEqual({
-        name: 'GSUITE_ADMIN/USERS/CREATE',
+        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/CREATE',
         payload: {
           '@type': 'Person',
           address: '123 Street Address',
@@ -297,7 +298,7 @@ describe('Operations', () => {
           name: 'Alexandr Cherednichenko',
           telephone: '12345678',
         },
-        provider: 'gsuiteAdmin',
+        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: {
           data: USERS_BY_ID_MOCK,
           success: true,
@@ -306,7 +307,7 @@ describe('Operations', () => {
     });
   });
 
-  describe(GsuiteAdminOperationName.USERS_DELETE, () => {
+  describe(GoogleAdminDirectoryOperationName.USERS_DELETE, () => {
     it(`should call DELETE https://www.googleapis.com/admin/directory/v1/users/userKey`, async () => {
       const id = '114190879825460327746';
       await invokeUsersDelete(id);
@@ -322,9 +323,9 @@ describe('Operations', () => {
       const id = '114190879825460327746';
       const output = await invokeUsersDelete(id);
       expect(output).toEqual({
-        name: 'GSUITE_ADMIN/USERS/DELETE',
+        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/DELETE',
         payload: { '@type': 'Person', identifier: id },
-        provider: 'gsuiteAdmin',
+        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: { success: true },
       });
     });
@@ -335,18 +336,18 @@ describe('Operations', () => {
 
 function invokeUsersDelete(
   identifier: string
-): Promise<GsuiteAdminUsersDeleteOperation['output']> {
-  return client.invoke<GsuiteAdminUsersDeleteOperation>({
-    name: GsuiteAdminOperationName.USERS_DELETE,
+): Promise<GoogleAdminDirectoryUsersDeleteOperation['output']> {
+  return client.invoke<GoogleAdminDirectoryUsersDeleteOperation>({
+    name: GoogleAdminDirectoryOperationName.USERS_DELETE,
     breadId: BREAD_ID,
     payload: { identifier, '@type': 'Person' },
   });
 }
 function invokeUsersCreate(
   payload: PersonSchema
-): Promise<GsuiteAdminUsersCreateOperation['output']> {
-  return client.invoke<GsuiteAdminUsersCreateOperation>({
-    name: GsuiteAdminOperationName.USERS_CREATE,
+): Promise<GoogleAdminDirectoryUsersCreateOperation['output']> {
+  return client.invoke<GoogleAdminDirectoryUsersCreateOperation>({
+    name: GoogleAdminDirectoryOperationName.USERS_CREATE,
     breadId: BREAD_ID,
     payload,
   });
@@ -354,9 +355,9 @@ function invokeUsersCreate(
 
 function invokeUsersUpdate(
   payload: PersonSchema
-): Promise<GsuiteAdminUsersUpdateOperation['output']> {
-  return client.invoke<GsuiteAdminUsersUpdateOperation>({
-    name: GsuiteAdminOperationName.USERS_UPDATE,
+): Promise<GoogleAdminDirectoryUsersUpdateOperation['output']> {
+  return client.invoke<GoogleAdminDirectoryUsersUpdateOperation>({
+    name: GoogleAdminDirectoryOperationName.USERS_UPDATE,
     breadId: BREAD_ID,
     payload,
   });
@@ -364,9 +365,9 @@ function invokeUsersUpdate(
 
 function invokeUsersSearch(
   query?: string
-): Promise<GsuiteAdminUsersSearchOperation['output']> {
-  return client.invoke<GsuiteAdminUsersSearchOperation>({
-    name: GsuiteAdminOperationName.USERS_SEARCH,
+): Promise<GoogleAdminDirectoryUsersSearchOperation['output']> {
+  return client.invoke<GoogleAdminDirectoryUsersSearchOperation>({
+    name: GoogleAdminDirectoryOperationName.USERS_SEARCH,
     params: { query },
     breadId: BREAD_ID,
     pagination: { type: 'PREV_NEXT', page: 'requested_page' },
@@ -375,18 +376,20 @@ function invokeUsersSearch(
 
 function invokeUsersById(
   id: string
-): Promise<GsuiteAdminUsersByIdOperation['output']> {
-  return client.invoke<GsuiteAdminUsersByIdOperation>({
-    name: GsuiteAdminOperationName.USERS_BY_ID,
+): Promise<GoogleAdminDirectoryUsersByIdOperation['output']> {
+  return client.invoke<GoogleAdminDirectoryUsersByIdOperation>({
+    name: GoogleAdminDirectoryOperationName.USERS_BY_ID,
     params: { identifier: id },
     breadId: BREAD_ID,
   });
 }
 
 function invokeStartAuth(): Promise<
-  GoogleCommonOauth2StartOperation<GsuiteAdminAuthScope>['output']
+  GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>['output']
 > {
-  return client.invoke<GoogleCommonOauth2StartOperation<GsuiteAdminAuthScope>>({
+  return client.invoke<
+    GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>
+  >({
     name: GoogleCommonOperationName.AUTH_FLOW_START,
     breadId: BREAD_ID,
     payload: {
@@ -428,8 +431,8 @@ function setupUsersByIdResponse(): void {
 }
 
 function setupUsersUpdateResponse(
-  update: Partial<GsuiteAdminUser>
-): GsuiteAdminUser {
+  update: Partial<GoogleAdminDirectoryUser>
+): GoogleAdminDirectoryUser {
   const updatedData = merge({}, USERS_BY_ID_MOCK, update);
 
   (axiosMock.request as Mock).mockImplementationOnce(() =>

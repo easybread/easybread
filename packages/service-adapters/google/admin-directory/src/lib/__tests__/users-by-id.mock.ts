@@ -1,6 +1,6 @@
-import { GsuiteAdminUser } from '../interfaces';
+import { GoogleAdminDirectoryUser } from '../interfaces';
 
-export const USERS_BY_ID_MOCK: GsuiteAdminUser = {
+export const USERS_BY_ID_MOCK: GoogleAdminDirectoryUser = {
   kind: 'admin#directory#user',
   id: '114190879825460327746',
   etag: '"s3sxUbiDZrO_w5pDMy1k-DjAn3hLQ_44DzW8eoBN_pY/Lwahpzn1AxHbXw1P-kWjgR21BCI"',

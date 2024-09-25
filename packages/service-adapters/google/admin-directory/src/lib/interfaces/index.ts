@@ -1,5 +1,5 @@
-export type { GsuiteAdminAuthScope } from './gsuite-admin.auth-scope.interface';
-export type { GsuiteAdminAddress } from './gsuite-admin.address.interface';
-export type { GsuiteAdminUser } from './gsuite-admin.user.interface';
-export type { GsuiteAdminUsersList } from './gsuite-admin.users-list.interface';
-export type { GsuiteAdminUsersListPaginationParams } from './gsuite-admin.users-list.pagination-params.interface';
+export type { GoogleAdminDirectoryAuthScope } from './google-admin-directory.auth-scope.interface';
+export type { GoogleAdminDirectoryAddress } from './google-admin-directory.address.interface';
+export type { GoogleAdminDirectoryUser } from './google-admin-directory.user.interface';
+export type { GoogleAdminDirectoryUsersList } from './google-admin-directory.users-list.interface';
+export type { GoogleAdminDirectoryUsersListPaginationParams } from './google-admin-directory.users-list.pagination-params.interface';

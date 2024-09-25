@@ -1,4 +1,4 @@
-export type GsuiteAdminAddress = {
+export type GoogleAdminDirectoryAddress = {
   type?: string;
   customType?: string;
   sourceIsStructured?: boolean;

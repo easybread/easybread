@@ -1,6 +1,6 @@
-import { GsuiteAdminAddress } from './gsuite-admin.address.interface';
+import { GoogleAdminDirectoryAddress } from './google-admin-directory.address.interface';
 
-export type GsuiteAdminUser = {
+export type GoogleAdminDirectoryUser = {
   kind: 'admin#directory#user';
   id?: string;
   etag?: string;
@@ -47,7 +47,7 @@ export type GsuiteAdminUser = {
     type?: string;
     customType?: string;
   }[];
-  addresses?: GsuiteAdminAddress[];
+  addresses?: GoogleAdminDirectoryAddress[];
   organizations?: {
     name?: string;
     title?: string;

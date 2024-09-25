@@ -4,20 +4,20 @@ import {
 } from '@easybread/core';
 
 import {
-  GsuiteAdminUsersList,
-  GsuiteAdminUsersListPaginationParams,
+  GoogleAdminDirectoryUsersList,
+  GoogleAdminDirectoryUsersListPaginationParams,
 } from '../interfaces';
 import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 
-export const gsuiteAdminPaginationAdapter = breadPaginationAdapter<
+export const googleAdminDirectoryPaginationAdapter = breadPaginationAdapter<
   BreadOperationInputPagination<'PREV_NEXT'>,
   BreadOperationOutputPagination<'PREV_NEXT'>,
-  GsuiteAdminUsersListPaginationParams,
-  GsuiteAdminUsersList
+  GoogleAdminDirectoryUsersListPaginationParams,
+  GoogleAdminDirectoryUsersList
 >({
   toExternalParams: {
     pageToken: (_) => {
-      if (!_.page) throw new Error('page is not specified');
+      if (!_.page) return '';
       return _.page.toString();
     },
   },
