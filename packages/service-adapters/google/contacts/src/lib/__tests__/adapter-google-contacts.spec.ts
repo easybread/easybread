@@ -173,7 +173,11 @@ describe('Google Plugin', () => {
           provider: serviceAdapter.provider,
           name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
           rawPayload: {
-            error: new Error('google: Not authorized'),
+            error: {
+              message: 'google: Not authorized',
+              originalError: {},
+              provider: 'google',
+            },
             success: false,
           },
         });

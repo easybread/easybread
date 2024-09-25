@@ -324,4 +324,14 @@ describe('allPages() async generator function', () => {
       ]);
     });
   });
+
+  describe('unAuthenticate()', () => {
+    it(`should remove auth data`, async () => {
+      const id = '1';
+      await client.unAuthenticate(id);
+      await expect(authStrategy.readAuthData(id)).rejects.toThrowError(
+        `no auth data in the state for user 1`
+      );
+    });
+  });
 });

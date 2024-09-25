@@ -8,22 +8,25 @@ import {
 import { BreadServiceAdapter } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
 import { AllPagesGenerator } from './all-pages-generator';
+import { BreadEventBus } from '../event-bus/bread-event.bus';
+import type { EasyBreadClientEvent } from './events/easy-bread-client.event';
 
 /**
  * Main library class.
  *
  * @template TOperation Defines Operations the client can handle.
- * @template A Defines Auth Strategy the client is going to use.
+ * @template TAuth Defines Auth Strategy the client is going to use.
+ * @template TOptions Service adapter options
  */
 export class EasyBreadClient<
   TOperation extends BreadOperation<string>,
   TAuth extends BreadAuthStrategy<object>,
   TOptions extends BreadServiceAdapterOptions | null = null
-> {
+> extends BreadEventBus<EasyBreadClientEvent> {
   allPagesGenerator: AllPagesGenerator;
 
   /**
-   * @param stateAdapter state adapter to use for persistence (save tokens & etc)
+   * @param stateAdapter state adapter to use for persistence (save tokens & etc.)
    * @param serviceAdapter a "plugin" service adapter.
    *                       Provides logic for requesting and transforming data
    * @param authStrategy an Auth strategy to use
@@ -37,6 +40,10 @@ export class EasyBreadClient<
     >,
     private readonly authStrategy: TAuth
   ) {
+    super();
+
+    this.authStrategy.forwardEvents(this);
+
     this.allPagesGenerator = new AllPagesGenerator((input) =>
       this.invoke(input)
     );
@@ -60,6 +67,10 @@ export class EasyBreadClient<
     >
   >(input: O['input']): AsyncGenerator<O['output'], void, unknown> {
     return this.allPagesGenerator.generate<O>(input);
+  }
+
+  async unAuthenticate(breadId: string): Promise<void> {
+    await this.authStrategy.unAuthenticate(breadId);
   }
 
   private createContext(
@@ -91,6 +102,8 @@ export class EasyBreadClient<
     output: O,
     _context: BreadOperationContext<TOperation, TAuth, TOptions>
   ): Promise<O> {
-    return output;
+    // TODO: remove this later hack later.
+    //   we should instead support optional serialization/deserialization
+    return JSON.parse(JSON.stringify(output));
   }
 }

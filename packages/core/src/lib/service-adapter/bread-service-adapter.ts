@@ -5,13 +5,13 @@ import { BreadServiceAdapterOptions } from '../common-interfaces';
 import {
   BreadException,
   NotImplementedException,
-  ServiceException
+  ServiceException,
 } from '../exception';
 import {
   BreadOperation,
   BreadOperationContext,
   BreadOperationHandler,
-  createFailedOperationOutput
+  createFailedOperationOutput,
 } from '../operation';
 
 /**
@@ -19,8 +19,8 @@ import {
  *
  * @template TOperation defines operation interfaces union type the adapter can handle
  * @template TAuthStrategy defines the AuthStrategy used by the service
- * @template [TOptions] defines the type of options that will be passed to every handler
- * @template [THandler] type alias for Operation Handler type that is this adapter can register
+ * @template TOptions defines the type of options that will be passed to every handler
+ * @template THandler type alias for Operation Handler type that is this adapter can register
  */
 export abstract class BreadServiceAdapter<
   TOperation extends BreadOperation<string>,
@@ -100,12 +100,12 @@ export abstract class BreadServiceAdapter<
   ): TOperation['output'] {
     return {
       ...outputWithoutProvider,
-      provider: this.provider
+      provider: this.provider,
     };
   }
 
   protected registerOperationHandlers(...operationHandlers: THandler[]): void {
-    operationHandlers.map(h => this.registerOperationHandler(h.name, h));
+    operationHandlers.map((h) => this.registerOperationHandler(h.name, h));
   }
 
   protected registerOperationHandler(
