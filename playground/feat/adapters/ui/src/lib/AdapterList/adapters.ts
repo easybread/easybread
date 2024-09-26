@@ -12,4 +12,9 @@ export const ADAPTERS: AdapterInfo[] = [
     title: 'Google Admin Directory',
     description: 'Manage resources in your Google Workspace',
   },
+  {
+    name: ADAPTER_NAME.BAMBOO_HR,
+    title: 'Bamboo HR',
+    description: 'Manage resources in your Bamboo HR',
+  },
 ];

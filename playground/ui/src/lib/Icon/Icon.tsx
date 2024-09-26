@@ -1,7 +1,8 @@
+import { clsx } from 'clsx';
 import { ICON_NAME, type IconName } from './IconName';
 import { SVGGoogleGLetter } from './SVGGoogleGLetter';
-import { clsx } from 'clsx';
 import { SVGChevronDown } from './SVGChevronDown';
+import { SVGBambooHr } from './SVGBambooHr';
 
 export type IconProps = {
   iconName: IconName;
@@ -9,13 +10,14 @@ export type IconProps = {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 };
 
-function SVG({ iconName }: { iconName: IconName }) {
+function RenderIcon({ iconName }: { iconName: IconName }) {
   switch (iconName) {
     case ICON_NAME.CHEVRON_DOWN:
       return <SVGChevronDown />;
     case ICON_NAME.GOOGLE_G_LETTER:
       return <SVGGoogleGLetter />;
-
+    case ICON_NAME.BAMBOO_HR:
+      return <SVGBambooHr />;
     default:
       return <div>no icon</div>;
   }
@@ -38,7 +40,7 @@ export function Icon(props: IconProps) {
         className
       )}
     >
-      {SVG({ iconName })}
+      <RenderIcon iconName={iconName} />
     </div>
   );
 }

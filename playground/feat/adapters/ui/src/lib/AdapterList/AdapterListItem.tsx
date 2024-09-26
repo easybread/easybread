@@ -13,7 +13,7 @@ export async function AdapterListItem(props: AdapterListItemProps) {
   return (
     <div className={'flex flex-col p-4 bg-white rounded-lg shadow-md'}>
       <h2 className={'text-xl font-bold'}>{title}</h2>
-      <p className={'text-md mb-2'}>{description}</p>
+      <p className={'text-md mb-2 h-full'}>{description}</p>
       <div className={'flex flex-col'}>
         <AdapterConnect name={name} connectedAt={adapterData?.createdAt} />
       </div>

@@ -20,6 +20,10 @@ const ADAPTERS_SELECT_OPTIONS: SelectOption<AdapterName>[] = [
     value: ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY,
     label: 'Google Admin Directory',
   },
+  {
+    value: ADAPTER_NAME.BAMBOO_HR,
+    label: 'Bamboo HR',
+  },
 ];
 
 export function PeopleSearchForm(props: PeopleSearchFormProps) {
@@ -37,13 +41,23 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
     ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY
   );
   const [state, setState] = useState<'idle' | 'loading'>('idle');
+  const [error, setError] = useState<string | null>(null);
 
   const search: FormEventHandler = (e) => {
     e.preventDefault();
     setState('loading');
 
     peopleSearchAction({ query, adapter }).then((r) => {
-      if (r.payload) onData(r.payload);
+      if (r.rawPayload.success) {
+        onData(r.payload);
+      } else {
+        console.error(r.rawPayload.error);
+        setError(
+          typeof r.rawPayload.error === 'string'
+            ? r.rawPayload.error
+            : (r.rawPayload.error as { message: string }).message
+        );
+      }
       setState('idle');
     });
   };
@@ -64,31 +78,37 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
   }
 
   return (
-    <form onSubmit={search} className={clsx('flex gap-2', className)}>
-      <Select
-        options={availableAdapters}
-        value={adapter}
-        onChange={setAdapter}
-        size={'md'}
-        variant={'outline'}
-        className={'min-w-64 bg-white'}
-      />
+    <form onSubmit={search} className={clsx('flex flex-col gap-2', className)}>
+      <div className={'flex gap-2'}>
+        <Select
+          options={availableAdapters}
+          value={adapter}
+          onChange={setAdapter}
+          size={'md'}
+          variant={'outline'}
+          className={'min-w-64 bg-white'}
+        />
+        <Input
+          autoFocus
+          disabled={state === 'loading'}
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <Button
+          type={'submit'}
+          disabled={state === 'loading'}
+          className={'min-w-36'}
+        >
+          {state === 'loading' ? 'Loading...' : 'Search'}
+        </Button>
+      </div>
 
-      <Input
-        autoFocus
-        disabled={state === 'loading'}
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-
-      <Button
-        type={'submit'}
-        disabled={state === 'loading'}
-        className={'min-w-36'}
-      >
-        {state === 'loading' ? 'Loading...' : 'Search'}
-      </Button>
+      {error && (
+        <div className={'text-red-500 flex flex-col'}>
+          <p>{error}</p>
+        </div>
+      )}
     </form>
   );
 }

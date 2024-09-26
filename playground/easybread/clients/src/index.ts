@@ -1,1 +1,2 @@
-export * from './lib/client-google-admin-directory-get';
+export * from './lib/clientGoogleAdminDirectoryGet';
+export * from './lib/clientBambooHrGet';

@@ -1,6 +1,6 @@
 import { StateAdapterMongo } from '@easybread/state-adapter-mongo';
 import { mongoClient } from 'playground-db';
 
-export const stateAdapterMongo = async () => {
+export const stateAdapterMongoGet = async () => {
   return await StateAdapterMongo.fromMongoClient(mongoClient());
 };

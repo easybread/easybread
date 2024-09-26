@@ -1,7 +1,8 @@
 import { OperationExecutor } from './operation-executor';
 import { BreadOperationContext, BreadOperationHandler } from '../operation';
 import { BreadServiceAdapterOptions } from '../common-interfaces';
-import { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { type InternalAxiosRequestConfig } from 'axios';
+import { createAxiosError } from '@easybread/test-utils';
 
 let mockHandler: jest.Mocked<BreadOperationHandler<any, any, any>>;
 let mockInput: any;
@@ -285,29 +286,19 @@ it('should use default shouldRetry behavior when not provided', async () => {
   expect(mockHandler.handle).toHaveBeenCalledTimes(1);
 });
 
-it(`should retry the operation on 429 HTTP error and don't call the handler.shouldRetry function`, async () => {
+it(`should retry the operation on 429 HTTP error if handler.shouldRetry returns null`, async () => {
   jest.useFakeTimers();
+
   const mockHandler = {
     name: 'mockOperation',
     handle: jest.fn().mockImplementation(async () => {
-      const config = {} as InternalAxiosRequestConfig;
-      throw new AxiosError(
-        'Some error',
-        'BAD_REQUEST_ERROR',
-        config,
-        {},
-        {
-          status: 429,
-          data: 'Too many requests',
-          headers: {},
-          config,
-          request: {},
-          statusText: 'Too May Requests',
-        }
-      );
+      throw createAxiosError('Some error', {
+        status: 429,
+        data: 'Too many requests',
+        statusText: 'Too May Requests',
+      });
     }),
-    shouldRetry: jest.fn(),
-    retryBackoffFactor: 1,
+    shouldRetry: jest.fn().mockReturnValue(null),
   } as unknown as BreadOperationHandler<any, any, any>;
 
   const retrier = new OperationExecutor({
@@ -323,8 +314,42 @@ it(`should retry the operation on 429 HTTP error and don't call the handler.shou
   await jest.runAllTimersAsync();
 
   expect(mockHandler.handle).toHaveBeenCalledTimes(11);
-  expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(0);
+  expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(11);
   await expect(executePromise).rejects.toThrow(
-    'Operation mockOperation failed after 10 retries. Time taken: 9000 ms'
+    'Operation mockOperation failed after 10 retries. Time taken: 511000 ms'
+  );
+});
+
+it(`should not retry the operation on 429 HTTP error if handler.shouldRetry returns false`, async () => {
+  jest.useFakeTimers();
+
+  const mockHandler = {
+    name: 'mockOperation',
+    handle: jest.fn().mockImplementation(async () => {
+      throw createAxiosError('Request failed with status code 429', {
+        status: 429,
+        data: 'Too many requests',
+        statusText: 'Too May Requests',
+      });
+    }),
+    shouldRetry: jest.fn().mockReturnValue(false),
+  } as unknown as BreadOperationHandler<any, any, any>;
+
+  const retrier = new OperationExecutor({
+    handler: mockHandler,
+    input: mockInput,
+    options: mockOptions,
+    context: mockContext,
+  });
+
+  const executePromise = retrier.execute();
+  executePromise.catch(() => undefined);
+
+  await jest.runAllTimersAsync();
+
+  expect(mockHandler.handle).toHaveBeenCalledTimes(1);
+  expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(1);
+  await expect(executePromise).rejects.toThrow(
+    'Request failed with status code 429'
   );
 });

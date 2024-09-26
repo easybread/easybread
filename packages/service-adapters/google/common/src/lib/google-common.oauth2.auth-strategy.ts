@@ -121,8 +121,6 @@ export class GoogleCommonOauth2AuthStrategy<
 
     const { expires_in, access_token } = result.data;
 
-    // TODO: handle failed refresh
-
     await this.writeAuthData(breadId, {
       accessToken: access_token,
       expiresAt: this.createExpirationDate(expires_in * 1000),

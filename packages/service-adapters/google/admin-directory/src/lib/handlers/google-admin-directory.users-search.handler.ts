@@ -20,7 +20,6 @@ export const GoogleAdminDirectoryUsersSearchHandler: BreadOperationHandler<
     const { name, params, pagination } = input;
     const { query } = params;
 
-    console.log('GoogleAdminDirectoryUsersSearchHandler');
     const response = await context.httpRequest<GoogleAdminDirectoryUsersList>({
       method: 'GET',
       url: 'https://www.googleapis.com/admin/directory/v1/users',

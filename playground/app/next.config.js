@@ -12,6 +12,17 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.bamboohr.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 const plugins = [

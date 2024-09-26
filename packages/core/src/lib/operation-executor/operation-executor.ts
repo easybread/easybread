@@ -72,13 +72,13 @@ export class OperationExecutor<
   }
 
   private shouldRetry(error: unknown): boolean {
-    if (this.isKnownRetryEligibleError(error)) {
-      return true;
-    }
-
-    return this.handler.shouldRetry
+    const handlerDecision = this.handler.shouldRetry
       ? this.handler.shouldRetry(error, this.retriesCount)
-      : false;
+      : null;
+
+    if (handlerDecision === null) return this.isKnownRetryEligibleError(error);
+
+    return handlerDecision;
   }
 
   private async retry(error: unknown) {
@@ -121,7 +121,13 @@ export class OperationExecutor<
       BreadHttpTransport.isTooManyRequestsError(error) ||
       BreadHttpTransport.isGatewayTimeoutError(error) ||
       BreadHttpTransport.isUnavailableError(error) ||
-      BreadHttpTransport.isConflictError(error) ||
+      // TODO: Maybe include conflict errors, but handle them better.
+      //  Sometimes it might mean a race condition,
+      //  sometimes it means a conflicting data
+      //  eg, when creating an entity that already exists
+      // BreadHttpTransport.isConflictError(error) ||
+
+      // TODO: should we handle internal server errors differently?
       BreadHttpTransport.isInternalServerError(error)
     );
   }

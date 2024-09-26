@@ -1,3 +1,6 @@
-import { createAxiosMock } from '@easybread/test-utils';
+const axios = jest.requireActual('axios');
 
-createAxiosMock(module);
+module.exports = {
+  ...axios,
+  request: jest.fn(() => Promise.resolve({ status: 500 })),
+};

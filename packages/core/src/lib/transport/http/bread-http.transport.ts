@@ -1,4 +1,9 @@
-import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
+import axios from 'axios';
+import {
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  isAxiosError,
+} from 'axios';
 
 export class BreadHttpTransport {
   static isTooManyRequestsError(error: unknown): boolean {
