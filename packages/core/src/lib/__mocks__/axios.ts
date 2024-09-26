@@ -1,6 +1,3 @@
-// eslint-disable-next-line no-console
-console.info('mocked axios');
+import { createAxiosMock } from '@easybread/test-utils';
 
-export default {
-  request: jest.fn(() => Promise.resolve({ status: 500 }))
-};
+createAxiosMock(module);

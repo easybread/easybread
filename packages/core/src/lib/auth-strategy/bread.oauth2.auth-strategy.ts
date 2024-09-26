@@ -13,8 +13,6 @@ export abstract class BreadOAuth2AuthStrategy<
     breadId: string,
     requestConfig: AxiosRequestConfig
   ): Promise<AxiosRequestConfig> {
-    console.log('BreadAuthStrategy.authorizeHttp');
-
     const authData = await this.getActiveAuthData(breadId);
 
     return this.addAuthorizationHeader(

@@ -15,4 +15,22 @@ export interface BreadOperationHandler<
     context: BreadOperationContext<TOperation, TAuthStrategy, TOptions>,
     options: TOptions
   ): Promise<Omit<TOperation['output'], 'provider'>>;
+
+  /**
+   * A function that determines whether the operation should be retried.
+   * If not provided, only the standard "Too many requests" errors
+   * will lead to retries.
+   *
+   * @param error
+   * @param retriesCount
+   */
+  shouldRetry?: (error: unknown, retriesCount: number) => boolean;
+
+  /**
+   * The factor by which the delay between retries will be multiplied.
+   */
+  retryBackoffFactor?: number;
 }
+
+export type InferOperationHandlerOperation<T extends object> =
+  T extends BreadOperationHandler<infer O, any, any> ? O : never;
