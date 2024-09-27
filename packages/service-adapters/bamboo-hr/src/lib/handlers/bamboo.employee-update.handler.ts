@@ -2,16 +2,14 @@ import {
   BreadOperationHandler,
   createSuccessfulOutputWithRawDataAndPayload,
 } from '@easybread/core';
-import {
-  BreadOperationName,
-  EmployeeUpdateOperation,
-} from '@easybread/operations';
+import { BreadOperationName } from '@easybread/operations';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { bambooEmployeeAdapter } from '../data-adapters';
+import type { BambooHrEmployeeUpdateOperation } from '../bamboo-hr.operation';
 
 export const BambooEmployeeUpdateHandler: BreadOperationHandler<
-  EmployeeUpdateOperation,
+  BambooHrEmployeeUpdateOperation,
   BambooHrAuthStrategy
 > = {
   async handle(input, context) {

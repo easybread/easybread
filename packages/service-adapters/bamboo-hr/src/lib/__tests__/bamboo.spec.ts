@@ -361,6 +361,7 @@ describe('usage', () => {
         provider: 'bamboo',
         rawPayload: {
           error: {
+            name: 'ServiceException',
             message:
               'bamboo: Request failed with status code 409. Duplicate email',
             originalError: {

@@ -1,27 +1,22 @@
 import { BreadAuthStrategy } from '../auth-strategy';
-import { BreadServiceAdapterOptions } from '../common-interfaces';
 import {
   BreadCollectionOperation,
-  BreadOperation,
   BreadOperationContext,
+  type BreadOperationPaginationType,
 } from '../operation';
 import { BreadServiceAdapter } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
 import { AllPagesGenerator } from './all-pages-generator';
 import { BreadEventBus } from '../event-bus/bread-event.bus';
 import type { EasyBreadClientEvent } from './events/easy-bread-client.event';
+import type { InferServiceAdapterOperation } from '../service-adapter/bread-service-adapter';
 
 /**
  * Main library class.
- *
- * @template TOperation Defines Operations the client can handle.
- * @template TAuth Defines Auth Strategy the client is going to use.
- * @template TOptions Service adapter options
  */
 export class EasyBreadClient<
-  TOperation extends BreadOperation<string>,
-  TAuth extends BreadAuthStrategy<object>,
-  TOptions extends BreadServiceAdapterOptions | null = null
+  TServiceAdapter extends BreadServiceAdapter<any, TAuthAdapter, any>,
+  TAuthAdapter extends BreadAuthStrategy<object>
 > extends BreadEventBus<EasyBreadClientEvent> {
   allPagesGenerator: AllPagesGenerator;
 
@@ -33,12 +28,8 @@ export class EasyBreadClient<
    */
   constructor(
     private readonly stateAdapter: BreadStateAdapter,
-    private readonly serviceAdapter: BreadServiceAdapter<
-      TOperation,
-      TAuth,
-      TOptions
-    >,
-    private readonly authStrategy: TAuth
+    private readonly serviceAdapter: TServiceAdapter,
+    private readonly authStrategy: TAuthAdapter
   ) {
     super();
 
@@ -49,7 +40,9 @@ export class EasyBreadClient<
     );
   }
 
-  async invoke<O extends TOperation>(input: O['input']): Promise<O['output']> {
+  async invoke<
+    TOperation extends InferServiceAdapterOperation<TServiceAdapter>
+  >(input: TOperation['input']): Promise<TOperation['output']> {
     const context = this.createContext(input.breadId);
 
     return this.preProcess(input, context)
@@ -59,11 +52,8 @@ export class EasyBreadClient<
 
   allPages<
     O extends Extract<
-      TOperation,
-      // TODO: replace with
-      //  `BreadCollectionOperation<TOperation['name'], BreadOperationPaginationType>`
-      //   and debug the tsc error
-      BreadCollectionOperation<TOperation['name'], any>
+      InferServiceAdapterOperation<TServiceAdapter>,
+      BreadCollectionOperation<any, any, any>
     >
   >(input: O['input']): AsyncGenerator<O['output'], void, unknown> {
     return this.allPagesGenerator.generate<O>(input);
@@ -73,35 +63,32 @@ export class EasyBreadClient<
     await this.authStrategy.unAuthenticate(breadId);
   }
 
-  private createContext(
-    breadId: string
-  ): BreadOperationContext<TOperation, TAuth, TOptions> {
+  private createContext(breadId: string): BreadOperationContext<TAuthAdapter> {
     return new BreadOperationContext({
       state: this.stateAdapter,
       auth: this.authStrategy,
-      client: this,
       breadId,
     });
   }
 
-  private async process<O extends TOperation>(
+  private async process<
+    O extends InferServiceAdapterOperation<TServiceAdapter>
+  >(
     input: O['input'],
-    context: BreadOperationContext<TOperation, TAuth, TOptions>
+    context: BreadOperationContext<TAuthAdapter>
   ): Promise<O['output']> {
     return await this.serviceAdapter.processOperation(input, context);
   }
 
-  private async preProcess<I extends TOperation['input']>(
-    input: I,
-    _context: BreadOperationContext<TOperation, TAuth, TOptions>
-  ): Promise<I> {
+  private async preProcess<
+    I extends InferServiceAdapterOperation<TServiceAdapter>['input']
+  >(input: I, _context: BreadOperationContext<TAuthAdapter>): Promise<I> {
     return input;
   }
 
-  private async postProcess<O extends TOperation['output']>(
-    output: O,
-    _context: BreadOperationContext<TOperation, TAuth, TOptions>
-  ): Promise<O> {
+  private async postProcess<
+    O extends InferServiceAdapterOperation<TServiceAdapter>['output']
+  >(output: O, _context: BreadOperationContext<TAuthAdapter>): Promise<O> {
     // TODO: remove this later hack later.
     //   we should instead support optional serialization/deserialization
     return JSON.parse(JSON.stringify(output));

@@ -1,15 +1,16 @@
+import axios from 'axios';
+import { mockAxios } from '@easybread/test-utils';
 import {
   BreadOperationSkipCountInputPagination,
   EasyBreadClient,
   InMemoryStateAdapter,
 } from '@easybread/core';
+
 import {
   RocketChatAuthConfigureOperation,
   RocketChatAuthStrategy,
   RocketChatOperationName,
 } from '@easybread/adapter-rocket-chat-common';
-import axiosMock from 'axios';
-
 import {
   RocketChatUsersAdapter,
   RocketChatUsersByIdOperation,
@@ -20,6 +21,8 @@ import {
 } from '../..';
 import { USERS_INFO_MOCK } from './users-info.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
+
+mockAxios();
 
 const BREAD_ID = '1';
 const AUTH_TOKEN = 'auth-token';
@@ -60,7 +63,7 @@ describe('Operations', () => {
 
     it(`should call GET https://testserver.io/api/users.list with expected query params`, async () => {
       await invokeUsersSearch();
-      expect((axiosMock.request as jest.Mock).mock.calls).toEqual([
+      expect(jest.mocked(axios.request).mock.calls).toEqual([
         [
           {
             headers: { 'X-Auth-Token': AUTH_TOKEN, 'X-User-Id': USER_ID },
@@ -118,7 +121,7 @@ describe('Operations', () => {
 
     it(`should call GET https://testserver.io/api/users.info with expected query params`, async () => {
       await invokeUsersById({ identifier: 'id1' });
-      expect(jest.mocked(axiosMock.request).mock.calls).toEqual([
+      expect(jest.mocked(axios.request).mock.calls).toEqual([
         [
           {
             headers: { 'X-Auth-Token': AUTH_TOKEN, 'X-User-Id': USER_ID },
@@ -152,7 +155,7 @@ describe('Operations', () => {
 //  ------------------------------------
 
 function setupUsersListResponse(): void {
-  (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: USERS_LIST_MOCK,
@@ -180,7 +183,7 @@ async function invokeUsersSearch(
 //  ------------------------------------
 
 function setupUsersInfoResponse(): void {
-  (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: USERS_INFO_MOCK,

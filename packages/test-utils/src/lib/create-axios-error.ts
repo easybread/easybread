@@ -1,8 +1,16 @@
 import { AxiosError, type AxiosResponse } from 'axios';
+type CreateAxiosErrorResponse = Partial<AxiosResponse> & { status: number };
+
+const DEFAULT_RESPONSE = {
+  status: 500,
+  statusText: 'Artificial Test Error',
+  data: {},
+  headers: {},
+} satisfies CreateAxiosErrorResponse;
 
 export function createAxiosError(
   errorMessage: string,
-  response: Partial<AxiosResponse> & { status: number }
+  response: CreateAxiosErrorResponse = { ...DEFAULT_RESPONSE }
 ) {
   return new AxiosError(
     errorMessage,
@@ -11,9 +19,7 @@ export function createAxiosError(
     {},
     {
       config: {} as any,
-      statusText: 'Artificial Test Error',
-      headers: {},
-      data: '',
+      ...DEFAULT_RESPONSE,
       ...response,
     }
   );

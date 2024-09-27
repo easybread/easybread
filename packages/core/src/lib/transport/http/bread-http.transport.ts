@@ -4,26 +4,47 @@ import {
   type AxiosResponse,
   isAxiosError,
 } from 'axios';
+import type { BreadHttpTransportError } from './bread-http.transport-error';
 
 export class BreadHttpTransport {
   static isTooManyRequestsError(error: unknown): boolean {
-    return isAxiosError(error) && error.response?.status === 429;
+    return isAxiosError(error) && this.getErrorStatus(error) === 429;
   }
 
   static isGatewayTimeoutError(error: unknown): boolean {
-    return isAxiosError(error) && error.response?.status === 504;
+    return isAxiosError(error) && this.getErrorStatus(error) === 504;
   }
 
   static isUnavailableError(error: unknown): boolean {
-    return isAxiosError(error) && error.response?.status === 503;
+    return isAxiosError(error) && this.getErrorStatus(error) === 503;
   }
 
   static isConflictError(error: unknown): boolean {
-    return isAxiosError(error) && error.response?.status === 409;
+    return isAxiosError(error) && this.getErrorStatus(error) === 409;
   }
 
   static isInternalServerError(error: unknown): boolean {
-    return isAxiosError(error) && error.response?.status === 500;
+    return isAxiosError(error) && this.getErrorStatus(error) === 500;
+  }
+
+  static isHttpError(error: unknown): error is BreadHttpTransportError<any> {
+    return isAxiosError(error);
+  }
+
+  static getErrorStatus(error: BreadHttpTransportError<any>): number {
+    return error.response?.status ?? error.status ?? 500;
+  }
+
+  static getErrorData<T extends BreadHttpTransportError<any>>(
+    error: T
+  ): T extends BreadHttpTransportError<infer TData>
+    ? TData | undefined
+    : never {
+    return error.response?.data;
+  }
+
+  static getErrorMessage(error: BreadHttpTransportError<any>): string {
+    return error.message;
   }
 
   async request<T>(

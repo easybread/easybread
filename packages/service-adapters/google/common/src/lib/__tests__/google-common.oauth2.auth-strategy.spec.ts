@@ -4,15 +4,13 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-import axiosMock from 'axios';
+import axios from 'axios';
 
 import {
   GoogleCommonOauth2AuthStrategy,
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
 } from '../..';
-
-type Mock = jest.Mock;
 
 type TestScopes =
   | 'https://www.google.com/m8/feeds/'
@@ -104,7 +102,7 @@ describe('authenticate()', () => {
 
   it(`should send correct http request`, async () => {
     await authStrategy.authenticate(BREAD_ID, { code: 'testcode' });
-    expect(axiosMock.request).toHaveBeenCalledWith({
+    expect(axios.request).toHaveBeenCalledWith({
       data:
         'client_id=TEST_ID' +
         '&client_secret=TEST_SECRET' +
@@ -181,7 +179,7 @@ describe('refreshToken()', () => {
     jest.resetAllMocks();
     setupRefreshTokenMock();
     await authStrategy.refreshToken(BREAD_ID);
-    expect(axiosMock.request).toHaveBeenCalledWith({
+    expect(axios.request).toHaveBeenCalledWith({
       data:
         'client_id=TEST_ID' +
         '&client_secret=TEST_SECRET' +
@@ -197,7 +195,7 @@ describe('refreshToken()', () => {
 //  ------------------------------------
 
 function setupAccessTokenResponseMock(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() => {
+  jest.mocked(axios.request).mockImplementationOnce(() => {
     return Promise.resolve({
       status: 200,
       data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
@@ -206,7 +204,7 @@ function setupAccessTokenResponseMock(): void {
 }
 
 function setupRefreshTokenMock(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() => {
+  jest.mocked(axios.request).mockImplementationOnce(() => {
     return Promise.resolve({
       status: 200,
       data: REFRESH_TOKEN_RESPONSE_DATA,

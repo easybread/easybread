@@ -8,9 +8,9 @@ import {
   ServiceException,
 } from '../exception';
 import {
-  BreadOperation,
-  BreadOperationContext,
-  BreadOperationHandler,
+  type BreadOperation,
+  type BreadOperationContext,
+  type BreadOperationHandlerDistributed,
   createFailedOperationOutput,
 } from '../operation';
 import { OperationExecutor } from '../operation-executor';
@@ -26,16 +26,14 @@ import { OperationExecutor } from '../operation-executor';
 export abstract class BreadServiceAdapter<
   TOperation extends BreadOperation<string>,
   TAuthStrategy extends BreadAuthStrategy<object>,
-  TOptions extends BreadServiceAdapterOptions | null = null,
-  THandler extends BreadOperationHandler<
-    TOperation,
-    TAuthStrategy,
-    TOptions
-  > = BreadOperationHandler<TOperation, TAuthStrategy, TOptions>
+  TOptions extends BreadServiceAdapterOptions | null = null
 > {
   protected options: TOptions;
 
-  private handlers: Map<TOperation['name'], THandler> = new Map();
+  private handlers: Map<
+    TOperation['name'],
+    BreadOperationHandlerDistributed<TOperation, TAuthStrategy, TOptions>
+  > = new Map();
 
   abstract provider: string;
 
@@ -46,7 +44,7 @@ export abstract class BreadServiceAdapter<
 
   async processOperation<O extends TOperation>(
     input: O['input'],
-    context: BreadOperationContext<TOperation, TAuthStrategy, TOptions>
+    context: BreadOperationContext<TAuthStrategy>
   ): Promise<O['output']> {
     try {
       const handler = this.findHandler(input.name);
@@ -116,13 +114,23 @@ export abstract class BreadServiceAdapter<
     };
   }
 
-  protected registerOperationHandlers(...operationHandlers: THandler[]): void {
+  protected registerOperationHandlers(
+    ...operationHandlers: BreadOperationHandlerDistributed<
+      TOperation,
+      TAuthStrategy,
+      TOptions
+    >[]
+  ): void {
     operationHandlers.map((h) => this.registerOperationHandler(h.name, h));
   }
 
-  protected registerOperationHandler(
-    operationName: TOperation['name'],
-    operationHandler: THandler
+  protected registerOperationHandler<TName extends TOperation['name']>(
+    operationName: TName,
+    operationHandler: BreadOperationHandlerDistributed<
+      TOperation,
+      TAuthStrategy,
+      TOptions
+    >
   ): void {
     // TODO: do something if exists
     if (this.handlers.has(operationName)) return;
@@ -130,7 +138,9 @@ export abstract class BreadServiceAdapter<
     this.handlers.set(operationName, operationHandler);
   }
 
-  protected findHandler(operationName: TOperation['name']): THandler {
+  protected findHandler(
+    operationName: TOperation['name']
+  ): BreadOperationHandlerDistributed<TOperation, TAuthStrategy, TOptions> {
     const handler = this.handlers.get(operationName);
     if (!handler) {
       throw new NotImplementedException();
@@ -138,3 +148,18 @@ export abstract class BreadServiceAdapter<
     return handler;
   }
 }
+
+// ------------------------------------
+
+export type BreadServiceAdapterAny = BreadServiceAdapter<any, any, any>;
+
+export type InferServiceAdapterOperation<T extends BreadServiceAdapterAny> =
+  T extends BreadServiceAdapter<infer TOperation, any, any>
+    ? TOperation
+    : never;
+
+export type InferServiceAdapterAuthAdapter<T extends BreadServiceAdapterAny> =
+  T extends BreadServiceAdapter<any, infer TAuth, any> ? TAuth : never;
+
+export type InferServiceAdapterOptions<T extends BreadServiceAdapterAny> =
+  T extends BreadServiceAdapter<any, any, infer TOptions> ? TOptions : never;

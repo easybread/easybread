@@ -1,6 +1,7 @@
 import {
   BreadOperationContext,
   type BreadOperationHandler,
+  type BreadOperationError,
   type InferOperationHandlerOperation,
 } from '../operation';
 import { BreadServiceAdapterOptions } from '../common-interfaces';
@@ -13,7 +14,7 @@ interface OperationExecutorProps<
   handler: THandler;
   input: InferOperationHandlerOperation<THandler>['input'];
   options: BreadServiceAdapterOptions | null;
-  context: BreadOperationContext<any, any, any>;
+  context: BreadOperationContext<any>;
 }
 
 // TODO:
@@ -72,8 +73,15 @@ export class OperationExecutor<
   }
 
   private shouldRetry(error: unknown): boolean {
+    if (!BreadHttpTransport.isHttpError(error)) return false;
+
     const handlerDecision = this.handler.shouldRetry
-      ? this.handler.shouldRetry(error, this.retriesCount)
+      ? this.handler.shouldRetry(
+          error as BreadOperationError<
+            InferOperationHandlerOperation<THandler>
+          >,
+          this.retriesCount
+        )
       : null;
 
     if (handlerDecision === null) return this.isKnownRetryEligibleError(error);

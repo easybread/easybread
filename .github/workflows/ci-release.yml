@@ -50,7 +50,6 @@ jobs:
       # even if we set `"dependsOn": [ "build" ]` in the nx.json file for the `nx-release-publish` target.
       # So we build manually
       - name: Build packages
-
         run: pnpm dlx nx run-many -t build
         shell: bash
 

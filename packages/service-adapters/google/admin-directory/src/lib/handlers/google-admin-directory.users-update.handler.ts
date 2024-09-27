@@ -4,10 +4,10 @@ import {
 } from '@easybread/core';
 
 import { googleAdminDirectoryUserAdapter } from '../data-adapters';
-import { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
 import { GoogleAdminDirectoryOperationName } from '../google-admin-directory.operation-name';
 import { GoogleAdminDirectoryUser } from '../interfaces';
 import { GoogleAdminDirectoryUsersUpdateOperation } from '../operations';
+import type { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
 
 export const GoogleAdminDirectoryUsersUpdateHandler: BreadOperationHandler<
   GoogleAdminDirectoryUsersUpdateOperation,
