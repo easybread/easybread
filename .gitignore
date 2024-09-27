@@ -28,6 +28,7 @@ tmp/
 .env
 *.env
 .env.*
+!.env.example
 
 # Next.js
 .next

@@ -1,0 +1,9 @@
+{
+  "name": "playground-feat-auth-data",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "playground/feat/auth/data/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project playground-feat-auth-data --web",
+  "targets": {}
+}

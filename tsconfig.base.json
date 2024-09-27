@@ -8,9 +8,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2023",
+    "target": "ES2023",
     "module": "esnext",
-    "lib": ["es2023", "dom"],
+    "lib": ["ES2023", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -49,7 +49,39 @@
       "@easybread/state-adapter-mongo": [
         "packages/state-adapter-mongo/src/index.ts"
       ],
-      "@easybread/test-utils": ["packages/test-utils/src/index.ts"]
+      "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
+      "playground-common": ["playground/common/src/index.ts"],
+      "playground-db": ["playground/db/src/index.ts"],
+      "playground-easybread-clients": [
+        "playground/easybread/clients/src/index.ts"
+      ],
+      "playground-easybread-state": ["playground/easybread/state/src/index.ts"],
+      "playground-feat-adapters-data": [
+        "playground/feat/adapters/data/src/index.ts"
+      ],
+      "playground-feat-adapters-ui": [
+        "playground/feat/adapters/ui/src/index.ts"
+      ],
+      "playground-feat-adapters-ui/server": [
+        "playground/feat/adapters/ui/src/server.ts"
+      ],
+      "playground-feat-auth-data": ["playground/feat/auth/data/src/index.ts"],
+      "playground-feat-auth-ui": ["playground/feat/auth/ui/src/index.ts"],
+      "playground-feat-auth-ui/server": [
+        "playground/feat/auth/ui/src/server.ts"
+      ],
+      "playground-feat-nav-ui": ["playground/feat/nav/ui/src/index.ts"],
+      "playground-feat-nav-ui/server": ["playground/feat/nav/ui/src/server.ts"],
+      "playground-feat-people-data": [
+        "playground/feat/people/data/src/index.ts"
+      ],
+      "playground-feat-people-ui": ["playground/feat/people/ui/src/index.ts"],
+      "playground-feat-people-ui/server": [
+        "playground/feat/people/ui/src/server.ts"
+      ],
+      "playground-feat-users-data": ["playground/feat/users/data/src/index.ts"],
+      "playground-ui": ["playground/ui/src/index.ts"],
+      "playground-ui/server": ["playground/ui/src/server.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

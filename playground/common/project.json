@@ -1,0 +1,9 @@
+{
+  "name": "playground-common",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "playground/common/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project playground-common --web",
+  "targets": {}
+}

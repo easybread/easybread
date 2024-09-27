@@ -88,7 +88,7 @@ export class BreadDataMapper<
     R extends BreadDataMapValueResolverDefinition<I, O>,
     O
   >(input: I, resolverDef: R): O {
-    if (resolverDef === null) return null;
+    if (resolverDef === null) return null as O;
 
     if (typeof resolverDef === 'string') {
       return input[resolverDef] as Extract<O, string>;
@@ -118,6 +118,7 @@ export class BreadDataMapper<
         resolverDef
       );
     }
+    throw new Error('Unknown resolver');
   }
 
   private isDataMapDefinitionResolver<
@@ -132,6 +133,7 @@ export class BreadDataMapper<
     O extends BreadDataMapIOConstraint
   >(value: unknown): value is BreadDataMapperClass<I, O> {
     return (
+      value !== null &&
       typeof value === 'object' &&
       'map' in value &&
       typeof value.map === 'function'

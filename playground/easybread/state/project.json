@@ -1,0 +1,9 @@
+{
+  "name": "playground-easybread-state",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "playground/easybread/state/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project playground-easybread-state --web",
+  "targets": {}
+}
