@@ -1,4 +1,3 @@
-import { load } from 'ts-dotenv';
 import {
   BambooHrAdapter,
   BambooHrAuthStrategy,
@@ -14,8 +13,6 @@ let client: EasyBreadClient<BambooHrOperation, BambooHrAuthStrategy, null>;
 
 export async function clientBambooHrGet() {
   if (client) return client;
-
-  const { BAMBOO_HR_KEY } = load({ BAMBOO_HR_KEY: String });
 
   const adapter = new BambooHrAdapter();
   const stateAdapter = await stateAdapterMongoGet();
