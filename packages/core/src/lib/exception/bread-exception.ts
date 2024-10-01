@@ -6,14 +6,16 @@ export class BreadException extends Error {
   toJSON(): object {
     return {
       ...this.valueOf(),
-      message: this.message
+      name: this.constructor.name,
+      message: this.message,
     };
   }
 
   toObject(): object {
     return {
       ...this.valueOf(),
-      message: this.message
+      name: this.constructor.name,
+      message: this.message,
     };
   }
 }

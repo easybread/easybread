@@ -1,13 +1,13 @@
 import { OperationExecutor } from './operation-executor';
 import { BreadOperationContext, BreadOperationHandler } from '../operation';
 import { BreadServiceAdapterOptions } from '../common-interfaces';
-import { type InternalAxiosRequestConfig } from 'axios';
 import { createAxiosError } from '@easybread/test-utils';
+import { RetriesLimitReachedException } from '../exception';
 
 let mockHandler: jest.Mocked<BreadOperationHandler<any, any, any>>;
 let mockInput: any;
 let mockOptions: BreadServiceAdapterOptions | null;
-let mockContext: BreadOperationContext<any, any, any>;
+let mockContext: BreadOperationContext<any>;
 
 beforeEach(() => {
   jest.restoreAllMocks();
@@ -18,7 +18,7 @@ beforeEach(() => {
   };
   mockInput = { someInput: 'value' };
   mockOptions = null;
-  mockContext = {} as BreadOperationContext<any, any, any>;
+  mockContext = {} as BreadOperationContext<any>;
 });
 
 afterEach(() => {
@@ -50,7 +50,7 @@ it('should execute successfully without retries', async () => {
 it('should retry on errors when shouldRetry returns true', async () => {
   jest.useFakeTimers();
 
-  const error = new Error('Temporary error');
+  const error = createAxiosError('Temporary error');
   const expectedOutput = { success: true };
 
   mockHandler.handle
@@ -93,7 +93,7 @@ it('should retry on errors when shouldRetry returns true', async () => {
 it(`should pass the retries count to shouldRetry function`, async () => {
   jest.useFakeTimers();
 
-  const error = new Error('Temporary error');
+  const error = createAxiosError('Temporary error');
   const expectedOutput = { success: true };
 
   mockHandler.handle
@@ -132,7 +132,7 @@ it(`should pass the retries count to shouldRetry function`, async () => {
 it('should respect the retry limit', async () => {
   jest.useFakeTimers();
 
-  const error = new Error('Persistent error');
+  const error = createAxiosError('Persistent error');
 
   mockHandler.handle.mockRejectedValue(error);
   jest.mocked(mockHandler.shouldRetry)?.mockReturnValue(true);
@@ -159,9 +159,7 @@ it('should respect the retry limit', async () => {
     expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(i + 2);
   }
 
-  await expect(executePromise).rejects.toThrowError(
-    'Operation mockOperation failed after 3 retries'
-  );
+  await expect(executePromise).rejects.toThrow(RetriesLimitReachedException);
   expect(mockHandler.handle).toHaveBeenCalledTimes(4);
   expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(4);
 });
@@ -171,7 +169,7 @@ it('should increase delay between retries by two times (by default) the previous
 
   const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
 
-  const error = new Error('Temporary error');
+  const error = createAxiosError('Temporary error');
   const expectedOutput = { success: true };
 
   mockHandler.handle
@@ -205,10 +203,10 @@ it('should increase delay between retries by two times (by default) the previous
   expect(setTimeoutSpy).toHaveBeenNthCalledWith(4, expect.any(Function), 4000);
 });
 
-it('should use the retryBackoffFactor defined on the handler object', async () => {
+it('should respect the retryBackoffFactor defined on the handler object', async () => {
   jest.useFakeTimers();
 
-  const error = new Error('Temporary error');
+  const error = createAxiosError('Temporary error');
   const expectedOutput = { success: true };
 
   mockHandler.handle
@@ -244,7 +242,7 @@ it('should use the retryBackoffFactor defined on the handler object', async () =
 it('should throw the original error when shouldRetry returns false', async () => {
   jest.useFakeTimers();
 
-  const error = new Error('Non-retryable error');
+  const error = createAxiosError('Non-retryable error');
 
   mockHandler.handle.mockRejectedValue(error);
   jest.mocked(mockHandler.shouldRetry)?.mockReturnValue(false);
@@ -264,13 +262,13 @@ it('should throw the original error when shouldRetry returns false', async () =>
   expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(1);
 });
 
-it('should use default shouldRetry behavior when not provided', async () => {
+it(`should throw RetriesLimitReachedException if retries limit is reached`, async () => {
   jest.useFakeTimers();
 
-  const error = new Error('Some error');
+  const axiosError = createAxiosError('Some http error', { status: 500 });
 
-  mockHandler.handle.mockRejectedValue(error);
-  delete mockHandler.shouldRetry;
+  mockHandler.handle.mockRejectedValue(axiosError);
+  jest.mocked(mockHandler.shouldRetry)?.mockReturnValue(true);
 
   const retrier = new OperationExecutor({
     handler: mockHandler,
@@ -280,13 +278,75 @@ it('should use default shouldRetry behavior when not provided', async () => {
   });
 
   const executePromise = retrier.execute();
-  jest.runAllTimers();
+  executePromise.catch(() => undefined);
 
-  await expect(executePromise).rejects.toThrow('Some error');
-  expect(mockHandler.handle).toHaveBeenCalledTimes(1);
+  await jest.runAllTimersAsync();
+
+  await expect(executePromise).rejects.toEqual(
+    expect.objectContaining({
+      message: expect.stringMatching(
+        /Operation mockOperation failed after 10 retries. Time taken: \d+ ms/
+      ),
+      cause: axiosError,
+      input: mockInput,
+      retriesCount: 10,
+      startTime: expect.any(Number),
+      endTime: expect.any(Number),
+      operationName: 'mockOperation',
+      options: mockOptions,
+    } satisfies Partial<RetriesLimitReachedException>)
+  );
 });
 
-it(`should retry the operation on 429 HTTP error if handler.shouldRetry returns null`, async () => {
+it(`should not retry on non-http errors and don't call handler.shouldRetry`, async () => {
+  jest.useFakeTimers();
+  const runtimeError = new Error('Some runtime error');
+
+  mockHandler.handle.mockRejectedValue(runtimeError);
+
+  const retrier = new OperationExecutor({
+    handler: mockHandler,
+    input: mockInput,
+    options: mockOptions,
+    context: mockContext,
+  });
+
+  const executePromise = retrier.execute();
+  executePromise.catch(() => undefined);
+
+  await jest.runAllTimersAsync();
+
+  await expect(executePromise).rejects.toThrow('Some runtime error');
+  expect(mockHandler.shouldRetry).not.toHaveBeenCalled();
+});
+
+it('should be ok if handler.shouldRetry is undefined', async () => {
+  jest.useFakeTimers();
+
+  const axiosError = createAxiosError('Some http error', { status: 500 });
+
+  delete mockHandler.shouldRetry;
+
+  mockHandler.handle.mockRejectedValue(axiosError);
+  const retrier = new OperationExecutor({
+    handler: mockHandler,
+    input: mockInput,
+    options: mockOptions,
+    context: mockContext,
+  });
+
+  const executePromise = retrier.execute();
+  executePromise.catch(() => undefined);
+
+  await jest.runAllTimersAsync();
+
+  await expect(executePromise).rejects.toThrow(RetriesLimitReachedException);
+  expect(mockHandler.handle).toHaveBeenCalledTimes(11);
+});
+
+// TODO: test all possible http error codes
+//  and verify the expected retry behavior
+it(`should retry the operation on retry-eligible HTTP error if handler.shouldRetry returns null`, async () => {
   jest.useFakeTimers();
 
   const mockHandler = {
@@ -315,12 +375,10 @@ it(`should retry the operation on 429 HTTP error if handler.shouldRetry returns 
 
   expect(mockHandler.handle).toHaveBeenCalledTimes(11);
   expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(11);
-  await expect(executePromise).rejects.toThrow(
-    'Operation mockOperation failed after 10 retries. Time taken: 511000 ms'
-  );
+  await expect(executePromise).rejects.toThrow(RetriesLimitReachedException);
 });
 
-it(`should not retry the operation on 429 HTTP error if handler.shouldRetry returns false`, async () => {
+it(`should not retry the operation on retry-eligible HTTP error if handler.shouldRetry returns false`, async () => {
   jest.useFakeTimers();
 
   const mockHandler = {
@@ -347,9 +405,9 @@ it(`should not retry the operation on 429 HTTP error if handler.shouldRetry retu
 
   await jest.runAllTimersAsync();
 
-  expect(mockHandler.handle).toHaveBeenCalledTimes(1);
-  expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(1);
   await expect(executePromise).rejects.toThrow(
     'Request failed with status code 429'
   );
+  expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(1);
+  expect(mockHandler.handle).toHaveBeenCalledTimes(1);
 });

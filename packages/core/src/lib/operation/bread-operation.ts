@@ -20,7 +20,7 @@ import {
 } from './bread-operation-output';
 import { BreadOperationPaginationType } from './bread-operation-pagination';
 
-export interface BreadStandardOperation<T extends string> {
+export interface BreadStandardOperation<T extends string, E = any> {
   name: T;
   input:
     | BreadOperationInput<T>
@@ -36,6 +36,8 @@ export interface BreadStandardOperation<T extends string> {
     | BreadOperationOutputWithRawData<T, object>
     | BreadOperationOutputWithPayload<T, BreadSchema>
     | BreadOperationOutputWithRawDataAndPayload<T, object, BreadSchema>;
+
+  error: E;
 }
 
 // ------------------------------------
@@ -45,10 +47,11 @@ export interface BreadStandardOperation<T extends string> {
 // then it should use specific interfaces designed for that.
 // ------------------------------------
 
-export interface BreadCollectionOperation<
+export type BreadCollectionOperation<
   T extends string,
-  P extends BreadOperationPaginationType
-> {
+  P extends BreadOperationPaginationType,
+  E = any
+> = {
   name: T;
   input:
     | BreadCollectionOperationInput<T, P>
@@ -73,8 +76,10 @@ export interface BreadCollectionOperation<
         BreadSchema[],
         P
       >;
-}
 
-export type BreadOperation<T extends string> =
-  | BreadStandardOperation<T>
-  | BreadCollectionOperation<T, BreadOperationPaginationType>;
+  error: E;
+};
+
+export type BreadOperation<T extends string, E = any> =
+  | BreadStandardOperation<T, E>
+  | BreadCollectionOperation<T, BreadOperationPaginationType, E>;

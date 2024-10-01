@@ -5,7 +5,8 @@
     "@easybread/core": "0.0.1",
     "@easybread/schemas": "0.0.1",
     "axios": "^1.7.4",
-    "@easybread/data-adapter": "0.0.1"
+    "@easybread/data-adapter": "0.0.1",
+    "@easybread/test-utils": "0.0.1"
   },
   "main": "./index.cjs",
   "module": "./index.js"

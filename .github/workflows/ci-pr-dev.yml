@@ -43,12 +43,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: List all remotes
-        run: git remote -v
-
-      - name: List all branches
-        run: git branch -a --no-color
-
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected

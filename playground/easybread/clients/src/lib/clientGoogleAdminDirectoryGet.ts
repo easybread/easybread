@@ -3,7 +3,6 @@ import { stateAdapterMongoGet } from 'playground-easybread-state';
 import {
   GoogleAdminDirectoryAdapter,
   GoogleAdminDirectoryAuthStrategy,
-  type GoogleAdminDirectoryOperation,
 } from '@easybread/adapter-google-admin-directory';
 import { load } from 'ts-dotenv';
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
@@ -11,9 +10,8 @@ import { adapterCollection } from 'playground-db';
 import { revalidatePath } from 'next/cache';
 
 let client: EasyBreadClient<
-  GoogleAdminDirectoryOperation,
-  GoogleAdminDirectoryAuthStrategy,
-  null
+  GoogleAdminDirectoryAdapter,
+  GoogleAdminDirectoryAuthStrategy
 >;
 
 export const clientGoogleAdminDirectoryGet = async () => {
@@ -47,9 +45,6 @@ export const clientGoogleAdminDirectoryGet = async () => {
   client.subscribe(BreadAuthenticationLostEvent.eventName, async (event) => {
     const { breadId } = event.payload;
     const { userId } = parseBreadId(breadId);
-
-    console.error('Adapter google admin directory lost');
-    console.error(event);
 
     await adapterCollection().deleteOne({
       userId,

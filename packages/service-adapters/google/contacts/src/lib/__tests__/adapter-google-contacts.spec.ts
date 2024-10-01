@@ -12,7 +12,7 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-import axiosMock, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 import {
   GoogleContactsAdapter,
@@ -29,8 +29,6 @@ import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock
 import { CONTACT_FEED_ENTRY_UPDATE_MOCK } from './contact-feed-entry-update.mock';
 import { CONTACT_FEED_ENTRY_MOCK } from './contact-feed-entry.mock';
 import { CONTACTS_FEED_MOCK } from './contacts-feed.mock';
-
-type Mock = jest.Mock;
 
 setExtendedTimeout();
 mockAxios();
@@ -130,7 +128,7 @@ describe('Google Plugin', () => {
 
       beforeEach(() => {
         jest.resetAllMocks();
-        (axiosMock.request as Mock).mockImplementationOnce(() => {
+        jest.mocked(axios.request).mockImplementationOnce(() => {
           if (errorMode) {
             throw new Error('Not authorized');
           }
@@ -144,7 +142,7 @@ describe('Google Plugin', () => {
 
       it(`should call google /token api`, async () => {
         await invokeCompleteAuth();
-        expect(axiosMock.request).toHaveBeenCalledWith({
+        expect(axios.request).toHaveBeenCalledWith({
           url: 'https://oauth2.googleapis.com/token',
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -174,6 +172,7 @@ describe('Google Plugin', () => {
           name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
           rawPayload: {
             error: {
+              name: 'ServiceException',
               message: 'google: Not authorized',
               originalError: {},
               provider: 'google',
@@ -195,7 +194,7 @@ describe('Google Plugin', () => {
 
     describe(GoogleContactsOperationName.PEOPLE_SEARCH, () => {
       function setupContactsMock(): void {
-        (axiosMock.request as Mock).mockImplementationOnce(() => {
+        jest.mocked(axios.request).mockImplementationOnce(() => {
           return Promise.resolve({
             status: 200,
             data: CONTACTS_FEED_MOCK,
@@ -204,7 +203,7 @@ describe('Google Plugin', () => {
       }
 
       function setupRefreshTokenMock(): void {
-        (axiosMock.request as Mock).mockImplementationOnce(() => {
+        jest.mocked(axios.request).mockImplementationOnce(() => {
           return Promise.resolve({
             status: 200,
             data: {
@@ -239,7 +238,7 @@ describe('Google Plugin', () => {
 
       it(`should call /m8/feeds/contacts/default/full?alt=json`, async () => {
         await invokePeopleSearch();
-        expect(axiosMock.request).toHaveBeenCalledWith({
+        expect(axios.request).toHaveBeenCalledWith({
           method: 'GET',
           url: 'https://www.google.com/m8/feeds/contacts/default/full',
           params: {
@@ -258,7 +257,7 @@ describe('Google Plugin', () => {
 
       it(`should use call the api with query string if provided`, async () => {
         await invokePeopleSearch('test');
-        expect(axiosMock.request).toHaveBeenCalledWith({
+        expect(axios.request).toHaveBeenCalledWith({
           method: 'GET',
           url: 'https://www.google.com/m8/feeds/contacts/default/full',
           params: {
@@ -373,7 +372,7 @@ describe('Google Plugin', () => {
         await invokePeopleSearch();
 
         // check refresh uri was called
-        expect((axiosMock.request as Mock).mock.calls[0]).toEqual([
+        expect(jest.mocked(axios.request).mock.calls[0]).toEqual([
           {
             data:
               'client_id=client-id' +
@@ -387,7 +386,7 @@ describe('Google Plugin', () => {
         ]);
 
         // check contacts feed uri was called with an updated access token
-        expect((axiosMock.request as Mock).mock.calls[1]).toEqual([
+        expect(jest.mocked(axios.request).mock.calls[1]).toEqual([
           {
             headers: {
               'GData-Version': '3.0',
@@ -405,7 +404,7 @@ describe('Google Plugin', () => {
           },
         ]);
 
-        expect((axiosMock.request as Mock).mock.calls.length).toBe(2);
+        expect(jest.mocked(axios.request).mock.calls.length).toBe(2);
 
         // check auth data updated
         const updatedAuthData =
@@ -432,9 +431,11 @@ describe('Google Plugin', () => {
         const result = await invokePeopleSearch();
         expect(JSON.parse(JSON.stringify(result.rawPayload))).toEqual({
           error: {
-            message: 'google: no auth data in the state for user 1',
+            name: 'ServiceException',
+            message: 'google: no auth data in the state for 1',
             originalError: {
-              message: 'no auth data in the state for user 1',
+              name: 'NoAuthDataException',
+              message: 'no auth data in the state for 1',
             },
             provider: 'google',
           },
@@ -451,7 +452,7 @@ describe('Google Plugin', () => {
 
     describe(GoogleContactsOperationName.PEOPLE_CREATE, () => {
       function setupCreateContactMock(): void {
-        (axiosMock.request as Mock).mockImplementationOnce(() =>
+        jest.mocked(axios.request).mockImplementationOnce(() =>
           Promise.resolve({
             status: 200,
             data: CONTACT_FEED_ENTRY_CREATE_MOCK,
@@ -482,7 +483,7 @@ describe('Google Plugin', () => {
 
       it(`should call POST /m8/feeds/contacts/default/full?alt=json API`, async () => {
         await invokePeopleCreate();
-        expect(axiosMock.request).toHaveBeenCalledWith({
+        expect(axios.request).toHaveBeenCalledWith({
           method: 'POST',
           url: 'https://www.google.com/m8/feeds/contacts/default/full',
           params: { alt: 'json' },
@@ -518,8 +519,9 @@ describe('Google Plugin', () => {
 
     describe(`${GoogleContactsOperationName.PEOPLE_UPDATE}`, () => {
       function setupUpdateContactMock(): void {
-        (axiosMock.request as Mock).mockImplementation(
-          (config: AxiosRequestConfig) =>
+        jest
+          .mocked(axios.request)
+          .mockImplementation((config: AxiosRequestConfig) =>
             Promise.resolve({
               status: 200,
               data:
@@ -527,7 +529,7 @@ describe('Google Plugin', () => {
                   ? CONTACT_FEED_ENTRY_MOCK
                   : CONTACT_FEED_ENTRY_UPDATE_MOCK,
             })
-        );
+          );
       }
 
       async function invokePeopleUpdate(): Promise<
@@ -558,7 +560,7 @@ describe('Google Plugin', () => {
 
       it(`should call /m8/feeds/contacts/default/full?alt=json API 2 times - to get and update the entry`, async () => {
         await invokePeopleUpdate();
-        expect((axiosMock.request as Mock).mock.calls).toEqual([
+        expect(jest.mocked(axios.request).mock.calls).toEqual([
           [
             {
               headers: {
@@ -756,7 +758,7 @@ describe('Google Plugin', () => {
 
     describe(`${GoogleContactsOperationName.PEOPLE_BY_ID}`, () => {
       function setupGetContactMock(): void {
-        (axiosMock.request as Mock).mockImplementationOnce(() =>
+        jest.mocked(axios.request).mockImplementationOnce(() =>
           Promise.resolve({
             status: 200,
             data: CONTACT_FEED_ENTRY_MOCK,
@@ -784,7 +786,7 @@ describe('Google Plugin', () => {
 
       it(`should call google api with correct params`, async () => {
         await invokePeopleById();
-        expect(axiosMock.request).toHaveBeenCalledWith({
+        expect(axios.request).toHaveBeenCalledWith({
           headers: {
             'GData-Version': '3.0',
             accept: 'application/json',
@@ -820,13 +822,13 @@ describe('Google Plugin', () => {
 
     describe(`${GoogleContactsOperationName.PEOPLE_DELETE}`, () => {
       function setupGetContactMock(): void {
-        (axiosMock.request as Mock).mockImplementation(
-          (config: AxiosRequestConfig) => {
+        jest
+          .mocked(axios.request)
+          .mockImplementation((config: AxiosRequestConfig) => {
             return config.method === 'GET'
               ? Promise.resolve({ status: 200, data: CONTACT_FEED_ENTRY_MOCK })
               : Promise.resolve({ status: 200 });
-          }
-        );
+          });
       }
 
       async function invokePeopleDelete(): Promise<
@@ -853,7 +855,7 @@ describe('Google Plugin', () => {
 
       it(`should call contact api 2 times: to fetch and then delete the entity`, async () => {
         await invokePeopleDelete();
-        expect((axiosMock.request as Mock).mock.calls).toEqual([
+        expect(jest.mocked(axios.request).mock.calls).toEqual([
           [
             {
               headers: {

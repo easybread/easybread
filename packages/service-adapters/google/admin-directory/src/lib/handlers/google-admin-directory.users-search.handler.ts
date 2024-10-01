@@ -1,4 +1,5 @@
 import {
+  BreadHttpTransport,
   BreadOperationHandler,
   createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
@@ -44,5 +45,6 @@ export const GoogleAdminDirectoryUsersSearchHandler: BreadOperationHandler<
       googleAdminDirectoryPaginationAdapter.toInternalData(response.data)
     );
   },
+
   name: GoogleAdminDirectoryOperationName.USERS_SEARCH,
 };

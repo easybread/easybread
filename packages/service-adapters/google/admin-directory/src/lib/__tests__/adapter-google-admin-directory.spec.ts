@@ -7,7 +7,7 @@ import {
 } from '@easybread/adapter-google-common';
 import { PersonSchema } from '@easybread/schemas';
 import { mockAxios, setExtendedTimeout } from '@easybread/test-utils';
-import axiosMock from 'axios';
+import axios from 'axios';
 import { merge } from 'lodash';
 
 import {
@@ -25,8 +25,6 @@ import {
 } from '../..';
 import { USERS_BY_ID_MOCK } from './users-by-id.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
-
-type Mock = jest.Mock;
 
 const BREAD_ID = '1';
 const CLIENT_ID = 'client-id';
@@ -100,7 +98,7 @@ describe('Operations', () => {
 
     it(`should call google /token api`, async () => {
       await invokeCompleteAuth();
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         url: 'https://oauth2.googleapis.com/token',
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -117,7 +115,7 @@ describe('Operations', () => {
   describe(GoogleAdminDirectoryOperationName.USERS_SEARCH, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersSearch('searchterm');
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         method: 'GET',
         url: 'https://www.googleapis.com/admin/directory/v1/users',
         headers: { authorization: 'Bearer access-token' },
@@ -171,7 +169,7 @@ describe('Operations', () => {
   describe(GoogleAdminDirectoryOperationName.USERS_BY_ID, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersById('114190879825460327746');
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         method: 'GET',
         url: 'https://www.googleapis.com/admin/directory/v1/users/114190879825460327746',
         headers: { authorization: 'Bearer access-token' },
@@ -210,7 +208,7 @@ describe('Operations', () => {
         givenName: 'updated',
       });
 
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         method: 'PUT',
         url: 'https://www.googleapis.com/admin/directory/v1/users/114190879825460327746',
         headers: { authorization: 'Bearer access-token' },
@@ -264,7 +262,7 @@ describe('Operations', () => {
         givenName: 'Test',
         familyName: 'Test',
       });
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         data: {
           kind: 'admin#directory#user',
           name: { familyName: 'Test', givenName: 'Test' },
@@ -311,7 +309,7 @@ describe('Operations', () => {
     it(`should call DELETE https://www.googleapis.com/admin/directory/v1/users/userKey`, async () => {
       const id = '114190879825460327746';
       await invokeUsersDelete(id);
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         headers: { authorization: 'Bearer access-token' },
         method: 'DELETE',
         url: `https://www.googleapis.com/admin/directory/v1/users/${id}`,
@@ -413,7 +411,7 @@ async function invokeCompleteAuth(): Promise<
 // ------------------------------------
 
 function setupUsersSearchResponse(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: USERS_LIST_MOCK,
@@ -422,7 +420,7 @@ function setupUsersSearchResponse(): void {
 }
 
 function setupUsersByIdResponse(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: USERS_BY_ID_MOCK,
@@ -435,7 +433,7 @@ function setupUsersUpdateResponse(
 ): GoogleAdminDirectoryUser {
   const updatedData = merge({}, USERS_BY_ID_MOCK, update);
 
-  (axiosMock.request as Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: updatedData,
@@ -446,7 +444,7 @@ function setupUsersUpdateResponse(
 }
 
 function setupUsersCreateResponse(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: USERS_BY_ID_MOCK,
@@ -455,7 +453,7 @@ function setupUsersCreateResponse(): void {
 }
 
 function setupUsersDeleteResponse(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: '',
@@ -464,7 +462,7 @@ function setupUsersDeleteResponse(): void {
 }
 
 function setupAccessTokenCreateResponse(): void {
-  (axiosMock.request as Mock).mockImplementationOnce(() =>
+  jest.mocked(axios.request).mockImplementationOnce(() =>
     Promise.resolve({
       status: 200,
       data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,

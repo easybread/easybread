@@ -3,10 +3,8 @@ import { createContextMock } from '@easybread/test-utils';
 
 import {
   RocketChatAuthConfigureHandler,
-  RocketChatAuthConfigureOperation,
   RocketChatAuthStrategy,
   RocketChatOperationName,
-  RocketChatServiceAdapterOptions,
 } from '../..';
 
 afterAll(() => {
@@ -15,13 +13,7 @@ afterAll(() => {
 
 it(`should call RocketChatAuthStrategy.authenticate with token and user id`, async () => {
   const context =
-    createContextMock<
-      BreadOperationContext<
-        RocketChatAuthConfigureOperation,
-        RocketChatAuthStrategy,
-        RocketChatServiceAdapterOptions
-      >
-    >();
+    createContextMock<BreadOperationContext<RocketChatAuthStrategy>>();
 
   await RocketChatAuthConfigureHandler.handle(
     {

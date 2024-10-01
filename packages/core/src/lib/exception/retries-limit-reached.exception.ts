@@ -11,12 +11,12 @@ export interface RetriesLimitReachedExceptionProps {
 }
 
 export class RetriesLimitReachedException extends BreadException {
-  private startTime: RetriesLimitReachedExceptionProps['startTime'];
-  private endTime: RetriesLimitReachedExceptionProps['endTime'];
-  private operationName: RetriesLimitReachedExceptionProps['operationName'];
-  private input: RetriesLimitReachedExceptionProps['input'];
-  private options: RetriesLimitReachedExceptionProps['options'];
-  private retriesCount: RetriesLimitReachedExceptionProps['retriesCount'];
+  startTime: RetriesLimitReachedExceptionProps['startTime'];
+  endTime: RetriesLimitReachedExceptionProps['endTime'];
+  operationName: RetriesLimitReachedExceptionProps['operationName'];
+  input: RetriesLimitReachedExceptionProps['input'];
+  options: RetriesLimitReachedExceptionProps['options'];
+  retriesCount: RetriesLimitReachedExceptionProps['retriesCount'];
 
   constructor({
     retriesCount,

@@ -3,19 +3,17 @@ import {
   createDisabledPagination,
   createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
-import {
-  BreadOperationName,
-  EmployeeSearchOperation,
-} from '@easybread/operations';
+import { BreadOperationName } from '@easybread/operations';
 import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
 import { find, isNumber, isObject, isString, pick } from 'lodash';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { bambooEmployeeAdapter } from '../data-adapters';
 import { BambooEmployeesDirectory } from '../interfaces';
+import type { BambooHrEmployeeSearchOperation } from '../bamboo-hr.operation';
 
 export const BambooEmployeeSearchHandler: BreadOperationHandler<
-  EmployeeSearchOperation<BambooEmployeesDirectory>,
+  BambooHrEmployeeSearchOperation,
   BambooHrAuthStrategy
 > = {
   name: BreadOperationName.EMPLOYEE_SEARCH,

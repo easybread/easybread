@@ -15,8 +15,9 @@ import {
   SIGN_IN_RESPONSE_MOCK,
   USER_ID,
 } from './mocks';
+import { mockAxios } from '@easybread/test-utils';
 
-jest.mock('axios');
+mockAxios();
 
 describe('Breezy', () => {
   const breezyAdapter = new BreezyAdapter();
