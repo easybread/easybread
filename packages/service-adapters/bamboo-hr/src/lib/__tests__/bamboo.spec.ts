@@ -6,14 +6,19 @@ import {
   EmployeeSearchOperation,
   SetupBasicAuthOperation,
 } from '@easybread/operations';
-import { mockAxios, setExtendedTimeout } from '@easybread/test-utils';
-import axiosMock, { AxiosError, AxiosResponse } from 'axios';
+import {
+  createAxiosError,
+  mockAxios,
+  setExtendedTimeout,
+} from '@easybread/test-utils';
+import axiosMock, { AxiosResponse } from 'axios';
 
-import { BambooEmployee, BambooHrAuthStrategy } from '../..';
 import {
   BambooBasicAuthPayload,
+  BambooEmployee,
   BambooEmployeesDirectory,
   BambooHrAdapter,
+  BambooHrAuthStrategy,
 } from '../..';
 import { BAMBOO_EMPLOYEE_MOCK } from './bamboo.employee.mock';
 import { BAMBOO_EMPLOYEES_DIR_MOCK } from './bamboo.employees-dir.mock';
@@ -334,34 +339,24 @@ describe('usage', () => {
       });
     });
 
-    it(`should return construct correct error when request failed with 409`, async () => {
-      jest.resetAllMocks();
-
-      const error = new Error('Request failed with status code 409');
-
-      // TODO: fix ts error
-      Object.assign(error, {
-        isAxiosError: true,
-        response: {
-          status: 409,
-          statusText: 'conflict',
-          headers: {
-            'x-bamboohr-error-messsage': 'Duplicate email, Duplicate email',
-            'x-bamboohr-error-message': 'Duplicate email, Duplicate email',
-          },
-          data: '',
+    it(`should return correct error when request failed with 409`, async () => {
+      const error = createAxiosError('Request failed with status code 409', {
+        status: 409,
+        headers: {
+          'x-bamboohr-error-messsage': 'Duplicate email, Duplicate email',
+          'x-bamboohr-error-message': 'Duplicate email, Duplicate email',
         },
-        // TODO: remove as unknown and fix ts error
-      } as unknown as AxiosError);
+      });
 
-      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
-        Promise.reject(error)
-      );
+      jest
+        .mocked(axiosMock.request)
+        .mockReset()
+        .mockImplementation(() => Promise.reject(error));
 
       const result = await invokeEmployeeCreate();
 
       // get what the res.json would send
-      expect(JSON.parse(JSON.stringify(result))).toEqual({
+      expect(result).toEqual({
         name: 'BREAD/EMPLOYEE/CREATE',
         provider: 'bamboo',
         rawPayload: {
@@ -369,18 +364,12 @@ describe('usage', () => {
             message:
               'bamboo: Request failed with status code 409. Duplicate email',
             originalError: {
-              isAxiosError: true,
-              response: {
-                data: '',
-                headers: {
-                  'x-bamboohr-error-message':
-                    'Duplicate email, Duplicate email',
-                  'x-bamboohr-error-messsage':
-                    'Duplicate email, Duplicate email',
-                },
-                status: 409,
-                statusText: 'conflict',
-              },
+              code: 'TEST_CODE',
+              config: {},
+              message: 'Request failed with status code 409',
+              name: 'AxiosError',
+              stack: expect.any(String),
+              status: 409,
             },
             provider: 'bamboo',
           },

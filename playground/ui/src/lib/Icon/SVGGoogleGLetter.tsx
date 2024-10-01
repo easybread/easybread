@@ -4,13 +4,7 @@ export type IconGoogleGLetterProps = {
 
 export function SVGGoogleGLetter(props: IconGoogleGLetterProps) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="150"
-      height="150"
-      viewBox="0 0 150 150"
-      fill="none"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" fill="none">
       <rect width="150" height="150" rx="75" fill="white" />
       <path
         d="M128 76.3208C128 72.3962 127.649 68.6226 126.996 65H75V86.4088H104.712C103.432 93.327 99.5426 99.1887 93.6956 103.113V117H111.538C121.977 107.365 128 93.1761 128 76.3208Z"

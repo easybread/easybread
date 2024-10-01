@@ -12,9 +12,22 @@ import {
   BambooEmployeesDirectory,
 } from './interfaces';
 
+export type BambooHrSetupBasicAuthOperation =
+  SetupBasicAuthOperation<BambooBasicAuthPayload>;
+
+export type BambooHrEmployeeSearchOperation =
+  EmployeeSearchOperation<BambooEmployeesDirectory>;
+
+export type BambooHrEmployeeByIdOperation =
+  EmployeeByIdOperation<BambooEmployee>;
+
+export type BambooHrEmployeeCreateOperation = EmployeeCreateOperation;
+
+export type BambooHrEmployeeUpdateOperation = EmployeeUpdateOperation;
+
 export type BambooHrOperation =
-  | SetupBasicAuthOperation<BambooBasicAuthPayload>
-  | EmployeeSearchOperation<BambooEmployeesDirectory>
-  | EmployeeByIdOperation<BambooEmployee>
-  | EmployeeCreateOperation
-  | EmployeeUpdateOperation;
+  | BambooHrEmployeeSearchOperation
+  | BambooHrEmployeeByIdOperation
+  | BambooHrEmployeeCreateOperation
+  | BambooHrEmployeeUpdateOperation
+  | BambooHrSetupBasicAuthOperation;

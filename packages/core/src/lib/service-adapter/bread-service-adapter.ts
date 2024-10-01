@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 
 import { BreadAuthStrategy } from '../auth-strategy';
 import { BreadServiceAdapterOptions } from '../common-interfaces';
@@ -13,6 +13,7 @@ import {
   BreadOperationHandler,
   createFailedOperationOutput,
 } from '../operation';
+import { OperationExecutor } from '../operation-executor';
 
 /**
  * Service adapter provides the logic for accessing the 3rd party service api
@@ -49,8 +50,15 @@ export abstract class BreadServiceAdapter<
   ): Promise<O['output']> {
     try {
       const handler = this.findHandler(input.name);
-      const output = await handler.handle(input, context, this.options);
-      return this.setProviderToOutput(output);
+      const options = this.options;
+      const executor = new OperationExecutor({
+        handler,
+        input,
+        options,
+        context,
+      });
+
+      return this.setProviderToOutput(await executor.execute());
     } catch (error) {
       return createFailedOperationOutput<O>(
         input.name,
@@ -79,14 +87,18 @@ export abstract class BreadServiceAdapter<
     if (error instanceof Error) {
       return new ServiceException(
         this.provider,
-        this.isAxiosError(error)
-          ? this.createServiceExceptionMessageFromAxiosError(error)
-          : error.message,
+        this.createServiceExceptionMessageFromError(error),
         error
       );
     }
 
     return new ServiceException(this.provider, `${error}`);
+  }
+
+  private createServiceExceptionMessageFromError(error: Error) {
+    return isAxiosError(error)
+      ? this.createServiceExceptionMessageFromAxiosError(error)
+      : error.message;
   }
 
   protected createServiceExceptionMessageFromAxiosError(
@@ -124,9 +136,5 @@ export abstract class BreadServiceAdapter<
       throw new NotImplementedException();
     }
     return handler;
-  }
-
-  private isAxiosError(err: Error | AxiosError): err is AxiosError {
-    return 'isAxiosError' in err && err.isAxiosError;
   }
 }

@@ -1,7 +1,7 @@
 import { Button, Icon } from 'playground-ui';
-import { adapterDisconnectAction } from './adapterDisconnectAction';
+import { adapterDisconnectAction } from '../adapterDisconnectAction';
 import { ADAPTER_NAME } from 'playground-common';
-import { adapterConnectAction } from './adapterConnectAction';
+import { connectAction } from './connectAction';
 
 export type AdapterConnectGoogleAdminDirectoryProps = {
   connectedAt?: Date;
@@ -15,11 +15,6 @@ export async function AdapterConnectGoogleAdminDirectory(
   const isConnected = connectedAt !== undefined;
 
   const disconnectAction = adapterDisconnectAction.bind(
-    null,
-    ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY
-  );
-
-  const connectAction = adapterConnectAction.bind(
     null,
     ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY
   );
