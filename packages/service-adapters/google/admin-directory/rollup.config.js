@@ -3,7 +3,8 @@ const { withNx } = require('@nx/rollup/with-nx');
 module.exports = withNx(
   {
     main: './src/index.ts',
-    outputPath: '../../../../dist/packages/service-adapters/gsuite-admin',
+    outputPath:
+      '../../../../dist/packages/service-adapters/google/admin-directory',
     tsConfig: './tsconfig.lib.json',
     compiler: 'swc',
     format: ['cjs', 'esm'],

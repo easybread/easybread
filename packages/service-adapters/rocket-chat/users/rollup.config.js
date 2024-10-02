@@ -3,7 +3,7 @@ const { withNx } = require('@nx/rollup/with-nx');
 module.exports = withNx(
   {
     main: './src/index.ts',
-    outputPath: '../../../../dist/packages/service-adapters/rocket-chat-users',
+    outputPath: '../../../../dist/packages/service-adapters/rocket-chat/users',
     tsConfig: './tsconfig.lib.json',
     compiler: 'swc',
     format: ['cjs', 'esm'],
