@@ -21,7 +21,7 @@
     "@nx/rollup": "19.8.3",
     "@shelf/jest-mongodb": "^4.3.2",
     "@swc-node/register": "~1.9.1",
-    "@swc/cli": "~0.3.12",
+    "@swc/cli": "0.4.1-nightly.20240914",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@swc/jest": "~0.2.36",

@@ -2,10 +2,10 @@
   "name": "@easybread/recommended",
   "version": "0.0.1",
   "dependencies": {
-    "@nx/devkit": "19.6.2",
+    "@nx/devkit": "19.8.3",
     "tslib": "^2.3.0",
-    "@nx/js": "19.6.2",
-    "@nx/eslint": "19.6.2"
+    "@nx/js": "19.8.3",
+    "@nx/eslint": "19.8.3"
   },
   "type": "commonjs",
   "main": "./src/index.js",
