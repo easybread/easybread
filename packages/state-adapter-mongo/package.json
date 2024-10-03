@@ -7,5 +7,8 @@
     "@shelf/jest-mongodb": "^4.3.2"
   },
   "main": "./index.cjs",
-  "module": "./index.js"
+  "module": "./index.js",
+  "publishConfig": {
+    "access": "public"
+  }
 }
