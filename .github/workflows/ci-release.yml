@@ -27,9 +27,6 @@ jobs:
       # Connect your workspace by running "nx connect" and uncomment this
       # - run: pnpm dlx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="build"
 
-      - name: Remove .npmrc (used only for local development)
-        run: rm .npmrc
-
       # Cache node_modules
       - uses: actions/setup-node@v4
         with:
@@ -59,7 +56,7 @@ jobs:
 
       - name: Publish packages
         id: publish
-        run: pnpm nx release publish --access public
+        run: pnpm nx release publish --access public --registry=https://registry.npmjs.org/
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
