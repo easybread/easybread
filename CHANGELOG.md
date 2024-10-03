@@ -1,3 +1,14 @@
+## 0.0.8 (2024-10-03)
+
+
+### 🩹 Fixes
+
+- **workspace:** publishing ([bfa7143](https://github.com/easybread/easybread/commit/bfa7143))
+
+### ❤️  Thank You
+
+- Alexandr Cherednichenko @alexandr2110pro
+
 ## 0.0.7 (2024-10-03)
 
 
