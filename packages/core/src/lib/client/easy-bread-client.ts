@@ -1,9 +1,5 @@
 import { BreadAuthStrategy } from '../auth-strategy';
-import {
-  BreadCollectionOperation,
-  BreadOperationContext,
-  type BreadOperationPaginationType,
-} from '../operation';
+import { BreadCollectionOperation, BreadOperationContext } from '../operation';
 import { BreadServiceAdapter } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
 import { AllPagesGenerator } from './all-pages-generator';
