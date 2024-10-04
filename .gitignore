@@ -3,7 +3,6 @@ build/
 dist/
 coverage/
 reports/
-docs/
 
 npm-debug.log
 yarn-error.log
@@ -35,3 +34,7 @@ tmp/
 out
 
 /local
+
+# Generated Docusaurus files
+.docusaurus/
+.cache-loader/

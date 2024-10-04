@@ -1,5 +1,8 @@
-# Add files here to ignore them from prettier formatting
+.prettierignore
+.docusaurus/
 /dist
 /coverage
-/.nx/cache
-/.nx/workspace-data
+/.nx
+/local
+/tmp
+/.verdaccio
