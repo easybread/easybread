@@ -7,6 +7,7 @@ export async function adapterBambooHrDisconnect() {
   const authStatus = await authorize();
   const clientBambooHr = await clientBambooHrGet();
 
+  console.log('disconnecting bamboo-hr', authStatus.data.userId);
   await adapterCollection().deleteOne({
     slug: ADAPTER_NAME.BAMBOO_HR,
     userId: authStatus.data.userId,
