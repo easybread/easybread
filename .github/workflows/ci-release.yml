@@ -40,22 +40,23 @@ jobs:
       # - run: pnpm exec nx-cloud record -- echo Hello World
 
       - name: Print Environment Info
-        run: pnpm dlx nx report
+        run: pnpm nx report
         shell: bash
 
       - name: Print Version
-        run: { echo Version: "${{ github.ref_name }}" }
+        run: |
+          echo "Version: ${{ github.ref_name }}"
 
       # For some reason, `nx release publish` doesn't build the packages (`nx release` does)
       # even if we set `"dependsOn": [ "build" ]` in the nx.json file for the `nx-release-publish` target.
       # So we build manually
       - name: Build packages
-        run: pnpm dlx nx run-many -t build
+        run: pnpm nx run-many -t test,build --exclude="playground*"
         shell: bash
 
       - name: Publish packages
         id: publish
-        run: pnpm dlx nx release publish
+        run: pnpm nx release publish --access public --registry=https://registry.npmjs.org/
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}

@@ -5,6 +5,11 @@
       "factory": "./src/generators/package/generator",
       "schema": "./src/generators/package/schema.json",
       "description": "package generator"
+    },
+    "make-public": {
+      "factory": "./src/generators/make-public/generator",
+      "schema": "./src/generators/make-public/schema.json",
+      "description": "make-public generator"
     }
   }
 }

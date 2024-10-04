@@ -11,5 +11,8 @@
     "@easybread/data-adapter": "0.0.1"
   },
   "main": "./index.cjs",
-  "module": "./index.js"
+  "module": "./index.js",
+  "publishConfig": {
+    "access": "public"
+  }
 }
