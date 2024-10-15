@@ -4,7 +4,6 @@
   "dependencies": {
     "@easybread/schemas": "0.0.1",
     "@easybread/common": "0.0.1",
-    "lodash": "^4.17.21",
     "axios": "^1.7.4",
     "@easybread/test-utils": "0.0.1"
   },
