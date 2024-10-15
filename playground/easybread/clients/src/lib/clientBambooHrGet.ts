@@ -25,7 +25,7 @@ export async function clientBambooHrGet() {
 
     await adapterCollection().deleteOne({
       userId,
-      slug: ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY,
+      slug: ADAPTER_NAME.BAMBOO_HR,
     });
 
     revalidatePath(`/`);

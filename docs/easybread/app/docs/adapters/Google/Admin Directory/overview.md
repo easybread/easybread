@@ -31,23 +31,22 @@ import {
   GoogleAdminDirectoryAuthStrategy,
 } from '@easybread/adapter-google-admin-directory';
 
+import { stateAdapter } from '~/easybread/state';
+
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } = load({
   GOOGLE_CLIENT_ID: String,
   GOOGLE_CLIENT_SECRET: String,
   GOOGLE_REDIRECT_URI: String,
 });
 
-const stateAdapter = new InMemoryStateAdapter();
-
 const serviceAdapter = new GoogleAdminDirectoryAdapter();
-
 const authStrategy = new GoogleAdminDirectoryAuthStrategy(stateAdapter, {
   clientId: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
   redirectUri: GOOGLE_REDIRECT_URI,
 });
 
-const client = new EasyBreadClient(stateAdapter, serviceAdapter, authStrategy);
+export const client = new EasyBreadClient(stateAdapter, serviceAdapter, authStrategy);
 ```
 
 ## Handle authentication lost event
