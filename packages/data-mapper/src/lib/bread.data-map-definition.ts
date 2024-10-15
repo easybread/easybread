@@ -1,12 +1,18 @@
 import { IsLiteral, KeysByValueType } from '@easybread/common';
 
+export const NO_MAP = 'NO_MAP' as const;
+export type BreadDataMapNoMapLiteral = typeof NO_MAP;
 /**
- * Value factory for producing a value of a certain type
+ * Value factory for producing a value of a certain type.
+ *
+ * If the value is NO_MAP, the property will not be mapped.
  *
  * @template I input type
  * @template O output type
  */
-export type BreadValueFactory<I extends object, O> = (input: I) => O;
+export type BreadValueFactory<I extends object, O> = (
+  input: I
+) => O | BreadDataMapNoMapLiteral;
 
 /**
  * Value factory for producing a literal value of a certain type
@@ -50,8 +56,8 @@ export type BreadDataMapValueResolverDefinition<
           | KeysByValueType<I, O>
           // a function to create the output value from the input
           | BreadValueFactory<I, O>
-          // null is a special case. It means that the property is not mapped.
-          | null);
+          // BreadDataMapNoMapLiteral is a special case. It means that the property is not mapped.
+          | BreadDataMapNoMapLiteral);
 /**
  * Map definition for mapping data from one type to another.
  *
