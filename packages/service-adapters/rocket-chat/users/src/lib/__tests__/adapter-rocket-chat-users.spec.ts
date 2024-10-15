@@ -126,7 +126,7 @@ describe('Operations', () => {
           {
             headers: { 'X-Auth-Token': AUTH_TOKEN, 'X-User-Id': USER_ID },
             method: 'GET',
-            params: { _id: 'id1', active: null, type: null },
+            params: { _id: 'id1' },
             url: 'https://testserver.io/api/v1/users.info',
           },
         ],

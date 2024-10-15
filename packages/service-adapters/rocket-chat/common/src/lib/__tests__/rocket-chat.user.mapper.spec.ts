@@ -18,8 +18,6 @@ describe('toRemoteMap()', () => {
       language: 'en',
       name: 'User Name',
       username: 'user.name',
-      type: null,
-      active: null,
     });
   });
 });

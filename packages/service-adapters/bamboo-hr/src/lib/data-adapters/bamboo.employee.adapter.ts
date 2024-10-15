@@ -7,15 +7,17 @@ export const bambooEmployeeAdapter = breadDataAdapter<
   BambooEmployee
 >({
   toExternal: {
-    id: 'identifier',
+    id: (_) => (_.identifier ? Number(_.identifier) : undefined),
     firstName: 'givenName',
     lastName: 'familyName',
     workEmail: 'email',
     workPhone: 'telephone',
+    avatar: 'image',
+    photoUrl: 'image',
   },
   toInternal: {
     '@type': () => 'Person',
-    identifier: 'id',
+    identifier: (_) => _.id?.toString(),
     gender: (_) => _.gender ?? undefined,
     name: ({ firstName, lastName }) => {
       return firstName || lastName
@@ -31,7 +33,7 @@ export const bambooEmployeeAdapter = breadDataAdapter<
       return phone ? `${phone}` : undefined;
     },
     email: (_) => _.workEmail ?? undefined,
-    image: (_) => _.photoUrl ?? undefined,
+    image: (_) => _.photoUrl ?? _.avatar ?? undefined,
     workLocation: (_) => _.location ?? undefined,
   },
 });
