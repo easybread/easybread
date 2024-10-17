@@ -1,15 +1,18 @@
 import {
-  EmployeeByIdOperation,
-  EmployeeCreateOperation,
-  EmployeeSearchOperation,
-  EmployeeUpdateOperation,
-  SetupBasicAuthOperation,
+  type EmployeeByIdOperation,
+  type EmployeeCreateOperation,
+  type EmployeeSearchOperation,
+  type EmployeeUpdateOperation,
+  type JobApplicantSearchOperation,
+  type JobApplicationSearchOperation,
+  type SetupBasicAuthOperation,
 } from '@easybread/operations';
 
 import {
-  BambooBasicAuthPayload,
-  BambooEmployee,
-  BambooEmployeesDirectory,
+  type BambooApplicationList,
+  type BambooBasicAuthPayload,
+  type BambooEmployee,
+  type BambooEmployeesDirectory,
 } from './interfaces';
 
 export type BambooHrSetupBasicAuthOperation =
@@ -25,9 +28,19 @@ export type BambooHrEmployeeCreateOperation = EmployeeCreateOperation;
 
 export type BambooHrEmployeeUpdateOperation = EmployeeUpdateOperation;
 
+export type BambooHrJobApplicationSearchOperation =
+  JobApplicationSearchOperation<BambooApplicationList, 'PREV_NEXT'>;
+
+export type BambooHrJobApplicantSearchOperation = JobApplicantSearchOperation<
+  BambooApplicationList,
+  'PREV_NEXT'
+>;
+
 export type BambooHrOperation =
   | BambooHrEmployeeSearchOperation
   | BambooHrEmployeeByIdOperation
   | BambooHrEmployeeCreateOperation
   | BambooHrEmployeeUpdateOperation
-  | BambooHrSetupBasicAuthOperation;
+  | BambooHrSetupBasicAuthOperation
+  | BambooHrJobApplicantSearchOperation
+  | BambooHrJobApplicationSearchOperation;

@@ -8,7 +8,9 @@
     "@easybread/schemas": "0.0.1",
     "axios": "^1.7.4",
     "lodash": "^4.17.21",
-    "@easybread/data-adapter": "0.0.1"
+    "@easybread/data-adapter": "0.0.1",
+    "@easybread/data-mapper": "0.0.1",
+    "@easybread/pagination-adapter": "0.0.1"
   },
   "main": "./index.cjs",
   "module": "./index.js",

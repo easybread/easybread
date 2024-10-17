@@ -198,8 +198,8 @@ it(`should work with missing properties`, async () => {
   const mapper = BreadDataMapper.create<Input, Output>({
     a: 'a',
     b: 'b',
-    c: 'd',
-    d: null,
+    c: 'NO_MAP',
+    d: (input) => input.d ?? 'NO_MAP',
   });
 
   const actual = mapper.map({ a: 'val', b: 15 });
@@ -208,7 +208,6 @@ it(`should work with missing properties`, async () => {
     a: 'val',
     b: 15,
     c: undefined,
-    d: null,
   } satisfies Partial<Output>);
 });
 
@@ -235,22 +234,20 @@ it(`should work with optional properties`, async () => {
   } satisfies Output);
 });
 
-it(`should work with optional fields on internal type`, async () => {
+it(`should work with optional fields on input type`, async () => {
   type Input = { a?: string; b?: number };
   type Output = { a: string; b: number; c?: string };
 
   const mapper = BreadDataMapper.create<Input, Output>({
-    a: 'a',
-    b: 'b',
+    a: (_) => _.a ?? 'NO_MAP',
+    b: (_) => _.b ?? 'NO_MAP',
   });
 
-  expect(mapper.map({ a: 'val', b: 15 })).toEqual({
-    a: 'val',
-    b: 15,
-  });
+  expect(mapper.map({ b: 15 })).toEqual({ b: 15 });
+  expect(mapper.map({ a: 'val' })).toEqual({ a: 'val' });
 });
 
-it(`should work with optional fields on external type`, async () => {
+it(`should work with optional fields on output type`, async () => {
   type Input = { a: string; b: number };
   type Output = { a?: string; b?: number };
 
@@ -263,4 +260,36 @@ it(`should work with optional fields on external type`, async () => {
     a: 'val',
     b: 15,
   });
+});
+
+it(`should allow value factory functions`, async () => {
+  type Input = { type: 'Input'; b: number };
+  type Output = { type: 'Output'; b: string };
+
+  const mapper = BreadDataMapper.create<Input, Output>({
+    type: () => 'Output',
+    b: (_) => _.b.toString(),
+  });
+
+  expect(mapper.map({ b: 1, type: 'Input' })).toEqual({
+    b: '1',
+    type: 'Output',
+  } satisfies Output);
+});
+
+it(`should skip fields marked as NO_MAP`, () => {
+  type Input = { str: string; num: number };
+  type Output = { a: string; b: number };
+
+  const mapper = BreadDataMapper.create<Input, Output>({
+    a: 'str',
+    b: 'NO_MAP',
+  });
+
+  expect(
+    mapper.map({
+      str: 'value',
+      num: 12,
+    })
+  ).toEqual({ a: 'value' } satisfies Partial<Output>);
 });

@@ -1,9 +1,11 @@
 import {
-  BreadDataMapDefinition,
-  BreadDataMapIOConstraint,
-  BreadDataMapperClass,
-  BreadDataMapValueResolverDefinition,
-  BreadValueFactory,
+  type BreadDataMapDefinition,
+  type BreadDataMapIOConstraint,
+  type BreadDataMapNoMapLiteral,
+  type BreadDataMapperClass,
+  type BreadDataMapValueResolverDefinition,
+  type BreadValueFactory,
+  NO_MAP,
 } from './bread.data-map-definition';
 
 /**
@@ -60,12 +62,15 @@ export class BreadDataMapper<
       if (!Object.hasOwn(mapDefinition, key)) continue;
 
       const resolver = mapDefinition[key];
-
-      output[key] = this.resolveValue<
+      const value = this.resolveValue<
         I,
         BreadDataMapDefinition<I, O>[typeof key],
         O[typeof key]
       >(input, resolver);
+
+      if (value === NO_MAP) continue;
+
+      output[key] = value;
     }
 
     return output;
@@ -87,8 +92,8 @@ export class BreadDataMapper<
     I extends BreadDataMapIOConstraint,
     R extends BreadDataMapValueResolverDefinition<I, O>,
     O
-  >(input: I, resolverDef: R): O {
-    if (resolverDef === null) return null as O;
+  >(input: I, resolverDef: R): O | BreadDataMapNoMapLiteral {
+    if (resolverDef === NO_MAP) return NO_MAP as O;
 
     if (typeof resolverDef === 'string') {
       return input[resolverDef] as Extract<O, string>;
@@ -118,6 +123,7 @@ export class BreadDataMapper<
         resolverDef
       );
     }
+
     throw new Error('Unknown resolver');
   }
 

@@ -1,7 +1,8 @@
 import { Bcp47LanguageCode, PersonSchema } from '@easybread/schemas';
+import { breadDataAdapter } from '@easybread/data-adapter';
+import { NO_MAP } from '@easybread/data-mapper';
 
 import { RocketChatUser } from '../interfaces';
-import { breadDataAdapter } from '@easybread/data-adapter';
 
 export const rocketChatUserAdapter = breadDataAdapter<
   PersonSchema,
@@ -12,8 +13,8 @@ export const rocketChatUserAdapter = breadDataAdapter<
     language: 'knowsLanguage',
     name: 'name',
     username: 'additionalName',
-    active: null,
-    type: null,
+    active: NO_MAP,
+    type: NO_MAP,
   },
   toInternal: {
     '@type': () => 'Person',

@@ -1,4 +1,9 @@
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
+import {
+  type BreadOperationOutputPagination,
+  EasyBreadClient,
+  InMemoryStateAdapter,
+} from '@easybread/core';
+import type { ApplyActionSchema } from '@easybread/schemas';
 import {
   BreadOperationName,
   EmployeeByIdOperation,
@@ -11,17 +16,22 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-import axiosMock, { AxiosResponse } from 'axios';
 
+import axios, { AxiosResponse } from 'axios';
 import {
-  BambooBasicAuthPayload,
-  BambooEmployee,
-  BambooEmployeesDirectory,
+  type BambooApplicationList,
+  type BambooBasicAuthPayload,
+  type BambooEmployee,
+  type BambooEmployeesDirectory,
+  type BambooHrJobApplicationSearchOperation,
+  type BambooHrJobApplicantSearchOperation,
   BambooHrAdapter,
   BambooHrAuthStrategy,
+  BambooHrOperationName,
 } from '../..';
 import { BAMBOO_EMPLOYEE_MOCK } from './bamboo.employee.mock';
 import { BAMBOO_EMPLOYEES_DIR_MOCK } from './bamboo.employees-dir.mock';
+import { BAMBOO_APPLICATIONS_MOCK } from './bamboo.applications.mock';
 
 mockAxios();
 setExtendedTimeout();
@@ -70,6 +80,7 @@ describe('usage', () => {
       });
 
       const authData = await authStrategy.readAuthData(BREAD_ID);
+
       expect(authData).toEqual({
         companyName: 'company-one',
         token: 'dXNlci1zZWNyZXQta2V5Ong=',
@@ -79,7 +90,7 @@ describe('usage', () => {
 
   describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
     beforeEach(async () => {
-      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+      jest.mocked(axios.request).mockImplementationOnce(() =>
         Promise.resolve({
           status: 200,
           data: BAMBOO_EMPLOYEES_DIR_MOCK,
@@ -101,7 +112,7 @@ describe('usage', () => {
     it(`should call bamboo https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/employees/directory api`, async () => {
       await invokeEmployeeSearch();
 
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         url: `https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/employees/directory`,
         method: 'GET',
         headers: {
@@ -190,7 +201,7 @@ describe('usage', () => {
 
   describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
     beforeEach(async () => {
-      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+      (axios.request as jest.Mock).mockImplementationOnce(() =>
         Promise.resolve({
           status: 200,
           data: BAMBOO_EMPLOYEE_MOCK,
@@ -210,7 +221,7 @@ describe('usage', () => {
 
     it(`should call bamboo api with correct params`, async () => {
       await invokeEmployeeById();
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         headers: {
           accept: 'application/json',
           authorization: 'Basic dXNlci1zZWNyZXQta2V5Ong=',
@@ -271,7 +282,7 @@ describe('usage', () => {
 
   describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
     beforeEach(async () => {
-      (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+      (axios.request as jest.Mock).mockImplementationOnce(() =>
         Promise.resolve({
           status: 201,
           headers: {
@@ -302,7 +313,7 @@ describe('usage', () => {
 
     it(`should call bamboo API`, async () => {
       await invokeEmployeeCreate();
-      expect(axiosMock.request).toHaveBeenCalledWith({
+      expect(axios.request).toHaveBeenCalledWith({
         url: 'https://api.bamboohr.com/api/gateway.php/company-one/v1/employees',
         method: 'POST',
         data: {
@@ -349,7 +360,7 @@ describe('usage', () => {
       });
 
       jest
-        .mocked(axiosMock.request)
+        .mocked(axios.request)
         .mockReset()
         .mockImplementation(() => Promise.reject(error));
 
@@ -377,6 +388,221 @@ describe('usage', () => {
           success: false,
         },
       });
+    });
+  });
+
+  describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
+    it(`should return an expected rawData and payload`, async () => {
+      const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
+      const applicationsFilteredByStartTime = BAMBOO_APPLICATIONS_MOCK.filter(
+        (a) => a.appliedDate >= `2024-10-11 00:00:00`
+      );
+
+      jest.mocked(axios.request).mockImplementationOnce(() =>
+        Promise.resolve({
+          status: 200,
+          data: {
+            applications: applicationsFilteredByStartTime,
+            nextPageUrl: null,
+            paginationComplete: true,
+          } satisfies BambooApplicationList,
+        })
+      );
+
+      const result = await client.invoke<BambooHrJobApplicationSearchOperation>(
+        {
+          name: BreadOperationName.JOB_APPLICATION_SEARCH,
+          breadId: BREAD_ID,
+          pagination: { type: 'PREV_NEXT', page: 1 },
+          params: { startTime },
+        }
+      );
+
+      expect(result.rawPayload).toEqual({
+        data: {
+          applications: applicationsFilteredByStartTime,
+          nextPageUrl: null,
+          paginationComplete: true,
+        },
+        success: true,
+      });
+
+      expect(result.pagination).toEqual({
+        type: 'PREV_NEXT',
+      });
+
+      expect(result.payload).toEqual([
+        {
+          '@type': 'ApplyAction',
+          agent: {
+            '@type': 'Person',
+            familyName: 'Lewis',
+            givenName: 'Janet',
+            identifier: '110',
+            image:
+              'https://resources.bamboohr.com/employees/photos/initials.php?initials=JL',
+            name: 'Janet Lewis',
+          },
+          identifier: '48',
+          object: {
+            '@type': 'JobPosting',
+            identifier: '19',
+            title: 'General Application',
+          },
+          starTime: '2024-10-19T17:08:59+00:00',
+        },
+        {
+          '@type': 'ApplyAction',
+          agent: {
+            '@type': 'Person',
+            familyName: 'Garcia',
+            givenName: 'James',
+            identifier: '114',
+            image:
+              'https://resources.bamboohr.com/employees/photos/initials.php?initials=JG',
+            name: 'James Garcia',
+          },
+          identifier: '56',
+          object: {
+            '@type': 'JobPosting',
+            identifier: '21',
+            title: 'Marketing Manager',
+          },
+          starTime: '2024-10-11T22:46:01+00:00',
+        },
+        {
+          '@type': 'ApplyAction',
+          agent: {
+            '@type': 'Person',
+            familyName: 'Stone',
+            givenName: 'John',
+            identifier: '109',
+            image:
+              'https://resources.bamboohr.com/employees/photos/initials.php?initials=JS',
+            name: 'John Stone',
+          },
+          identifier: '47',
+          object: {
+            '@type': 'JobPosting',
+            identifier: '19',
+            title: 'General Application',
+          },
+          starTime: '2024-10-11T20:07:43+00:00',
+        },
+      ] satisfies ApplyActionSchema[]);
+    });
+
+    it(`should map pagination data correctly`, async () => {
+      jest.mocked(axios.request).mockImplementation(() =>
+        Promise.resolve({
+          status: 200,
+          data: {
+            applications: BAMBOO_APPLICATIONS_MOCK,
+            nextPageUrl: `https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/applicant_tracking/applications?page=2`,
+            paginationComplete: false,
+          } satisfies BambooApplicationList,
+        })
+      );
+
+      const result = await client.invoke<BambooHrJobApplicationSearchOperation>(
+        {
+          name: BreadOperationName.JOB_APPLICATION_SEARCH,
+          breadId: BREAD_ID,
+          pagination: { type: 'PREV_NEXT', page: 1 },
+          params: {},
+        }
+      );
+
+      expect(result.pagination).toEqual({
+        type: 'PREV_NEXT',
+        next: 2,
+      } satisfies BreadOperationOutputPagination<'PREV_NEXT'>);
+
+      const nextPageResult =
+        await client.invoke<BambooHrJobApplicationSearchOperation>({
+          name: BreadOperationName.JOB_APPLICATION_SEARCH,
+          breadId: BREAD_ID,
+          pagination: {
+            type: 'PREV_NEXT',
+            page: result.pagination.next,
+          },
+          params: {},
+        });
+
+      expect(jest.mocked(axios.request)).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          params: expect.objectContaining({
+            page: 2,
+          }),
+        })
+      );
+    });
+  });
+
+  describe(`${BambooHrOperationName.JOB_APPLICANT_SEARCH}`, () => {
+    it(`should return an expected rawData and payload`, async () => {
+      const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
+      const applicationsFilteredByStartTime = BAMBOO_APPLICATIONS_MOCK.filter(
+        (a) => a.appliedDate >= `2024-10-11 00:00:00`
+      );
+
+      jest.mocked(axios.request).mockImplementationOnce(() =>
+        Promise.resolve({
+          status: 200,
+          data: {
+            applications: applicationsFilteredByStartTime,
+            nextPageUrl: null,
+            paginationComplete: true,
+          } satisfies BambooApplicationList,
+        })
+      );
+
+      const result = await client.invoke<BambooHrJobApplicantSearchOperation>({
+        name: BreadOperationName.JOB_APPLICANT_SEARCH,
+        breadId: BREAD_ID,
+        pagination: { type: 'PREV_NEXT', page: 1 },
+        params: { startTime },
+      });
+
+      expect(result.rawPayload).toEqual({
+        data: {
+          applications: applicationsFilteredByStartTime,
+          nextPageUrl: null,
+          paginationComplete: true,
+        },
+        success: true,
+      });
+
+      expect(result.payload).toEqual([
+        {
+          '@type': 'Person',
+          familyName: 'Lewis',
+          givenName: 'Janet',
+          identifier: '110',
+          image:
+            'https://resources.bamboohr.com/employees/photos/initials.php?initials=JL',
+          name: 'Janet Lewis',
+        },
+        {
+          '@type': 'Person',
+          familyName: 'Garcia',
+          givenName: 'James',
+          identifier: '114',
+          image:
+            'https://resources.bamboohr.com/employees/photos/initials.php?initials=JG',
+          name: 'James Garcia',
+        },
+        {
+          '@type': 'Person',
+          familyName: 'Stone',
+          givenName: 'John',
+          identifier: '109',
+          image:
+            'https://resources.bamboohr.com/employees/photos/initials.php?initials=JS',
+          name: 'John Stone',
+        },
+      ]);
     });
   });
 });

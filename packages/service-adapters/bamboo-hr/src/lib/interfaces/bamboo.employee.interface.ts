@@ -1,5 +1,5 @@
 export type BambooEmployee = {
-  id?: string;
+  id?: number;
   canUploadPhoto?: boolean | number;
   department?: string | null;
   displayName?: string | null;
@@ -13,6 +13,7 @@ export type BambooEmployee = {
   mobilePhone?: string | null;
   photoUploaded?: boolean;
   photoUrl?: string;
+  avatar?: string;
   preferredName?: string | null;
   workEmail?: string | null;
   workPhone?: string | null;
