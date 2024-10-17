@@ -66,15 +66,22 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'core',
+          sidebarId: 'guide',
           position: 'left',
-          label: 'Core',
+          label: 'Guide',
         },
         {
           type: 'docSidebar',
           sidebarId: 'adapters',
           position: 'left',
           label: 'Adapters',
+        },
+
+        {
+          type: 'docSidebar',
+          sidebarId: 'api',
+          position: 'left',
+          label: 'API',
         },
 
         {
