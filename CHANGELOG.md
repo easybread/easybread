@@ -1,3 +1,23 @@
+## 0.0.10 (2024-10-17)
+
+
+### 🚀 Features
+
+- **adapter-bamboo-hr:** add handle job application ops ([3ff1229](https://github.com/easybread/easybread/commit/3ff1229))
+- **docs:** docusaurus foundation ([d00f27c](https://github.com/easybread/easybread/commit/d00f27c))
+- **operations:** add job application related ops ([3976dd5](https://github.com/easybread/easybread/commit/3976dd5))
+- **schemas:** add new schemas ([3652494](https://github.com/easybread/easybread/commit/3652494))
+
+### 🩹 Fixes
+
+- **core:** rm dead code ([70d6098](https://github.com/easybread/easybread/commit/70d6098))
+- **data-mapper:** explicit 'NO_MAP' property resolver ([4c2a79d](https://github.com/easybread/easybread/commit/4c2a79d))
+- **playground:** bamboo-hr integration issues ([4b5ef09](https://github.com/easybread/easybread/commit/4b5ef09))
+
+### ❤️  Thank You
+
+- Alexandr Cherednichenko @alexandr2110pro
+
 ## 0.0.9 (2024-10-03)
 
 This was a version bump only, there were no code changes.
