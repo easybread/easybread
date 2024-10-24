@@ -6,7 +6,6 @@ export * from './lib/operation';
 export * from './lib/service-adapter';
 export * from './lib/state';
 export * from './lib/state-adapters';
-export * from './lib/data-mapper';
 export * from './lib/event-bus/bread-event.bus';
 export * from './lib/event-bus/bread.event';
 export * from './lib/transport/http';

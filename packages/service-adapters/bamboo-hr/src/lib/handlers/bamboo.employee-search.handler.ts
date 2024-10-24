@@ -47,6 +47,11 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
         (value) => {
           if (isString(value)) return queryRegExp.test(value);
           if (isNumber(value)) return queryRegExp.test(`${value}`);
+
+          if (Array.isArray(value)) {
+            return value.some((s) => queryRegExp.test(s));
+          }
+
           if (isObject(value)) {
             if (value['@type'] === 'Organization') {
               const { name, alternateName } = value as OrganizationSchema;
@@ -55,6 +60,7 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
               );
             }
           }
+
           return false;
         }
       );
