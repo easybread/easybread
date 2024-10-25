@@ -5,7 +5,7 @@ sidebar_label: Authentication
 
 # Google Admin Directory Authentication
 
-AOuth2.0 authentication is required to access the Google Admin Directory API.
+OAuth2.0 authentication is required to access the Google Admin Directory API.
 
 There are three steps involved:
 1. Initiate the authentication flow
