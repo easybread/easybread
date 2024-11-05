@@ -9,15 +9,13 @@ Get one employee by id.
 
 ```ts
 import { BreadOperationName } from '@easybread/operations';
-import type { BambooHrEmployeeByIdOperation } from '@easybread/adapter-bamboo-hr';
 
 export async function adapterBambooHrEmployeeById(
   breadId: string,
   identifier: string
 ): Promise<PersonSchema> {
-  const results = await client.invoke<BambooHrEmployeeByIdOperation>({
+  const results = await client.invoke(BreadOperationName.EMPLOYEE_BY_ID,{
     breadId,
-    name: BreadOperationName.EMPLOYEE_BY_ID,
     params: { identifier }
   });
 

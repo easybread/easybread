@@ -15,8 +15,7 @@ When exchanging data through the EasyBREAD, you use the BreadSchema which is der
 ```ts
 import type { PersonSchema } from '@easybread/schemas';
 
-const results = await client.invoke<GoogleAdminDirectoryUsersByIdOperation>({
-  name: GoogleAdminDirectoryOperationName.USERS_BY_ID,
+const results = await client.invoke(GoogleAdminDirectoryOperationName.USERS_BY_ID, {
   params: { identifier: id },
   breadId: BREAD_ID,
 });

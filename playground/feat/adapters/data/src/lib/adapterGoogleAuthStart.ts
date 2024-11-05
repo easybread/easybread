@@ -1,8 +1,5 @@
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
-import {
-  type GoogleCommonOauth2StartOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 import { GoogleAdminDirectoryAuthScope } from '@easybread/adapter-google-admin-directory';
 import { redirect } from 'next/navigation';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
@@ -24,9 +21,9 @@ export const adapterGoogleAuthStart = async () => {
     { upsert: true }
   );
 
-  const result =
-    await clientGoogleAdminDirectory.invoke<GoogleCommonOauth2StartOperation>({
-      name: GoogleCommonOperationName.AUTH_FLOW_START,
+  const result = await clientGoogleAdminDirectory.invoke(
+    GoogleCommonOperationName.AUTH_FLOW_START,
+    {
       breadId: makeBreadId(authStatus.data.userId),
       payload: {
         prompt: ['consent'],
@@ -39,7 +36,8 @@ export const adapterGoogleAuthStart = async () => {
         ] satisfies GoogleAdminDirectoryAuthScope[],
         state: connectionToken,
       },
-    });
+    }
+  );
 
   if (!result.rawPayload.success) {
     throw new Error('adapterGoogleAuthStart failed', {

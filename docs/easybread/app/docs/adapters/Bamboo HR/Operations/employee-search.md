@@ -9,16 +9,14 @@ Note, that the pagination is not supported. It is the limitation of the [Bamboo 
 
 ```ts
 import { BreadOperationName } from '@easybread/operations';
-import type { BambooHrEmployeeSearchOperation } from '@easybread/adapter-bamboo-hr';
 import type { PersonSchema } from '@easybread/schemas';
 
 export async function adapterBambooHrEmployeeSearch(
   breadId: string,
   query: string
 ): Promise<PersonSchema[]> {
-  const results = await client.invoke<BambooHrEmployeeSearchOperation>({
+  const results = await client.invoke(BreadOperationName.EMPLOYEE_SEARCH, {
     breadId,
-    name: BreadOperationName.EMPLOYEE_SEARCH,
     params: { query },
     pagination: { type: 'DISABLED' },
   });
@@ -28,7 +26,7 @@ export async function adapterBambooHrEmployeeSearch(
       cause: results.rawPayload
     });
   }
-  
+
   return results.payload;
 }
 ```

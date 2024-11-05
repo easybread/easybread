@@ -85,6 +85,13 @@ const config: Config = {
         },
 
         {
+          type: 'docSidebar',
+          sidebarId: 'migration',
+          position: 'left',
+          label: 'Migration',
+        },
+
+        {
           href: 'https://github.com/easybread/easybread',
           label: 'GitHub',
           position: 'right',

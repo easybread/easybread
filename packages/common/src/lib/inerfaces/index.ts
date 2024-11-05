@@ -7,3 +7,4 @@ export * from './keys-by-value-type';
 export * from './value-of';
 export * from './includes';
 export * from './if-else';
+export * from './distributed-omit';

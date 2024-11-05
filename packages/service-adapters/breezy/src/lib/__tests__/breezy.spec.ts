@@ -41,15 +41,14 @@ describe('Breezy', () => {
       function invokeAuthenticate(): Promise<
         BreezyAuthenticateOperation['output']
       > {
-        return client.invoke<BreezyAuthenticateOperation>({
+        return client.invoke(BreezyOperationName.AUTHENTICATE, {
           breadId: USER_ID,
-          name: BreezyOperationName.AUTHENTICATE,
           payload: { email: EMAIL, password: PASSWORD },
         });
       }
 
       beforeEach(() => {
-        (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+        jest.mocked(axiosMock.request).mockImplementationOnce(() =>
           Promise.resolve({
             status: 200,
             data: SIGN_IN_RESPONSE_MOCK,
@@ -93,15 +92,14 @@ describe('Breezy', () => {
       function invokeCompanySearch(): Promise<
         BreezyCompanySearchOperation['output']
       > {
-        return client.invoke<BreezyCompanySearchOperation>({
+        return client.invoke(BreezyOperationName.COMPANY_SEARCH, {
           breadId: USER_ID,
-          name: BreezyOperationName.COMPANY_SEARCH,
           pagination: { type: 'DISABLED' },
         });
       }
 
       beforeEach(async () => {
-        (axiosMock.request as jest.Mock).mockImplementationOnce(() =>
+        jest.mocked(axiosMock.request).mockImplementationOnce(() =>
           Promise.resolve({
             status: 200,
             data: COMPANIES_SEARCH_RESPONSE_MOCK,

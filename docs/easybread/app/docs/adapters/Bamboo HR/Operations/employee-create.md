@@ -7,16 +7,14 @@ sidebar_label: Employee Create
 
 ```ts
 import { BreadOperationName } from '@easybread/operations';
-import type { BambooHrEmployeeCreateOperation } from '@easybread/adapter-bamboo-hr';
 import type { PersonSchema } from '@easybread/schemas';
 
 export async function adapterBambooHrEmployeeCreate(
   breadId: string,
   payload: PersonSchema
 ): Promise<PersonSchema> {
-  const results = await client.invoke<BambooHrEmployeeCreateOperation>({
+  const results = await client.invoke(BreadOperationName.EMPLOYEE_CREATE, {
     breadId,
-    name: BreadOperationName.EMPLOYEE_CREATE,
     payload
   });
 

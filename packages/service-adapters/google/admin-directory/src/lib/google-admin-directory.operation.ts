@@ -10,10 +10,11 @@ import {
   GoogleAdminDirectoryUsersSearchOperation,
   GoogleAdminDirectoryUsersUpdateOperation,
 } from './operations';
+import type { GoogleAdminDirectoryAuthScope } from './interfaces';
 
 export type GoogleAdminDirectoryOperation =
   | GoogleCommonOauth2CompleteOperation
-  | GoogleCommonOauth2StartOperation
+  | GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>
   | GoogleAdminDirectoryUsersSearchOperation
   | GoogleAdminDirectoryUsersByIdOperation
   | GoogleAdminDirectoryUsersUpdateOperation

@@ -6,11 +6,9 @@ sidebar_label: Users Delete
 # Google Admin Directory - Users Delete
 
 Delete one user by identifier.
+
 ```ts
-import {
-  type GoogleAdminDirectoryUsersDeleteOperation,
-  GoogleAdminDirectoryOperationName
-} from '@easybread/adapter-google-admin-directory';
+import { GoogleAdminDirectoryOperationName } from '@easybread/adapter-google-admin-directory';
 import type { PersonSchema } from '@easybread/schemas';
 
 async function googleAdminDirectoryUsersDelete(
@@ -18,8 +16,7 @@ async function googleAdminDirectoryUsersDelete(
   userId: string,
 ): Promise<PersonSchema> {
   const results =
-    await client.invoke<GoogleAdminDirectoryUsersDeleteOperation>({
-      name: GoogleAdminDirectoryOperationName.USERS_DELETE,
+    await client.invoke(GoogleAdminDirectoryOperationName.USERS_DELETE, {
       breadId,
       payload: {
         '@type': 'Person',

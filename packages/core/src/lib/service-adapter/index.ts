@@ -1,1 +1,1 @@
-export { BreadServiceAdapter } from './bread-service-adapter';
+export * from './bread-service-adapter';

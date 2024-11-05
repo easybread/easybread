@@ -18,13 +18,7 @@ There are three steps involved:
 
 ```ts
 import { randomBytes } from 'node:crypto';
-import {
-  type GoogleCommonOauth2StartOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
-import {
-  type GoogleAdminDirectoryAuthScope,
-} from '@easybread/adapter-google-admin-directory';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 
 export async function adapterGoogleAdminDirectoryAuthStart(
   breadId: string
@@ -34,12 +28,7 @@ export async function adapterGoogleAdminDirectoryAuthStart(
   // Store it in your database.
   const googleOauthSessionToken = randomBytes(16).toString('hex');
 
-  const result = await client.invoke<
-    // note, that you need to specify the Auth Scope type,
-    // Otherwise the IDE would not be able to autocomplete the scopes.
-    GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>
-  >({
-    name: GoogleCommonOperationName.AUTH_FLOW_START,
+  const result = await client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
     breadId,
     payload: {
       prompt: ['consent'],
@@ -80,10 +69,7 @@ Extract the googleOauthSessionToken from the `state`,
 then do:
 
 ```ts
-import {
-  type GoogleCommonOauth2CompleteOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 
 async function googleAdminDirectoryOauthComplete(
   googleOauthSessionToken: string,
@@ -92,9 +78,8 @@ async function googleAdminDirectoryOauthComplete(
 ) {
   // check that the received data is authentic, by comparing it with the stored data.
   await verifyAuthenticity(googleOauthSessionToken, userId);
-  
-  const results = await client.invoke<GoogleCommonOauth2CompleteOperation>({
-    name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+
+  const results = await client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
     breadId,
     payload: { code }
   });
