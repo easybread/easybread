@@ -4,9 +4,6 @@
   "dependencies": {
     "@easybread/core": "0.0.1",
     "@easybread/schemas": "0.0.1",
-    "@easybread/test-utils": "0.0.1",
-    "axios": "^1.7.4",
-    "lodash": "^4.17.21",
     "@easybread/data-adapter": "0.0.1",
     "@easybread/pagination-adapter": "0.0.1",
     "@easybread/adapter-google-common": "0.0.1"

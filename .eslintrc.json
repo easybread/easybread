@@ -9,6 +9,24 @@
       "rules": {}
     },
     {
+      "files": ["package.json"],
+      "parser": "jsonc-eslint-parser",
+      "rules": {
+        "@nx/dependency-checks": [
+          "error",
+          {
+            "ignoredFiles": [
+              "{projectRoot}/rollup.config.{js,ts,mjs,mts}",
+              "{projectRoot}/**/__tests__/**",
+              "{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)",
+              "{projectRoot}/eslint.config.js",
+              "{projectRoot}/.eslintrc.json"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nx/enforce-module-boundaries": [
