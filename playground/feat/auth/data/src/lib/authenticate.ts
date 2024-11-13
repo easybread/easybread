@@ -12,7 +12,7 @@ interface AuthenticateParams {
   ) => void;
 }
 
-export function authenticate(params: AuthenticateParams) {
+export async function authenticate(params: AuthenticateParams) {
   const { data, setCookie } = params;
 
   const {
@@ -25,7 +25,7 @@ export function authenticate(params: AuthenticateParams) {
 
   setCookie(
     accessTokenName,
-    authTokenEncode({
+    await authTokenEncode({
       data,
       expireTimeSec: accessTokenExpireTimeSec,
     }),
@@ -35,7 +35,7 @@ export function authenticate(params: AuthenticateParams) {
 
   setCookie(
     refreshTokenName,
-    authTokenEncode({
+    await authTokenEncode({
       data,
       expireTimeSec: refreshTokenExpireTimeSec,
     }),

@@ -1,9 +1,7 @@
 import { Button, Input } from 'playground-ui';
-import { loginAction } from './loginAction';
+import { loginAction } from 'playground-feat-auth-actions';
 
-export type LoginFormProps = {
-  //
-};
+export type LoginFormProps = object;
 
 export async function LoginForm(props: LoginFormProps) {
   return (

@@ -1,20 +1,19 @@
+import { randomBytes } from 'node:crypto';
+
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 import { GoogleAdminDirectoryAuthScope } from '@easybread/adapter-google-admin-directory';
-import { redirect } from 'next/navigation';
+
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
-import { randomBytes } from 'node:crypto';
-import { authorize } from 'playground-feat-auth-data';
 
-export const adapterGoogleAuthStart = async () => {
-  const authStatus = await authorize();
+export const adapterGoogleAuthStart = async (userId: string) => {
   const connectionToken = randomBytes(16).toString('hex');
   const clientGoogleAdminDirectory = await clientGoogleAdminDirectoryGet();
 
   await adapterCollection().updateOne(
     {
-      userId: authStatus.data.userId,
+      userId,
       slug: ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY,
     },
     { $set: { createdAt: new Date(), isConnected: false, connectionToken } },
@@ -24,7 +23,7 @@ export const adapterGoogleAuthStart = async () => {
   const result = await clientGoogleAdminDirectory.invoke(
     GoogleCommonOperationName.AUTH_FLOW_START,
     {
-      breadId: makeBreadId(authStatus.data.userId),
+      breadId: makeBreadId(userId),
       payload: {
         prompt: ['consent'],
         includeGrantedScopes: true,
@@ -45,5 +44,5 @@ export const adapterGoogleAuthStart = async () => {
     });
   }
 
-  redirect(result.rawPayload.data.authUri);
+  return result.rawPayload.data;
 };

@@ -1,4 +1,3 @@
-import { authorize } from 'playground-feat-auth-data';
 import { clientBambooHrGet } from 'playground-easybread-clients';
 import { BreadOperationName } from '@easybread/operations';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
@@ -7,20 +6,20 @@ import { adapterCollection } from 'playground-db';
 export type AdapterBambooHrConnectParams = {
   apiKey: string;
   companyName: string;
+  userId: string;
 };
 
 export async function adapterBambooHrConnect({
   apiKey,
   companyName,
+  userId,
 }: AdapterBambooHrConnectParams) {
-  const authData = await authorize();
-
   const clientBambooHr = await clientBambooHrGet();
 
   const output = await clientBambooHr.invoke(
     BreadOperationName.SETUP_BASIC_AUTH,
     {
-      breadId: makeBreadId(authData.data.userId),
+      breadId: makeBreadId(userId),
       payload: { apiKey, companyName },
     }
   );
@@ -32,7 +31,7 @@ export async function adapterBambooHrConnect({
 
   await adapterCollection().insertOne({
     slug: ADAPTER_NAME.BAMBOO_HR,
-    userId: authData.data.userId,
+    userId,
     createdAt: new Date(),
     isConnected: true,
   });

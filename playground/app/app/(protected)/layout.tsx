@@ -1,18 +1,11 @@
-'use client';
+import { type PropsWithChildren } from 'react';
+import { redirect } from 'next/navigation';
+import { authStatusGet } from 'playground-feat-auth-data';
 
-import { type PropsWithChildren, useLayoutEffect, useState } from 'react';
-import { authorizeAction } from './authorizeAction';
+export default async function ProtectedLayout(props: PropsWithChildren) {
+  const result = await authStatusGet();
 
-export default function ProtectedLayout(props: PropsWithChildren) {
-  const [isAuthorized, setIsAuthorized] = useState(false);
-
-  useLayoutEffect(() => {
-    void authorizeAction().then(() => {
-      setIsAuthorized(true);
-    });
-  }, []);
-
-  if (!isAuthorized) return null;
+  if (!result?.authorized) return redirect('/login');
 
   return <>{props.children}</>;
 }

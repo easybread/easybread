@@ -7,7 +7,6 @@ import {
 import { load } from 'ts-dotenv';
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
-import { revalidatePath } from 'next/cache';
 
 let client: EasyBreadClient<
   GoogleAdminDirectoryAdapter,
@@ -50,8 +49,6 @@ export const clientGoogleAdminDirectoryGet = async () => {
       userId,
       slug: ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY,
     });
-
-    revalidatePath(`/`);
   });
 
   return client;

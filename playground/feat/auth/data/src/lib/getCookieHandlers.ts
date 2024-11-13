@@ -17,8 +17,8 @@ export type CookieHandlers = {
   clearCookie: (name: string, domain?: string) => void;
 };
 
-export function getCookieHandlers(): CookieHandlers {
-  const cookieStore = cookies();
+export async function getCookieHandlers(): Promise<CookieHandlers> {
+  const cookieStore = await cookies();
 
   const getCookie = (name: string) => cookieStore.get(name)?.value;
 
