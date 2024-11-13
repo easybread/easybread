@@ -1,9 +1,10 @@
-import { authorize } from 'playground-feat-auth-data';
+import { authStatusGet } from 'playground-feat-auth-data';
 import { clientBambooHrGet } from 'playground-easybread-clients';
 import { BreadOperationName } from '@easybread/operations';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import type { BambooHrSetupBasicAuthOperation } from '@easybread/adapter-bamboo-hr';
+import { redirect } from 'next/navigation';
 
 export type AdapterBambooHrConnectParams = {
   apiKey: string;
@@ -14,7 +15,9 @@ export async function adapterBambooHrConnect({
   apiKey,
   companyName,
 }: AdapterBambooHrConnectParams) {
-  const authData = await authorize();
+  const authData = await authStatusGet();
+
+  if (!authData.authorized) return redirect('/login');
 
   const clientBambooHr = await clientBambooHrGet();
 

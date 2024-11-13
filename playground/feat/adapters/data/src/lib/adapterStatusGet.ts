@@ -1,12 +1,14 @@
-'use server';
-
 import { adapterCollection } from 'playground-db';
 import { isAdapterName } from 'playground-common';
-import { authorize } from 'playground-feat-auth-data';
+import { authStatusGet } from 'playground-feat-auth-data';
+import { redirect } from 'next/navigation';
 
 export async function adapterStatusGet(slug: string) {
   if (!isAdapterName(slug)) throw new Error('invalid adapter name');
-  const authStatus = await authorize();
+
+  const authStatus = await authStatusGet();
+
+  if (!authStatus.authorized) return redirect(`/login`);
 
   return adapterCollection().findOne({ slug, userId: authStatus.data.userId });
 }

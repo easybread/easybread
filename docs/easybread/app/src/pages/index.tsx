@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';

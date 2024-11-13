@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { adapterBambooHrConnect } from 'playground-feat-adapters-data';
 
-export async function connectAction(formData: FormData) {
+export async function bambooHrConnectAction(formData: FormData) {
   const apiKey = formData.get('apiKey')?.toString();
   const companyName = formData.get('companyName')?.toString();
 

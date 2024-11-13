@@ -1,15 +1,14 @@
-import { TopNavContainer } from './TopNavContainer';
+import Link from 'next/link';
 import { authStatusGet } from 'playground-feat-auth-data';
 import { Button, LogoEasyBread } from 'playground-ui';
-import { logoutAction } from './logoutAction';
-import Link from 'next/link';
+import { logoutAction } from 'playground-feat-auth-actions';
 
-export type TopNavProps = {
-  //
-};
+import { TopNavContainer } from './TopNavContainer';
+
+export type TopNavProps = object;
 
 export async function TopNav(props: TopNavProps) {
-  const authStatus = authStatusGet();
+  const authStatus = await authStatusGet();
 
   if (!authStatus?.authorized) return null;
 

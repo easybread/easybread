@@ -57,6 +57,9 @@
         "playground/easybread/clients/src/index.ts"
       ],
       "playground-easybread-state": ["playground/easybread/state/src/index.ts"],
+      "playground-feat-adapters-actions": [
+        "playground/feat/adapters/actions/src/index.ts"
+      ],
       "playground-feat-adapters-data": [
         "playground/feat/adapters/data/src/index.ts"
       ],
@@ -65,6 +68,9 @@
       ],
       "playground-feat-adapters-ui/server": [
         "playground/feat/adapters/ui/src/server.ts"
+      ],
+      "playground-feat-auth-actions": [
+        "playground/feat/auth/actions/src/index.ts"
       ],
       "playground-feat-auth-data": ["playground/feat/auth/data/src/index.ts"],
       "playground-feat-auth-ui": ["playground/feat/auth/ui/src/index.ts"],
