@@ -28,11 +28,11 @@ export async function adapterGoogleAuthComplete({
   });
 
   if (!adapter) {
-    throw new Error('adapter not found');
+    throw new Error('ADAPTER_NOT_FOUND');
   }
 
   if (adapter.connectionToken !== state) {
-    throw new Error('state mismatch');
+    throw new Error('STATE_MISMATCH');
   }
 
   const results =

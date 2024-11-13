@@ -1,9 +1,7 @@
 import { AdapterListItem } from './AdapterListItem';
 import { ADAPTERS } from './adapters';
 
-export type AdapterListProps = {
-  //
-};
+export type AdapterListProps = object;
 
 export async function AdapterList(props: AdapterListProps) {
   return (

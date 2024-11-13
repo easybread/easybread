@@ -1,3 +1,4 @@
+import 'server-only';
 export * from './lib/adapterGoogleAuthStart';
 export * from './lib/adapterGoogleAuthComplete';
 export * from './lib/adapterGoogleDisconnect';

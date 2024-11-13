@@ -2,7 +2,7 @@ import { adapterCollection } from 'playground-db';
 import { authStatusGet } from 'playground-feat-auth-data';
 
 export async function adapterListGet() {
-  const authData = authStatusGet();
+  const authData = await authStatusGet();
 
   if (!authData.authorized) return [];
 

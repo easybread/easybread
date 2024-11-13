@@ -1,7 +1,9 @@
 import { Button, Icon } from 'playground-ui';
-import { adapterDisconnectAction } from '../adapterDisconnectAction';
 import { ADAPTER_NAME } from 'playground-common';
-import { connectAction } from './connectAction';
+import {
+  adapterDisconnectAction,
+  adapterGoogleAdminDirectoryConnectAction,
+} from 'playground-feat-adapters-actions';
 
 export type AdapterConnectGoogleAdminDirectoryProps = {
   connectedAt?: Date;
@@ -27,7 +29,10 @@ export async function AdapterConnectGoogleAdminDirectory(
       </Button>
     </form>
   ) : (
-    <form action={connectAction} className={'flex flex-col'}>
+    <form
+      action={adapterGoogleAdminDirectoryConnectAction}
+      className={'flex flex-col'}
+    >
       <Button type={'submit'} variant={'outline'} size={'md'}>
         <Icon iconName={'GOOGLE_G_LETTER'} size={'xs'} className={'mr-2'} />
         <span>Connect</span>

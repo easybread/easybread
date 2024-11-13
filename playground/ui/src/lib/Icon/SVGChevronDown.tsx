@@ -1,6 +1,4 @@
-export type CvgChevronDownProps = {
-  //
-};
+export type CvgChevronDownProps = object;
 
 export function SVGChevronDown(props: CvgChevronDownProps) {
   return (

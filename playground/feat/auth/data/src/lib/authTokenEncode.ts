@@ -1,16 +1,23 @@
-import { sign } from 'jsonwebtoken';
 import { load } from 'ts-dotenv';
+import { SignJWT } from 'jose';
 
 interface AuthTokenEncodeParams<TData extends object> {
   data: TData;
   expireTimeSec: number;
+  [key: string]: unknown;
 }
 
-export function authTokenEncode<TData extends object>({
+export function authTokenEncode<TData extends Record<string, unknown>>({
   data,
   expireTimeSec,
-}: AuthTokenEncodeParams<TData>): string {
+}: AuthTokenEncodeParams<TData>): Promise<string> {
   const { SHARED_JWT_SECRET } = load({ SHARED_JWT_SECRET: String });
 
-  return sign({ data }, SHARED_JWT_SECRET, { expiresIn: expireTimeSec });
+  const encodedKey = new TextEncoder().encode(SHARED_JWT_SECRET);
+
+  return new SignJWT({ data })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(`${expireTimeSec}sec`)
+    .sign(encodedKey);
 }

@@ -1,8 +1,10 @@
 import { ADAPTER_NAME } from 'playground-common';
 import { Button, Icon, Input } from 'playground-ui';
 
-import { adapterDisconnectAction } from '../adapterDisconnectAction';
-import { connectAction } from './connectAction';
+import {
+  adapterDisconnectAction,
+  bambooHrConnectAction,
+} from 'playground-feat-adapters-actions';
 
 export type AdapterConnectBambooHrProps = {
   connectedAt?: Date;
@@ -28,7 +30,7 @@ export async function AdapterConnectBambooHr(
       </Button>
     </form>
   ) : (
-    <form action={connectAction} className={'flex flex-col'}>
+    <form action={bambooHrConnectAction} className={'flex flex-col'}>
       <div className={'flex flex-col gap-2'}>
         <Input type="password" name="apiKey" placeholder={'API Key'} />
         <Input type="text" name="companyName" placeholder={'Company Name'} />

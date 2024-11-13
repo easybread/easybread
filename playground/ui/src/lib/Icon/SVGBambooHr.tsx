@@ -1,6 +1,4 @@
-export type SvgBambooHrProps = {
-  //
-};
+export type SvgBambooHrProps = object;
 
 // style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
 

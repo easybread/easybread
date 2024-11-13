@@ -1,6 +1,4 @@
-export type IconGoogleGLetterProps = {
-  //
-};
+export type IconGoogleGLetterProps = object;
 
 export function SVGGoogleGLetter(props: IconGoogleGLetterProps) {
   return (
