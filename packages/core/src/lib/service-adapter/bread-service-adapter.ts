@@ -12,6 +12,7 @@ import {
   type BreadOperationContext,
   type BreadOperationHandlerDistributed,
   createFailedOperationOutput,
+  type ExtractCollectionOperation,
 } from '../operation';
 import { OperationExecutor } from '../operation-executor';
 
@@ -30,10 +31,10 @@ export abstract class BreadServiceAdapter<
 > {
   protected options: TOptions;
 
-  private handlers: Map<
+  private handlers = new Map<
     TOperation['name'],
     BreadOperationHandlerDistributed<TOperation, TAuthStrategy, TOptions>
-  > = new Map();
+  >();
 
   abstract provider: string;
 
@@ -153,13 +154,26 @@ export abstract class BreadServiceAdapter<
 
 export type BreadServiceAdapterAny = BreadServiceAdapter<any, any, any>;
 
-export type InferServiceAdapterOperation<T extends BreadServiceAdapterAny> =
-  T extends BreadServiceAdapter<infer TOperation, any, any>
-    ? TOperation
-    : never;
+export type InferServiceAdapterOperation<T> = T extends BreadServiceAdapter<
+  infer TOperation,
+  any,
+  any
+>
+  ? TOperation
+  : never;
 
-export type InferServiceAdapterAuthAdapter<T extends BreadServiceAdapterAny> =
-  T extends BreadServiceAdapter<any, infer TAuth, any> ? TAuth : never;
+export type InferServiceAdapterOperationName<T> =
+  InferServiceAdapterOperation<T>['name'];
 
-export type InferServiceAdapterOptions<T extends BreadServiceAdapterAny> =
-  T extends BreadServiceAdapter<any, any, infer TOptions> ? TOptions : never;
+export type InferServiceAdapterCollectionOperationName<T> =
+  ExtractCollectionOperation<InferServiceAdapterOperation<T>>['name'];
+
+export type InferServiceAdapterOperationByName<
+  TAdapter extends BreadServiceAdapterAny,
+  TName extends InferServiceAdapterOperationName<TAdapter>
+> = Extract<InferServiceAdapterOperation<TAdapter>, { name: TName }>;
+
+export type InferServiceAdapterCollectionOperationByName<
+  TAdapter extends BreadServiceAdapterAny,
+  TName extends InferServiceAdapterOperationName<TAdapter>
+> = Extract<InferServiceAdapterOperation<TAdapter>, { name: TName }>;

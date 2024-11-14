@@ -5,7 +5,7 @@ import type { BreadServiceAdapterOptions } from '../common-interfaces';
 import type { BreadHttpTransportError } from '../transport/http';
 
 export interface BreadOperationHandler<
-  TOperation extends BreadOperation<string>,
+  TOperation extends BreadOperation<any, any>,
   TAuthStrategy extends BreadAuthStrategy<object>,
   TOptions extends BreadServiceAdapterOptions | null = null
 > {

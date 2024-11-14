@@ -6,10 +6,7 @@ sidebar_label: Users Search
 # Google Admin Directory - Users Search Operation
 
 ```ts
-import {
-  type GoogleAdminDirectoryUsersSearchOperation,
-  GoogleAdminDirectoryOperationName
-} from '@easybread/adapter-google-admin-directory';
+import { GoogleAdminDirectoryOperationName } from '@easybread/adapter-google-admin-directory';
 import type { PersonSchema } from '@easybread/schemas';
 
 async function googleAdminDirectoryUsersSearch(
@@ -21,8 +18,7 @@ async function googleAdminDirectoryUsersSearch(
   next: string | number;
 }> {
   const results =
-    await client.invoke<GoogleAdminDirectoryUsersSearchOperation>({
-      name: GoogleAdminDirectoryOperationName.USERS_SEARCH,
+    await client.invoke(GoogleAdminDirectoryOperationName.USERS_SEARCH, {
       params: { query },
       breadId,
       pagination: {
@@ -35,13 +31,13 @@ async function googleAdminDirectoryUsersSearch(
     // handle the error
     new Error('Google User Search Failed', { cause: results.rawPayload });
   }
+  
   const {
     payload,
     pagination: { next, prev },
   } = results;
-  
+
   // use prev and next pointers to fetch the next or the previous page.
   return { payload, next, prev };
 }
 ```
-

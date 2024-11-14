@@ -1,8 +1,5 @@
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
-import {
-  type GoogleCommonOauth2CompleteOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 import { adapterCollection } from 'playground-db';
 import { isAdapterName, makeBreadId } from 'playground-common';
 
@@ -35,14 +32,13 @@ export async function adapterGoogleAuthComplete({
     throw new Error('STATE_MISMATCH');
   }
 
-  const results =
-    await clientGoogleAdminDirectory.invoke<GoogleCommonOauth2CompleteOperation>(
-      {
-        name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
-        breadId: makeBreadId(userId),
-        payload: { code },
-      }
-    );
+  const results = await clientGoogleAdminDirectory.invoke(
+    GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+    {
+      breadId: makeBreadId(userId),
+      payload: { code },
+    }
+  );
 
   if (!results.rawPayload.success) {
     new Error('Google Auth Failed', { cause: results.rawPayload });

@@ -7,7 +7,6 @@ import {
 } from '@easybread/core';
 
 import {
-  RocketChatAuthConfigureOperation,
   RocketChatAuthStrategy,
   RocketChatOperationName,
 } from '@easybread/adapter-rocket-chat-common';
@@ -43,9 +42,8 @@ it(`should allow creating the client`, () => {
 describe('Operations', () => {
   describe('AUTH_CONFIGURE', () => {
     it(`should save auth data to state`, async () => {
-      await client.invoke<RocketChatAuthConfigureOperation>({
+      await client.invoke(RocketChatOperationName.AUTH_CONFIGURE, {
         breadId: BREAD_ID,
-        name: RocketChatOperationName.AUTH_CONFIGURE,
         params: { authToken: AUTH_TOKEN, userId: USER_ID },
       });
 
@@ -172,8 +170,7 @@ async function invokeUsersSearch(
   pagination: BreadOperationSkipCountInputPagination = DEFAULT_PAGINATION,
   params: RocketChatUsersSearchOperationInputParams = {}
 ): Promise<RocketChatUsersSearchOperation['output']> {
-  return await client.invoke<RocketChatUsersSearchOperation>({
-    name: RocketChatUsersOperationName.SEARCH,
+  return await client.invoke(RocketChatUsersOperationName.SEARCH, {
     pagination,
     breadId: BREAD_ID,
     params,
@@ -194,9 +191,8 @@ function setupUsersInfoResponse(): void {
 async function invokeUsersById(
   params: RocketChatUsersByIdOperationInputParams
 ): Promise<RocketChatUsersByIdOperation['output']> {
-  return await client.invoke<RocketChatUsersByIdOperation>({
+  return await client.invoke(RocketChatUsersOperationName.BY_ID, {
     breadId: BREAD_ID,
-    name: RocketChatUsersOperationName.BY_ID,
     params,
   });
 }

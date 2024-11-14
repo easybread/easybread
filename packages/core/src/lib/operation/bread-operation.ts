@@ -83,3 +83,6 @@ export type BreadCollectionOperation<
 export type BreadOperation<T extends string, E = any> =
   | BreadStandardOperation<T, E>
   | BreadCollectionOperation<T, BreadOperationPaginationType, E>;
+
+export type ExtractCollectionOperation<T extends object> =
+  T extends BreadCollectionOperation<any, any, any> ? T : never;

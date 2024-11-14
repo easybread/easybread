@@ -3,7 +3,6 @@ import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
   GoogleCommonOauth2CompleteOperation,
-  GoogleCommonOauth2StartOperation,
   GoogleCommonOauth2StateData,
   GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
@@ -74,19 +73,19 @@ describe('Google Plugin', () => {
   describe('Operations', () => {
     describe(GoogleCommonOperationName.AUTH_FLOW_START, () => {
       it(`should create the auth uri`, async () => {
-        const result = await client.invoke<
-          GoogleCommonOauth2StartOperation<GoogleContactsAuthScopes>
-        >({
-          breadId: USER_ID,
-          name: GoogleCommonOperationName.AUTH_FLOW_START,
-          payload: {
-            state: 'my-state-value',
-            prompt: 'none',
-            loginHint: 'my hint',
-            includeGrantedScopes: true,
-            scope: AUTH_SCOPES,
-          },
-        });
+        const result = await client.invoke(
+          GoogleCommonOperationName.AUTH_FLOW_START,
+          {
+            breadId: USER_ID,
+            payload: {
+              state: 'my-state-value',
+              prompt: 'none',
+              loginHint: 'my hint',
+              includeGrantedScopes: true,
+              scope: AUTH_SCOPES,
+            },
+          }
+        );
 
         expect(result).toEqual({
           provider: serviceAdapter.provider,
@@ -119,9 +118,8 @@ describe('Google Plugin', () => {
       async function invokeCompleteAuth(): Promise<
         GoogleCommonOauth2CompleteOperation['output']
       > {
-        return client.invoke<GoogleCommonOauth2CompleteOperation>({
+        return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
           breadId: USER_ID,
-          name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
           payload: { code: 'my-auth-code' },
         });
       }
@@ -219,9 +217,8 @@ describe('Google Plugin', () => {
       async function invokePeopleSearch(
         query?: string
       ): Promise<GoogleContactsPeopleSearchOperation['output']> {
-        return client.invoke<GoogleContactsPeopleSearchOperation>({
+        return client.invoke(GoogleContactsOperationName.PEOPLE_SEARCH, {
           breadId: USER_ID,
-          name: GoogleContactsOperationName.PEOPLE_SEARCH,
           params: { query },
           pagination: {
             type: 'SKIP_COUNT',
@@ -463,9 +460,8 @@ describe('Google Plugin', () => {
       async function invokePeopleCreate(): Promise<
         GoogleContactsPeopleCreateOperation['output']
       > {
-        return client.invoke<GoogleContactsPeopleCreateOperation>({
+        return client.invoke(GoogleContactsOperationName.PEOPLE_CREATE, {
           breadId: USER_ID,
-          name: GoogleContactsOperationName.PEOPLE_CREATE,
           payload: {
             '@type': 'Person',
             givenName: 'Test',
@@ -535,9 +531,8 @@ describe('Google Plugin', () => {
       async function invokePeopleUpdate(): Promise<
         GoogleContactsPeopleUpdateOperation['output']
       > {
-        return client.invoke<GoogleContactsPeopleUpdateOperation>({
+        return client.invoke(GoogleContactsOperationName.PEOPLE_UPDATE, {
           breadId: USER_ID,
-          name: GoogleContactsOperationName.PEOPLE_UPDATE,
           payload: {
             '@type': 'Person',
             identifier: '79ec2071883179b9',
@@ -769,9 +764,8 @@ describe('Google Plugin', () => {
       async function invokePeopleById(): Promise<
         GoogleContactsPeopleByIdOperation['output']
       > {
-        return client.invoke<GoogleContactsPeopleByIdOperation>({
+        return client.invoke(GoogleContactsOperationName.PEOPLE_BY_ID, {
           breadId: USER_ID,
-          name: GoogleContactsOperationName.PEOPLE_BY_ID,
           params: { identifier: '79ec2071883179b9' },
         });
       }
@@ -834,9 +828,8 @@ describe('Google Plugin', () => {
       async function invokePeopleDelete(): Promise<
         GoogleContactsPeopleDeleteOperation['output']
       > {
-        return client.invoke<GoogleContactsPeopleDeleteOperation>({
+        return client.invoke(GoogleContactsOperationName.PEOPLE_DELETE, {
           breadId: USER_ID,
-          name: GoogleContactsOperationName.PEOPLE_DELETE,
           payload: {
             '@type': 'Person',
             identifier: '79ec2071883179b9',

@@ -6,13 +6,13 @@ import { BambooHrAuthStrategy } from './bamboo-hr.auth-strategy';
 import { BAMBOO_HR_PROVIDER_NAME } from './bamboo-hr.constants';
 import { BambooHrOperation } from './bamboo-hr.operation';
 import {
-  BambooJobApplicationSearchHandler,
   BambooEmployeeByIdHandler,
   BambooEmployeeCreateHandler,
   BambooEmployeeSearchHandler,
   BambooEmployeeUpdateHandler,
-  BambooSetupBasicAuthHandler,
   BambooJobApplicantSearchHandler,
+  BambooJobApplicationSearchHandler,
+  BambooSetupBasicAuthHandler,
 } from './handlers';
 
 export class BambooHrAdapter extends BreadServiceAdapter<

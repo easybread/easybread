@@ -8,15 +8,11 @@ sidebar_label: Users Create
 Create a new user.
 
 ```ts
-import {
-  type GoogleAdminDirectoryUsersCreateOperation,
-  GoogleAdminDirectoryOperationName
-} from '@easybread/adapter-google-admin-directory';
+import { GoogleAdminDirectoryOperationName } from '@easybread/adapter-google-admin-directory';
 
 async function googleAdminDirectoryUsersCreate(breadId: string): Promise<PersonSchema> {
   const results =
-    await client.invoke<GoogleAdminDirectoryUsersCreateOperation>({
-      name: GoogleAdminDirectoryOperationName.USERS_CREATE,
+    await client.invoke(GoogleAdminDirectoryOperationName.USERS_CREATE, {
       breadId,
       payload: {
         '@type': 'Person',

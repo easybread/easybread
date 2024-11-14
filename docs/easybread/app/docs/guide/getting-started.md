@@ -55,21 +55,12 @@ Authentication is a two step process:
 1. Initiate the authentication flow
 
 ```ts
-import {
-  type GoogleCommonOauth2StartOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
-import {
-  type GoogleAdminDirectoryAuthScope,
-} from '@easybread/adapter-google-admin-directory';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 
 export async function adapterGoogleAdminDirectoryAuthStart(
   breadId: string
 ): Promise<string> {
-  const result = await client.invoke<
-    GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>
-  >({
-    name: GoogleCommonOperationName.AUTH_FLOW_START,
+  const result = await client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
     breadId,
     payload: {
       prompt: ['consent'],
@@ -82,7 +73,7 @@ export async function adapterGoogleAdminDirectoryAuthStart(
       ],
     },
   });
-  
+
   // redirect the user to this location.
   return result.rawPayload.data.authUri;
 }
@@ -91,21 +82,17 @@ export async function adapterGoogleAdminDirectoryAuthStart(
 2. Exchange the authorization code received from the Google OAuth consent screen for an access token
 
 ```ts
-import {
-  type GoogleCommonOauth2CompleteOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 
 async function googleAdminDirectoryOauthComplete(
   breadId: string,
   code: string,
 ) {
-  const results = await client.invoke<GoogleCommonOauth2CompleteOperation>({
-    name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+  const results = await client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
     breadId,
     payload: { code }
   });
-  
+
   // update your database. 
   // You don't have to manage the received access token manually.
   // EasyBREAD will handle the token and refresh it automatically, transparently for you.
@@ -117,10 +104,7 @@ async function googleAdminDirectoryOauthComplete(
 Now you can invoke other operations to interact with the API.
 
 ```ts
-import {
-  type GoogleAdminDirectoryUsersSearchOperation,
-  GoogleAdminDirectoryOperationName
-} from '@easybread/adapter-google-admin-directory';
+import { GoogleAdminDirectoryOperationName } from '@easybread/adapter-google-admin-directory';
 import type { PersonSchema } from '@easybread/schemas';
 
 async function googleAdminDirectoryUsersSearch(
@@ -132,8 +116,7 @@ async function googleAdminDirectoryUsersSearch(
   next: string | number;
 }> {
   const results =
-    await client.invoke<GoogleAdminDirectoryUsersSearchOperation>({
-      name: GoogleAdminDirectoryOperationName.USERS_SEARCH,
+    await client.invoke(GoogleAdminDirectoryOperationName.USERS_SEARCH, {
       params: { query },
       breadId,
       pagination: {

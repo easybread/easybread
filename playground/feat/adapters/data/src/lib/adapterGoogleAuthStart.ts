@@ -1,13 +1,11 @@
+import { randomBytes } from 'node:crypto';
+
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
-import {
-  type GoogleCommonOauth2StartOperation,
-  GoogleCommonOperationName,
-} from '@easybread/adapter-google-common';
+import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
 import { GoogleAdminDirectoryAuthScope } from '@easybread/adapter-google-admin-directory';
-import { redirect } from 'next/navigation';
+
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
-import { randomBytes } from 'node:crypto';
 
 export const adapterGoogleAuthStart = async (userId: string) => {
   const connectionToken = randomBytes(16).toString('hex');
@@ -22,9 +20,9 @@ export const adapterGoogleAuthStart = async (userId: string) => {
     { upsert: true }
   );
 
-  const result =
-    await clientGoogleAdminDirectory.invoke<GoogleCommonOauth2StartOperation>({
-      name: GoogleCommonOperationName.AUTH_FLOW_START,
+  const result = await clientGoogleAdminDirectory.invoke(
+    GoogleCommonOperationName.AUTH_FLOW_START,
+    {
       breadId: makeBreadId(userId),
       payload: {
         prompt: ['consent'],
@@ -37,7 +35,8 @@ export const adapterGoogleAuthStart = async (userId: string) => {
         ] satisfies GoogleAdminDirectoryAuthScope[],
         state: connectionToken,
       },
-    });
+    }
+  );
 
   if (!result.rawPayload.success) {
     throw new Error('adapterGoogleAuthStart failed', {
@@ -45,5 +44,5 @@ export const adapterGoogleAuthStart = async (userId: string) => {
     });
   }
 
-  redirect(result.rawPayload.data.authUri);
+  return result.rawPayload.data;
 };

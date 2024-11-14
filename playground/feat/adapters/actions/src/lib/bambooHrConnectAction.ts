@@ -2,6 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { adapterBambooHrConnect } from 'playground-feat-adapters-data';
+import { authStatusGet } from 'playground-feat-auth-data';
+import { redirect } from 'next/navigation';
 
 export async function bambooHrConnectAction(formData: FormData) {
   const apiKey = formData.get('apiKey')?.toString();
@@ -9,7 +11,15 @@ export async function bambooHrConnectAction(formData: FormData) {
 
   if (!apiKey || !companyName) return;
 
-  await adapterBambooHrConnect({ apiKey, companyName });
+  const authData = await authStatusGet();
+
+  if (!authData.authorized) return redirect('/login');
+
+  await adapterBambooHrConnect({
+    apiKey,
+    companyName,
+    userId: authData.data.userId,
+  });
 
   revalidatePath('/');
 }

@@ -1,88 +1,67 @@
-import {
-  BreadCollectionOperation,
-  BreadOperation,
-  BreadOperationPaginationType
-} from '../operation';
+import { BreadCollectionOperation } from '../operation';
+import type {
+  BreadServiceAdapterAny,
+  InferServiceAdapterOperation,
+} from '../service-adapter';
+import type { DistributedOmit } from '@easybread/common';
 
-type InvokeFunction = <O extends BreadOperation<string>>(
-  input: O['input']
-) => Promise<O['output']>;
+export type AllPagesGeneratorInvokeFn<
+  TOperation extends BreadCollectionOperation<string, any>
+> = (
+  name: TOperation['name'],
+  data: DistributedOmit<TOperation['input'], 'name'>
+) => Promise<TOperation['output']>;
 
-export class AllPagesGenerator {
-  constructor(private readonly invoke: InvokeFunction) {}
-
-  generate<
-    TOperation extends BreadCollectionOperation<
-      string,
-      BreadOperationPaginationType
+export class AllPagesGenerator<TServiceAdapter extends BreadServiceAdapterAny> {
+  constructor(
+    private readonly invoke: AllPagesGeneratorInvokeFn<
+      InferServiceAdapterOperation<TServiceAdapter>
     >
-  >(
-    input: TOperation['input']
-  ): AsyncGenerator<TOperation['output'], void, unknown> {
-    switch (input.pagination.type) {
-      case 'DISABLED':
-        return this.disabledGenerator<
-          Extract<
-            TOperation,
-            BreadCollectionOperation<TOperation['name'], 'DISABLED'>
-          >
-        >(
-          // TODO: avoid this
-          input as Extract<
-            TOperation,
-            BreadCollectionOperation<TOperation['name'], 'DISABLED'>
-          >['input']
-        );
+  ) {}
 
-      case 'SKIP_COUNT':
-        // TODO: how to avoid such a complex type annotations?
-        return this.skipCountGenerator<
-          Extract<
-            TOperation,
-            BreadCollectionOperation<TOperation['name'], 'SKIP_COUNT'>
-          >
-        >(
-          // TODO: avoid this
-          input as Extract<
-            TOperation,
-            BreadCollectionOperation<TOperation['name'], 'SKIP_COUNT'>
-          >['input']
-        );
+  generate<TOperation extends BreadCollectionOperation<string, any>>(
+    name: TOperation['name'],
+    data: DistributedOmit<TOperation['input'], 'name'>
+  ): AsyncGenerator<TOperation['output'], void, unknown> {
+    switch (data.pagination.type) {
+      case 'DISABLED':
+        return this.disabledGenerator(name, data);
 
       case 'PREV_NEXT':
-        return this.prevNextGenerator<
-          Extract<
-            TOperation,
-            BreadCollectionOperation<TOperation['name'], 'PREV_NEXT'>
-          >
-        >(
-          // TODO: avoid this
-          input as Extract<
-            TOperation,
-            BreadCollectionOperation<TOperation['name'], 'PREV_NEXT'>
-          >['input']
-        );
+        return this.prevNextGenerator(name, data);
+
+      case 'SKIP_COUNT':
+        return this.skipCountGenerator(name, data);
+
+      default:
+        throw new Error(`Unknown pagination`, {
+          cause: data.pagination satisfies never,
+        });
     }
   }
 
   private async *skipCountGenerator<
     TOperation extends BreadCollectionOperation<string, 'SKIP_COUNT'>
   >(
-    input: TOperation['input']
+    name: TOperation['name'],
+    data: DistributedOmit<TOperation['input'], 'name'>
   ): AsyncGenerator<TOperation['output'], void, unknown> {
-    const { count = 50, type } = input.pagination;
-    let skip = input.pagination.skip || 0;
+    const { count = 50, type } = data.pagination;
+
+    let skip = data.pagination.skip || 0;
 
     while (true) {
-      const result = await this.invoke<TOperation>({
-        ...input,
-        pagination: { type, skip, count }
+      const result = await this.invoke(name, {
+        ...data,
+        pagination: { type, skip, count },
       });
 
       yield result;
 
-      // reached the end of the collection
-      if (skip + count >= result.pagination.totalCount) return;
+      if (result.rawPayload)
+        if (skip + count >= result.pagination.totalCount)
+          // reached the end of the collection
+          return;
 
       // increase page for the next invoke() call
       skip += count;
@@ -92,14 +71,15 @@ export class AllPagesGenerator {
   private async *prevNextGenerator<
     TOperation extends BreadCollectionOperation<string, 'PREV_NEXT'>
   >(
-    input: TOperation['input']
+    name: TOperation['name'],
+    data: DistributedOmit<TOperation['input'], 'name'>
   ): AsyncGenerator<TOperation['output'], void, unknown> {
-    let page = input.pagination.page;
+    let page = data.pagination.page;
 
     while (true) {
-      const result = await this.invoke<TOperation>({
-        ...input,
-        pagination: { type: 'PREV_NEXT', page }
+      const result = await this.invoke(name, {
+        ...data,
+        pagination: { type: 'PREV_NEXT', page },
       });
 
       yield result;
@@ -117,11 +97,12 @@ export class AllPagesGenerator {
   private async *disabledGenerator<
     TOperation extends BreadCollectionOperation<string, 'DISABLED'>
   >(
-    input: TOperation['input']
+    name: TOperation['name'],
+    data: DistributedOmit<TOperation['input'], 'name'>
   ): AsyncGenerator<TOperation['output'], void, unknown> {
-    yield await this.invoke<TOperation>({
-      ...input,
-      pagination: { type: 'PREV_NEXT' }
+    yield await this.invoke(name, {
+      ...data,
+      pagination: { type: 'DISABLED' },
     });
   }
 }

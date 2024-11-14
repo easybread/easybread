@@ -335,8 +335,7 @@ describe('Operations', () => {
 function invokeUsersDelete(
   identifier: string
 ): Promise<GoogleAdminDirectoryUsersDeleteOperation['output']> {
-  return client.invoke<GoogleAdminDirectoryUsersDeleteOperation>({
-    name: GoogleAdminDirectoryOperationName.USERS_DELETE,
+  return client.invoke(GoogleAdminDirectoryOperationName.USERS_DELETE, {
     breadId: BREAD_ID,
     payload: { identifier, '@type': 'Person' },
   });
@@ -344,8 +343,7 @@ function invokeUsersDelete(
 function invokeUsersCreate(
   payload: PersonSchema
 ): Promise<GoogleAdminDirectoryUsersCreateOperation['output']> {
-  return client.invoke<GoogleAdminDirectoryUsersCreateOperation>({
-    name: GoogleAdminDirectoryOperationName.USERS_CREATE,
+  return client.invoke(GoogleAdminDirectoryOperationName.USERS_CREATE, {
     breadId: BREAD_ID,
     payload,
   });
@@ -354,8 +352,7 @@ function invokeUsersCreate(
 function invokeUsersUpdate(
   payload: PersonSchema
 ): Promise<GoogleAdminDirectoryUsersUpdateOperation['output']> {
-  return client.invoke<GoogleAdminDirectoryUsersUpdateOperation>({
-    name: GoogleAdminDirectoryOperationName.USERS_UPDATE,
+  return client.invoke(GoogleAdminDirectoryOperationName.USERS_UPDATE, {
     breadId: BREAD_ID,
     payload,
   });
@@ -364,8 +361,7 @@ function invokeUsersUpdate(
 function invokeUsersSearch(
   query?: string
 ): Promise<GoogleAdminDirectoryUsersSearchOperation['output']> {
-  return client.invoke<GoogleAdminDirectoryUsersSearchOperation>({
-    name: GoogleAdminDirectoryOperationName.USERS_SEARCH,
+  return client.invoke(GoogleAdminDirectoryOperationName.USERS_SEARCH, {
     params: { query },
     breadId: BREAD_ID,
     pagination: { type: 'PREV_NEXT', page: 'requested_page' },
@@ -375,8 +371,7 @@ function invokeUsersSearch(
 function invokeUsersById(
   id: string
 ): Promise<GoogleAdminDirectoryUsersByIdOperation['output']> {
-  return client.invoke<GoogleAdminDirectoryUsersByIdOperation>({
-    name: GoogleAdminDirectoryOperationName.USERS_BY_ID,
+  return client.invoke(GoogleAdminDirectoryOperationName.USERS_BY_ID, {
     params: { identifier: id },
     breadId: BREAD_ID,
   });
@@ -385,10 +380,7 @@ function invokeUsersById(
 function invokeStartAuth(): Promise<
   GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>['output']
 > {
-  return client.invoke<
-    GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>
-  >({
-    name: GoogleCommonOperationName.AUTH_FLOW_START,
+  return client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
     breadId: BREAD_ID,
     payload: {
       scope: AUTH_SCOPES,
@@ -401,9 +393,8 @@ function invokeStartAuth(): Promise<
 async function invokeCompleteAuth(): Promise<
   GoogleCommonOauth2CompleteOperation['output']
 > {
-  return client.invoke<GoogleCommonOauth2CompleteOperation>({
+  return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
     breadId: BREAD_ID,
-    name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
     payload: { code: 'my-auth-code' },
   });
 }
