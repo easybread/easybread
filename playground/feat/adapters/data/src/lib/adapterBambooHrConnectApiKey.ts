@@ -1,7 +1,7 @@
 import { clientBambooHrGet } from 'playground-easybread-clients';
 import { BreadOperationName } from '@easybread/operations';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
-import { adapterCollection } from 'playground-db';
+import { adapterCollection, type BambooHRAdapter } from 'playground-db';
 
 export type AdapterBambooHrConnectParams = {
   apiKey: string;
@@ -9,7 +9,7 @@ export type AdapterBambooHrConnectParams = {
   userId: string;
 };
 
-export async function adapterBambooHrConnect({
+export async function adapterBambooHrConnectApiKey({
   apiKey,
   companyName,
   userId,
@@ -29,10 +29,16 @@ export async function adapterBambooHrConnect({
     throw new Error('Bamboo HR Setup Basic Auth Failed');
   }
 
-  await adapterCollection().insertOne({
-    slug: ADAPTER_NAME.BAMBOO_HR,
-    userId,
-    createdAt: new Date(),
-    isConnected: true,
-  });
+  await adapterCollection().updateOne(
+    { slug: ADAPTER_NAME.BAMBOO_HR, userId, connectionMethod: 'API_KEY' },
+    {
+      $set: {
+        createdAt: new Date(),
+        connectedAt: new Date(),
+        connectionToken: undefined,
+        companyName,
+      } satisfies Partial<BambooHRAdapter>,
+    },
+    { upsert: true }
+  );
 }

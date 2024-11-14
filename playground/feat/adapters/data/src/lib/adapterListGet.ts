@@ -9,7 +9,7 @@ export async function adapterListGet() {
   return await adapterCollection()
     .find({
       userId: authData.data.userId,
-      isConnected: true,
+      connectedAt: { $exists: true },
     })
     .toArray();
 }

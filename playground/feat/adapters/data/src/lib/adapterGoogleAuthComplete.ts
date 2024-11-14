@@ -1,6 +1,9 @@
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
-import { adapterCollection } from 'playground-db';
+import {
+  adapterCollection,
+  isGoogleAdminDirectoryAdapter,
+} from 'playground-db';
 import { isAdapterName, makeBreadId } from 'playground-common';
 
 interface AdapterGoogleAuthCompleteParams {
@@ -24,12 +27,16 @@ export async function adapterGoogleAuthComplete({
     userId,
   });
 
-  if (!adapter) {
-    throw new Error('ADAPTER_NOT_FOUND');
+  if (!adapter || !isGoogleAdminDirectoryAdapter(adapter)) {
+    throw new Error('GOOGLE_ADMIN_DIRECTORY_ADAPTER_NOT_FOUND');
   }
 
   if (adapter.connectionToken !== state) {
     throw new Error('STATE_MISMATCH');
+  }
+
+  if (adapter.userId !== userId) {
+    throw new Error('USER_ID_MISMATCH');
   }
 
   const results = await clientGoogleAdminDirectory.invoke(
@@ -51,7 +58,7 @@ export async function adapterGoogleAuthComplete({
     },
     {
       $set: {
-        isConnected: true,
+        connectedAt: new Date(),
         connectionToken: undefined,
       },
     }

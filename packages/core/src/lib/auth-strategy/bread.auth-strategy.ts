@@ -38,7 +38,11 @@ export abstract class BreadAuthStrategy<
   }
 
   protected createAuthDataStateKey(breadId: string): string {
-    return `${this.provider}:auth-data:${breadId}`;
+    return `${this.provider}:auth-data:${this.constructor.name}:${breadId}`;
+  }
+
+  protected createAuthAttemptStateKey(breadId: string): string {
+    return `${this.provider}:auth-attempt:${this.constructor.name}:${breadId}`;
   }
 
   protected async writeAuthData(

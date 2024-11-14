@@ -3,6 +3,7 @@ import { ICON_NAME, type IconName } from './IconName';
 import { SVGGoogleGLetter } from './SVGGoogleGLetter';
 import { SVGChevronDown } from './SVGChevronDown';
 import { SVGBambooHr } from './SVGBambooHr';
+import { SVGMapPin } from './SVGMapPin';
 
 export type IconProps = {
   iconName: IconName;
@@ -18,6 +19,8 @@ function RenderIcon({ iconName }: { iconName: IconName }) {
       return <SVGGoogleGLetter />;
     case ICON_NAME.BAMBOO_HR:
       return <SVGBambooHr />;
+    case ICON_NAME.MAP_PIN:
+      return <SVGMapPin />;
     default:
       return <div>no icon</div>;
   }

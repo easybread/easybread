@@ -31,8 +31,9 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
 
   const availableAdapters = useMemo(() => {
     if (!adapters) return [];
+
     return ADAPTERS_SELECT_OPTIONS.filter((a) => {
-      return adapters.some((b) => a.value === b.slug && b.isConnected);
+      return adapters.some((b) => a.value === b.slug && !!b.connectedAt);
     });
   }, [adapters]);
 

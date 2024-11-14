@@ -1,3 +1,4 @@
+import { load } from 'ts-dotenv';
 import {
   BambooHrAdapter,
   BambooHrAuthStrategy,
@@ -13,9 +14,28 @@ let client: EasyBreadClient<BambooHrAdapter, BambooHrAuthStrategy>;
 export async function clientBambooHrGet() {
   if (client) return client;
 
+  const {
+    BAMBOO_HR_OID_CLIENT_ID,
+    BAMBOO_HR_OID_CLIENT_SECRET,
+    BAMBOO_HR_OID_REDIRECT_URI,
+    BAMBOO_HR_OID_APPLICATION_API_KEY,
+  } = load({
+    BAMBOO_HR_OID_CLIENT_ID: String,
+    BAMBOO_HR_OID_CLIENT_SECRET: String,
+    BAMBOO_HR_OID_REDIRECT_URI: String,
+    BAMBOO_HR_OID_APPLICATION_API_KEY: String,
+  });
+
   const adapter = new BambooHrAdapter();
   const stateAdapter = await stateAdapterMongoGet();
-  const authStrategy = new BambooHrAuthStrategy(stateAdapter);
+  const authStrategy = new BambooHrAuthStrategy(stateAdapter, {
+    oidcOptions: {
+      clientId: BAMBOO_HR_OID_CLIENT_ID,
+      clientSecret: BAMBOO_HR_OID_CLIENT_SECRET,
+      redirectUri: BAMBOO_HR_OID_REDIRECT_URI,
+      applicationKey: BAMBOO_HR_OID_APPLICATION_API_KEY,
+    },
+  });
 
   client = new EasyBreadClient(stateAdapter, adapter, authStrategy);
 
