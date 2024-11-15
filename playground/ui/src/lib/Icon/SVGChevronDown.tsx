@@ -1,6 +1,6 @@
 export type CvgChevronDownProps = object;
 
-export function SVGChevronDown(props: CvgChevronDownProps) {
+export function SVGChevronDown(_props: CvgChevronDownProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
       <path

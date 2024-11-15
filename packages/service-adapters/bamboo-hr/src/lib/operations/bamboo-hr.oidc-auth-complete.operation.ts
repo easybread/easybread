@@ -1,6 +1,5 @@
 import type {
   BreadOperationInputWithPayload,
-  BreadOperationOutput,
   BreadOperationOutputWithRawData,
   BreadStandardOperation,
 } from '@easybread/core';

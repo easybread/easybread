@@ -1,6 +1,6 @@
 export type MapPinProps = object;
 
-export function SVGMapPin(props: MapPinProps) {
+export function SVGMapPin(_props: MapPinProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
