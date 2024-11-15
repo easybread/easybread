@@ -3,17 +3,22 @@ import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
   GoogleCommonOauth2CompleteOperation,
+  type GoogleCommonOauth2ConnectionAttemptStateData,
   GoogleCommonOauth2StateData,
   GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
 import {
   expectDate,
+  expectFormDataValues,
+  getNthMockCallArgs,
+  getNthMockCallMthArg,
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import {
+  GOOGLE_PROVIDER_NAME,
   GoogleContactsAdapter,
   GoogleContactsAuthScopes,
   GoogleContactsAuthStrategy,
@@ -70,44 +75,64 @@ describe('Google Plugin', () => {
     authStrategy
   );
 
+  async function getAuthAttemptData() {
+    const data =
+      await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
+        `${GOOGLE_PROVIDER_NAME}:auth-attempt:GoogleContactsAuthStrategy:${USER_ID}`
+      );
+
+    if (!data) throw new Error('Unexpected empty auth attempt data');
+
+    return data;
+  }
+
+  async function invokeAuthStart() {
+    return client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
+      breadId: USER_ID,
+      payload: {
+        prompt: 'none',
+        loginHint: 'my hint',
+        includeGrantedScopes: true,
+        scope: AUTH_SCOPES,
+      },
+    });
+  }
+
   describe('Operations', () => {
     describe(GoogleCommonOperationName.AUTH_FLOW_START, () => {
       it(`should create the auth uri`, async () => {
-        const result = await client.invoke(
-          GoogleCommonOperationName.AUTH_FLOW_START,
-          {
-            breadId: USER_ID,
-            payload: {
-              state: 'my-state-value',
-              prompt: 'none',
-              loginHint: 'my hint',
-              includeGrantedScopes: true,
-              scope: AUTH_SCOPES,
-            },
-          }
-        );
-
+        const result = await invokeAuthStart();
         expect(result).toEqual({
           provider: serviceAdapter.provider,
           name: 'GOOGLE_COMMON/AUTH_FLOW/START',
           rawPayload: {
             data: {
-              authUri:
-                'https://accounts.google.com/o/oauth2/v2/auth?' +
-                'client_id=client-id' +
-                '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
-                '&response_type=code' +
-                // eslint-disable-next-line max-len
-                '&scope=https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcontacts.readonly' +
-                '&access_type=offline' +
-                '&include_granted_scopes=true' +
-                '&alt=json' +
-                '&login_hint=my%20hint' +
-                '&state=my-state-value' +
-                '&prompt=none',
+              authUri: expect.stringMatching(
+                new RegExp(
+                  'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
+                    '\\?client_id=client-id' +
+                    '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
+                    '&response_type=code' +
+                    '&scope=https%3A%2F%2Fwww\\.google\\.com%2Fm8%2Ffeeds%2F\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fcontacts\\.readonly' +
+                    '&access_type=offline' +
+                    '&include_granted_scopes=true' +
+                    '&alt=json' +
+                    '&state=[^&]+' +
+                    '&login_hint=my\\+hint' +
+                    '&prompt=none'
+                )
+              ),
             },
             success: true,
           },
+        });
+      });
+
+      it(`should store the auth attempt data`, async () => {
+        const authAttemptData = await getAuthAttemptData();
+
+        expect(authAttemptData).toEqual({
+          authAttemptToken: expect.stringMatching(/[a-zA-Z0-9_-]{16}/),
         });
       });
     });
@@ -115,12 +140,12 @@ describe('Google Plugin', () => {
     describe(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, () => {
       let errorMode = false;
 
-      async function invokeCompleteAuth(): Promise<
-        GoogleCommonOauth2CompleteOperation['output']
-      > {
+      async function invokeCompleteAuth(
+        state: string
+      ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
         return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
           breadId: USER_ID,
-          payload: { code: 'my-auth-code' },
+          payload: { code: 'my-auth-code', state },
         });
       }
 
@@ -138,34 +163,15 @@ describe('Google Plugin', () => {
         });
       });
 
-      it(`should call google /token api`, async () => {
-        await invokeCompleteAuth();
-        expect(axios.request).toHaveBeenCalledWith({
-          url: 'https://oauth2.googleapis.com/token',
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          data:
-            'client_id=client-id' +
-            '&client_secret=client-secret' +
-            '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
-            '&grant_type=authorization_code' +
-            '&code=my-auth-code',
-        });
-      });
-
-      it(`should save the oauth2 data`, async () => {
-        const actual = await authStrategy.readAuthData(USER_ID);
-
-        expect(actual).toEqual({
-          accessToken: 'access-token',
-          expiresAt: expectDate,
-          refreshToken: 'refresh-token',
-        });
-      });
-
       it(`should throw api error if it happens`, async () => {
         errorMode = true;
-        expect(await invokeCompleteAuth()).toEqual({
+
+        await invokeAuthStart();
+        const authAttemptData = await getAuthAttemptData();
+
+        expect(
+          await invokeCompleteAuth(authAttemptData.authAttemptToken)
+        ).toEqual({
           provider: serviceAdapter.provider,
           name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
           rawPayload: {
@@ -182,10 +188,50 @@ describe('Google Plugin', () => {
       });
 
       it(`should return success and raw payload`, async () => {
-        const result = await invokeCompleteAuth();
+        await invokeAuthStart();
+        const authAttemptData = await getAuthAttemptData();
+        const result = await invokeCompleteAuth(
+          authAttemptData.authAttemptToken
+        );
+
         expect(result.rawPayload).toEqual({
           data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
           success: true,
+        });
+      });
+
+      it(`should call google /token api`, async () => {
+        await invokeAuthStart();
+        const authAttemptData = await getAuthAttemptData();
+        await invokeCompleteAuth(authAttemptData.authAttemptToken);
+        expect(axios.request).toHaveBeenCalledWith({
+          url: 'https://oauth2.googleapis.com/token',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          data: expect.any(FormData),
+        });
+
+        expectFormDataValues(
+          getNthMockCallMthArg<{ data: FormData }>(axios.request, 1, 1).data,
+          {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            code: 'my-auth-code',
+            grant_type: 'authorization_code',
+            redirect_uri: REDIRECT_URI,
+          }
+        );
+      });
+
+      it(`should save the oauth2 data`, async () => {
+        await invokeAuthStart();
+        const authAttemptData = await getAuthAttemptData();
+        await invokeCompleteAuth(authAttemptData.authAttemptToken);
+        const actual = await authStrategy.readAuthData(USER_ID);
+        expect(actual).toEqual({
+          accessToken: 'access-token',
+          expiresAt: expectDate,
+          refreshToken: 'refresh-token',
         });
       });
     });
@@ -371,22 +417,30 @@ describe('Google Plugin', () => {
         // run people search
         await invokePeopleSearch();
 
+        expect(jest.mocked(axios.request)).toHaveBeenCalledTimes(2);
+
         // check refresh uri was called
-        expect(jest.mocked(axios.request).mock.calls[0]).toEqual([
+        expect(getNthMockCallArgs(axios.request, 1)).toEqual([
           {
-            data:
-              'client_id=client-id' +
-              '&client_secret=client-secret' +
-              '&grant_type=refresh_token' +
-              '&refresh_token=refresh-token',
+            data: expect.any(FormData),
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             method: 'POST',
             url: 'https://oauth2.googleapis.com/token',
           },
         ]);
 
+        expectFormDataValues(
+          getNthMockCallMthArg<{ data: FormData }>(axios.request, 1, 1).data,
+          {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: 'refresh_token',
+            refresh_token: 'refresh-token',
+          }
+        );
+
         // check contacts feed uri was called with an updated access token
-        expect(jest.mocked(axios.request).mock.calls[1]).toEqual([
+        expect(getNthMockCallArgs(axios.request, 2)).toEqual([
           {
             headers: {
               'GData-Version': '3.0',
@@ -404,13 +458,12 @@ describe('Google Plugin', () => {
           },
         ]);
 
-        expect(jest.mocked(axios.request).mock.calls.length).toBe(2);
-
         // check auth data updated
         const updatedAuthData =
           await stateAdapter.read<GoogleCommonOauth2StateData>(
             oauth2DataStateKey
           );
+
         expect(updatedAuthData).toEqual({
           accessToken: 'new-access-token',
           refreshToken: 'refresh-token',

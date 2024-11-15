@@ -1,14 +1,21 @@
+import { merge } from 'lodash';
+import axios from 'axios';
+
 import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonOauth2CompleteOperation,
+  type GoogleCommonOauth2ConnectionAttemptStateData,
   GoogleCommonOauth2StartOperation,
   GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
 import { PersonSchema } from '@easybread/schemas';
-import { mockAxios, setExtendedTimeout } from '@easybread/test-utils';
-import axios from 'axios';
-import { merge } from 'lodash';
+import {
+  expectFormDataValues,
+  getNthMockCallMthArg,
+  mockAxios,
+  setExtendedTimeout,
+} from '@easybread/test-utils';
 
 import {
   GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
@@ -72,18 +79,21 @@ describe('Operations', () => {
         provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
         rawPayload: {
           data: {
-            authUri:
-              'https://accounts.google.com/o/oauth2/v2/auth' +
-              '?client_id=client-id' +
-              '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
-              '&response_type=code' +
-              // eslint-disable-next-line max-len
-              '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadmin.directory.group%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadmin.directory.group.member' +
-              '&access_type=offline' +
-              '&include_granted_scopes=true' +
-              '&alt=json' +
-              '&prompt=consent' +
-              '&prompt=select_account',
+            authUri: expect.stringMatching(
+              new RegExp(
+                'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
+                  '\\?client_id=client-id' +
+                  '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
+                  '&response_type=code' +
+                  '&scope=https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fadmin\\.directory\\.group\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fadmin\\.directory\\.group\\.member' +
+                  '&access_type=offline' +
+                  '&include_granted_scopes=true' +
+                  '&alt=json' +
+                  '&state=[^&]+' +
+                  '&prompt=consent' +
+                  '&prompt=select_account'
+              )
+            ),
           },
           success: true,
         },
@@ -96,25 +106,53 @@ describe('Operations', () => {
       setupAccessTokenCreateResponse();
     });
 
+    it(`should return an unsuccessful output if the state is invalid`, async () => {
+      expect(await invokeCompleteAuth('wrong-state')).toEqual({
+        name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
+        provider: 'googleAdminDirectory',
+        rawPayload: {
+          error: {
+            message: 'googleAdminDirectory: Auth attempt token mismatch for 1',
+            name: 'ServiceException',
+            originalError: {
+              message: 'Auth attempt token mismatch for 1',
+              name: 'AuthAttemptTokenMismatchException',
+            },
+            provider: 'googleAdminDirectory',
+          },
+          success: false,
+        },
+      });
+    });
+
     it(`should call google /token api`, async () => {
-      await invokeCompleteAuth();
+      const authAttemptToken = await getAuthAttemptData();
+      await invokeCompleteAuth(authAttemptToken);
+
       expect(axios.request).toHaveBeenCalledWith({
         url: 'https://oauth2.googleapis.com/token',
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data:
-          'client_id=client-id' +
-          '&client_secret=client-secret' +
-          '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
-          '&grant_type=authorization_code' +
-          '&code=my-auth-code',
+        data: expect.any(FormData),
       });
+
+      expectFormDataValues(
+        getNthMockCallMthArg<{ data: FormData }>(axios.request, 1, 1).data,
+        {
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          code: 'my-auth-code',
+          grant_type: 'authorization_code',
+          redirect_uri: REDIRECT_URI,
+        }
+      );
     });
   });
 
   describe(GoogleAdminDirectoryOperationName.USERS_SEARCH, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersSearch('searchterm');
+
       expect(axios.request).toHaveBeenCalledWith({
         method: 'GET',
         url: 'https://www.googleapis.com/admin/directory/v1/users',
@@ -131,6 +169,7 @@ describe('Operations', () => {
     it(`should return the expected output`, async () => {
       jest.resetAllMocks();
       setupUsersSearchResponse();
+
       const output = await invokeUsersSearch();
 
       expect(output).toEqual({
@@ -377,7 +416,7 @@ function invokeUsersById(
   });
 }
 
-function invokeStartAuth(): Promise<
+async function invokeStartAuth(): Promise<
   GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>['output']
 > {
   return client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
@@ -389,17 +428,36 @@ function invokeStartAuth(): Promise<
     },
   });
 }
+async function getAuthAttemptData() {
+  const data =
+    await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
+      `${GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME}:auth-attempt:GoogleAdminDirectoryAuthStrategy:${BREAD_ID}`
+    );
 
-async function invokeCompleteAuth(): Promise<
-  GoogleCommonOauth2CompleteOperation['output']
-> {
+  if (!data) throw new Error('Unexpected empty auth attempt data');
+
+  return data.authAttemptToken;
+}
+
+async function invokeCompleteAuth(
+  state: string
+): Promise<GoogleCommonOauth2CompleteOperation['output']> {
   return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
     breadId: BREAD_ID,
-    payload: { code: 'my-auth-code' },
+    payload: { code: 'my-auth-code', state },
   });
 }
 
 // ------------------------------------
+
+function setupAccessTokenCreateResponse(): void {
+  jest.mocked(axios.request).mockImplementationOnce(() =>
+    Promise.resolve({
+      status: 200,
+      data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
+    })
+  );
+}
 
 function setupUsersSearchResponse(): void {
   jest.mocked(axios.request).mockImplementationOnce(() =>
@@ -448,15 +506,6 @@ function setupUsersDeleteResponse(): void {
     Promise.resolve({
       status: 200,
       data: '',
-    })
-  );
-}
-
-function setupAccessTokenCreateResponse(): void {
-  jest.mocked(axios.request).mockImplementationOnce(() =>
-    Promise.resolve({
-      status: 200,
-      data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
     })
   );
 }

@@ -3,4 +3,5 @@
  */
 export interface GoogleCommonOauth2CompleteOperationInputPayload {
   code: string;
+  state: string;
 }

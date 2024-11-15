@@ -31,19 +31,11 @@ export async function adapterGoogleAuthComplete({
     throw new Error('GOOGLE_ADMIN_DIRECTORY_ADAPTER_NOT_FOUND');
   }
 
-  if (adapter.connectionToken !== state) {
-    throw new Error('STATE_MISMATCH');
-  }
-
-  if (adapter.userId !== userId) {
-    throw new Error('USER_ID_MISMATCH');
-  }
-
   const results = await clientGoogleAdminDirectory.invoke(
     GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
     {
       breadId: makeBreadId(userId),
-      payload: { code },
+      payload: { code, state },
     }
   );
 
@@ -52,15 +44,10 @@ export async function adapterGoogleAuthComplete({
   }
 
   await adapterCollection().updateOne(
+    { slug, userId },
     {
-      slug,
-      userId,
-    },
-    {
-      $set: {
-        connectedAt: new Date(),
-        connectionToken: undefined,
-      },
+      $set: { connectedAt: new Date() },
+      $setOnInsert: { createdAt: new Date() },
     }
   );
 }

@@ -1,6 +1,4 @@
-import { ParsedUrlQueryInput } from 'node:querystring';
-
-export type GoogleCommonAccessTokenCreateRequestData = ParsedUrlQueryInput & {
+export type GoogleCommonAccessTokenCreateRequestData = {
   client_id: string;
   client_secret: string;
   code: string;

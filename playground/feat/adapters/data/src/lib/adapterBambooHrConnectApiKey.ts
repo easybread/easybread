@@ -25,7 +25,6 @@ export async function adapterBambooHrConnectApiKey({
   );
 
   if (!output.rawPayload.success) {
-    console.log(output);
     throw new Error('Bamboo HR Setup Basic Auth Failed');
   }
 
@@ -35,7 +34,6 @@ export async function adapterBambooHrConnectApiKey({
       $set: {
         createdAt: new Date(),
         connectedAt: new Date(),
-        connectionToken: undefined,
         companyName,
       } satisfies Partial<BambooHRAdapter>,
     },

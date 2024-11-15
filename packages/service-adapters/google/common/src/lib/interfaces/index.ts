@@ -5,3 +5,4 @@ export type { GoogleCommonAccessTokenRefreshResponse } from './google-common.acc
 export type { GoogleCommonAuthStrategyOptions } from './google-common.oauth2.auth-strategy-options.interface';
 export type { GoogleCommonAuthorizationParameters } from './google-common.authorization-parameters.interface';
 export type { GoogleCommonOauth2StateData } from './google-common.oauth2-state-data.interface';
+export * from './google-common.oauth2-connection-attempt.state-data.interface';

@@ -163,7 +163,7 @@ describe(BambooHrOperationName.OIDC_AUTH_START, () => {
     await expect(readAuthAttemptData()).resolves.toEqual({
       breadId: BREAD_ID,
       companyName: COMPANY_NAME,
-      connectionToken: expect.any(String),
+      authAttemptToken: expect.any(String),
     });
   });
 });
@@ -214,7 +214,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
       breadId: BREAD_ID,
       payload: {
         code: 'some-code',
-        state: attemptData.connectionToken,
+        state: attemptData.authAttemptToken,
       },
     });
   }
@@ -238,16 +238,16 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
 
     expect(result).toEqual({
       name: BambooHrOperationName.OIDC_AUTH_COMPLETE,
-      provider: bambooHrAdapter.provider,
+      provider: BAMBOO_HR_PROVIDER_NAME,
       rawPayload: {
         error: {
+          message: 'bamboo: Auth attempt token mismatch for user-one',
           name: 'ServiceException',
-          provider: bambooHrAdapter.provider,
-          message: 'bamboo: Invalid connection attempt',
           originalError: {
-            message: 'Invalid connection attempt',
-            name: 'BreadException',
+            message: 'Auth attempt token mismatch for user-one',
+            name: 'AuthAttemptTokenMismatchException',
           },
+          provider: BAMBOO_HR_PROVIDER_NAME,
         },
         success: false,
       },

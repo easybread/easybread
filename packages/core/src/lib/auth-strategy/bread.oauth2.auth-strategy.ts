@@ -1,12 +1,16 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { BreadAuthStrategy } from './bread.auth-strategy';
-import { BreadOauth2StateData } from './interfaces';
+import {
+  type BreadAuthAttemptStateDataBase,
+  BreadOauth2StateData,
+} from './interfaces';
 import { BreadAuthenticationLostEvent } from './events/bread.authentication-lost.event';
 
 export abstract class BreadOAuth2AuthStrategy<
-  TStateData extends BreadOauth2StateData
-> extends BreadAuthStrategy<TStateData> {
+  TStateData extends BreadOauth2StateData,
+  TAuthAttemptStateData extends BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase
+> extends BreadAuthStrategy<TStateData, TAuthAttemptStateData> {
   private refreshPromise: Promise<void> | null = null;
 
   async authorizeHttp(

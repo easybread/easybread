@@ -22,7 +22,6 @@ describe('handle()', () => {
           loginHint: 'hint',
           prompt: ['select_account', 'consent'],
           scope: ['test-scope'],
-          state: 'teststate=testval',
         },
       },
       context,
@@ -33,7 +32,6 @@ describe('handle()', () => {
       loginHint: 'hint',
       prompt: ['select_account', 'consent'],
       scope: ['test-scope'],
-      state: 'teststate=testval',
     });
   });
 
@@ -53,7 +51,6 @@ describe('handle()', () => {
           loginHint: 'hint',
           prompt: ['select_account', 'consent'],
           scope: ['test-scope'],
-          state: 'teststate=testval',
         },
       },
       context,

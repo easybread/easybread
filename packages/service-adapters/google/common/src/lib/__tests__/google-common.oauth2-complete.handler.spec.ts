@@ -1,6 +1,7 @@
 import { GoogleCommonOauth2CompleteHandler } from '../handlers';
 import { GoogleCommonOperationName } from '../operations';
 import { createContextMock } from './create-context-mock';
+import type { GoogleCommonAccessTokenCreateResponse } from '../interfaces';
 
 describe('name', () => {
   it(`should be GOOGLE_COMMON/AUTH_FLOW/COMPLETE`, () => {
@@ -15,7 +16,7 @@ describe('handle', () => {
     const context = createContextMock();
     await GoogleCommonOauth2CompleteHandler.handle(
       {
-        payload: { code: '123' },
+        payload: { code: '123', state: 'some-state' },
         name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
         breadId: '1',
       },
@@ -25,18 +26,26 @@ describe('handle', () => {
 
     expect(context.auth.authenticate as jest.Mock).toHaveBeenCalledWith('1', {
       code: '123',
+      state: 'some-state',
     });
   });
 
   it(`should produce correct output with auth data in raw payload`, async () => {
     const context = createContextMock();
 
-    (context.auth.authenticate as jest.Mock).mockImplementationOnce(() => {
-      return { foo: 'bar' };
+    jest.mocked(context.auth.authenticate).mockImplementationOnce(async () => {
+      return {
+        access_token: 'access-token',
+        expires_in: 3600,
+        refresh_token: 'refresh-token',
+        scope: 'some-scope',
+        token_type: 'Bearer',
+      } satisfies GoogleCommonAccessTokenCreateResponse;
     });
+
     const output = await GoogleCommonOauth2CompleteHandler.handle(
       {
-        payload: { code: '123' },
+        payload: { code: '123', state: 'some-state' },
         name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
         breadId: '1',
       },
@@ -48,7 +57,13 @@ describe('handle', () => {
       name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
       rawPayload: {
         // auth data returned from the auth strategy
-        data: { foo: 'bar' },
+        data: {
+          access_token: 'access-token',
+          expires_in: 3600,
+          refresh_token: 'refresh-token',
+          scope: 'some-scope',
+          token_type: 'Bearer',
+        },
         success: true,
       },
     });
