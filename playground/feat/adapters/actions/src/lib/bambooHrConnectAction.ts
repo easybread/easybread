@@ -1,25 +1,47 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { adapterBambooHrConnect } from 'playground-feat-adapters-data';
+import {
+  adapterBambooHrConnectApiKey,
+  adapterBambooHrOidcStart,
+} from 'playground-feat-adapters-data';
 import { authStatusGet } from 'playground-feat-auth-data';
 import { redirect } from 'next/navigation';
+import type { BambooHRAdapterConnectionMethod } from 'playground-db';
 
 export async function bambooHrConnectAction(formData: FormData) {
   const apiKey = formData.get('apiKey')?.toString();
   const companyName = formData.get('companyName')?.toString();
+  const mode = formData
+    .get('mode')
+    ?.toString() as BambooHRAdapterConnectionMethod | null;
 
-  if (!apiKey || !companyName) return;
+  if (!mode) return;
 
   const authData = await authStatusGet();
 
   if (!authData.authorized) return redirect('/login');
 
-  await adapterBambooHrConnect({
-    apiKey,
-    companyName,
-    userId: authData.data.userId,
-  });
+  if (mode === 'API_KEY') {
+    if (!apiKey || !companyName) return;
 
-  revalidatePath('/');
+    await adapterBambooHrConnectApiKey({
+      apiKey,
+      companyName,
+      userId: authData.data.userId,
+    });
+
+    revalidatePath('/');
+  }
+
+  if (mode === 'OIDC') {
+    if (!companyName) return;
+
+    const { authUri } = await adapterBambooHrOidcStart({
+      companyName,
+      userId: authData.data.userId,
+    });
+
+    return redirect(authUri);
+  }
 }

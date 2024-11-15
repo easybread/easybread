@@ -14,6 +14,10 @@ import {
   type BambooEmployee,
   type BambooEmployeesDirectory,
 } from './interfaces';
+import type {
+  BambooHrOidcAuthCompleteOperation,
+  BambooHrOidcAuthStartOperation,
+} from './operations';
 
 export type BambooHrSetupBasicAuthOperation =
   SetupBasicAuthOperation<BambooBasicAuthPayload>;
@@ -43,4 +47,6 @@ export type BambooHrOperation =
   | BambooHrEmployeeUpdateOperation
   | BambooHrSetupBasicAuthOperation
   | BambooHrJobApplicantSearchOperation
-  | BambooHrJobApplicationSearchOperation;
+  | BambooHrJobApplicationSearchOperation
+  | BambooHrOidcAuthStartOperation
+  | BambooHrOidcAuthCompleteOperation;

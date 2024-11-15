@@ -6,3 +6,6 @@ export * from './bamboo.employee-update.handler';
 
 export * from './bamboo-job-applicant-search.handler';
 export * from './bamboo-job-application-search.handler';
+
+export * from './bamboo.oidc-auth-start.handler';
+export * from './bamboo.oidc-auth-complete.handler';

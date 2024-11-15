@@ -351,11 +351,14 @@ describe('Google Plugin', () => {
 
       it(`should refresh access token if it expired`, async () => {
         // simulate expired access token
-        const oauth2DataStateKey = `google:auth-data:${USER_ID}`;
+        const oauth2DataStateKey = `google:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
+
         const currentAuthData =
-          (await stateAdapter.read<GoogleCommonOauth2StateData>(
+          await stateAdapter.read<GoogleCommonOauth2StateData>(
             oauth2DataStateKey
-          )) as GoogleCommonOauth2StateData;
+          );
+
+        if (!currentAuthData) throw new Error('Unexpected empty auth data');
 
         currentAuthData.expiresAt = new Date(Date.now() - 1000).toISOString();
 
@@ -416,16 +419,18 @@ describe('Google Plugin', () => {
       });
 
       it(`should fail if no auth data is saved for the user`, async () => {
-        const authDataStateKey = `google:auth-data:${USER_ID}`;
+        const authDataStateKey = `google:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
+
         // cache auth data
         const authData = await stateAdapter.read<GoogleCommonOauth2StateData>(
           authDataStateKey
         );
 
         // rm auth data
-        await stateAdapter.reset();
+        await client.unAuthenticate(USER_ID);
 
         const result = await invokePeopleSearch();
+
         expect(JSON.parse(JSON.stringify(result.rawPayload))).toEqual({
           error: {
             name: 'ServiceException',

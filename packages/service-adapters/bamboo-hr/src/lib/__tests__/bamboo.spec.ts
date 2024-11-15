@@ -12,18 +12,25 @@ import {
 } from '@easybread/operations';
 import {
   createAxiosError,
+  expectFormDataValues,
+  getNthMockCallArgs,
+  getNthMockCallMthArg,
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
 
 import axios, { AxiosResponse } from 'axios';
 import {
+  BAMBOO_HR_PROVIDER_NAME,
   type BambooApplicationList,
   type BambooEmployee,
   type BambooEmployeesDirectory,
   BambooHrAdapter,
   BambooHrAuthStrategy,
   BambooHrOperationName,
+  type BambooOidcConnectionAttemptStateData,
+  type BambooOidcLoginPayload,
+  type BambooOidcTokenPayload,
 } from '../..';
 import { BAMBOO_EMPLOYEE_MOCK } from './bamboo.employee.mock';
 import { BAMBOO_EMPLOYEES_DIR_MOCK } from './bamboo.employees-dir.mock';
@@ -35,6 +42,17 @@ setExtendedTimeout();
 const API_KEY = 'user-secret-key';
 const BREAD_ID = 'user-one';
 const COMPANY_NAME = 'company-one';
+
+const OIDC_CLIENT_ID = 'client-id';
+const OIDC_CLIENT_SECRET = 'client-secret';
+const OIDC_REDIRECT_URI = 'http://localhost:3000/accept-bamboo-oidc-code';
+const OIDC_APPLICATION_KEY = 'application-key';
+
+async function readAuthAttemptData(breadId: string = BREAD_ID) {
+  return stateAdapter.read<BambooOidcConnectionAttemptStateData>(
+    `${BAMBOO_HR_PROVIDER_NAME}:auth-attempt:BambooHrAuthStrategy:${breadId}`
+  );
+}
 
 // create adapters
 const bambooHrAdapter = new BambooHrAdapter();
@@ -79,6 +97,233 @@ describe(`${BreadOperationName.SETUP_BASIC_AUTH}`, () => {
       companyName: 'company-one',
       token: 'dXNlci1zZWNyZXQta2V5Ong=',
     });
+  });
+});
+
+describe(BambooHrOperationName.OIDC_AUTH_START, () => {
+  it('should throw if no oidc config wes provided to the ', async () => {
+    const result = await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+      breadId: BREAD_ID,
+      payload: { companyName: COMPANY_NAME },
+    });
+
+    expect(result).toEqual({
+      name: BambooHrOperationName.OIDC_AUTH_START,
+      provider: BAMBOO_HR_PROVIDER_NAME,
+      rawPayload: {
+        success: false,
+        error: {
+          name: 'ServiceException',
+          provider: BAMBOO_HR_PROVIDER_NAME,
+          message:
+            'bamboo: BambooHrAuthStrategy is not configured to support OpenID Connect',
+          originalError: {
+            message:
+              'BambooHrAuthStrategy is not configured to support OpenID Connect',
+            name: 'BreadException',
+          },
+        },
+      },
+    });
+  });
+
+  it(`should return the redirect url`, async () => {
+    authStrategy.configureOidc({
+      clientId: OIDC_CLIENT_ID,
+      applicationKey: OIDC_APPLICATION_KEY,
+      clientSecret: OIDC_CLIENT_SECRET,
+      redirectUri: OIDC_REDIRECT_URI,
+    });
+
+    const result = await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+      breadId: BREAD_ID,
+      payload: { companyName: COMPANY_NAME },
+    });
+
+    expect(result).toEqual({
+      name: 'BAMBOO_HR/OIDC_AUTH/START',
+      provider: 'bamboo',
+      rawPayload: {
+        data: {
+          authUri: expect.stringMatching(
+            /^https:\/\/company-one\.bamboohr\.com\/authorize\.php\?request=authorize&response_type=code&scope=openid\+email&state=[^&]+&client_id=client-id&redirect_uri=http:\/\/localhost:3000\/accept-bamboo-oidc-code$/
+          ),
+        },
+        success: true,
+      },
+    });
+  });
+
+  it(`should store the connection attempt`, async () => {
+    await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+      breadId: BREAD_ID,
+      payload: { companyName: COMPANY_NAME },
+    });
+
+    await expect(readAuthAttemptData()).resolves.toEqual({
+      breadId: BREAD_ID,
+      companyName: COMPANY_NAME,
+      connectionToken: expect.any(String),
+    });
+  });
+});
+
+describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
+  beforeEach(async () => {
+    jest.resetAllMocks();
+    jest
+      .mocked(axios.request)
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          status: 200,
+          data: {
+            access_token: 'ACCESS_TOKEN',
+            token_type: 'Bearer',
+            expires_in: 3600,
+            scope: 'openid+email',
+            company_domain: COMPANY_NAME,
+            id_token: 'ID_TOKEN',
+          } satisfies BambooOidcTokenPayload,
+        })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          status: 200,
+          data: {
+            key: API_KEY,
+            success: true,
+            apiUrl: 'https://api.bamboohr.com/api/gateway.php',
+            userId: 'BAMBOO_USER_ID',
+            employeeId: 'BAMBOO_EMPLOYEE_ID',
+          } satisfies BambooOidcLoginPayload,
+        })
+      );
+  });
+
+  async function callOidcComplete() {
+    await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+      breadId: BREAD_ID,
+      payload: { companyName: COMPANY_NAME },
+    });
+
+    const attemptData = await readAuthAttemptData();
+
+    if (!attemptData) throw new Error('No connection attempt found');
+
+    return client.invoke(BambooHrOperationName.OIDC_AUTH_COMPLETE, {
+      breadId: BREAD_ID,
+      payload: {
+        code: 'some-code',
+        state: attemptData.connectionToken,
+      },
+    });
+  }
+
+  it(`should throw if the state is invalid`, async () => {
+    await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+      breadId: BREAD_ID,
+      payload: { companyName: COMPANY_NAME },
+    });
+
+    const result = await client.invoke(
+      BambooHrOperationName.OIDC_AUTH_COMPLETE,
+      {
+        breadId: BREAD_ID,
+        payload: {
+          code: 'some-code',
+          state: 'wrong-state',
+        },
+      }
+    );
+
+    expect(result).toEqual({
+      name: BambooHrOperationName.OIDC_AUTH_COMPLETE,
+      provider: bambooHrAdapter.provider,
+      rawPayload: {
+        error: {
+          name: 'ServiceException',
+          provider: bambooHrAdapter.provider,
+          message: 'bamboo: Invalid connection attempt',
+          originalError: {
+            message: 'Invalid connection attempt',
+            name: 'BreadException',
+          },
+        },
+        success: false,
+      },
+    });
+  });
+
+  it(`should return successful result`, async () => {
+    const result = await callOidcComplete();
+
+    expect(result).toEqual({
+      name: BambooHrOperationName.OIDC_AUTH_COMPLETE,
+      provider: bambooHrAdapter.provider,
+      rawPayload: {
+        success: true,
+        data: { companyName: COMPANY_NAME },
+      },
+    });
+  });
+
+  it(`should save the received api key as auth data`, async () => {
+    const authData = await authStrategy.readAuthData(BREAD_ID);
+
+    expect(authData).toEqual({
+      companyName: 'company-one',
+      token: 'dXNlci1zZWNyZXQta2V5Ong=',
+    });
+  });
+
+  it(`should call the token endpoint`, async () => {
+    await callOidcComplete();
+    expect(getNthMockCallArgs(axios.request, 1)).toEqual([
+      {
+        url: 'https://company-one.bamboohr.com/token.php?request=token',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          accept: 'application/json',
+        },
+        data: expect.any(FormData),
+      },
+    ]);
+
+    expectFormDataValues(
+      getNthMockCallMthArg<{ data: FormData }>(axios.request, 1, 1).data,
+      {
+        client_id: 'client-id',
+        client_secret: 'client-secret',
+        code: 'some-code',
+        grant_type: 'authorization_code',
+        redirect_uri: 'http://localhost:3000/accept-bamboo-oidc-code',
+        scope: 'openid email',
+      }
+    );
+  });
+
+  it(`should call the login endpoint`, async () => {
+    await callOidcComplete();
+    expect(getNthMockCallArgs(axios.request, 2)).toEqual([
+      {
+        url: 'https://api.bamboohr.com/api/gateway.php/company-one/v1/oidcLogin',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          accept: 'application/json',
+        },
+        data: expect.any(FormData),
+      },
+    ]);
+
+    expectFormDataValues(
+      getNthMockCallMthArg<{ data: FormData }>(axios.request, 2, 1).data,
+      {
+        applicationKey: 'application-key',
+        id_token: 'ID_TOKEN',
+      }
+    );
   });
 });
 

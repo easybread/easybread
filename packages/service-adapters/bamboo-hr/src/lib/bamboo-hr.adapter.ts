@@ -12,6 +12,8 @@ import {
   BambooEmployeeUpdateHandler,
   BambooJobApplicantSearchHandler,
   BambooJobApplicationSearchHandler,
+  BambooOidcAuthCompleteHandler,
+  BambooOidcAuthStartHandler,
   BambooSetupBasicAuthHandler,
 } from './handlers';
 
@@ -30,7 +32,9 @@ export class BambooHrAdapter extends BreadServiceAdapter<
       BambooEmployeeUpdateHandler,
       BambooEmployeeByIdHandler,
       BambooJobApplicationSearchHandler,
-      BambooJobApplicantSearchHandler
+      BambooJobApplicantSearchHandler,
+      BambooOidcAuthStartHandler,
+      BambooOidcAuthCompleteHandler
     );
   }
 

@@ -6,3 +6,4 @@ export * from './lib/PageContent/PageContent';
 export * from './lib/Card/Card';
 export * from './lib/Select/Select';
 export * from './lib/Logos/LogoEasyBREAD';
+export * from './lib/Pill/Pill';

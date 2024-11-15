@@ -1,16 +1,16 @@
 import { AdapterOauthCompleteGoogleAdmin } from './AdapterOauthCompleteGoogleAdmin';
-import { ADAPTER_NAME, type AdapterName } from 'playground-common';
-
-export type AdapterOauthCompleteProps = {
-  slug: AdapterName;
-  searchParams: Promise<Record<string, string>>;
-};
+import { ADAPTER_NAME } from 'playground-common';
+import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
+import { AdapterOauthCompleteBambooHrOidc } from './AdapterOauthCompleteBambooHrOidc';
 
 export async function AdapterOauthComplete(props: AdapterOauthCompleteProps) {
   const { slug } = props;
   switch (slug) {
     case ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY:
       return <AdapterOauthCompleteGoogleAdmin {...props} />;
+
+    case ADAPTER_NAME.BAMBOO_HR:
+      return <AdapterOauthCompleteBambooHrOidc {...props} />;
 
     default:
       return <div>{`Adapter not found: ${slug}`}</div>;

@@ -1,6 +1,7 @@
 import { AdapterConnect } from '../AdapterConnect/AdapterConnect';
 import type { AdapterInfo } from './adapters';
 import { adapterStatusGet } from 'playground-feat-adapters-data';
+import { AdapterExtraInfo } from './AdapterExtraInfo';
 
 export type AdapterListItemProps = {
   info: AdapterInfo;
@@ -8,14 +9,19 @@ export type AdapterListItemProps = {
 
 export async function AdapterListItem(props: AdapterListItemProps) {
   const { name, title, description } = props.info;
+
   const adapterData = await adapterStatusGet(name);
 
   return (
     <div className={'flex flex-col p-4 bg-white rounded-lg shadow-md'}>
       <h2 className={'text-xl font-bold'}>{title}</h2>
+
       <p className={'text-md mb-2 h-full'}>{description}</p>
+
+      <AdapterExtraInfo data={adapterData} />
+
       <div className={'flex flex-col'}>
-        <AdapterConnect name={name} connectedAt={adapterData?.createdAt} />
+        <AdapterConnect name={name} data={adapterData} />
       </div>
     </div>
   );

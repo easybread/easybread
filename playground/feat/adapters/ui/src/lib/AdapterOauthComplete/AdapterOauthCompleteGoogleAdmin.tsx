@@ -1,15 +1,11 @@
 import { redirect } from 'next/navigation';
-import { type AdapterName, isAdapterName } from 'playground-common';
+import { isAdapterName } from 'playground-common';
 import { authStatusGet } from 'playground-feat-auth-data';
 import { adapterGoogleAuthComplete } from 'playground-feat-adapters-data';
-
-export type AuthCompleteProps = {
-  searchParams: Promise<Record<string, string>>;
-  slug: AdapterName;
-};
+import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
 
 export async function AdapterOauthCompleteGoogleAdmin(
-  props: AuthCompleteProps
+  props: AdapterOauthCompleteProps
 ) {
   const { code, state } = await props.searchParams;
   const { slug } = props;

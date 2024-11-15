@@ -16,7 +16,9 @@ export const adapterGoogleAuthStart = async (userId: string) => {
       userId,
       slug: ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY,
     },
-    { $set: { createdAt: new Date(), isConnected: false, connectionToken } },
+    {
+      $set: { createdAt: new Date(), connectedAt: undefined, connectionToken },
+    },
     { upsert: true }
   );
 
