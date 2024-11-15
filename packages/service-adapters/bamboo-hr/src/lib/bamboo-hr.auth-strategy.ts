@@ -12,7 +12,6 @@ import {
   type BambooOidcLoginPayload,
   type BambooOidcTokenPayload,
 } from './interfaces';
-import { randomBytes } from 'node:crypto';
 
 export type BambooHrAuthStrategyOidcOptions = {
   clientId: string;
@@ -29,7 +28,10 @@ interface AuthenticateOidcParams {
   state: string;
 }
 
-export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<BambooAuthStateData> {
+export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
+  BambooAuthStateData,
+  BambooOidcConnectionAttemptStateData
+> {
   private options: BambooHrAuthStrategyOptions;
 
   constructor(
@@ -73,10 +75,10 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<BambooAuthState
     const { clientId, redirectUri } = this.options.oidcOptions;
     const { companyName } = payload;
 
-    const { connectionToken } = await this.storeConnectionAttempt(
+    const { authAttemptToken } = await this.createAuthAttempt(breadId, {
       breadId,
-      companyName
-    );
+      companyName,
+    });
 
     const scope = 'openid+email';
     const responseType = 'code';
@@ -89,7 +91,7 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<BambooAuthState
       `?request=${request}` +
       `&response_type=${responseType}` +
       `&scope=${scope}` +
-      `&state=${connectionToken}` +
+      `&state=${authAttemptToken}` +
       `&client_id=${clientId}` +
       `&redirect_uri=${redirectUri}`
     );
@@ -108,7 +110,7 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<BambooAuthState
     const { clientId, redirectUri, clientSecret, applicationKey } =
       this.options.oidcOptions;
 
-    const { companyName } = await this.verifyConnectionAttempt(breadId, state);
+    const { companyName } = await this.verifyAuthAttempt(breadId, state);
 
     const createTokenURL = `https://${companyName}.bamboohr.com/token.php?request=token`;
     const createTokenFD = new FormData();
@@ -163,50 +165,9 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<BambooAuthState
 
     await Promise.all([
       this.writeAuthData(breadId, { token, companyName }),
-      this.clearConnectionAttempt(breadId),
+      this.clearAuthAttempt(breadId),
     ]);
 
     return { companyName };
-  }
-
-  private async storeConnectionAttempt(breadId: string, companyName: string) {
-    const connectionToken = randomBytes(16).toString('base64url');
-
-    await this.state.write<BambooOidcConnectionAttemptStateData>(
-      this.createAuthAttemptStateKey(breadId),
-      {
-        breadId,
-        companyName,
-        connectionToken,
-      }
-    );
-
-    return { connectionToken };
-  }
-
-  private async verifyConnectionAttempt(
-    breadId: string,
-    connectionToken: string
-  ) {
-    const attemptData =
-      await this.state.read<BambooOidcConnectionAttemptStateData>(
-        this.createAuthAttemptStateKey(breadId)
-      );
-
-    if (!attemptData) {
-      throw new BreadException('No connection attempt found');
-    }
-
-    const { connectionToken: storedConnectionToken, companyName } = attemptData;
-
-    if (storedConnectionToken !== connectionToken) {
-      throw new BreadException('Invalid connection attempt');
-    }
-
-    return { companyName };
-  }
-
-  private async clearConnectionAttempt(breadId: string) {
-    await this.state.remove(this.createAuthAttemptStateKey(breadId));
   }
 }

@@ -1,6 +1,4 @@
-import { ParsedUrlQueryInput } from 'node:querystring';
-
-export type GoogleCommonAuthorizationParameters = ParsedUrlQueryInput & {
+export type GoogleCommonAuthorizationParameters = {
   access_type: string;
   scope: string;
   response_type: string;

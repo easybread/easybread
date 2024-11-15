@@ -1,7 +1,10 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { BreadAuthStrategy } from './bread.auth-strategy';
-import { BreadBasicAuthStateData } from './interfaces';
+import {
+  type BreadAuthAttemptStateDataBase,
+  BreadBasicAuthStateData,
+} from './interfaces';
 
 interface CreateTokenParams {
   id: string;
@@ -9,8 +12,9 @@ interface CreateTokenParams {
 }
 
 export abstract class BreadBasicAuthStrategy<
-  TStateData extends BreadBasicAuthStateData
-> extends BreadAuthStrategy<TStateData> {
+  TStateData extends BreadBasicAuthStateData,
+  TAuthAttemptStateData extends BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase
+> extends BreadAuthStrategy<TStateData, TAuthAttemptStateData> {
   async authorizeHttp(
     breadId: string,
     requestConfig: AxiosRequestConfig
@@ -21,7 +25,7 @@ export abstract class BreadBasicAuthStrategy<
 
     return {
       ...requestConfig,
-      headers: this.mergeHeaders(requestConfig.headers, authHeaders)
+      headers: this.mergeHeaders(requestConfig.headers, authHeaders),
     };
   }
 

@@ -5,7 +5,6 @@ export interface GoogleCommonOauth2StartOperationInputPayload<
   TScopes extends string
 > {
   scope: TScopes[];
-  state?: string;
   includeGrantedScopes?: boolean;
   loginHint?: string;
   prompt?: 'none' | ('consent' | 'select_account')[];

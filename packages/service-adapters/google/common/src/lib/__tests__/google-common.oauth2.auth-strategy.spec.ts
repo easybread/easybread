@@ -1,6 +1,12 @@
-import { InMemoryStateAdapter } from '@easybread/core';
+import {
+  AuthAttemptTokenMismatchException,
+  InMemoryStateAdapter,
+  NoAuthDataException,
+} from '@easybread/core';
 import {
   expectDate,
+  expectFormDataValues,
+  getNthMockCallMthArg,
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
@@ -11,6 +17,7 @@ import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
 } from '../..';
+import type { GoogleCommonOauth2ConnectionAttemptStateData } from '../interfaces/google-common.oauth2-connection-attempt.state-data.interface';
 
 type TestScopes =
   | 'https://www.google.com/m8/feeds/'
@@ -75,49 +82,75 @@ describe('createAuthUri()', () => {
         'https://www.google.com/m8/feeds/',
         'https://www.googleapis.com/auth/contacts.readonly',
       ],
-      state: 'teststate=testvalue',
     });
+
     expect(actual).toEqual(
-      'https://accounts.google.com/o/oauth2/v2/auth?' +
-        'client_id=TEST_ID' +
-        '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-oauth' +
-        '&response_type=code' +
-        // eslint-disable-next-line max-len
-        '&scope=https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcontacts.readonly' +
-        '&access_type=offline' +
-        '&include_granted_scopes=true' +
-        '&alt=json' +
-        '&login_hint=hint' +
-        '&state=teststate%3Dtestvalue' +
-        '&prompt=consent'
+      // re = /saa%2&=+/
+      expect.stringMatching(
+        new RegExp(
+          'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
+            '\\?client_id=TEST_ID' +
+            '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-oauth' +
+            '&response_type=code' +
+            '&scope=https%3A%2F%2Fwww\\.google\\.com%2Fm8%2Ffeeds%2F\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fcontacts\\.readonly' +
+            '&access_type=offline' +
+            '&include_granted_scopes=true' +
+            '&alt=json' +
+            '&state=[^&]+' +
+            '&login_hint=hint' +
+            '&prompt=consent'
+        )
+      )
     );
   });
 });
 
 describe('authenticate()', () => {
-  beforeEach(() => {
+  let authAttemptToken: string;
+
+  beforeEach(async () => {
     jest.resetAllMocks();
+    authAttemptToken = await createAuthUrlAndGetAuthAttemptToken();
     setupAccessTokenResponseMock();
   });
 
+  it(`should throw if the state is invalid`, async () => {
+    await expect(
+      authStrategy.authenticate(BREAD_ID, { code: 'testcode', state: 'wrong' })
+    ).rejects.toThrow(AuthAttemptTokenMismatchException);
+  });
+
   it(`should send correct http request`, async () => {
-    await authStrategy.authenticate(BREAD_ID, { code: 'testcode' });
+    await authStrategy.authenticate(BREAD_ID, {
+      code: 'testcode',
+      state: authAttemptToken,
+    });
+
     expect(axios.request).toHaveBeenCalledWith({
-      data:
-        'client_id=TEST_ID' +
-        '&client_secret=TEST_SECRET' +
-        '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-oauth' +
-        '&grant_type=authorization_code' +
-        '&code=testcode',
+      data: expect.any(FormData),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       method: 'POST',
       url: 'https://oauth2.googleapis.com/token',
     });
+
+    expectFormDataValues(
+      getNthMockCallMthArg<{ data: FormData }>(axios.request, 1, 1).data,
+      {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
+        grant_type: 'authorization_code',
+        code: 'testcode',
+      }
+    );
   });
+
   it('should return correct data', async () => {
     const actual = await authStrategy.authenticate(BREAD_ID, {
       code: 'testcode',
+      state: authAttemptToken,
     });
+
     expect(actual).toEqual({
       access_token: 'access-token',
       expires_in: 3920,
@@ -130,10 +163,19 @@ describe('authenticate()', () => {
 });
 
 describe(`readAuthData()`, () => {
-  it(`should return the auth data`, async () => {
+  it(`should throw if not authenticated`, async () => {
+    await expect(authStrategy.readAuthData(BREAD_ID)).rejects.toThrow(
+      NoAuthDataException
+    );
+  });
+
+  it(`should return the auth data, if authenticated`, async () => {
+    const authAttemptToken = await createAuthUrlAndGetAuthAttemptToken();
     setupAccessTokenResponseMock();
+
     await authStrategy.authenticate(BREAD_ID, {
       code: 'testcode',
+      state: authAttemptToken,
     });
 
     expect(await authStrategy.readAuthData(BREAD_ID)).toEqual({
@@ -150,8 +192,10 @@ describe(`authorizeHttp()`, () => {
     setupAccessTokenResponseMock();
     await authStrategy.authenticate(BREAD_ID, {
       code: 'testcode',
+      state: await createAuthUrlAndGetAuthAttemptToken(),
     });
   });
+
   it(`should set correct auth headers to the request config`, async () => {
     const actual = await authStrategy.authorizeHttp(BREAD_ID, {
       url: 'http://test.com',
@@ -172,6 +216,7 @@ describe('refreshToken()', () => {
     setupAccessTokenResponseMock();
     await authStrategy.authenticate(BREAD_ID, {
       code: 'testcode',
+      state: await createAuthUrlAndGetAuthAttemptToken(),
     });
   });
 
@@ -179,16 +224,23 @@ describe('refreshToken()', () => {
     jest.resetAllMocks();
     setupRefreshTokenMock();
     await authStrategy.refreshToken(BREAD_ID);
+
     expect(axios.request).toHaveBeenCalledWith({
-      data:
-        'client_id=TEST_ID' +
-        '&client_secret=TEST_SECRET' +
-        '&grant_type=refresh_token' +
-        '&refresh_token=refresh-token',
+      data: expect.any(FormData),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       method: 'POST',
       url: 'https://oauth2.googleapis.com/token',
     });
+
+    expectFormDataValues(
+      getNthMockCallMthArg<{ data: FormData }>(axios.request, 1, 1).data,
+      {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: 'refresh-token',
+      }
+    );
   });
 });
 
@@ -210,4 +262,25 @@ function setupRefreshTokenMock(): void {
       data: REFRESH_TOKEN_RESPONSE_DATA,
     });
   });
+}
+
+async function createAuthUrlAndGetAuthAttemptToken() {
+  await authStrategy.createAuthUri(BREAD_ID, {
+    includeGrantedScopes: true,
+    loginHint: 'hint',
+    prompt: ['consent'],
+    scope: [
+      'https://www.google.com/m8/feeds/',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  });
+
+  const authAttemptData =
+    await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
+      `${PROVIDER_NAME}:auth-attempt:GoogleCommonOauth2AuthStrategy:${BREAD_ID}`
+    );
+
+  if (!authAttemptData) throw new Error('Unexpected empty auth attempt data');
+
+  return authAttemptData.authAttemptToken;
 }

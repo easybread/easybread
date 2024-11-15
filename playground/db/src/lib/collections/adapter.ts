@@ -5,7 +5,6 @@ export type AdapterBase = {
   slug: string;
   createdAt: Date;
   userId: string;
-  connectionToken?: string;
   connectedAt?: Date;
 };
 
