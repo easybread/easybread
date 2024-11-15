@@ -27,3 +27,6 @@ const authStrategy = new BambooHrAuthStrategy(stateAdapter);
 
 export const client = new EasyBreadClient(stateAdapter, serviceAdapter, authStrategy);
 ```
+
+If you're going to use the OpenID Connect Authentication, also follow the
+[Bamboo HR OpenID Connect Authentication Guide](./authentication.md#openid-connect-authentication).
