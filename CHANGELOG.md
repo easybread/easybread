@@ -1,3 +1,29 @@
+## 0.0.11 (2024-11-16)
+
+### 🚀 Features
+
+- ⚠️  new invoke api ([793383d](https://github.com/easybread/easybread/commit/793383d))
+- **adapter-bamboo-hr:** add handle job application ops ([3ff1229](https://github.com/easybread/easybread/commit/3ff1229))
+- **adapter-bamboo-hr:** OpenID Connect auth ([20c3c3a](https://github.com/easybread/easybread/commit/20c3c3a))
+- **adapter-google-*:** handle oauth state parameter ([b16bb6f](https://github.com/easybread/easybread/commit/b16bb6f))
+- **docs:** docusaurus foundation ([d00f27c](https://github.com/easybread/easybread/commit/d00f27c))
+- **operations:** add job application related ops ([3976dd5](https://github.com/easybread/easybread/commit/3976dd5))
+- **schemas:** add new schemas ([3652494](https://github.com/easybread/easybread/commit/3652494))
+
+### 🩹 Fixes
+
+- **core:** rm dead code ([70d6098](https://github.com/easybread/easybread/commit/70d6098))
+- **data-mapper:** explicit 'NO_MAP' property resolver ([4c2a79d](https://github.com/easybread/easybread/commit/4c2a79d))
+- **playground:** bamboo-hr integration issues ([4b5ef09](https://github.com/easybread/easybread/commit/4b5ef09))
+
+### ⚠️  Breaking Changes
+
+- ⚠️  new invoke api ([793383d](https://github.com/easybread/easybread/commit/793383d))
+
+### ❤️  Thank You
+
+- Alexandr Cherednichenko @alexandr2110pro
+
 ## 0.0.10 (2024-10-17)
 
 
