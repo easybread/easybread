@@ -12,7 +12,7 @@ export const mongoClient = () => {
     MONGO_HOST: String,
   });
 
-  return new MongoClient(
-    `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27017`
-  );
+  return (client = new MongoClient(
+    `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27017`,
+  ));
 };
