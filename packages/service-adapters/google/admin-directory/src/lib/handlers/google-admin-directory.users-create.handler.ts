@@ -25,7 +25,7 @@ export const GoogleAdminDirectoryUsersCreateHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       name,
       response.data,
-      googleAdminDirectoryUserAdapter.toInternal(response.data)
+      googleAdminDirectoryUserAdapter.toInternal(response.data),
     );
   },
 

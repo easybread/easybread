@@ -1,4 +1,5 @@
 import { BreezyAuthenticateResponse } from '../../interfaces';
+
 import { EMAIL } from './credentials';
 
 export const SIGN_IN_RESPONSE_MOCK: BreezyAuthenticateResponse = {

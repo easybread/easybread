@@ -3,7 +3,9 @@ import type {
   BreadOperationOutputWithRawData,
   BreadStandardOperation,
 } from '@easybread/core';
+
 import type { BambooHrOperationName } from '../bamboo-hr.operation-name';
+
 import type { BambooHrOidcAuthStartOperationInputPayload } from './bamboo-hr.oidc-auth-start.operation.input-payload';
 import type { BambooHrOidcAuthStartOperationOutputRawData } from './bamboo-hr.oidc-auth-start.operation.output-raw-data';
 

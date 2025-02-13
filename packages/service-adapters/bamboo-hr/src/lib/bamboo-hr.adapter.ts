@@ -34,12 +34,12 @@ export class BambooHrAdapter extends BreadServiceAdapter<
       BambooJobApplicationSearchHandler,
       BambooJobApplicantSearchHandler,
       BambooOidcAuthStartHandler,
-      BambooOidcAuthCompleteHandler
+      BambooOidcAuthCompleteHandler,
     );
   }
 
   protected override createServiceExceptionMessageFromAxiosError(
-    error: AxiosError
+    error: AxiosError,
   ): string {
     // this might be a comma separated list possibly with duplicates
     const bambooErrorMessagesString =

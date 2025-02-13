@@ -1,6 +1,7 @@
 import { BreadSchema } from '@easybread/schemas';
 
 import { BreadException, ServiceException } from '../exception';
+
 import { BreadOperation } from './bread-operation';
 import {
   BreadCollectionOperationOutputWithPayload,
@@ -9,30 +10,30 @@ import {
   BreadOperationOutput,
   BreadOperationOutputWithPayload,
   BreadOperationOutputWithRawData,
-  BreadOperationOutputWithRawDataAndPayload
+  BreadOperationOutputWithRawDataAndPayload,
 } from './bread-operation-output';
 import {
   BreadOperationOutputPagination,
-  BreadOperationPaginationType
+  BreadOperationPaginationType,
 } from './bread-operation-pagination';
 
 export function createSuccessfulOutput<TName extends string>(
-  name: TName
+  name: TName,
 ): Omit<BreadOperationOutput<TName>, 'provider'> {
   return {
     name,
-    rawPayload: { success: true }
+    rawPayload: { success: true },
   };
 }
 
 export function createSuccessfulOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
-  TPayload extends BreadSchema
+  TPayload extends BreadSchema,
 >(
   name: TName,
   data: TRawData,
-  payload: TPayload
+  payload: TPayload,
 ): Omit<
   BreadOperationOutputWithRawDataAndPayload<TName, TRawData, TPayload>,
   'provider'
@@ -40,34 +41,34 @@ export function createSuccessfulOutputWithRawDataAndPayload<
   return {
     name,
     payload,
-    rawPayload: { success: true, data }
+    rawPayload: { success: true, data },
   };
 }
 
 export function createSuccessfulOutputWithRawData<
   TName extends string,
-  TRawData extends object
+  TRawData extends object,
 >(
   name: TName,
-  data: TRawData
+  data: TRawData,
 ): Omit<BreadOperationOutputWithRawData<TName, TRawData>, 'provider'> {
   return {
     name,
-    rawPayload: { success: true, data }
+    rawPayload: { success: true, data },
   };
 }
 
 export function createSuccessfulOutputWithPayload<
   TName extends string,
-  TPayload extends BreadSchema
+  TPayload extends BreadSchema,
 >(
   name: TName,
-  payload: TPayload
+  payload: TPayload,
 ): Omit<BreadOperationOutputWithPayload<TName, TPayload>, 'provider'> {
   return {
     name,
     payload,
-    rawPayload: { success: true }
+    rawPayload: { success: true },
   };
 }
 
@@ -81,13 +82,13 @@ export function createSuccessfulCollectionOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
   TPayload extends BreadSchema[],
-  TPaginationType extends BreadOperationPaginationType
+  TPaginationType extends BreadOperationPaginationType,
 >(
   name: TName,
   data: TRawData,
   payload: TPayload,
   // TODO: make this optional without tsc complains
-  pagination: BreadOperationOutputPagination<TPaginationType>
+  pagination: BreadOperationOutputPagination<TPaginationType>,
 ): Omit<
   BreadCollectionOperationOutputWithRawDataAndPayload<
     TName,
@@ -101,18 +102,18 @@ export function createSuccessfulCollectionOutputWithRawDataAndPayload<
     name,
     payload,
     rawPayload: { success: true, data },
-    pagination
+    pagination,
   };
 }
 
 export function createSuccessfulCollectionOutputWithPayload<
   TName extends string,
   TPayload extends BreadSchema[],
-  TPaginationType extends BreadOperationPaginationType
+  TPaginationType extends BreadOperationPaginationType,
 >(
   name: TName,
   payload: TPayload,
-  pagination: BreadOperationOutputPagination<TPaginationType>
+  pagination: BreadOperationOutputPagination<TPaginationType>,
 ): Omit<
   BreadCollectionOperationOutputWithPayload<TName, TPayload, TPaginationType>,
   'provider'
@@ -121,7 +122,7 @@ export function createSuccessfulCollectionOutputWithPayload<
     name,
     payload,
     rawPayload: { success: true },
-    pagination
+    pagination,
   };
 }
 
@@ -129,10 +130,10 @@ export function createSuccessfulCollectionOutputWithPayload<
 
 export function createFailedOutput<
   TName extends string,
-  TError extends ServiceException | BreadException | Error | object
+  TError extends ServiceException | BreadException | Error | object,
 >(
   name: TName,
-  error: TError
+  error: TError,
 ): {
   name: TName;
   provider: string;
@@ -143,20 +144,20 @@ export function createFailedOutput<
     provider: ServiceException.isServiceException(error)
       ? error.provider
       : 'unknown',
-    rawPayload: { success: false, error }
+    rawPayload: { success: false, error },
   };
 }
 
 export function createFailedOperationOutput<T extends BreadOperation<string>>(
   name: T['name'],
   provider: string,
-  error: ServiceException
+  error: ServiceException,
 ): T['output'] {
   const rawPayload: BreadFailedOperationRawPayload = { success: false, error };
 
   return {
     name,
     provider,
-    rawPayload
+    rawPayload,
   };
 }

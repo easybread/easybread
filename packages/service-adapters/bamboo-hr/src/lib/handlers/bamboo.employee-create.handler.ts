@@ -6,8 +6,8 @@ import { BreadOperationName } from '@easybread/operations';
 import { AxiosResponse } from 'axios';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { bambooEmployeeAdapter } from '../data-adapters';
 import type { BambooHrEmployeeCreateOperation } from '../bamboo-hr.operation';
+import { bambooEmployeeAdapter } from '../data-adapters';
 
 export const BambooEmployeeCreateHandler: BreadOperationHandler<
   BambooHrEmployeeCreateOperation,
@@ -35,7 +35,7 @@ export const BambooEmployeeCreateHandler: BreadOperationHandler<
       {
         ...payload,
         identifier: getIdentifierFromHeaders(response),
-      }
+      },
     );
   },
 };

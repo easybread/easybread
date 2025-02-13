@@ -1,10 +1,10 @@
-import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
+import { isAdapterName, makeBreadId } from 'playground-common';
 import {
   adapterCollection,
   isGoogleAdminDirectoryAdapter,
 } from 'playground-db';
-import { isAdapterName, makeBreadId } from 'playground-common';
+import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 
 interface AdapterGoogleAuthCompleteParams {
   userId: string;
@@ -36,7 +36,7 @@ export async function adapterGoogleAuthComplete({
     {
       breadId: makeBreadId(userId),
       payload: { code, state },
-    }
+    },
   );
 
   if (!results.rawPayload.success) {
@@ -48,6 +48,6 @@ export async function adapterGoogleAuthComplete({
     {
       $set: { connectedAt: new Date() },
       $setOnInsert: { createdAt: new Date() },
-    }
+    },
   );
 }

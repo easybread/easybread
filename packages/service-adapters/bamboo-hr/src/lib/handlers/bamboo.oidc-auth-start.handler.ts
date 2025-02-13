@@ -2,9 +2,10 @@ import {
   type BreadOperationHandler,
   createSuccessfulOutputWithRawData,
 } from '@easybread/core';
-import type { BambooHrOidcAuthStartOperation } from '../operations';
+
 import type { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { BambooHrOperationName } from '../bamboo-hr.operation-name';
+import type { BambooHrOidcAuthStartOperation } from '../operations';
 
 export const BambooOidcAuthStartHandler: BreadOperationHandler<
   BambooHrOidcAuthStartOperation,

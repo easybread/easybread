@@ -1,7 +1,7 @@
 import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
-import { clientBambooHrGet } from 'playground-easybread-clients';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
-import { adapterCollection, type BambooHRAdapter } from 'playground-db';
+import { type BambooHRAdapter, adapterCollection } from 'playground-db';
+import { clientBambooHrGet } from 'playground-easybread-clients';
 
 interface AdapterBambooHrOidcStartProps {
   companyName: string;
@@ -9,7 +9,7 @@ interface AdapterBambooHrOidcStartProps {
 }
 
 export async function adapterBambooHrOidcStart(
-  props: AdapterBambooHrOidcStartProps
+  props: AdapterBambooHrOidcStartProps,
 ) {
   const { companyName, userId } = props;
 
@@ -26,7 +26,7 @@ export async function adapterBambooHrOidcStart(
         companyName,
       } satisfies Partial<BambooHRAdapter>,
     },
-    { upsert: true }
+    { upsert: true },
   );
 
   const clientBambooHr = await clientBambooHrGet();
@@ -36,7 +36,7 @@ export async function adapterBambooHrOidcStart(
     {
       breadId: makeBreadId(userId),
       payload: { companyName },
-    }
+    },
   );
 
   if (!output.rawPayload.success) {

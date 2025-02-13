@@ -1,15 +1,15 @@
-import axios from 'axios';
-import { mockAxios } from '@easybread/test-utils';
+import {
+  RocketChatAuthStrategy,
+  RocketChatOperationName,
+} from '@easybread/adapter-rocket-chat-common';
 import {
   BreadOperationSkipCountInputPagination,
   EasyBreadClient,
   InMemoryStateAdapter,
 } from '@easybread/core';
+import { mockAxios } from '@easybread/test-utils';
+import axios from 'axios';
 
-import {
-  RocketChatAuthStrategy,
-  RocketChatOperationName,
-} from '@easybread/adapter-rocket-chat-common';
 import {
   RocketChatUsersAdapter,
   RocketChatUsersByIdOperation,
@@ -18,6 +18,7 @@ import {
   RocketChatUsersSearchOperation,
   RocketChatUsersSearchOperationInputParams,
 } from '../..';
+
 import { USERS_INFO_MOCK } from './users-info.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
 
@@ -157,7 +158,7 @@ function setupUsersListResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_LIST_MOCK,
-    })
+    }),
   );
 }
 
@@ -168,7 +169,7 @@ const DEFAULT_PAGINATION: BreadOperationSkipCountInputPagination = {
 };
 async function invokeUsersSearch(
   pagination: BreadOperationSkipCountInputPagination = DEFAULT_PAGINATION,
-  params: RocketChatUsersSearchOperationInputParams = {}
+  params: RocketChatUsersSearchOperationInputParams = {},
 ): Promise<RocketChatUsersSearchOperation['output']> {
   return await client.invoke(RocketChatUsersOperationName.SEARCH, {
     pagination,
@@ -184,12 +185,12 @@ function setupUsersInfoResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_INFO_MOCK,
-    })
+    }),
   );
 }
 
 async function invokeUsersById(
-  params: RocketChatUsersByIdOperationInputParams
+  params: RocketChatUsersByIdOperationInputParams,
 ): Promise<RocketChatUsersByIdOperation['output']> {
   return await client.invoke(RocketChatUsersOperationName.BY_ID, {
     breadId: BREAD_ID,

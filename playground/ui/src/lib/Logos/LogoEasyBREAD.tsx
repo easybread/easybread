@@ -1,5 +1,6 @@
-import logo from './easybread_logo.png';
 import Image from 'next/image';
+
+import logo from './easybread_logo.png';
 
 export type LogoEasyBreadProps = {
   size?: 'sm' | 'md' | 'lg';

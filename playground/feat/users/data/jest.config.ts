@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'playground-feat-users-data',
   preset: '../../../../jest.preset.js',

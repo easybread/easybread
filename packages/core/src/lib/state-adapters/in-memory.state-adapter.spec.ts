@@ -21,7 +21,7 @@ describe('InMemoryStateAdapter', () => {
   describe('read() and write()', () => {
     it(`should allow creating and reading new entities`, async () => {
       expect(await adapter.write<One>(oneKey, oneInitialValue)).toEqual(
-        oneInitialValue
+        oneInitialValue,
       );
       expect(await adapter.read<One>(oneKey)).toEqual(oneInitialValue);
     });
@@ -32,7 +32,7 @@ describe('InMemoryStateAdapter', () => {
 
       expect(await adapter.read(oneKey)).toEqual({
         foo: 'updated',
-        bar: 1
+        bar: 1,
       } as One);
     });
   });
@@ -64,7 +64,7 @@ describe('InMemoryStateAdapter', () => {
     it(`should throw if record does not exist`, async () => {
       await createOne();
       await expect(adapter.remove<One>('not-existing')).rejects.toThrow(
-        'Not found'
+        'Not found',
       );
     });
   });

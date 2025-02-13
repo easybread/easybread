@@ -13,11 +13,12 @@ interface CreateTokenParams {
 
 export abstract class BreadBasicAuthStrategy<
   TStateData extends BreadBasicAuthStateData,
-  TAuthAttemptStateData extends BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase
+  TAuthAttemptStateData extends
+    BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase,
 > extends BreadAuthStrategy<TStateData, TAuthAttemptStateData> {
   async authorizeHttp(
     breadId: string,
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     const { token } = await this.readAuthData(breadId);
 

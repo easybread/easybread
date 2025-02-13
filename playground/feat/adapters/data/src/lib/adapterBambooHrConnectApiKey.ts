@@ -1,7 +1,7 @@
-import { clientBambooHrGet } from 'playground-easybread-clients';
 import { BreadOperationName } from '@easybread/operations';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
-import { adapterCollection, type BambooHRAdapter } from 'playground-db';
+import { type BambooHRAdapter, adapterCollection } from 'playground-db';
+import { clientBambooHrGet } from 'playground-easybread-clients';
 
 export type AdapterBambooHrConnectParams = {
   apiKey: string;
@@ -21,7 +21,7 @@ export async function adapterBambooHrConnectApiKey({
     {
       breadId: makeBreadId(userId),
       payload: { apiKey, companyName },
-    }
+    },
   );
 
   if (!output.rawPayload.success) {
@@ -37,6 +37,6 @@ export async function adapterBambooHrConnectApiKey({
         companyName,
       } satisfies Partial<BambooHRAdapter>,
     },
-    { upsert: true }
+    { upsert: true },
   );
 }

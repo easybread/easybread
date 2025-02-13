@@ -1,6 +1,7 @@
 import { breadDataAdapter } from '@easybread/data-adapter';
-import { BreezyCompany } from '../interfaces';
 import { OrganizationSchema } from '@easybread/schemas';
+
+import { BreezyCompany } from '../interfaces';
 
 export const breezyCompanyAdapter = breadDataAdapter<
   OrganizationSchema,

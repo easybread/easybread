@@ -1,6 +1,6 @@
-import { PeopleSearch } from 'playground-feat-people-ui';
-import { adapterListGet } from 'playground-feat-adapters-data';
 import { serializeDoc } from 'playground-db';
+import { adapterListGet } from 'playground-feat-adapters-data';
+import { PeopleSearch } from 'playground-feat-people-ui';
 
 export const revalidate = 0;
 

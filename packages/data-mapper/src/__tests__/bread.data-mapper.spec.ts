@@ -129,7 +129,7 @@ it(`should work with arrays via the factory functions`, async () => {
   type Output = { array: OutputArrayItem[] };
 
   const mapper = BreadDataMapper.create<Input, Output>({
-    array: (input) => [
+    array: input => [
       { type: 'A', a: input.a },
       { type: 'B', b: input.b },
     ],
@@ -183,7 +183,7 @@ it(`should work with a more complex composition`, async () => {
   });
 
   const mapper = BreadDataMapper.create<Input, Output>({
-    foo: (i) => fooMapper.map(i.foo),
+    foo: i => fooMapper.map(i.foo),
   });
 
   const actual = mapper.map({ foo: { a: 'val' } });
@@ -199,7 +199,7 @@ it(`should work with missing properties`, async () => {
     a: 'a',
     b: 'b',
     c: 'NO_MAP',
-    d: (input) => input.d ?? 'NO_MAP',
+    d: input => input.d ?? 'NO_MAP',
   });
 
   const actual = mapper.map({ a: 'val', b: 15 });
@@ -226,7 +226,7 @@ it(`should work with optional properties`, async () => {
       a: '1',
       b: '2',
       type: 'Input',
-    })
+    }),
   ).toEqual({
     a: '1',
     b: '2',
@@ -239,8 +239,8 @@ it(`should work with optional fields on input type`, async () => {
   type Output = { a: string; b: number; c?: string };
 
   const mapper = BreadDataMapper.create<Input, Output>({
-    a: (_) => _.a ?? 'NO_MAP',
-    b: (_) => _.b ?? 'NO_MAP',
+    a: _ => _.a ?? 'NO_MAP',
+    b: _ => _.b ?? 'NO_MAP',
   });
 
   expect(mapper.map({ b: 15 })).toEqual({ b: 15 });
@@ -268,7 +268,7 @@ it(`should allow value factory functions`, async () => {
 
   const mapper = BreadDataMapper.create<Input, Output>({
     type: () => 'Output',
-    b: (_) => _.b.toString(),
+    b: _ => _.b.toString(),
   });
 
   expect(mapper.map({ b: 1, type: 'Input' })).toEqual({
@@ -290,6 +290,6 @@ it(`should skip fields marked as NO_MAP`, () => {
     mapper.map({
       str: 'value',
       num: 12,
-    })
+    }),
   ).toEqual({ a: 'value' } satisfies Partial<Output>);
 });

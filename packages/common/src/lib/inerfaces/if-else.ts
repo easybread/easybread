@@ -11,7 +11,7 @@
  * ```
  */
 export type IfElse<TPredicate extends boolean, TThen, TElse = never> = [
-  TPredicate
+  TPredicate,
 ] extends [true]
   ? TThen
   : TElse;

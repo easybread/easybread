@@ -1,7 +1,8 @@
+import { stringOrArrayToString } from '@easybread/common';
 import { breadDataAdapter } from '@easybread/data-adapter';
 import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
+
 import { GoogleContactsFeedEntry } from '../interfaces';
-import { stringOrArrayToString } from '@easybread/common';
 import {
   GdataEmail,
   GdataName,
@@ -14,10 +15,10 @@ export const googleContactsContactAdapter = breadDataAdapter<
   GoogleContactsFeedEntry
 >({
   toExternal: {
-    id: (input) => createId(input),
-    gd$name: (input) => createGDName(input),
-    gd$email: (input) => createGDEmail(stringOrArrayToString(input.email)),
-    gd$phoneNumber: (input) => {
+    id: input => createId(input),
+    gd$name: input => createGDName(input),
+    gd$email: input => createGDEmail(stringOrArrayToString(input.email)),
+    gd$phoneNumber: input => {
       return createGDPhoneNumber(stringOrArrayToString(input.telephone));
     },
 
@@ -27,18 +28,17 @@ export const googleContactsContactAdapter = breadDataAdapter<
   },
   toInternal: {
     '@type': () => 'Person',
-    identifier: (input) => getIdFromLink(input.id?.$t),
-    email: (input) =>
-      input.gd$email?.find((m) => m.primary === 'true')?.address,
-    name: (input) => input.gd$name?.gd$fullName?.$t,
-    givenName: (input) => input.gd$name?.gd$givenName?.$t,
-    familyName: (input) => input.gd$name?.gd$familyName?.$t,
-    additionalName: (input) => input.gd$name?.gd$additionalName?.$t,
-    honorificPrefix: (input) => input.gd$name?.gd$namePrefix?.$t,
-    honorificSuffix: (input) => input.gd$name?.gd$nameSuffix?.$t,
-    jobTitle: (input) => getContactOrganization(input)?.gd$orgTitle?.$t,
-    worksFor: (input) => createWorksFor(input),
-    telephone: (input) => findPrimaryPhoneNumber(input)?.$t,
+    identifier: input => getIdFromLink(input.id?.$t),
+    email: input => input.gd$email?.find(m => m.primary === 'true')?.address,
+    name: input => input.gd$name?.gd$fullName?.$t,
+    givenName: input => input.gd$name?.gd$givenName?.$t,
+    familyName: input => input.gd$name?.gd$familyName?.$t,
+    additionalName: input => input.gd$name?.gd$additionalName?.$t,
+    honorificPrefix: input => input.gd$name?.gd$namePrefix?.$t,
+    honorificSuffix: input => input.gd$name?.gd$nameSuffix?.$t,
+    jobTitle: input => getContactOrganization(input)?.gd$orgTitle?.$t,
+    worksFor: input => createWorksFor(input),
+    telephone: input => findPrimaryPhoneNumber(input)?.$t,
   },
 });
 
@@ -111,7 +111,7 @@ function createGDEmail(email: string | undefined): GdataEmail[] | undefined {
     : undefined;
 }
 function createGDPhoneNumber(
-  telephone: string | undefined
+  telephone: string | undefined,
 ): GdataPhoneNumber[] | undefined {
   return telephone
     ? [
@@ -132,23 +132,23 @@ function getIdFromLink(idLink: string | undefined): string | undefined {
 }
 
 function getContactOrganization(
-  contact: GoogleContactsFeedEntry
+  contact: GoogleContactsFeedEntry,
 ): undefined | GdataOrganization {
   return contact.gd$organization ? contact.gd$organization[0] : undefined;
 }
 
 function createWorksFor(
-  input: GoogleContactsFeedEntry
+  input: GoogleContactsFeedEntry,
 ): OrganizationSchema | undefined {
   const name = getContactOrganization(input)?.gd$orgName?.$t;
   return name ? { '@type': 'Organization', name } : undefined;
 }
 
 function findPrimaryPhoneNumber(
-  input: GoogleContactsFeedEntry
+  input: GoogleContactsFeedEntry,
 ): undefined | GdataPhoneNumber {
   const { gd$phoneNumber } = input;
   return gd$phoneNumber
-    ? gd$phoneNumber.find((p) => p.primary === 'true') || gd$phoneNumber[0]
+    ? gd$phoneNumber.find(p => p.primary === 'true') || gd$phoneNumber[0]
     : undefined;
 }

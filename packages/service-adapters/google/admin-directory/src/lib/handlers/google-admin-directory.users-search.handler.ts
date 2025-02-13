@@ -39,9 +39,9 @@ export const GoogleAdminDirectoryUsersSearchHandler: BreadOperationHandler<
       name,
       response.data,
       (response.data.users ?? []).map(
-        googleAdminDirectoryUserAdapter.toInternal
+        googleAdminDirectoryUserAdapter.toInternal,
       ),
-      googleAdminDirectoryPaginationAdapter.toInternalData(response.data)
+      googleAdminDirectoryPaginationAdapter.toInternalData(response.data),
     );
   },
 

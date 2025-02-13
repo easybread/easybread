@@ -20,11 +20,11 @@ function setValue(params: URLSearchParams, key: string, value: FormDataValue) {
 
 export function toUrlSearchParams(
   data: Record<string, SearchParamsValue | SearchParamsValue[]>,
-  params: URLSearchParams = new URLSearchParams()
+  params: URLSearchParams = new URLSearchParams(),
 ) {
   for (const [key, value] of Object.entries(data)) {
     if (Array.isArray(value)) {
-      value.forEach((v) => setValue(params, key, v));
+      value.forEach(v => setValue(params, key, v));
       continue;
     }
 

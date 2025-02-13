@@ -4,7 +4,7 @@ import { GoogleContactsFeedEntry } from '../interfaces';
 
 export const googleContactsUpdateContactTransform = (
   baseEntry: GoogleContactsFeedEntry,
-  updateEntry: GoogleContactsFeedEntry
+  updateEntry: GoogleContactsFeedEntry,
 ): GoogleContactsFeedEntry => {
   const baseEntryClone = cloneDeep<GoogleContactsFeedEntry>(baseEntry);
 
@@ -36,7 +36,7 @@ export const googleContactsUpdateContactTransform = (
       (base, update) => {
         if (update.address) base.address = update.address;
         if (update.label) base.label = update.label;
-      }
+      },
     );
   }
 
@@ -51,7 +51,7 @@ export const googleContactsUpdateContactTransform = (
       (base, update) => {
         base.$t = update.$t;
         base.uri = update.uri;
-      }
+      },
     );
   }
 
@@ -74,7 +74,7 @@ export const googleContactsUpdateContactTransform = (
         if (update.gd$orgName) base.gd$orgName = update.gd$orgName;
         if (update.gd$orgTitle) base.gd$orgTitle = update.gd$orgTitle;
         if (update.label) base.label = update.label;
-      }
+      },
     );
   }
 
@@ -87,10 +87,10 @@ function updateArrayField<TField>(
   baseValues: TField[],
   updateValues: TField[],
   matcher: (base: TField, update: TField) => boolean,
-  updater: (base: TField, update: TField) => void
+  updater: (base: TField, update: TField) => void,
 ): void {
-  updateValues.forEach((update) => {
-    const base = baseValues.find((base) => matcher(base, update));
+  updateValues.forEach(update => {
+    const base = baseValues.find(base => matcher(base, update));
 
     if (base) {
       updater(base, update);

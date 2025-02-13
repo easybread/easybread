@@ -1,7 +1,3 @@
-import { merge } from 'lodash';
-import axios from 'axios';
-
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonOauth2CompleteOperation,
@@ -9,6 +5,7 @@ import {
   GoogleCommonOauth2StartOperation,
   GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
+import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 import {
   expectFormDataValues,
@@ -16,6 +13,8 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
+import axios from 'axios';
+import { merge } from 'lodash';
 
 import {
   GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
@@ -30,6 +29,7 @@ import {
   GoogleAdminDirectoryUsersSearchOperation,
   GoogleAdminDirectoryUsersUpdateOperation,
 } from '../..';
+
 import { USERS_BY_ID_MOCK } from './users-by-id.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
 
@@ -91,8 +91,8 @@ describe('Operations', () => {
                   '&alt=json' +
                   '&state=[^&]+' +
                   '&prompt=consent' +
-                  '&prompt=select_account'
-              )
+                  '&prompt=select_account',
+              ),
             ),
           },
           success: true,
@@ -144,7 +144,7 @@ describe('Operations', () => {
           code: 'my-auth-code',
           grant_type: 'authorization_code',
           redirect_uri: REDIRECT_URI,
-        }
+        },
       );
     });
   });
@@ -372,7 +372,7 @@ describe('Operations', () => {
 // ------------------------------------
 
 function invokeUsersDelete(
-  identifier: string
+  identifier: string,
 ): Promise<GoogleAdminDirectoryUsersDeleteOperation['output']> {
   return client.invoke(GoogleAdminDirectoryOperationName.USERS_DELETE, {
     breadId: BREAD_ID,
@@ -380,7 +380,7 @@ function invokeUsersDelete(
   });
 }
 function invokeUsersCreate(
-  payload: PersonSchema
+  payload: PersonSchema,
 ): Promise<GoogleAdminDirectoryUsersCreateOperation['output']> {
   return client.invoke(GoogleAdminDirectoryOperationName.USERS_CREATE, {
     breadId: BREAD_ID,
@@ -389,7 +389,7 @@ function invokeUsersCreate(
 }
 
 function invokeUsersUpdate(
-  payload: PersonSchema
+  payload: PersonSchema,
 ): Promise<GoogleAdminDirectoryUsersUpdateOperation['output']> {
   return client.invoke(GoogleAdminDirectoryOperationName.USERS_UPDATE, {
     breadId: BREAD_ID,
@@ -398,7 +398,7 @@ function invokeUsersUpdate(
 }
 
 function invokeUsersSearch(
-  query?: string
+  query?: string,
 ): Promise<GoogleAdminDirectoryUsersSearchOperation['output']> {
   return client.invoke(GoogleAdminDirectoryOperationName.USERS_SEARCH, {
     params: { query },
@@ -408,7 +408,7 @@ function invokeUsersSearch(
 }
 
 function invokeUsersById(
-  id: string
+  id: string,
 ): Promise<GoogleAdminDirectoryUsersByIdOperation['output']> {
   return client.invoke(GoogleAdminDirectoryOperationName.USERS_BY_ID, {
     params: { identifier: id },
@@ -431,7 +431,7 @@ async function invokeStartAuth(): Promise<
 async function getAuthAttemptData() {
   const data =
     await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
-      `${GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME}:auth-attempt:GoogleAdminDirectoryAuthStrategy:${BREAD_ID}`
+      `${GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME}:auth-attempt:GoogleAdminDirectoryAuthStrategy:${BREAD_ID}`,
     );
 
   if (!data) throw new Error('Unexpected empty auth attempt data');
@@ -440,7 +440,7 @@ async function getAuthAttemptData() {
 }
 
 async function invokeCompleteAuth(
-  state: string
+  state: string,
 ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
   return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
     breadId: BREAD_ID,
@@ -455,7 +455,7 @@ function setupAccessTokenCreateResponse(): void {
     Promise.resolve({
       status: 200,
       data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
-    })
+    }),
   );
 }
 
@@ -464,7 +464,7 @@ function setupUsersSearchResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_LIST_MOCK,
-    })
+    }),
   );
 }
 
@@ -473,12 +473,12 @@ function setupUsersByIdResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_BY_ID_MOCK,
-    })
+    }),
   );
 }
 
 function setupUsersUpdateResponse(
-  update: Partial<GoogleAdminDirectoryUser>
+  update: Partial<GoogleAdminDirectoryUser>,
 ): GoogleAdminDirectoryUser {
   const updatedData = merge({}, USERS_BY_ID_MOCK, update);
 
@@ -486,7 +486,7 @@ function setupUsersUpdateResponse(
     Promise.resolve({
       status: 200,
       data: updatedData,
-    })
+    }),
   );
 
   return updatedData;
@@ -497,7 +497,7 @@ function setupUsersCreateResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_BY_ID_MOCK,
-    })
+    }),
   );
 }
 
@@ -506,6 +506,6 @@ function setupUsersDeleteResponse(): void {
     Promise.resolve({
       status: 200,
       data: '',
-    })
+    }),
   );
 }

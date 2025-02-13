@@ -5,6 +5,7 @@ import {
 } from '@easybread/core';
 
 import { RocketChatOperationName } from '../rocket-chat.operation-name';
+
 import { RocketChatAuthConfigureOperationInputParams } from './rocket-chat.auth-configure-operation.input-params';
 
 export interface RocketChatAuthConfigureOperation

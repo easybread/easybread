@@ -5,6 +5,7 @@ import {
 } from '@easybread/core';
 
 import { GoogleCommonAccessTokenCreateResponse } from '../interfaces';
+
 import { GoogleCommonOauth2CompleteOperationInputPayload } from './google-common.oauth2-complete.operation.input-payload';
 import { GoogleCommonOperationName } from './google-common.operation-name';
 

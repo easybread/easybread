@@ -13,9 +13,9 @@ import {
 import axios from 'axios';
 
 import {
-  GoogleCommonOauth2AuthStrategy,
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
+  GoogleCommonOauth2AuthStrategy,
 } from '../..';
 import type { GoogleCommonOauth2ConnectionAttemptStateData } from '../interfaces/google-common.oauth2-connection-attempt.state-data.interface';
 
@@ -58,7 +58,7 @@ const authStrategy = new GoogleCommonOauth2AuthStrategy<TestScopes>(
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     redirectUri: REDIRECT_URI,
-  }
+  },
 );
 
 setExtendedTimeout();
@@ -98,9 +98,9 @@ describe('createAuthUri()', () => {
             '&alt=json' +
             '&state=[^&]+' +
             '&login_hint=hint' +
-            '&prompt=consent'
-        )
-      )
+            '&prompt=consent',
+        ),
+      ),
     );
   });
 });
@@ -116,7 +116,7 @@ describe('authenticate()', () => {
 
   it(`should throw if the state is invalid`, async () => {
     await expect(
-      authStrategy.authenticate(BREAD_ID, { code: 'testcode', state: 'wrong' })
+      authStrategy.authenticate(BREAD_ID, { code: 'testcode', state: 'wrong' }),
     ).rejects.toThrow(AuthAttemptTokenMismatchException);
   });
 
@@ -141,7 +141,7 @@ describe('authenticate()', () => {
         redirect_uri: REDIRECT_URI,
         grant_type: 'authorization_code',
         code: 'testcode',
-      }
+      },
     );
   });
 
@@ -165,7 +165,7 @@ describe('authenticate()', () => {
 describe(`readAuthData()`, () => {
   it(`should throw if not authenticated`, async () => {
     await expect(authStrategy.readAuthData(BREAD_ID)).rejects.toThrow(
-      NoAuthDataException
+      NoAuthDataException,
     );
   });
 
@@ -239,7 +239,7 @@ describe('refreshToken()', () => {
         client_secret: CLIENT_SECRET,
         grant_type: 'refresh_token',
         refresh_token: 'refresh-token',
-      }
+      },
     );
   });
 });
@@ -277,7 +277,7 @@ async function createAuthUrlAndGetAuthAttemptToken() {
 
   const authAttemptData =
     await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
-      `${PROVIDER_NAME}:auth-attempt:GoogleCommonOauth2AuthStrategy:${BREAD_ID}`
+      `${PROVIDER_NAME}:auth-attempt:GoogleCommonOauth2AuthStrategy:${BREAD_ID}`,
     );
 
   if (!authAttemptData) throw new Error('Unexpected empty auth attempt data');

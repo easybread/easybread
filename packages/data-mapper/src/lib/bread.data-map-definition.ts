@@ -11,7 +11,7 @@ export type BreadDataMapNoMapLiteral = typeof NO_MAP;
  * @template O output type
  */
 export type BreadValueFactory<I extends object, O> = (
-  input: I
+  input: I,
 ) => O | BreadDataMapNoMapLiteral;
 
 /**
@@ -28,7 +28,7 @@ export type BreadDataMapIOConstraint = Record<string | symbol, unknown>;
 
 export type BreadDataMapperClass<
   TInput extends BreadDataMapIOConstraint,
-  TOutput extends BreadDataMapIOConstraint
+  TOutput extends BreadDataMapIOConstraint,
 > = {
   map(input: TInput): TOutput;
 };
@@ -41,7 +41,7 @@ export type BreadDataMapperClass<
  */
 export type BreadDataMapValueResolverDefinition<
   I extends BreadDataMapIOConstraint,
-  O
+  O,
 > =
   | (O extends Array<unknown> ? BreadValueFactory<I, O> : never)
   // if the output[key] is an object, then map recursively.
@@ -66,7 +66,7 @@ export type BreadDataMapValueResolverDefinition<
  */
 export type BreadDataMapDefinition<
   I extends BreadDataMapIOConstraint,
-  O extends BreadDataMapIOConstraint
+  O extends BreadDataMapIOConstraint,
 > = {
   [K in keyof O]: BreadDataMapValueResolverDefinition<I, O[K]>;
 };

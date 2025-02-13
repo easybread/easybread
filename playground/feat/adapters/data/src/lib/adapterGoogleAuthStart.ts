@@ -1,8 +1,7 @@
-import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
-
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
+import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 
 export const adapterGoogleAuthStart = async (userId: string) => {
   const clientGoogleAdminDirectory = await clientGoogleAdminDirectoryGet();
@@ -12,7 +11,7 @@ export const adapterGoogleAuthStart = async (userId: string) => {
     {
       $set: { createdAt: new Date(), connectedAt: undefined },
     },
-    { upsert: true }
+    { upsert: true },
   );
 
   const result = await clientGoogleAdminDirectory.invoke(
@@ -29,7 +28,7 @@ export const adapterGoogleAuthStart = async (userId: string) => {
           'https://www.googleapis.com/auth/cloud-platform',
         ],
       },
-    }
+    },
   );
 
   if (!result.rawPayload.success) {

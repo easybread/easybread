@@ -1,6 +1,6 @@
+import type { AuthTokenData } from './AuthTokenData';
 import { AUTH_CONFIG } from './authConfig';
 import { authTokenEncode } from './authTokenEncode';
-import type { AuthTokenData } from './AuthTokenData';
 
 interface AuthenticateParams {
   data: AuthTokenData;
@@ -8,7 +8,7 @@ interface AuthenticateParams {
     name: string,
     value: string,
     expireTimeMs: number,
-    domain: string
+    domain: string,
   ) => void;
 }
 
@@ -30,7 +30,7 @@ export async function authenticate(params: AuthenticateParams) {
       expireTimeSec: accessTokenExpireTimeSec,
     }),
     accessTokenExpireTimeSec * 1000,
-    cookieDomain
+    cookieDomain,
   );
 
   setCookie(
@@ -40,6 +40,6 @@ export async function authenticate(params: AuthenticateParams) {
       expireTimeSec: refreshTokenExpireTimeSec,
     }),
     refreshTokenExpireTimeSec * 1000,
-    cookieDomain
+    cookieDomain,
   );
 }

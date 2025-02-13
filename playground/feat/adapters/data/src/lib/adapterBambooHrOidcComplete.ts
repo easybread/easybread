@@ -1,12 +1,12 @@
+import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
+import { redirect } from 'next/navigation';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import {
-  adapterCollection,
   type BambooHRAdapter,
+  adapterCollection,
   isBambooHrAdapter,
 } from 'playground-db';
 import { clientBambooHrGet } from 'playground-easybread-clients';
-import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
-import { redirect } from 'next/navigation';
 
 export interface AdapterBambooHrOidcCompleteOptions {
   userId: string;
@@ -15,7 +15,7 @@ export interface AdapterBambooHrOidcCompleteOptions {
 }
 
 export async function adapterBambooHrOidcComplete(
-  options: AdapterBambooHrOidcCompleteOptions
+  options: AdapterBambooHrOidcCompleteOptions,
 ) {
   const { userId, code, state } = options;
 
@@ -35,7 +35,7 @@ export async function adapterBambooHrOidcComplete(
     {
       breadId: makeBreadId(userId),
       payload: { code, state },
-    }
+    },
   );
 
   if (results.rawPayload.success === false) {
@@ -60,7 +60,7 @@ export async function adapterBambooHrOidcComplete(
       } satisfies Partial<BambooHRAdapter>,
     },
 
-    { upsert: true }
+    { upsert: true },
   );
 
   redirect('/adapters');

@@ -30,7 +30,7 @@ export class RetriesLimitReachedException extends BreadException {
     super(
       `Operation ${operationName} failed after ${retriesCount} retries. Time taken: ${
         endTime - startTime
-      } ms`
+      } ms`,
     );
 
     this.startTime = startTime;

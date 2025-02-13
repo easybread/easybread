@@ -5,7 +5,7 @@ import { BREEZY_PROVIDER_NAME } from './breezy.constants';
 import { BreezyOperation } from './breezy.operation';
 import {
   BreezyAuthenticateHandler,
-  BreezyCompanySearchHandler
+  BreezyCompanySearchHandler,
 } from './handlers';
 
 export class BreezyAdapter extends BreadServiceAdapter<
@@ -18,7 +18,7 @@ export class BreezyAdapter extends BreadServiceAdapter<
     super();
     this.registerOperationHandlers(
       BreezyAuthenticateHandler,
-      BreezyCompanySearchHandler
+      BreezyCompanySearchHandler,
     );
   }
 }

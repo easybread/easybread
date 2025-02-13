@@ -3,13 +3,13 @@ import {
   EasyBreadClient,
   InMemoryStateAdapter,
 } from '@easybread/core';
-import type { ApplyActionSchema } from '@easybread/schemas';
 import {
   BreadOperationName,
   EmployeeByIdOperation,
   EmployeeCreateOperation,
   EmployeeSearchOperation,
 } from '@easybread/operations';
+import type { ApplyActionSchema } from '@easybread/schemas';
 import {
   createAxiosError,
   expectFormDataValues,
@@ -18,8 +18,8 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-
 import axios, { AxiosResponse } from 'axios';
+
 import {
   BAMBOO_HR_PROVIDER_NAME,
   type BambooApplicationList,
@@ -32,9 +32,10 @@ import {
   type BambooOidcLoginPayload,
   type BambooOidcTokenPayload,
 } from '../..';
+
+import { BAMBOO_APPLICATIONS_MOCK } from './bamboo.applications.mock';
 import { BAMBOO_EMPLOYEE_MOCK } from './bamboo.employee.mock';
 import { BAMBOO_EMPLOYEES_DIR_MOCK } from './bamboo.employees-dir.mock';
-import { BAMBOO_APPLICATIONS_MOCK } from './bamboo.applications.mock';
 
 mockAxios();
 setExtendedTimeout();
@@ -50,7 +51,7 @@ const OIDC_APPLICATION_KEY = 'application-key';
 
 async function readAuthAttemptData(breadId: string = BREAD_ID) {
   return stateAdapter.read<BambooOidcConnectionAttemptStateData>(
-    `${BAMBOO_HR_PROVIDER_NAME}:auth-attempt:BambooHrAuthStrategy:${breadId}`
+    `${BAMBOO_HR_PROVIDER_NAME}:auth-attempt:BambooHrAuthStrategy:${breadId}`,
   );
 }
 
@@ -80,7 +81,7 @@ describe(`${BreadOperationName.SETUP_BASIC_AUTH}`, () => {
           apiKey: API_KEY,
           companyName: COMPANY_NAME,
         },
-      }
+      },
     );
 
     expect(authResult).toEqual({
@@ -146,7 +147,7 @@ describe(BambooHrOperationName.OIDC_AUTH_START, () => {
       rawPayload: {
         data: {
           authUri: expect.stringMatching(
-            /^https:\/\/company-one\.bamboohr\.com\/authorize\.php\?request=authorize&response_type=code&scope=openid\+email&state=[^&]+&client_id=client-id&redirect_uri=http:\/\/localhost:3000\/accept-bamboo-oidc-code$/
+            /^https:\/\/company-one\.bamboohr\.com\/authorize\.php\?request=authorize&response_type=code&scope=openid\+email&state=[^&]+&client_id=client-id&redirect_uri=http:\/\/localhost:3000\/accept-bamboo-oidc-code$/,
           ),
         },
         success: true,
@@ -184,7 +185,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
             company_domain: COMPANY_NAME,
             id_token: 'ID_TOKEN',
           } satisfies BambooOidcTokenPayload,
-        })
+        }),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -196,7 +197,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
             userId: 'BAMBOO_USER_ID',
             employeeId: 'BAMBOO_EMPLOYEE_ID',
           } satisfies BambooOidcLoginPayload,
-        })
+        }),
       );
   });
 
@@ -233,7 +234,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
           code: 'some-code',
           state: 'wrong-state',
         },
-      }
+      },
     );
 
     expect(result).toEqual({
@@ -299,7 +300,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
         grant_type: 'authorization_code',
         redirect_uri: 'http://localhost:3000/accept-bamboo-oidc-code',
         scope: 'openid email',
-      }
+      },
     );
   });
 
@@ -322,7 +323,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
       {
         applicationKey: 'application-key',
         id_token: 'ID_TOKEN',
-      }
+      },
     );
   });
 });
@@ -333,12 +334,12 @@ describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
       Promise.resolve({
         status: 200,
         data: BAMBOO_EMPLOYEES_DIR_MOCK,
-      })
+      }),
     );
   });
 
   function invokeEmployeeSearch(
-    query?: string
+    query?: string,
   ): Promise<EmployeeSearchOperation<BambooEmployeesDirectory>['output']> {
     return client.invoke(BreadOperationName.EMPLOYEE_SEARCH, {
       breadId: BREAD_ID,
@@ -443,7 +444,7 @@ describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
       Promise.resolve({
         status: 200,
         data: BAMBOO_EMPLOYEE_MOCK,
-      } as AxiosResponse)
+      } as AxiosResponse),
     );
   });
 
@@ -528,7 +529,7 @@ describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
             'https://api.bamboohr.com/api/gateway.php/mietest/v1/employees/27',
         },
         // TODO: remove as unknown and fix ts error
-      } as unknown as AxiosResponse)
+      } as unknown as AxiosResponse),
     );
   });
 
@@ -629,7 +630,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
   it(`should return an expected rawData and payload`, async () => {
     const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
     const applicationsFilteredByStartTime = BAMBOO_APPLICATIONS_MOCK.filter(
-      (a) => a.appliedDate >= `2024-10-11 00:00:00`
+      a => a.appliedDate >= `2024-10-11 00:00:00`,
     );
 
     jest.mocked(axios.request).mockImplementationOnce(() =>
@@ -640,7 +641,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           nextPageUrl: null,
           paginationComplete: true,
         } satisfies BambooApplicationList,
-      })
+      }),
     );
 
     const result = await client.invoke(
@@ -649,7 +650,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
         breadId: BREAD_ID,
         pagination: { type: 'PREV_NEXT', page: 1 },
         params: { startTime },
-      }
+      },
     );
 
     expect(result.rawPayload).toEqual({
@@ -735,7 +736,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           nextPageUrl: `https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/applicant_tracking/applications?page=2`,
           paginationComplete: false,
         } satisfies BambooApplicationList,
-      })
+      }),
     );
 
     const result = await client.invoke(
@@ -744,7 +745,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
         breadId: BREAD_ID,
         pagination: { type: 'PREV_NEXT', page: 1 },
         params: {},
-      }
+      },
     );
 
     expect(result.pagination).toEqual({
@@ -765,7 +766,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
       2,
       expect.objectContaining({
         params: expect.objectContaining({ page: 2 }),
-      })
+      }),
     );
   });
 });
@@ -774,7 +775,7 @@ describe(`${BambooHrOperationName.JOB_APPLICANT_SEARCH}`, () => {
   it(`should return an expected rawData and payload`, async () => {
     const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
     const applicationsFilteredByStartTime = BAMBOO_APPLICATIONS_MOCK.filter(
-      (a) => a.appliedDate >= `2024-10-11 00:00:00`
+      a => a.appliedDate >= `2024-10-11 00:00:00`,
     );
 
     jest.mocked(axios.request).mockImplementationOnce(() =>
@@ -785,7 +786,7 @@ describe(`${BambooHrOperationName.JOB_APPLICANT_SEARCH}`, () => {
           nextPageUrl: null,
           paginationComplete: true,
         } satisfies BambooApplicationList,
-      })
+      }),
     );
 
     const result = await client.invoke(
@@ -794,7 +795,7 @@ describe(`${BambooHrOperationName.JOB_APPLICANT_SEARCH}`, () => {
         breadId: BREAD_ID,
         pagination: { type: 'PREV_NEXT', page: 1 },
         params: { startTime },
-      }
+      },
     );
 
     expect(result.rawPayload).toEqual({

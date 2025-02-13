@@ -1,12 +1,12 @@
 import {
-  BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload,
-} from '@easybread/core';
-import {
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions,
   rocketChatUserAdapter,
 } from '@easybread/adapter-rocket-chat-common';
+import {
+  BreadOperationHandler,
+  createSuccessfulOutputWithRawDataAndPayload,
+} from '@easybread/core';
 import { resolve } from 'url';
 
 import { RocketChatUsersInfo } from '../interfaces';
@@ -39,7 +39,7 @@ export const RocketChatUsersByIdHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       name,
       result.data,
-      rocketChatUserAdapter.toInternal(result.data.user)
+      rocketChatUserAdapter.toInternal(result.data.user),
     );
   },
 };

@@ -1,6 +1,6 @@
 import type { BreadSchema } from './bread.schema';
-import type { PersonSchema } from './person.schema';
 import type { OrganizationSchema } from './organization.schema';
+import type { PersonSchema } from './person.schema';
 
 export type RatingSchema = BreadSchema & {
   '@type': 'Rating';

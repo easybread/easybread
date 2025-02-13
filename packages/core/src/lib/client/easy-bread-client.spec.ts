@@ -22,14 +22,14 @@ class TestAuthStrategy extends BreadAuthStrategy<object> {
 
   async authenticate(
     _breadId: string,
-    _payload: object | undefined
+    _payload: object | undefined,
   ): Promise<void> {
     return;
   }
 
   async authorizeHttp(
     _breadId: string,
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     return requestConfig;
   }
@@ -235,7 +235,7 @@ describe('allPages() async generator function', () => {
     beforeEach(() => {
       const lastPage = 3;
       const createNextPage = (
-        currentPage?: number | string
+        currentPage?: number | string,
       ): number | undefined => {
         const numberCurrent = Number(currentPage);
 
@@ -345,7 +345,7 @@ describe('allPages() async generator function', () => {
       const id = '1';
       await client.unAuthenticate(id);
       await expect(authStrategy.readAuthData(id)).rejects.toThrowError(
-        `no auth data in the state for 1`
+        `no auth data in the state for 1`,
       );
     });
   });

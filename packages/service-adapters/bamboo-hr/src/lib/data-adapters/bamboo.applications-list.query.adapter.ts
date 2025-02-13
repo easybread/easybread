@@ -1,14 +1,15 @@
 import { breadDataAdapter } from '@easybread/data-adapter';
-import type { BambooApplicationListQuery } from '../interfaces';
-import type { JobApplicantSearchOperationInputParams } from '@easybread/operations';
 import { NO_MAP } from '@easybread/data-mapper';
+import type { JobApplicantSearchOperationInputParams } from '@easybread/operations';
+
+import type { BambooApplicationListQuery } from '../interfaces';
 
 export const bambooApplicationsListQueryAdapter = breadDataAdapter<
   JobApplicantSearchOperationInputParams,
   BambooApplicationListQuery
 >({
   toExternal: {
-    applicationStatus: (_) => {
+    applicationStatus: _ => {
       switch (_.actionStatus) {
         case 'ActiveActionStatus':
           return 'ACTIVE';
@@ -26,7 +27,7 @@ export const bambooApplicationsListQueryAdapter = breadDataAdapter<
           return NO_MAP;
       }
     },
-    newSince: (_) => {
+    newSince: _ => {
       if (!_.startTime) return NO_MAP;
       const date = new Date(_.startTime);
       const utcYear = date.getUTCFullYear();
@@ -43,7 +44,7 @@ export const bambooApplicationsListQueryAdapter = breadDataAdapter<
   },
 
   toInternal: {
-    actionStatus: (_) => {
+    actionStatus: _ => {
       switch (_.applicationStatus) {
         case 'ACTIVE':
           return 'ActiveActionStatus';
@@ -61,7 +62,7 @@ export const bambooApplicationsListQueryAdapter = breadDataAdapter<
           return NO_MAP;
       }
     },
-    startTime: (_) => {
+    startTime: _ => {
       if (!_.newSince) return NO_MAP;
       return new Date(_.newSince).toISOString();
     },

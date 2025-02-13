@@ -1,6 +1,6 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawData
+  createSuccessfulOutputWithRawData,
 } from '@easybread/core';
 
 import { BreezyAuthStrategy } from '../breezy.auth-strategy';
@@ -20,7 +20,7 @@ export const BreezyAuthenticateHandler: BreadOperationHandler<
 
     return createSuccessfulOutputWithRawData(
       BreezyOperationName.AUTHENTICATE,
-      result
+      result,
     );
-  }
+  },
 };

@@ -11,8 +11,8 @@ import {
   type BreadOperation,
   type BreadOperationContext,
   type BreadOperationHandlerDistributed,
-  createFailedOperationOutput,
   type ExtractCollectionOperation,
+  createFailedOperationOutput,
 } from '../operation';
 import { OperationExecutor } from '../operation-executor';
 
@@ -27,7 +27,7 @@ import { OperationExecutor } from '../operation-executor';
 export abstract class BreadServiceAdapter<
   TOperation extends BreadOperation<string>,
   TAuthStrategy extends BreadAuthStrategy<object>,
-  TOptions extends BreadServiceAdapterOptions | null = null
+  TOptions extends BreadServiceAdapterOptions | null = null,
 > {
   protected options: TOptions;
 
@@ -45,7 +45,7 @@ export abstract class BreadServiceAdapter<
 
   async processOperation<O extends TOperation>(
     input: O['input'],
-    context: BreadOperationContext<TAuthStrategy>
+    context: BreadOperationContext<TAuthStrategy>,
   ): Promise<O['output']> {
     try {
       const handler = this.findHandler(input.name);
@@ -62,7 +62,7 @@ export abstract class BreadServiceAdapter<
       return createFailedOperationOutput<O>(
         input.name,
         this.provider,
-        this.createServiceException(error)
+        this.createServiceException(error),
       );
     }
   }
@@ -75,7 +75,7 @@ export abstract class BreadServiceAdapter<
       | BreadException
       | ServiceException
       | string
-      | unknown
+      | unknown,
   ): ServiceException {
     if (error instanceof ServiceException) return error;
 
@@ -87,7 +87,7 @@ export abstract class BreadServiceAdapter<
       return new ServiceException(
         this.provider,
         this.createServiceExceptionMessageFromError(error),
-        error
+        error,
       );
     }
 
@@ -101,13 +101,13 @@ export abstract class BreadServiceAdapter<
   }
 
   protected createServiceExceptionMessageFromAxiosError(
-    error: AxiosError
+    error: AxiosError,
   ): string {
     return error.message;
   }
 
   protected setProviderToOutput(
-    outputWithoutProvider: Omit<TOperation['output'], 'provider'>
+    outputWithoutProvider: Omit<TOperation['output'], 'provider'>,
   ): TOperation['output'] {
     return {
       ...outputWithoutProvider,
@@ -122,7 +122,7 @@ export abstract class BreadServiceAdapter<
       TOptions
     >[]
   ): void {
-    operationHandlers.map((h) => this.registerOperationHandler(h.name, h));
+    operationHandlers.map(h => this.registerOperationHandler(h.name, h));
   }
 
   protected registerOperationHandler<TName extends TOperation['name']>(
@@ -131,7 +131,7 @@ export abstract class BreadServiceAdapter<
       TOperation,
       TAuthStrategy,
       TOptions
-    >
+    >,
   ): void {
     // TODO: do something if exists
     if (this.handlers.has(operationName)) return;
@@ -140,7 +140,7 @@ export abstract class BreadServiceAdapter<
   }
 
   protected findHandler(
-    operationName: TOperation['name']
+    operationName: TOperation['name'],
   ): BreadOperationHandlerDistributed<TOperation, TAuthStrategy, TOptions> {
     const handler = this.handlers.get(operationName);
     if (!handler) {
@@ -154,13 +154,10 @@ export abstract class BreadServiceAdapter<
 
 export type BreadServiceAdapterAny = BreadServiceAdapter<any, any, any>;
 
-export type InferServiceAdapterOperation<T> = T extends BreadServiceAdapter<
-  infer TOperation,
-  any,
-  any
->
-  ? TOperation
-  : never;
+export type InferServiceAdapterOperation<T> =
+  T extends BreadServiceAdapter<infer TOperation, any, any>
+    ? TOperation
+    : never;
 
 export type InferServiceAdapterOperationName<T> =
   InferServiceAdapterOperation<T>['name'];
@@ -170,10 +167,10 @@ export type InferServiceAdapterCollectionOperationName<T> =
 
 export type InferServiceAdapterOperationByName<
   TAdapter extends BreadServiceAdapterAny,
-  TName extends InferServiceAdapterOperationName<TAdapter>
+  TName extends InferServiceAdapterOperationName<TAdapter>,
 > = Extract<InferServiceAdapterOperation<TAdapter>, { name: TName }>;
 
 export type InferServiceAdapterCollectionOperationByName<
   TAdapter extends BreadServiceAdapterAny,
-  TName extends InferServiceAdapterOperationName<TAdapter>
+  TName extends InferServiceAdapterOperationName<TAdapter>,
 > = Extract<InferServiceAdapterOperation<TAdapter>, { name: TName }>;

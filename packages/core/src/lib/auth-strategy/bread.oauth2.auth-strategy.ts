@@ -1,32 +1,33 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { BreadAuthStrategy } from './bread.auth-strategy';
+import { BreadAuthenticationLostEvent } from './events/bread.authentication-lost.event';
 import {
   type BreadAuthAttemptStateDataBase,
   BreadOauth2StateData,
 } from './interfaces';
-import { BreadAuthenticationLostEvent } from './events/bread.authentication-lost.event';
 
 export abstract class BreadOAuth2AuthStrategy<
   TStateData extends BreadOauth2StateData,
-  TAuthAttemptStateData extends BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase
+  TAuthAttemptStateData extends
+    BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase,
 > extends BreadAuthStrategy<TStateData, TAuthAttemptStateData> {
   private refreshPromise: Promise<void> | null = null;
 
   async authorizeHttp(
     breadId: string,
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     const authData = await this.getActiveAuthData(breadId);
 
     return this.addAuthorizationHeader(
       requestConfig,
-      `Bearer ${authData.accessToken}`
+      `Bearer ${authData.accessToken}`,
     );
   }
 
   protected async getActiveAuthData(
-    breadId: string
+    breadId: string,
   ): Promise<BreadOauth2StateData> {
     try {
       const authData = await this.readAuthData(breadId);
@@ -54,7 +55,7 @@ export abstract class BreadOAuth2AuthStrategy<
 
   protected async handleGetActiveAuthDataFailed(
     breadId: string,
-    error: unknown
+    error: unknown,
   ) {
     await this.clearAuthData(breadId);
     this.publish(
@@ -62,7 +63,7 @@ export abstract class BreadOAuth2AuthStrategy<
         provider: this.provider,
         breadId,
         error,
-      })
+      }),
     );
   }
 

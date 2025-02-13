@@ -48,14 +48,14 @@ export interface BreadOperationOutput<TName extends string>
 
 export interface BreadOperationOutputWithRawData<
   TName extends string,
-  TRawData extends object
+  TRawData extends object,
 > extends BreadOperationOutputBase<TName> {
   rawPayload: BreadOperationOutputRawPayloadWithData<TRawData>;
 }
 
 export interface BreadOperationOutputWithPayload<
   TName extends string,
-  TPayload extends BreadSchema
+  TPayload extends BreadSchema,
 > extends BreadOperationOutputBase<TName> {
   rawPayload: BreadOperationOutputRawPayload;
   payload: TPayload;
@@ -64,7 +64,7 @@ export interface BreadOperationOutputWithPayload<
 export type BreadOperationOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
-  TPayload extends BreadSchema
+  TPayload extends BreadSchema,
 > = BreadOperationOutputWithRawData<TName, TRawData> &
   BreadOperationOutputWithPayload<TName, TPayload>;
 
@@ -74,7 +74,7 @@ export type BreadOperationOutputWithRawDataAndPayload<
 export interface BreadCollectionOperationOutputWithPayload<
   TName extends string,
   TPayload extends BreadSchema[],
-  TPaginationType extends BreadOperationPaginationType = 'DISABLED'
+  TPaginationType extends BreadOperationPaginationType = 'DISABLED',
 > extends BreadOperationOutputBase<TName> {
   rawPayload: BreadOperationOutputRawPayload;
   payload: TPayload;
@@ -85,6 +85,6 @@ export type BreadCollectionOperationOutputWithRawDataAndPayload<
   TName extends string,
   TRawData extends object,
   TPayload extends BreadSchema[],
-  TPaginationType extends BreadOperationPaginationType = 'DISABLED'
+  TPaginationType extends BreadOperationPaginationType = 'DISABLED',
 > = BreadOperationOutputWithRawData<TName, TRawData> &
   BreadCollectionOperationOutputWithPayload<TName, TPayload, TPaginationType>;

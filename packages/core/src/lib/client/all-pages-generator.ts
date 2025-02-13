@@ -1,27 +1,28 @@
+import type { DistributedOmit } from '@easybread/common';
+
 import { BreadCollectionOperation } from '../operation';
 import type {
   BreadServiceAdapterAny,
   InferServiceAdapterOperation,
 } from '../service-adapter';
-import type { DistributedOmit } from '@easybread/common';
 
 export type AllPagesGeneratorInvokeFn<
-  TOperation extends BreadCollectionOperation<string, any>
+  TOperation extends BreadCollectionOperation<string, any>,
 > = (
   name: TOperation['name'],
-  data: DistributedOmit<TOperation['input'], 'name'>
+  data: DistributedOmit<TOperation['input'], 'name'>,
 ) => Promise<TOperation['output']>;
 
 export class AllPagesGenerator<TServiceAdapter extends BreadServiceAdapterAny> {
   constructor(
     private readonly invoke: AllPagesGeneratorInvokeFn<
       InferServiceAdapterOperation<TServiceAdapter>
-    >
+    >,
   ) {}
 
   generate<TOperation extends BreadCollectionOperation<string, any>>(
     name: TOperation['name'],
-    data: DistributedOmit<TOperation['input'], 'name'>
+    data: DistributedOmit<TOperation['input'], 'name'>,
   ): AsyncGenerator<TOperation['output'], void, unknown> {
     switch (data.pagination.type) {
       case 'DISABLED':
@@ -41,10 +42,10 @@ export class AllPagesGenerator<TServiceAdapter extends BreadServiceAdapterAny> {
   }
 
   private async *skipCountGenerator<
-    TOperation extends BreadCollectionOperation<string, 'SKIP_COUNT'>
+    TOperation extends BreadCollectionOperation<string, 'SKIP_COUNT'>,
   >(
     name: TOperation['name'],
-    data: DistributedOmit<TOperation['input'], 'name'>
+    data: DistributedOmit<TOperation['input'], 'name'>,
   ): AsyncGenerator<TOperation['output'], void, unknown> {
     const { count = 50, type } = data.pagination;
 
@@ -69,10 +70,10 @@ export class AllPagesGenerator<TServiceAdapter extends BreadServiceAdapterAny> {
   }
 
   private async *prevNextGenerator<
-    TOperation extends BreadCollectionOperation<string, 'PREV_NEXT'>
+    TOperation extends BreadCollectionOperation<string, 'PREV_NEXT'>,
   >(
     name: TOperation['name'],
-    data: DistributedOmit<TOperation['input'], 'name'>
+    data: DistributedOmit<TOperation['input'], 'name'>,
   ): AsyncGenerator<TOperation['output'], void, unknown> {
     let page = data.pagination.page;
 
@@ -95,10 +96,10 @@ export class AllPagesGenerator<TServiceAdapter extends BreadServiceAdapterAny> {
   }
 
   private async *disabledGenerator<
-    TOperation extends BreadCollectionOperation<string, 'DISABLED'>
+    TOperation extends BreadCollectionOperation<string, 'DISABLED'>,
   >(
     name: TOperation['name'],
-    data: DistributedOmit<TOperation['input'], 'name'>
+    data: DistributedOmit<TOperation['input'], 'name'>,
   ): AsyncGenerator<TOperation['output'], void, unknown> {
     yield await this.invoke(name, {
       ...data,

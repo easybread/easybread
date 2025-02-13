@@ -1,10 +1,10 @@
+import { GoogleAdminDirectoryOperationName } from '@easybread/adapter-google-admin-directory';
+import { BreadOperationName } from '@easybread/operations';
+import { ADAPTER_NAME, type AdapterName, makeBreadId } from 'playground-common';
 import {
   clientBambooHrGet,
   clientGoogleAdminDirectoryGet,
 } from 'playground-easybread-clients';
-import { GoogleAdminDirectoryOperationName } from '@easybread/adapter-google-admin-directory';
-import { ADAPTER_NAME, type AdapterName, makeBreadId } from 'playground-common';
-import { BreadOperationName } from '@easybread/operations';
 
 interface PeopleSearchParams {
   userId: string;
@@ -26,7 +26,7 @@ export async function peopleSearch({
           breadId: makeBreadId(userId),
           pagination: { type: 'PREV_NEXT' },
           params: { query },
-        }
+        },
       );
     }
 

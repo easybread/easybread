@@ -1,13 +1,13 @@
 import {
   BreadOperationInputWithPayload,
   BreadOperationOutputWithRawData,
-  BreadStandardOperation
+  BreadStandardOperation,
 } from '@easybread/core';
 
 import { BreezyOperationName } from '../breezy.operation-name';
 import {
   BreezyAuthenticatePayload,
-  BreezyAuthenticateResponse
+  BreezyAuthenticateResponse,
 } from '../interfaces';
 
 export interface BreezyAuthenticateOperation

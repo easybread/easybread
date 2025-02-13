@@ -25,8 +25,8 @@ export const BreezyCompanySearchHandler: BreadOperationHandler<
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreezyOperationName.COMPANY_SEARCH,
       result.data,
-      result.data.map((company) => breezyCompanyAdapter.toInternal(company)),
-      createDisabledPagination()
+      result.data.map(company => breezyCompanyAdapter.toInternal(company)),
+      createDisabledPagination(),
     );
   },
 };

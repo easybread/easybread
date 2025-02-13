@@ -1,5 +1,5 @@
 export function createContextMock<
-  TBreadOperationContext
+  TBreadOperationContext,
 >(): TBreadOperationContext {
   const auth = {
     authenticate: jest.fn(),

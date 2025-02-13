@@ -4,6 +4,7 @@ import {
   type AxiosResponse,
   isAxiosError,
 } from 'axios';
+
 import type { BreadHttpTransportError } from './bread-http.transport-error';
 
 export class BreadHttpTransport {
@@ -36,7 +37,7 @@ export class BreadHttpTransport {
   }
 
   static getErrorData<T extends BreadHttpTransportError<any>>(
-    error: T
+    error: T,
   ): T extends BreadHttpTransportError<infer TData>
     ? TData | undefined
     : never {
@@ -48,17 +49,15 @@ export class BreadHttpTransport {
   }
 
   async request<T>(
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
     return axios
       .request<T, AxiosResponse<T>>(requestConfig)
-      .then((r) => {
-        // eslint-disable-next-line no-console
+      .then(r => {
         // console.log('REQUEST FINISHED:\n%s', r.data);
         return r;
       })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
+      .catch(err => {
         // console.log('REQUEST FAILED:\n%s', err.response?.data);
         throw err;
       });

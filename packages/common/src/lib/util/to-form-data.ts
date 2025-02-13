@@ -22,13 +22,13 @@ function setValue(fd: FormData, key: string, value: FormDataValue) {
 }
 
 export function toFormData(
-  data: Record<string, FormDataValue | FormDataValue[]>
+  data: Record<string, FormDataValue | FormDataValue[]>,
 ) {
   const fd = new FormData();
 
   for (const [key, value] of Object.entries(data)) {
     if (Array.isArray(value)) {
-      value.forEach((v) => setValue(fd, key, v));
+      value.forEach(v => setValue(fd, key, v));
       continue;
     }
 

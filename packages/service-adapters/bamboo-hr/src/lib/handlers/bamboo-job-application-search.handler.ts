@@ -5,14 +5,14 @@ import {
 import { BreadOperationName } from '@easybread/operations';
 
 import type { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
+import type { BambooHrJobApplicationSearchOperation } from '../bamboo-hr.operation';
+import { bambooPaginationAdapter } from '../data-adapters';
+import { bambooApplicationAdapter } from '../data-adapters/bamboo.application.adapter';
+import { bambooApplicationsListQueryAdapter } from '../data-adapters/bamboo.applications-list.query.adapter';
 import type {
   BambooApplicationList,
   BambooApplicationListQuery,
 } from '../interfaces';
-import { bambooPaginationAdapter } from '../data-adapters';
-import { bambooApplicationAdapter } from '../data-adapters/bamboo.application.adapter';
-import { bambooApplicationsListQueryAdapter } from '../data-adapters/bamboo.applications-list.query.adapter';
-import type { BambooHrJobApplicationSearchOperation } from '../bamboo-hr.operation';
 
 export const BambooJobApplicationSearchHandler: BreadOperationHandler<
   BambooHrJobApplicationSearchOperation,
@@ -37,14 +37,14 @@ export const BambooJobApplicationSearchHandler: BreadOperationHandler<
     });
 
     const payload = result.data.applications.map(
-      bambooApplicationAdapter.toInternal
+      bambooApplicationAdapter.toInternal,
     );
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreadOperationName.JOB_APPLICATION_SEARCH,
       result.data,
       payload,
-      bambooPaginationAdapter.toInternalData(result.data)
+      bambooPaginationAdapter.toInternalData(result.data),
     );
   },
 };

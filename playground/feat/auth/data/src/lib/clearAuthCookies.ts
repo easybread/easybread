@@ -1,5 +1,5 @@
-import { getCookieHandlers } from './getCookieHandlers';
 import { AUTH_CONFIG } from './authConfig';
+import { getCookieHandlers } from './getCookieHandlers';
 
 export async function clearAuthCookies() {
   const { clearCookie } = await getCookieHandlers();

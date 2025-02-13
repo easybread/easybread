@@ -36,8 +36,8 @@ it(`should allow for composition`, () => {
 
   // TODO: consider improving the composition pattern
   const adapter = breadDataAdapter<External, Internal>({
-    toExternal: { foo: (i) => fooAdapter.toExternal(i.foo) },
-    toInternal: { foo: (i) => fooAdapter.toInternal(i.foo) },
+    toExternal: { foo: i => fooAdapter.toExternal(i.foo) },
+    toInternal: { foo: i => fooAdapter.toInternal(i.foo) },
   });
 
   expect(adapter.toExternal({ foo: { a: 'val' } })).toEqual({

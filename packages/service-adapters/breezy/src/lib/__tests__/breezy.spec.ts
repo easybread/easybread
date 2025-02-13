@@ -1,13 +1,15 @@
 import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
+import { mockAxios } from '@easybread/test-utils';
 import axiosMock from 'axios';
 
 import {
   BreezyAdapter,
-  BreezyAuthenticateOperation,
   BreezyAuthStrategy,
+  BreezyAuthenticateOperation,
   BreezyCompanySearchOperation,
   BreezyOperationName,
 } from '../..';
+
 import {
   COMPANIES_SEARCH_RESPONSE_MOCK,
   EMAIL,
@@ -15,7 +17,6 @@ import {
   SIGN_IN_RESPONSE_MOCK,
   USER_ID,
 } from './mocks';
-import { mockAxios } from '@easybread/test-utils';
 
 mockAxios();
 
@@ -52,7 +53,7 @@ describe('Breezy', () => {
           Promise.resolve({
             status: 200,
             data: SIGN_IN_RESPONSE_MOCK,
-          })
+          }),
         );
       });
 
@@ -103,7 +104,7 @@ describe('Breezy', () => {
           Promise.resolve({
             status: 200,
             data: COMPANIES_SEARCH_RESPONSE_MOCK,
-          })
+          }),
         );
       });
 

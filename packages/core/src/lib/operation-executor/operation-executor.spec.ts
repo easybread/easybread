@@ -1,8 +1,10 @@
-import { OperationExecutor } from './operation-executor';
-import { BreadOperationContext, BreadOperationHandler } from '../operation';
-import { BreadServiceAdapterOptions } from '../common-interfaces';
 import { createAxiosError } from '@easybread/test-utils';
+
+import { BreadServiceAdapterOptions } from '../common-interfaces';
 import { RetriesLimitReachedException } from '../exception';
+import { BreadOperationContext, BreadOperationHandler } from '../operation';
+
+import { OperationExecutor } from './operation-executor';
 
 let mockHandler: jest.Mocked<BreadOperationHandler<any, any, any>>;
 let mockInput: any;
@@ -43,7 +45,7 @@ it('should execute successfully without retries', async () => {
   expect(mockHandler.handle).toHaveBeenCalledWith(
     mockInput,
     mockContext,
-    mockOptions
+    mockOptions,
   );
 });
 
@@ -120,12 +122,12 @@ it(`should pass the retries count to shouldRetry function`, async () => {
   expect(mockHandler.shouldRetry).toHaveBeenNthCalledWith(
     1,
     expect.any(Error),
-    0
+    0,
   );
   expect(mockHandler.shouldRetry).toHaveBeenNthCalledWith(
     2,
     expect.any(Error),
-    1
+    1,
   );
 });
 
@@ -144,7 +146,7 @@ it('should respect the retry limit', async () => {
       options: mockOptions,
       context: mockContext,
     },
-    3
+    3,
   );
 
   const executePromise = retrier.execute();
@@ -285,7 +287,7 @@ it(`should throw RetriesLimitReachedException if retries limit is reached`, asyn
   await expect(executePromise).rejects.toEqual(
     expect.objectContaining({
       message: expect.stringMatching(
-        /Operation mockOperation failed after 10 retries. Time taken: \d+ ms/
+        /Operation mockOperation failed after 10 retries. Time taken: \d+ ms/,
       ),
       cause: axiosError,
       input: mockInput,
@@ -294,7 +296,7 @@ it(`should throw RetriesLimitReachedException if retries limit is reached`, asyn
       endTime: expect.any(Number),
       operationName: 'mockOperation',
       options: mockOptions,
-    } satisfies Partial<RetriesLimitReachedException>)
+    } satisfies Partial<RetriesLimitReachedException>),
   );
 });
 
@@ -406,7 +408,7 @@ it(`should not retry the operation on retry-eligible HTTP error if handler.shoul
   await jest.runAllTimersAsync();
 
   await expect(executePromise).rejects.toThrow(
-    'Request failed with status code 429'
+    'Request failed with status code 429',
   );
   expect(mockHandler.shouldRetry).toHaveBeenCalledTimes(1);
   expect(mockHandler.handle).toHaveBeenCalledTimes(1);

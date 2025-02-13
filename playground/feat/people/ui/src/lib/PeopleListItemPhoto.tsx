@@ -1,6 +1,5 @@
-import Image from 'next/image';
-
 import type { PersonSchema } from '@easybread/schemas';
+import Image from 'next/image';
 
 export type PeopleListItemPhotoProps = {
   person: PersonSchema;
@@ -11,7 +10,7 @@ function PhotoPlaceholder({ person }: { person: PersonSchema }) {
   return (
     <div
       className={
-        'w-16 min-w-16 h-16 bg-amber-600 rounded-full text-white flex justify-center items-center font-bold text-2xl border border-1 border-white shadow-md shadow-gray-300'
+        'border-1 flex size-16 min-w-16 items-center justify-center rounded-full border border-white bg-amber-600 text-2xl font-bold text-white shadow-md shadow-gray-300'
       }
     >
       {givenName?.charAt(0)}
@@ -28,7 +27,7 @@ export function PeopleListItemPhoto(props: PeopleListItemPhotoProps) {
   return (
     <Image
       className={
-        'w-16 h-16 min-w-16 rounded-full border border-1 border-white shadow-md shadow-gray-300'
+        'border-1 size-16 min-w-16 rounded-full border border-white shadow-md shadow-gray-300'
       }
       src={person.image}
       alt={'photo'}

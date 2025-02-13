@@ -24,14 +24,14 @@ export class StateAdapterMongo extends BreadStateAdapter {
 
   private constructor(
     private readonly client: MongoClient,
-    private readonly collectionName: string = StateAdapterMongo.DEFAULT_COLLECTION_NAME
+    private readonly collectionName: string = StateAdapterMongo.DEFAULT_COLLECTION_NAME,
   ) {
     super();
   }
 
   static async fromMongoClient(
     client: MongoClient,
-    options: FromMongoClientOptions = {}
+    options: FromMongoClientOptions = {},
   ): Promise<StateAdapterMongo> {
     const { collectionName, createIndex = true } = options;
 
@@ -42,7 +42,7 @@ export class StateAdapterMongo extends BreadStateAdapter {
 
   static async fromConnectionUrl(
     connectionURI: string,
-    options: FromConnectionURLOptions = {}
+    options: FromConnectionURLOptions = {},
   ): Promise<StateAdapterMongo> {
     const { collectionName, createIndex, clientOptions } = options;
 
@@ -56,7 +56,7 @@ export class StateAdapterMongo extends BreadStateAdapter {
 
   static async createIndex(
     client: MongoClient,
-    collectionName: string = this.DEFAULT_COLLECTION_NAME
+    collectionName: string = this.DEFAULT_COLLECTION_NAME,
   ): Promise<void> {
     await client.db().createIndex(collectionName, 'key', {
       unique: true,
@@ -65,7 +65,7 @@ export class StateAdapterMongo extends BreadStateAdapter {
 
   private static createMongoClient(
     connectionURI: string,
-    clientOptions: MongoClientOptions = {}
+    clientOptions: MongoClientOptions = {},
   ): Promise<MongoClient> {
     return MongoClient.connect(connectionURI, {
       ...StateAdapterMongo.DEFAULT_CLIENT_OPTIONS,
@@ -102,7 +102,7 @@ export class StateAdapterMongo extends BreadStateAdapter {
     const collection = await this.getCollection();
     const res = await collection.findOneAndDelete(
       { key: key },
-      { includeResultMetadata: true }
+      { includeResultMetadata: true },
     );
     return res !== null && res.ok === 1;
   }

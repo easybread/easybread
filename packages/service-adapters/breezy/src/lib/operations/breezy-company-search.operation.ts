@@ -1,7 +1,7 @@
 import {
   BreadCollectionOperation,
   BreadCollectionOperationInput,
-  BreadCollectionOperationOutputWithRawDataAndPayload
+  BreadCollectionOperationOutputWithRawDataAndPayload,
 } from '@easybread/core';
 import { OrganizationSchema } from '@easybread/schemas';
 

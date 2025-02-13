@@ -1,10 +1,11 @@
-import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
 import { redirect } from 'next/navigation';
-import { authStatusGet } from 'playground-feat-auth-data';
 import { adapterBambooHrOidcComplete } from 'playground-feat-adapters-data';
+import { authStatusGet } from 'playground-feat-auth-data';
+
+import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
 
 export async function AdapterOauthCompleteBambooHrOidc(
-  props: AdapterOauthCompleteProps
+  props: AdapterOauthCompleteProps,
 ) {
   const { code, state } = await props.searchParams;
 

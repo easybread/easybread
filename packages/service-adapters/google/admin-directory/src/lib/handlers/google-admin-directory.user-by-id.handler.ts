@@ -3,11 +3,11 @@ import {
   createSuccessfulOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
+import { googleAdminDirectoryUserAdapter } from '../data-adapters';
 import { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
 import { GoogleAdminDirectoryOperationName } from '../google-admin-directory.operation-name';
 import { GoogleAdminDirectoryUser } from '../interfaces';
 import { GoogleAdminDirectoryUsersByIdOperation } from '../operations';
-import { googleAdminDirectoryUserAdapter } from '../data-adapters';
 
 export const GoogleAdminDirectoryUserByIdHandler: BreadOperationHandler<
   GoogleAdminDirectoryUsersByIdOperation,
@@ -29,7 +29,7 @@ export const GoogleAdminDirectoryUserByIdHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       name,
       result.data,
-      googleAdminDirectoryUserAdapter.toInternal(result.data)
+      googleAdminDirectoryUserAdapter.toInternal(result.data),
     );
   },
 };

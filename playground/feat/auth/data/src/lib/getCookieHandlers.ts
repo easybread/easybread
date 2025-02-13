@@ -6,7 +6,7 @@ export type SetCookieFn = (
   name: string,
   value: string,
   expireTimeMs: number,
-  domain: string
+  domain: string,
 ) => void;
 
 export type GetCookieFn = (name: string) => string | undefined;
@@ -26,7 +26,7 @@ export async function getCookieHandlers(): Promise<CookieHandlers> {
     name: string,
     value: string,
     expireTimeMs: number = NINETY_DAYS_IN_MS,
-    domain: string
+    domain: string,
   ) => {
     cookieStore.set(name, value, {
       httpOnly: true,

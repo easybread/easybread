@@ -50,7 +50,7 @@ export interface BreadStandardOperation<T extends string, E = any> {
 export type BreadCollectionOperation<
   T extends string,
   P extends BreadOperationPaginationType,
-  E = any
+  E = any,
 > = {
   name: T;
   input:
