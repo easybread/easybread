@@ -1,11 +1,12 @@
 import { Tree } from '@nx/devkit';
-import { PackageGeneratorSchema } from './schema';
-import { libraryGenerator } from '@nx/js';
 import { Linter } from '@nx/eslint';
+import { libraryGenerator } from '@nx/js';
+
+import { PackageGeneratorSchema } from './schema';
 
 export async function packageGenerator(
   tree: Tree,
-  options: PackageGeneratorSchema
+  options: PackageGeneratorSchema,
 ) {
   const { name, directory } = options;
 
@@ -21,7 +22,6 @@ export async function packageGenerator(
     importPath: `@easybread/${name}`,
     unitTestRunner: 'jest',
     linter: Linter.EsLint,
-    projectNameAndRootFormat: 'as-provided',
   });
 }
 

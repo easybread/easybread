@@ -10,14 +10,14 @@ export class RocketChatAuthStrategy extends BreadAuthStrategy<RocketChatAuthStat
 
   async authenticate(
     breadId: string,
-    payload: { authToken: string; userId: string }
+    payload: { authToken: string; userId: string },
   ): Promise<void> {
     await this.writeAuthData(breadId, payload);
   }
 
   async authorizeHttp(
     breadId: string,
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     const { authToken, userId } = await this.readAuthData(breadId);
     return this.setHeaders(requestConfig, {

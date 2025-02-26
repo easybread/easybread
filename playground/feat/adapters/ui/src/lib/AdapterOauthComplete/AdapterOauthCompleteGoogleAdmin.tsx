@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation';
 import { isAdapterName } from 'playground-common';
-import { authStatusGet } from 'playground-feat-auth-data';
 import { adapterGoogleAuthComplete } from 'playground-feat-adapters-data';
+import { authStatusGet } from 'playground-feat-auth-data';
+
 import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
 
 export async function AdapterOauthCompleteGoogleAdmin(
-  props: AdapterOauthCompleteProps
+  props: AdapterOauthCompleteProps,
 ) {
   const { code, state } = await props.searchParams;
   const { slug } = props;
@@ -27,7 +28,7 @@ export async function AdapterOauthCompleteGoogleAdmin(
     state,
     slug,
     userId: authStatus.data.userId,
-  }).catch((err) => {
+  }).catch(err => {
     console.error(err);
   });
 

@@ -1,12 +1,12 @@
-import { BreadAuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
-import { stateAdapterMongoGet } from 'playground-easybread-state';
 import {
   GoogleAdminDirectoryAdapter,
   GoogleAdminDirectoryAuthStrategy,
 } from '@easybread/adapter-google-admin-directory';
-import { load } from 'ts-dotenv';
+import { BreadAuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
+import { stateAdapterMongoGet } from 'playground-easybread-state';
+import { load } from 'ts-dotenv';
 
 let client: EasyBreadClient<
   GoogleAdminDirectoryAdapter,
@@ -32,16 +32,16 @@ export const clientGoogleAdminDirectoryGet = async () => {
       clientId: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
       redirectUri: GOOGLE_REDIRECT_URI,
-    }
+    },
   );
 
   client = new EasyBreadClient(
     stateAdapter,
     googleAdminDirectoryAdapter,
-    googleAuthStrategy
+    googleAuthStrategy,
   );
 
-  client.subscribe(BreadAuthenticationLostEvent.eventName, async (event) => {
+  client.subscribe(BreadAuthenticationLostEvent.eventName, async event => {
     const { breadId } = event.payload;
     const { userId } = parseBreadId(breadId);
 

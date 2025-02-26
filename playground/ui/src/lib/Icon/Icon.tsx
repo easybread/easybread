@@ -1,8 +1,9 @@
 import { clsx } from 'clsx';
+
 import { ICON_NAME, type IconName } from './IconName';
-import { SVGGoogleGLetter } from './SVGGoogleGLetter';
-import { SVGChevronDown } from './SVGChevronDown';
 import { SVGBambooHr } from './SVGBambooHr';
+import { SVGChevronDown } from './SVGChevronDown';
+import { SVGGoogleGLetter } from './SVGGoogleGLetter';
 import { SVGMapPin } from './SVGMapPin';
 
 export type IconProps = {
@@ -40,7 +41,7 @@ export function Icon(props: IconProps) {
           'w-16 h-16': size === 'xl',
         },
         'flex items-center justify-center',
-        className
+        className,
       )}
     >
       <RenderIcon iconName={iconName} />

@@ -30,7 +30,7 @@ export const GoogleContactsPeopleByIdHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_BY_ID,
       result.data,
-      googleContactsContactAdapter.toInternal(result.data.entry)
+      googleContactsContactAdapter.toInternal(result.data.entry),
     );
   },
 };

@@ -1,26 +1,28 @@
 import { AxiosRequestConfig } from 'axios';
+import { randomBytes } from 'node:crypto';
 
+import { BreadEventBus } from '../event-bus/bread-event.bus';
 import {
-  AuthAttemptTokenMismatchException,
   AuthAttemptDataNotFoundException,
+  AuthAttemptTokenMismatchException,
   NoAuthDataException,
 } from '../exception';
 import { BreadStateAdapter } from '../state';
 import { BreadHttpTransport } from '../transport/http';
-import { BreadEventBus } from '../event-bus/bread-event.bus';
+
 import type { BreadAuthStrategyEvent } from './events/bread.auth-strategy.event';
 import type { BreadAuthAttemptStateDataBase } from './interfaces';
-import { randomBytes } from 'node:crypto';
 
 export abstract class BreadAuthStrategy<
   TStateData extends object,
-  TAuthAttemptStateData extends BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase
+  TAuthAttemptStateData extends
+    BreadAuthAttemptStateDataBase = BreadAuthAttemptStateDataBase,
 > extends BreadEventBus<BreadAuthStrategyEvent> {
   readonly http: BreadHttpTransport;
 
   protected constructor(
     protected readonly state: BreadStateAdapter,
-    protected readonly provider: string
+    protected readonly provider: string,
   ) {
     if (!provider) throw new Error('provider is not specified');
 
@@ -31,7 +33,7 @@ export abstract class BreadAuthStrategy<
 
   async readAuthData(breadId: string): Promise<TStateData> {
     const authData = await this.state.read<TStateData>(
-      this.createAuthDataStateKey(breadId)
+      this.createAuthDataStateKey(breadId),
     );
 
     if (!authData) throw new NoAuthDataException(breadId);
@@ -46,17 +48,17 @@ export abstract class BreadAuthStrategy<
 
   protected async createAuthAttempt(
     breadId: string,
-    dataWithoutToken: Omit<TAuthAttemptStateData, 'authAttemptToken'>
+    dataWithoutToken: Omit<TAuthAttemptStateData, 'authAttemptToken'>,
   ) {
     return await this.state.write<TAuthAttemptStateData>(
       this.createAuthAttemptStateKey(breadId),
-      await this.createAuthAttemptStateData(breadId, dataWithoutToken)
+      await this.createAuthAttemptStateData(breadId, dataWithoutToken),
     );
   }
 
   protected async createAuthAttemptStateData(
     breadId: string,
-    dataWithoutToken: Omit<TAuthAttemptStateData, 'authAttemptToken'>
+    dataWithoutToken: Omit<TAuthAttemptStateData, 'authAttemptToken'>,
   ): Promise<TAuthAttemptStateData> {
     const authAttemptToken = randomBytes(16).toString('base64url');
 
@@ -72,7 +74,7 @@ export abstract class BreadAuthStrategy<
 
   protected async verifyAuthAttempt(
     breadId: string,
-    authAttemptToken: string
+    authAttemptToken: string,
   ): Promise<TAuthAttemptStateData> {
     const attemptData = await this.readAuthAttempt(breadId);
 
@@ -84,10 +86,10 @@ export abstract class BreadAuthStrategy<
   }
 
   protected async readAuthAttempt(
-    breadId: string
+    breadId: string,
   ): Promise<TAuthAttemptStateData> {
     const attemptData = await this.state.read<TAuthAttemptStateData>(
-      this.createAuthAttemptStateKey(breadId)
+      this.createAuthAttemptStateKey(breadId),
     );
 
     if (!attemptData) throw new AuthAttemptDataNotFoundException(breadId);
@@ -109,23 +111,23 @@ export abstract class BreadAuthStrategy<
 
   protected async writeAuthData(
     breadId: string,
-    data: TStateData
+    data: TStateData,
   ): Promise<void> {
     await this.state.write<TStateData>(
       this.createAuthDataStateKey(breadId),
-      data
+      data,
     );
   }
 
   protected async clearAuthData(breadId: string): Promise<void> {
     await this.state
       .remove(this.createAuthDataStateKey(breadId))
-      .catch((_) => undefined);
+      .catch(_ => undefined);
   }
 
   protected setHeaders(
     requestConfig: AxiosRequestConfig,
-    headers: Partial<AxiosRequestConfig['headers']>
+    headers: Partial<AxiosRequestConfig['headers']>,
   ): AxiosRequestConfig {
     return {
       ...requestConfig,
@@ -135,14 +137,14 @@ export abstract class BreadAuthStrategy<
 
   protected addAuthorizationHeader(
     requestConfig: AxiosRequestConfig,
-    authorization: string
+    authorization: string,
   ): AxiosRequestConfig {
     return this.setHeaders(requestConfig, { authorization });
   }
 
   protected mergeHeaders(
     originalHeaders: object | undefined,
-    newHeaders: object | undefined
+    newHeaders: object | undefined,
   ): Record<string, string> {
     return {
       ...(originalHeaders ?? {}),
@@ -158,7 +160,7 @@ export abstract class BreadAuthStrategy<
 
   abstract authorizeHttp(
     breadId: string,
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig>;
 
   // TODO: authorization for graphql

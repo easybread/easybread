@@ -1,20 +1,21 @@
 import {
+  Tree,
   formatFiles,
   getProjects,
   joinPathFragments,
   readJson,
-  Tree,
   writeJson,
 } from '@nx/devkit';
+
 import { MakePublicGeneratorSchema } from './schema';
 
 export async function makePublicGenerator(
   tree: Tree,
-  _options: MakePublicGeneratorSchema
+  _options: MakePublicGeneratorSchema,
 ) {
   const projects = getProjects(tree);
 
-  projects.forEach((project) => {
+  projects.forEach(project => {
     if (project.projectType !== 'library') return;
     if (!project.root.startsWith('packages')) return;
 

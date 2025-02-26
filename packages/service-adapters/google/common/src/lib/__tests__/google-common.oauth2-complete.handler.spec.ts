@@ -1,12 +1,13 @@
 import { GoogleCommonOauth2CompleteHandler } from '../handlers';
-import { GoogleCommonOperationName } from '../operations';
-import { createContextMock } from './create-context-mock';
 import type { GoogleCommonAccessTokenCreateResponse } from '../interfaces';
+import { GoogleCommonOperationName } from '../operations';
+
+import { createContextMock } from './create-context-mock';
 
 describe('name', () => {
   it(`should be GOOGLE_COMMON/AUTH_FLOW/COMPLETE`, () => {
     expect(GoogleCommonOauth2CompleteHandler.name).toEqual(
-      'GOOGLE_COMMON/AUTH_FLOW/COMPLETE'
+      'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
     );
   });
 });
@@ -21,7 +22,7 @@ describe('handle', () => {
         breadId: '1',
       },
       context,
-      null
+      null,
     );
 
     expect(context.auth.authenticate as jest.Mock).toHaveBeenCalledWith('1', {
@@ -50,7 +51,7 @@ describe('handle', () => {
         breadId: '1',
       },
       context,
-      null
+      null,
     );
 
     expect(output).toEqual({

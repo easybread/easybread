@@ -1,8 +1,8 @@
 import type { ActionStatusTypeSchema } from './action-status-type.schema';
+import type { AnySchema } from './any.schema';
+import type { BreadSchema } from './bread.schema';
 import type { OrganizationSchema } from './organization.schema';
 import type { PersonSchema } from './person.schema';
-import type { BreadSchema } from './bread.schema';
-import type { AnySchema } from './any.schema';
 
 export type ActionSchema = BreadSchema & {
   '@type': 'Action';

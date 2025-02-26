@@ -5,16 +5,16 @@ import {
 import { BreadOperationName } from '@easybread/operations';
 
 import type { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import type {
-  BambooApplicationList,
-  BambooApplicationListQuery,
-} from '../interfaces';
+import type { BambooHrJobApplicantSearchOperation } from '../bamboo-hr.operation';
 import {
   bambooEmployeeAdapter,
   bambooPaginationAdapter,
 } from '../data-adapters';
 import { bambooApplicationsListQueryAdapter } from '../data-adapters/bamboo.applications-list.query.adapter';
-import type { BambooHrJobApplicantSearchOperation } from '../bamboo-hr.operation';
+import type {
+  BambooApplicationList,
+  BambooApplicationListQuery,
+} from '../interfaces';
 
 export const BambooJobApplicantSearchHandler: BreadOperationHandler<
   BambooHrJobApplicantSearchOperation,
@@ -38,15 +38,15 @@ export const BambooJobApplicantSearchHandler: BreadOperationHandler<
       } satisfies BambooApplicationListQuery,
     });
 
-    const payload = result.data.applications.map((a) =>
-      bambooEmployeeAdapter.toInternal(a.applicant)
+    const payload = result.data.applications.map(a =>
+      bambooEmployeeAdapter.toInternal(a.applicant),
     );
 
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       BreadOperationName.JOB_APPLICANT_SEARCH,
       result.data,
       payload,
-      bambooPaginationAdapter.toInternalData(result.data)
+      bambooPaginationAdapter.toInternalData(result.data),
     );
   },
 };

@@ -1,16 +1,16 @@
 import {
   BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload,
   ServiceException,
+  createSuccessfulOutputWithRawDataAndPayload,
 } from '@easybread/core';
 
+import { googleContactsContactAdapter } from '../data-adapters';
 import { GoogleContactsAuthStrategy } from '../google-contacts.auth-strategy';
 import { GOOGLE_PROVIDER_NAME } from '../google-contacts.constants';
 import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedEntryResponse } from '../interfaces';
 import { GoogleContactsPeopleUpdateOperation } from '../operations';
 import { googleContactsUpdateContactTransform } from '../transform';
-import { googleContactsContactAdapter } from '../data-adapters';
 
 export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
   GoogleContactsPeopleUpdateOperation,
@@ -46,7 +46,7 @@ export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
     // TODO: replace this with data mapper too.
     const contactUpdatedEntry = googleContactsUpdateContactTransform(
       contactBase.data.entry,
-      contactEntryChange
+      contactEntryChange,
     );
 
     const result = await context.httpRequest<GoogleContactsFeedEntryResponse>({
@@ -65,7 +65,7 @@ export const GoogleContactsPeopleUpdateHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_UPDATE,
       result.data,
-      googleContactsContactAdapter.toInternal(result.data.entry)
+      googleContactsContactAdapter.toInternal(result.data.entry),
     );
   },
 };

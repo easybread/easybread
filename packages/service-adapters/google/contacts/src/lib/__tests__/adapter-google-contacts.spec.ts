@@ -1,4 +1,3 @@
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
@@ -7,6 +6,7 @@ import {
   GoogleCommonOauth2StateData,
   GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
+import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   expectDate,
   expectFormDataValues,
@@ -29,6 +29,7 @@ import {
   GoogleContactsPeopleSearchOperation,
   GoogleContactsPeopleUpdateOperation,
 } from '../..';
+
 import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 import { CONTACT_FEED_ENTRY_UPDATE_MOCK } from './contact-feed-entry-update.mock';
 import { CONTACT_FEED_ENTRY_MOCK } from './contact-feed-entry.mock';
@@ -72,13 +73,13 @@ describe('Google Plugin', () => {
   const client = new EasyBreadClient(
     stateAdapter,
     serviceAdapter,
-    authStrategy
+    authStrategy,
   );
 
   async function getAuthAttemptData() {
     const data =
       await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
-        `${GOOGLE_PROVIDER_NAME}:auth-attempt:GoogleContactsAuthStrategy:${USER_ID}`
+        `${GOOGLE_PROVIDER_NAME}:auth-attempt:GoogleContactsAuthStrategy:${USER_ID}`,
       );
 
     if (!data) throw new Error('Unexpected empty auth attempt data');
@@ -119,8 +120,8 @@ describe('Google Plugin', () => {
                     '&alt=json' +
                     '&state=[^&]+' +
                     '&login_hint=my\\+hint' +
-                    '&prompt=none'
-                )
+                    '&prompt=none',
+                ),
               ),
             },
             success: true,
@@ -141,7 +142,7 @@ describe('Google Plugin', () => {
       let errorMode = false;
 
       async function invokeCompleteAuth(
-        state: string
+        state: string,
       ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
         return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
           breadId: USER_ID,
@@ -170,7 +171,7 @@ describe('Google Plugin', () => {
         const authAttemptData = await getAuthAttemptData();
 
         expect(
-          await invokeCompleteAuth(authAttemptData.authAttemptToken)
+          await invokeCompleteAuth(authAttemptData.authAttemptToken),
         ).toEqual({
           provider: serviceAdapter.provider,
           name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
@@ -191,7 +192,7 @@ describe('Google Plugin', () => {
         await invokeAuthStart();
         const authAttemptData = await getAuthAttemptData();
         const result = await invokeCompleteAuth(
-          authAttemptData.authAttemptToken
+          authAttemptData.authAttemptToken,
         );
 
         expect(result.rawPayload).toEqual({
@@ -219,7 +220,7 @@ describe('Google Plugin', () => {
             code: 'my-auth-code',
             grant_type: 'authorization_code',
             redirect_uri: REDIRECT_URI,
-          }
+          },
         );
       });
 
@@ -261,7 +262,7 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleSearch(
-        query?: string
+        query?: string,
       ): Promise<GoogleContactsPeopleSearchOperation['output']> {
         return client.invoke(GoogleContactsOperationName.PEOPLE_SEARCH, {
           breadId: USER_ID,
@@ -401,7 +402,7 @@ describe('Google Plugin', () => {
 
         const currentAuthData =
           await stateAdapter.read<GoogleCommonOauth2StateData>(
-            oauth2DataStateKey
+            oauth2DataStateKey,
           );
 
         if (!currentAuthData) throw new Error('Unexpected empty auth data');
@@ -436,7 +437,7 @@ describe('Google Plugin', () => {
             client_secret: CLIENT_SECRET,
             grant_type: 'refresh_token',
             refresh_token: 'refresh-token',
-          }
+          },
         );
 
         // check contacts feed uri was called with an updated access token
@@ -461,7 +462,7 @@ describe('Google Plugin', () => {
         // check auth data updated
         const updatedAuthData =
           await stateAdapter.read<GoogleCommonOauth2StateData>(
-            oauth2DataStateKey
+            oauth2DataStateKey,
           );
 
         expect(updatedAuthData).toEqual({
@@ -475,9 +476,10 @@ describe('Google Plugin', () => {
         const authDataStateKey = `google:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
 
         // cache auth data
-        const authData = await stateAdapter.read<GoogleCommonOauth2StateData>(
-          authDataStateKey
-        );
+        const authData =
+          await stateAdapter.read<GoogleCommonOauth2StateData>(
+            authDataStateKey,
+          );
 
         // rm auth data
         await client.unAuthenticate(USER_ID);
@@ -500,7 +502,7 @@ describe('Google Plugin', () => {
         // restore auth data
         await stateAdapter.write<GoogleCommonOauth2StateData>(
           authDataStateKey,
-          authData as GoogleCommonOauth2StateData
+          authData as GoogleCommonOauth2StateData,
         );
       });
     });
@@ -511,7 +513,7 @@ describe('Google Plugin', () => {
           Promise.resolve({
             status: 200,
             data: CONTACT_FEED_ENTRY_CREATE_MOCK,
-          })
+          }),
         );
       }
 
@@ -582,7 +584,7 @@ describe('Google Plugin', () => {
                 config.method === 'GET'
                   ? CONTACT_FEED_ENTRY_MOCK
                   : CONTACT_FEED_ENTRY_UPDATE_MOCK,
-            })
+            }),
           );
       }
 
@@ -815,7 +817,7 @@ describe('Google Plugin', () => {
           Promise.resolve({
             status: 200,
             data: CONTACT_FEED_ENTRY_MOCK,
-          })
+          }),
         );
       }
 

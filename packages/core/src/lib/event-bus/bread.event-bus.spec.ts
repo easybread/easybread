@@ -1,5 +1,5 @@
-import { BreadEvent } from './bread.event';
 import { BreadEventBus } from './bread-event.bus';
+import { BreadEvent } from './bread.event';
 
 class EventOne extends BreadEvent<{ foo: number }> {
   readonly name = 'EventOne';

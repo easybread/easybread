@@ -3,6 +3,7 @@ import {
   GoogleCommonOauth2StartOperation,
 } from '@easybread/adapter-google-common';
 
+import type { GoogleAdminDirectoryAuthScope } from './interfaces';
 import {
   GoogleAdminDirectoryUsersByIdOperation,
   GoogleAdminDirectoryUsersCreateOperation,
@@ -10,7 +11,6 @@ import {
   GoogleAdminDirectoryUsersSearchOperation,
   GoogleAdminDirectoryUsersUpdateOperation,
 } from './operations';
-import type { GoogleAdminDirectoryAuthScope } from './interfaces';
 
 export type GoogleAdminDirectoryOperation =
   | GoogleCommonOauth2CompleteOperation

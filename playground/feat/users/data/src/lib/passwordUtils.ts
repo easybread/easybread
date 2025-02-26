@@ -1,4 +1,4 @@
-import { randomBytes, pbkdf2Sync } from 'crypto';
+import { pbkdf2Sync, randomBytes } from 'crypto';
 
 export function passwordHash(password: string): string {
   const salt = randomBytes(16).toString('hex');
@@ -10,7 +10,7 @@ export function passwordHash(password: string): string {
 export function passwordVerify(password: string, storedHash: string): boolean {
   const [salt, hash] = storedHash.split(':');
   const verifyHash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString(
-    'hex'
+    'hex',
   );
   return hash === verifyHash;
 }

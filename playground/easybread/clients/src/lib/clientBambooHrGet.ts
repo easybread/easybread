@@ -1,13 +1,13 @@
-import { load } from 'ts-dotenv';
 import {
   BambooHrAdapter,
   BambooHrAuthStrategy,
 } from '@easybread/adapter-bamboo-hr';
-import { stateAdapterMongoGet } from 'playground-easybread-state';
 import { BreadAuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
+import { revalidatePath } from 'next/cache';
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
-import { revalidatePath } from 'next/cache';
+import { stateAdapterMongoGet } from 'playground-easybread-state';
+import { load } from 'ts-dotenv';
 
 let client: EasyBreadClient<BambooHrAdapter, BambooHrAuthStrategy>;
 
@@ -39,7 +39,7 @@ export async function clientBambooHrGet() {
 
   client = new EasyBreadClient(stateAdapter, adapter, authStrategy);
 
-  client.subscribe(BreadAuthenticationLostEvent.eventName, async (event) => {
+  client.subscribe(BreadAuthenticationLostEvent.eventName, async event => {
     const { breadId } = event.payload;
     const { userId } = parseBreadId(breadId);
 

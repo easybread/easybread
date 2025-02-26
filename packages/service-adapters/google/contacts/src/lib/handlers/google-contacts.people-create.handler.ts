@@ -29,7 +29,7 @@ export const GoogleContactsPeopleCreateHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       GoogleContactsOperationName.PEOPLE_CREATE,
       result.data,
-      googleContactsContactAdapter.toInternal(result.data.entry)
+      googleContactsContactAdapter.toInternal(result.data.entry),
     );
   },
 };

@@ -4,7 +4,7 @@ export type BreadOperationPaginationType =
   | 'DISABLED';
 
 export type BreadOperationPaginationBase<
-  TType extends BreadOperationPaginationType
+  TType extends BreadOperationPaginationType,
 > = {
   type: TType;
 };
@@ -42,7 +42,7 @@ type BreadOperationInputPaginationUnion =
   | BreadOperationDisabledPagination;
 
 export type BreadOperationInputPagination<
-  TType extends BreadOperationPaginationType
+  TType extends BreadOperationPaginationType,
 > = Extract<
   BreadOperationInputPaginationUnion,
   BreadOperationPaginationBase<TType>
@@ -54,7 +54,7 @@ type BreadOperationOutputPaginationUnion =
   | BreadOperationDisabledPagination;
 
 export type BreadOperationOutputPagination<
-  TType extends BreadOperationPaginationType
+  TType extends BreadOperationPaginationType,
 > = Extract<
   BreadOperationOutputPaginationUnion,
   BreadOperationPaginationBase<TType>

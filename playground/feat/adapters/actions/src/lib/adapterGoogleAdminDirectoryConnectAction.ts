@@ -1,7 +1,6 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-
 import { adapterGoogleAuthStart } from 'playground-feat-adapters-data';
 import { authStatusGet } from 'playground-feat-auth-data';
 

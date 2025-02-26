@@ -1,8 +1,8 @@
 import { ADAPTER_NAME, type AdapterName } from 'playground-common';
-
-import { AdapterConnectGoogleAdminDirectory } from './googleAdmin/AdapterConnectGoogleAdminDirectory';
-import { AdapterConnectBambooHr } from './bambooHr/AdapterConnectBambooHr';
 import type { Adapter } from 'playground-db';
+
+import { AdapterConnectBambooHr } from './bambooHr/AdapterConnectBambooHr';
+import { AdapterConnectGoogleAdminDirectory } from './googleAdmin/AdapterConnectGoogleAdminDirectory';
 
 export type AdapterConnectProps = {
   name: AdapterName;

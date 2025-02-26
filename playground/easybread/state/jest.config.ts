@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'playground-easybread-state',
   preset: '../../../jest.preset.js',

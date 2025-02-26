@@ -2,8 +2,8 @@ import {
   type BreadDataMapDefinition,
   type BreadDataMapIOConstraint,
   type BreadDataMapNoMapLiteral,
-  type BreadDataMapperClass,
   type BreadDataMapValueResolverDefinition,
+  type BreadDataMapperClass,
   type BreadValueFactory,
   NO_MAP,
 } from './bread.data-map-definition';
@@ -17,7 +17,7 @@ import {
  */
 export class BreadDataMapper<
   TInput extends BreadDataMapIOConstraint,
-  TOutput extends BreadDataMapIOConstraint
+  TOutput extends BreadDataMapIOConstraint,
 > implements BreadDataMapperClass<TInput, TOutput>
 {
   /**
@@ -29,7 +29,7 @@ export class BreadDataMapper<
    */
   static create<
     TInput extends BreadDataMapIOConstraint,
-    TOutput extends BreadDataMapIOConstraint
+    TOutput extends BreadDataMapIOConstraint,
   >(mapDefinition: BreadDataMapDefinition<TInput, TOutput>) {
     return new BreadDataMapper<TInput, TOutput>(mapDefinition);
   }
@@ -54,7 +54,7 @@ export class BreadDataMapper<
    */
   private mapWith<
     I extends BreadDataMapIOConstraint,
-    O extends BreadDataMapIOConstraint
+    O extends BreadDataMapIOConstraint,
   >(input: I, mapDefinition: BreadDataMapDefinition<I, O>) {
     const output = {} as O;
 
@@ -91,7 +91,7 @@ export class BreadDataMapper<
   private resolveValue<
     I extends BreadDataMapIOConstraint,
     R extends BreadDataMapValueResolverDefinition<I, O>,
-    O
+    O,
   >(input: I, resolverDef: R): O | BreadDataMapNoMapLiteral {
     if (resolverDef === NO_MAP) return NO_MAP as O;
 
@@ -107,7 +107,7 @@ export class BreadDataMapper<
 
     if (
       this.isMapperResolver<I, Extract<O, BreadDataMapIOConstraint>>(
-        resolverDef
+        resolverDef,
       )
     ) {
       return resolverDef.map(input);
@@ -115,12 +115,12 @@ export class BreadDataMapper<
 
     if (
       this.isDataMapDefinitionResolver<I, Extract<O, BreadDataMapIOConstraint>>(
-        resolverDef
+        resolverDef,
       )
     ) {
       return this.mapWith<I, Extract<O, BreadDataMapIOConstraint>>(
         input,
-        resolverDef
+        resolverDef,
       );
     }
 
@@ -129,14 +129,14 @@ export class BreadDataMapper<
 
   private isDataMapDefinitionResolver<
     I extends BreadDataMapIOConstraint,
-    O extends BreadDataMapIOConstraint
+    O extends BreadDataMapIOConstraint,
   >(value: unknown): value is BreadDataMapDefinition<I, O> {
     return typeof value === 'object';
   }
 
   private isMapperResolver<
     I extends BreadDataMapIOConstraint,
-    O extends BreadDataMapIOConstraint
+    O extends BreadDataMapIOConstraint,
   >(value: unknown): value is BreadDataMapperClass<I, O> {
     return (
       value !== null &&
@@ -151,7 +151,7 @@ export class BreadDataMapper<
   }
 
   private isFactoryResolver<I extends BreadDataMapIOConstraint, O>(
-    value: unknown
+    value: unknown,
   ): value is BreadValueFactory<I, O> {
     return typeof value === 'function';
   }

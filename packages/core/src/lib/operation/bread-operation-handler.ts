@@ -1,20 +1,21 @@
-import { BreadOperation } from './bread-operation';
-import { BreadOperationContext } from './bread-operation-context';
 import { BreadAuthStrategy } from '../auth-strategy';
 import type { BreadServiceAdapterOptions } from '../common-interfaces';
 import type { BreadHttpTransportError } from '../transport/http';
 
+import { BreadOperation } from './bread-operation';
+import { BreadOperationContext } from './bread-operation-context';
+
 export interface BreadOperationHandler<
   TOperation extends BreadOperation<any, any>,
   TAuthStrategy extends BreadAuthStrategy<object>,
-  TOptions extends BreadServiceAdapterOptions | null = null
+  TOptions extends BreadServiceAdapterOptions | null = null,
 > {
   name: TOperation['name'];
 
   handle(
     input: TOperation['input'],
     context: BreadOperationContext<TAuthStrategy>,
-    options: TOptions
+    options: TOptions,
   ): Promise<Omit<TOperation['output'], 'provider'>>;
 
   /**
@@ -27,7 +28,7 @@ export interface BreadOperationHandler<
    */
   shouldRetry?: (
     error: BreadOperationError<TOperation>,
-    retriesCount: number
+    retriesCount: number,
   ) => boolean;
 
   /**
@@ -49,7 +50,8 @@ export type BreadOperationError<TOperation extends BreadOperation<string>> =
 export type BreadOperationHandlerDistributed<
   TOperation extends BreadOperation<any, any>,
   TAuthStrategy extends BreadAuthStrategy<object>,
-  TOptions extends BreadServiceAdapterOptions | null = null
-> = TOperation extends BreadOperation<any, any>
-  ? BreadOperationHandler<TOperation, TAuthStrategy, TOptions>
-  : never;
+  TOptions extends BreadServiceAdapterOptions | null = null,
+> =
+  TOperation extends BreadOperation<any, any>
+    ? BreadOperationHandler<TOperation, TAuthStrategy, TOptions>
+    : never;

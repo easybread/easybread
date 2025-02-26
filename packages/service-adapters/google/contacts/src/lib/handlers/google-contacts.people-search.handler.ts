@@ -43,7 +43,7 @@ export const GoogleContactsPeopleSearchHandler: BreadOperationHandler<
       GoogleContactsOperationName.PEOPLE_SEARCH,
       result.data,
       result.data.feed.entry.map(googleContactsContactAdapter.toInternal),
-      googleContactsPaginationAdapter.toInternalData(result.data)
+      googleContactsPaginationAdapter.toInternalData(result.data),
     );
   },
 };

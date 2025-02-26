@@ -7,6 +7,7 @@ import { PersonSchema } from '@easybread/schemas';
 
 import { GoogleAdminDirectoryOperationName } from '../google-admin-directory.operation-name';
 import { GoogleAdminDirectoryUsersList } from '../interfaces';
+
 import { GoogleAdminDirectoryUsersSearchOperationInputParams } from './google-admin-directory.users-search.operation.input-params';
 
 export interface GoogleAdminDirectoryUsersSearchOperation

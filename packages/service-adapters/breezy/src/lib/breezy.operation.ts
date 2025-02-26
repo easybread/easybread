@@ -1,6 +1,6 @@
 import {
   BreezyAuthenticateOperation,
-  BreezyCompanySearchOperation
+  BreezyCompanySearchOperation,
 } from './operations';
 
 export type BreezyOperation =

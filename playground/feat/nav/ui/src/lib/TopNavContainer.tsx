@@ -4,7 +4,7 @@ export type TopNavContainerProps = PropsWithChildren;
 
 export function TopNavContainer(props: TopNavContainerProps) {
   return (
-    <div className={'h-16 w-full flex items-center shadow px-8 bg-white'}>
+    <div className={'flex h-16 w-full items-center bg-white px-8 shadow'}>
       {props.children}
     </div>
   );

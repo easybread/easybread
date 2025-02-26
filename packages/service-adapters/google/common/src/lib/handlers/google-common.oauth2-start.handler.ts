@@ -18,7 +18,7 @@ export const GoogleCommonOauth2StartHandler: BreadOperationHandler<
   async handle(input, context) {
     const authUri = await context.auth.createAuthUri(
       input.breadId,
-      input.payload
+      input.payload,
     );
 
     return createSuccessfulOutputWithRawData(this.name, { authUri });

@@ -4,14 +4,16 @@ import type {
   BreadCollectionOperationOutputWithRawDataAndPayload,
   BreadOperationPaginationType,
 } from '@easybread/core';
-import { BreadOperationName } from '../bread.operation-name';
-import type { JobApplicantSearchOperationInputParams } from './job-applicant-search.operation.input-params';
 import type { PersonSchema } from '@easybread/schemas';
+
+import { BreadOperationName } from '../bread.operation-name';
+
+import type { JobApplicantSearchOperationInputParams } from './job-applicant-search.operation.input-params';
 
 export interface JobApplicantSearchOperation<
   TRawData extends object = object,
   TPaginationType extends BreadOperationPaginationType = 'DISABLED',
-  TError = any
+  TError = any,
 > extends BreadCollectionOperation<
     BreadOperationName.JOB_APPLICANT_SEARCH,
     TPaginationType,

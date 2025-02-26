@@ -1,8 +1,8 @@
-import { BreadServiceAdapter } from '@easybread/core';
 import {
   GoogleCommonOauth2CompleteHandler,
   GoogleCommonOauth2StartHandler,
 } from '@easybread/adapter-google-common';
+import { BreadServiceAdapter } from '@easybread/core';
 
 import { GoogleAdminDirectoryAuthStrategy } from './google-admin-directory.auth-strategy';
 import { GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME } from './google-admin-directory.constants';
@@ -30,7 +30,7 @@ export class GoogleAdminDirectoryAdapter extends BreadServiceAdapter<
       GoogleAdminDirectoryUserByIdHandler,
       GoogleAdminDirectoryUsersUpdateHandler,
       GoogleAdminDirectoryUsersCreateHandler,
-      GoogleAdminDirectoryUsersDeleteHandler
+      GoogleAdminDirectoryUsersDeleteHandler,
     );
   }
 }

@@ -1,5 +1,5 @@
+import { Tree, readJson, readProjectConfiguration } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { readJson, readProjectConfiguration, Tree } from '@nx/devkit';
 
 import { packageGenerator } from './generator';
 import type { PackageGeneratorSchema } from './schema';
@@ -67,7 +67,7 @@ describe.skip('package generator', () => {
       await packageGenerator(tree, options);
       const packageJson = readJson(
         tree,
-        'packages/sub/domain/my-package/package.json'
+        'packages/sub/domain/my-package/package.json',
       );
       expect(packageJson.name).toBe('@easybread/my-package');
     });

@@ -1,8 +1,9 @@
-import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 import {
   BreadOperationInputPagination,
   BreadOperationOutputPagination,
 } from '@easybread/core';
+import { breadPaginationAdapter } from '@easybread/pagination-adapter';
+
 import {
   GoogleContactsFeedPaginationParams,
   GoogleContactsFeedResponse,
@@ -16,13 +17,13 @@ export const googleContactsPaginationAdapter = breadPaginationAdapter<
 >({
   toExternalParams: {
     'max-results': 'count',
-    'start-index': (_) => _.skip + 1,
+    'start-index': _ => _.skip + 1,
   },
 
   toInternalData: {
     type: () => 'SKIP_COUNT',
-    count: (_) => Number(_.feed.openSearch$itemsPerPage.$t),
-    skip: (_) => Number(_.feed.openSearch$startIndex.$t) - 1,
-    totalCount: (_) => Number(_.feed.openSearch$totalResults.$t),
+    count: _ => Number(_.feed.openSearch$itemsPerPage.$t),
+    skip: _ => Number(_.feed.openSearch$startIndex.$t) - 1,
+    totalCount: _ => Number(_.feed.openSearch$totalResults.$t),
   },
 });

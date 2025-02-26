@@ -22,7 +22,7 @@ it(`should call RocketChatAuthStrategy.authenticate with token and user id`, asy
       breadId: '1',
     },
     context,
-    { serverUrl: 'doesnt-matter' }
+    { serverUrl: 'doesnt-matter' },
   );
 
   expect(jest.mocked(context.auth.authenticate).mock.calls).toEqual([

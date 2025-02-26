@@ -1,9 +1,9 @@
-import { BreadServiceAdapter } from '@easybread/core';
 import {
   RocketChatAuthConfigureHandler,
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions,
 } from '@easybread/adapter-rocket-chat-common';
+import { BreadServiceAdapter } from '@easybread/core';
 
 import {
   RocketChatUsersByIdHandler,
@@ -24,7 +24,7 @@ export class RocketChatUsersAdapter extends BreadServiceAdapter<
     this.registerOperationHandlers(
       RocketChatAuthConfigureHandler,
       RocketChatUsersSearchHandler,
-      RocketChatUsersByIdHandler
+      RocketChatUsersByIdHandler,
     );
   }
 }

@@ -1,4 +1,5 @@
 import { userCollection } from 'playground-db';
+
 import { passwordHash } from './passwordUtils';
 
 interface UserCreateProps {
@@ -14,7 +15,7 @@ export async function userCreate(props: UserCreateProps) {
       email,
       passwordHash: passwordHash(password),
     },
-    {}
+    {},
   );
 
   return { _id: user.insertedId, email };

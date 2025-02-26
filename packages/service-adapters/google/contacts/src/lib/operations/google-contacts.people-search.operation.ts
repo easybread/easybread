@@ -7,6 +7,7 @@ import { PersonSchema } from '@easybread/schemas';
 
 import { GoogleContactsOperationName } from '../google-contacts.operation-name';
 import { GoogleContactsFeedResponse } from '../interfaces';
+
 import { GoogleContactsPeopleSearchOperationInputParams } from './google-contacts.people-search.operation.input-params';
 
 export interface GoogleContactsPeopleSearchOperation

@@ -1,7 +1,7 @@
 'use server';
 
-import { authenticate, getCookieHandlers } from 'playground-feat-auth-data';
 import { redirect } from 'next/navigation';
+import { authenticate, getCookieHandlers } from 'playground-feat-auth-data';
 import {
   passwordVerify,
   userCreate,

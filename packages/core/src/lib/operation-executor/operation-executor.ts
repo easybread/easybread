@@ -1,15 +1,15 @@
-import {
-  BreadOperationContext,
-  type BreadOperationHandler,
-  type BreadOperationError,
-  type InferOperationHandlerOperation,
-} from '../operation';
 import { BreadServiceAdapterOptions } from '../common-interfaces';
 import { RetriesLimitReachedException } from '../exception';
+import {
+  BreadOperationContext,
+  type BreadOperationError,
+  type BreadOperationHandler,
+  type InferOperationHandlerOperation,
+} from '../operation';
 import { BreadHttpTransport } from '../transport/http';
 
 interface OperationExecutorProps<
-  THandler extends BreadOperationHandler<any, any, any>
+  THandler extends BreadOperationHandler<any, any, any>,
 > {
   handler: THandler;
   input: InferOperationHandlerOperation<THandler>['input'];
@@ -29,7 +29,7 @@ interface OperationExecutorProps<
  * @template THandler operation handler type
  */
 export class OperationExecutor<
-  THandler extends BreadOperationHandler<any, any, any>
+  THandler extends BreadOperationHandler<any, any, any>,
 > {
   static DEFAULT_RETRIES_LIMIT = 10;
 
@@ -46,7 +46,7 @@ export class OperationExecutor<
 
   constructor(
     { handler, input, options, context }: OperationExecutorProps<THandler>,
-    retriesLimit = OperationExecutor.DEFAULT_RETRIES_LIMIT
+    retriesLimit = OperationExecutor.DEFAULT_RETRIES_LIMIT,
   ) {
     this.handler = handler;
     this.input = input;
@@ -66,7 +66,7 @@ export class OperationExecutor<
   > {
     return await this.handler
       .handle(this.input, this.context, this.options)
-      .catch((error) => {
+      .catch(error => {
         if (this.shouldRetry(error)) return this.retry(error);
         throw error;
       });
@@ -80,7 +80,7 @@ export class OperationExecutor<
           error as BreadOperationError<
             InferOperationHandlerOperation<THandler>
           >,
-          this.retriesCount
+          this.retriesCount,
         )
       : null;
 
@@ -111,7 +111,7 @@ export class OperationExecutor<
   }
 
   private async wait() {
-    await new Promise((r) => setTimeout(r, this.delay));
+    await new Promise(r => setTimeout(r, this.delay));
   }
 
   private increaseDelay() {

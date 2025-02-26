@@ -2,12 +2,12 @@ import {
   BreadOperationInputPagination,
   BreadOperationOutputPagination,
 } from '@easybread/core';
+import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 
 import {
   GoogleAdminDirectoryUsersList,
   GoogleAdminDirectoryUsersListPaginationParams,
 } from '../interfaces';
-import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 
 export const googleAdminDirectoryPaginationAdapter = breadPaginationAdapter<
   BreadOperationInputPagination<'PREV_NEXT'>,
@@ -16,7 +16,7 @@ export const googleAdminDirectoryPaginationAdapter = breadPaginationAdapter<
   GoogleAdminDirectoryUsersList
 >({
   toExternalParams: {
-    pageToken: (_) => {
+    pageToken: _ => {
       if (!_.page) return '';
       return _.page.toString();
     },

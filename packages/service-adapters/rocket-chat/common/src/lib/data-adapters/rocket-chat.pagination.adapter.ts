@@ -2,12 +2,12 @@ import {
   BreadOperationInputPagination,
   BreadOperationOutputPagination,
 } from '@easybread/core';
+import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 
 import {
   RocketChatPaginationData,
   RocketChatPaginationParams,
 } from '../interfaces';
-import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 
 export const rocketChatPaginationAdapter = breadPaginationAdapter<
   BreadOperationInputPagination<'SKIP_COUNT'>,

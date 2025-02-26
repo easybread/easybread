@@ -16,7 +16,7 @@ export interface BreadPaginationAdapterParams<
   IP extends BreadDataMapIOConstraint,
   ID extends BreadDataMapIOConstraint,
   EP extends BreadDataMapIOConstraint,
-  ED extends BreadDataMapIOConstraint
+  ED extends BreadDataMapIOConstraint,
 > {
   /** Map definition to map from internal params to external params. */
   toExternalParams: BreadDataMapDefinition<IP, EP>;
@@ -38,7 +38,7 @@ export type BreadPaginationAdapter<
   IP extends BreadDataMapIOConstraint,
   ID extends BreadDataMapIOConstraint,
   EP extends BreadDataMapIOConstraint,
-  ED extends BreadDataMapIOConstraint
+  ED extends BreadDataMapIOConstraint,
 > = {
   /** Map from internal params to external params. */
   toExternalParams: (input: IP) => EP;
@@ -61,9 +61,9 @@ export function breadPaginationAdapter<
   IP extends BreadDataMapIOConstraint,
   ID extends BreadDataMapIOConstraint,
   EP extends BreadDataMapIOConstraint,
-  ED extends BreadDataMapIOConstraint
+  ED extends BreadDataMapIOConstraint,
 >(
-  props: BreadPaginationAdapterParams<IP, ID, EP, ED>
+  props: BreadPaginationAdapterParams<IP, ID, EP, ED>,
 ): BreadPaginationAdapter<IP, ID, EP, ED> {
   const { toExternalParams, toInternalData } = props;
 

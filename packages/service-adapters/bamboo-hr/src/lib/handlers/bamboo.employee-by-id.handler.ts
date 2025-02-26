@@ -5,9 +5,9 @@ import {
 import { BreadOperationName } from '@easybread/operations';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import { BambooEmployee } from '../interfaces';
-import { bambooEmployeeAdapter } from '../data-adapters';
 import type { BambooHrEmployeeByIdOperation } from '../bamboo-hr.operation';
+import { bambooEmployeeAdapter } from '../data-adapters';
+import { BambooEmployee } from '../interfaces';
 
 export const BambooEmployeeByIdHandler: BreadOperationHandler<
   BambooHrEmployeeByIdOperation,
@@ -55,7 +55,7 @@ export const BambooEmployeeByIdHandler: BreadOperationHandler<
     return createSuccessfulOutputWithRawDataAndPayload(
       BreadOperationName.EMPLOYEE_BY_ID,
       response.data,
-      bambooEmployeeAdapter.toInternal(response.data)
+      bambooEmployeeAdapter.toInternal(response.data),
     );
   },
 };

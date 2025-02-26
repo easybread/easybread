@@ -1,9 +1,10 @@
+import type { IfElse, Includes } from '@easybread/common';
+
 import type {
   BreadEvent,
   BreadEventByName,
   BreadEventName,
 } from './bread.event';
-import type { IfElse, Includes } from '@easybread/common';
 
 export type BreadEventSubscriber<T extends BreadEvent> = T extends BreadEvent
   ? { bivarianceHack(event: T): void | Promise<void> }['bivarianceHack']
@@ -40,7 +41,7 @@ export class BreadEventBus<TEvent extends BreadEvent> {
     childEventBus: IfElse<
       Includes<TChildEvent, TEvent>,
       BreadEventBus<TChildEvent>
-    >
+    >,
   ): DeregisterFn {
     this.children.add(childEventBus);
     return () => this.children.delete(childEventBus);
@@ -63,7 +64,7 @@ export class BreadEventBus<TEvent extends BreadEvent> {
    */
   subscribe<TName extends BreadEventName<TEvent>>(
     eventName: TName,
-    subscriber: BreadEventSubscriber<BreadEventByName<TEvent, TName>>
+    subscriber: BreadEventSubscriber<BreadEventByName<TEvent, TName>>,
   ): DeregisterFn {
     const listeners = this.subscribers.get(eventName);
     const unsubscribe = () => this.unsubscribe(eventName, subscriber);
@@ -84,8 +85,8 @@ export class BreadEventBus<TEvent extends BreadEvent> {
    * @param event
    */
   publish<T extends TEvent>(event: T) {
-    this.subscribers.get(event.name)?.forEach((s) => s(event));
-    this.children.forEach((c) => c.publish(event));
+    this.subscribers.get(event.name)?.forEach(s => s(event));
+    this.children.forEach(c => c.publish(event));
   }
 
   /**
@@ -96,7 +97,7 @@ export class BreadEventBus<TEvent extends BreadEvent> {
    */
   unsubscribe<TName extends BreadEventName<TEvent>>(
     eventName: TName,
-    listener: BreadEventSubscriber<BreadEventByName<TEvent, TName>>
+    listener: BreadEventSubscriber<BreadEventByName<TEvent, TName>>,
   ) {
     this.subscribers.get(eventName)?.delete(listener);
   }

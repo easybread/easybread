@@ -4,8 +4,6 @@ export type PageHeadingProps = {
 
 export function PageHeading(props: PageHeadingProps) {
   return (
-    <div className="text-2xl font-bold mb-4 mt-4 text-gray-600">
-      {props.text}
-    </div>
+    <div className="my-4 text-2xl font-bold text-gray-600">{props.text}</div>
   );
 }

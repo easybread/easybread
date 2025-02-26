@@ -1,7 +1,8 @@
+import { breadDataAdapter } from '@easybread/data-adapter';
 import { PersonSchema } from '@easybread/schemas';
 
 import { GoogleAdminDirectoryUser } from '../interfaces';
-import { breadDataAdapter } from '@easybread/data-adapter';
+
 import { googleAdminDirectoryAddressAdapter } from './google-admin-directory.address.adapter';
 
 export const googleAdminDirectoryUserAdapter = breadDataAdapter<
@@ -24,12 +25,12 @@ export const googleAdminDirectoryUserAdapter = breadDataAdapter<
       };
     },
 
-    phones: (input) => {
+    phones: input => {
       if (!input.telephone) return [];
       return [{ value: input.telephone }];
     },
 
-    addresses: (input) => {
+    addresses: input => {
       if (!input.address) return [];
 
       if (typeof input.address === 'string') {
@@ -47,25 +48,25 @@ export const googleAdminDirectoryUserAdapter = breadDataAdapter<
   toInternal: {
     '@type': () => 'Person',
     identifier: 'id',
-    name: (input) => input.name?.fullName,
-    familyName: (input) => input.name?.familyName,
-    givenName: (input) => input.name?.givenName,
+    name: input => input.name?.fullName,
+    familyName: input => input.name?.familyName,
+    givenName: input => input.name?.givenName,
     email: 'primaryEmail',
 
-    telephone: (input) => {
+    telephone: input => {
       if (!input.phones || input.phones.length === 0) return undefined;
 
-      let phone = input.phones.find((p) => p.primary);
+      let phone = input.phones.find(p => p.primary);
 
       if (!phone) phone = input.phones[0];
 
       return phone.value;
     },
 
-    address: (input) => {
+    address: input => {
       if (!input.addresses || input.addresses.length === 0) return undefined;
 
-      let address = input?.addresses?.find((a) => a.primary);
+      let address = input?.addresses?.find(a => a.primary);
 
       if (!address) address = input?.addresses[0];
 

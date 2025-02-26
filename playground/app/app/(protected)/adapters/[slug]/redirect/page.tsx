@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
-import { AdapterOauthComplete } from 'playground-feat-adapters-ui';
 import { isAdapterName } from 'playground-common';
+import { AdapterOauthComplete } from 'playground-feat-adapters-ui';
+import { Suspense } from 'react';
 
 type AdapterRedirectPageProps = {
   params: Promise<{ slug: string }>;
@@ -10,7 +10,7 @@ type AdapterRedirectPageProps = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdapterRedirectPage(
-  props: AdapterRedirectPageProps
+  props: AdapterRedirectPageProps,
 ) {
   const { params, searchParams } = props;
   const { slug } = await params;

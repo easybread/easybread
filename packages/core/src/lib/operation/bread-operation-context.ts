@@ -5,7 +5,7 @@ import { BreadStateAdapter } from '../state';
 import { BreadHttpTransport } from '../transport/http';
 
 interface BreadOperationContextOptions<
-  TAuth extends BreadAuthStrategy<object>
+  TAuth extends BreadAuthStrategy<object>,
 > {
   readonly breadId: string;
   readonly state: BreadStateAdapter;
@@ -28,12 +28,12 @@ export class BreadOperationContext<TAuth extends BreadAuthStrategy<object>> {
 
   async httpRequest<T>(
     requestConfig: AxiosRequestConfig,
-    skipAuthorization = false
+    skipAuthorization = false,
   ): Promise<AxiosResponse<T>> {
     return this.http.request<T>(
       skipAuthorization
         ? requestConfig
-        : await this.auth.authorizeHttp(this.breadId, requestConfig)
+        : await this.auth.authorizeHttp(this.breadId, requestConfig),
     );
   }
 }

@@ -1,13 +1,13 @@
 import {
+  RocketChatAuthStrategy,
+  RocketChatServiceAdapterOptions,
+  rocketChatPaginationAdapter,
+  rocketChatUserAdapter,
+} from '@easybread/adapter-rocket-chat-common';
+import {
   BreadOperationHandler,
   createSuccessfulCollectionOutputWithRawDataAndPayload,
 } from '@easybread/core';
-import {
-  RocketChatAuthStrategy,
-  rocketChatPaginationAdapter,
-  RocketChatServiceAdapterOptions,
-  rocketChatUserAdapter,
-} from '@easybread/adapter-rocket-chat-common';
 import { resolve } from 'url';
 
 import { RocketChatUsersList } from '../interfaces';
@@ -35,8 +35,8 @@ export const RocketChatUsersSearchHandler: BreadOperationHandler<
     return createSuccessfulCollectionOutputWithRawDataAndPayload(
       name,
       result.data,
-      result.data.users.map((user) => rocketChatUserAdapter.toInternal(user)),
-      rocketChatPaginationAdapter.toInternalData(result.data)
+      result.data.users.map(user => rocketChatUserAdapter.toInternal(user)),
+      rocketChatPaginationAdapter.toInternalData(result.data),
     );
   },
 };

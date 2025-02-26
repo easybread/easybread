@@ -1,11 +1,12 @@
 import { GoogleCommonOauth2StartHandler } from '../handlers';
 import { GoogleCommonOperationName } from '../operations';
+
 import { createContextMock } from './create-context-mock';
 
 describe('name', () => {
   it(`should be`, () => {
     expect(GoogleCommonOauth2StartHandler.name).toBe(
-      'GOOGLE_COMMON/AUTH_FLOW/START'
+      'GOOGLE_COMMON/AUTH_FLOW/START',
     );
   });
 });
@@ -25,7 +26,7 @@ describe('handle()', () => {
         },
       },
       context,
-      null
+      null,
     );
     expect(context.auth.createAuthUri).toHaveBeenCalledWith('1', {
       includeGrantedScopes: true,
@@ -54,7 +55,7 @@ describe('handle()', () => {
         },
       },
       context,
-      null
+      null,
     );
 
     expect(output).toEqual({

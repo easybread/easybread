@@ -1,5 +1,6 @@
-import { playgroundDb } from '../playgroundDb';
 import { ADAPTER_NAME } from 'playground-common';
+
+import { playgroundDb } from '../playgroundDb';
 
 export type AdapterBase = {
   slug: string;
@@ -26,13 +27,13 @@ export const adapterCollection = () =>
   playgroundDb().collection<Adapter>('adapters');
 
 export function isBambooHrAdapter(
-  adapter: Adapter
+  adapter: Adapter,
 ): adapter is BambooHRAdapter {
   return adapter.slug === ADAPTER_NAME.BAMBOO_HR;
 }
 
 export function isGoogleAdminDirectoryAdapter(
-  adapter: Adapter
+  adapter: Adapter,
 ): adapter is GoogleAdminDirectoryAdapter {
   return adapter.slug === ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY;
 }

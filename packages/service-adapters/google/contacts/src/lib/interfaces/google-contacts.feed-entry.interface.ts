@@ -1,6 +1,6 @@
 import {
-  GcontactGroupMembershipInfo,
   GContactWebsite,
+  GcontactGroupMembershipInfo,
   GdataEmail,
   GdataExtendedProperty,
   GdataLink,

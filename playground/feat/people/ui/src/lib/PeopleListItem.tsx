@@ -1,5 +1,6 @@
 import type { PersonSchema } from '@easybread/schemas';
 import { Card, Icon } from 'playground-ui';
+
 import { PeopleListItemPhoto } from './PeopleListItemPhoto';
 
 export type PeopleListItemProps = {
@@ -11,25 +12,23 @@ export function PeopleListItem(props: PeopleListItemProps) {
 
   return (
     <Card className={'mb-2'}>
-      <div className={'flex h-full gap-4 items-center'}>
+      <div className={'flex h-full items-center gap-4'}>
         <PeopleListItemPhoto person={person} />
 
-        <div className={'w-full flex flex-col overflow-hidden'}>
-          <span
-            className={'font-bold overflow-ellipsis w-full overflow-hidden'}
-          >
+        <div className={'flex w-full flex-col overflow-hidden'}>
+          <span className={'w-full overflow-hidden text-ellipsis font-bold'}>
             {person.givenName} {person.familyName}
           </span>
 
-          <span className={'overflow-ellipsis w-full overflow-hidden'}>
+          <span className={'w-full overflow-hidden text-ellipsis'}>
             {person.email}
           </span>
           {!person.workLocation ? null : (
-            <span className="overflow-ellipsis w-full overflow-hidden flex items-center text-gray-700">
+            <span className="flex w-full items-center overflow-hidden text-ellipsis text-gray-700">
               <Icon
                 iconName={'MAP_PIN'}
                 size={'xs'}
-                className={'stroke-gray-500 mr-1'}
+                className={'mr-1 stroke-gray-500'}
               />
 
               {person.workLocation}

@@ -1,3 +1,4 @@
+import { toFormData, toUrlSearchParams } from '@easybread/common';
 import { BreadOAuth2AuthStrategy, BreadStateAdapter } from '@easybread/core';
 
 import {
@@ -5,19 +6,18 @@ import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshRequestData,
   GoogleCommonAccessTokenRefreshResponse,
-  GoogleCommonAuthorizationParameters,
   GoogleCommonAuthStrategyOptions,
+  GoogleCommonAuthorizationParameters,
   GoogleCommonOauth2StateData,
 } from './interfaces';
+import type { GoogleCommonOauth2ConnectionAttemptStateData } from './interfaces/google-common.oauth2-connection-attempt.state-data.interface';
 import {
   GoogleCommonOauth2CompleteOperationInputPayload,
   GoogleCommonOauth2StartOperationInputPayload,
 } from './operations';
-import type { GoogleCommonOauth2ConnectionAttemptStateData } from './interfaces/google-common.oauth2-connection-attempt.state-data.interface';
-import { toFormData, toUrlSearchParams } from '@easybread/common';
 
 export class GoogleCommonOauth2AuthStrategy<
-  TScopes extends string = string
+  TScopes extends string = string,
 > extends BreadOAuth2AuthStrategy<
   GoogleCommonOauth2StateData,
   GoogleCommonOauth2ConnectionAttemptStateData
@@ -27,7 +27,7 @@ export class GoogleCommonOauth2AuthStrategy<
   constructor(
     state: BreadStateAdapter,
     providerName: string,
-    options: GoogleCommonAuthStrategyOptions
+    options: GoogleCommonAuthStrategyOptions,
   ) {
     super(state, providerName);
     this.options = options;
@@ -35,7 +35,7 @@ export class GoogleCommonOauth2AuthStrategy<
 
   async createAuthUri(
     breadId: string,
-    payload: GoogleCommonOauth2StartOperationInputPayload<TScopes>
+    payload: GoogleCommonOauth2StartOperationInputPayload<TScopes>,
   ): Promise<string> {
     const {
       prompt,
@@ -72,7 +72,7 @@ export class GoogleCommonOauth2AuthStrategy<
 
   async authenticate(
     breadId: string,
-    payload: GoogleCommonOauth2CompleteOperationInputPayload
+    payload: GoogleCommonOauth2CompleteOperationInputPayload,
   ): Promise<GoogleCommonAccessTokenCreateResponse> {
     const { code, state } = payload;
     const { clientId, clientSecret, redirectUri } = this.options;

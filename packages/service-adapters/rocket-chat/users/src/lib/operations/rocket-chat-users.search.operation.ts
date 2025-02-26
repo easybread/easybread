@@ -7,6 +7,7 @@ import { PersonSchema } from '@easybread/schemas';
 
 import { RocketChatUsersList } from '../interfaces';
 import { RocketChatUsersOperationName } from '../rocket-chat-users.operation-name';
+
 import { RocketChatUsersSearchOperationInputParams } from './rocket-chat-users.search.operation.input-params';
 
 export interface RocketChatUsersSearchOperation

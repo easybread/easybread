@@ -1,7 +1,7 @@
 import Link from 'next/link';
+import { logoutAction } from 'playground-feat-auth-actions';
 import { authStatusGet } from 'playground-feat-auth-data';
 import { Button, LogoEasyBread } from 'playground-ui';
-import { logoutAction } from 'playground-feat-auth-actions';
 
 import { TopNavContainer } from './TopNavContainer';
 
@@ -14,7 +14,7 @@ export async function TopNav(props: TopNavProps) {
 
   return (
     <TopNavContainer>
-      <div className={'w-full flex items-center'}>
+      <div className={'flex w-full items-center'}>
         <LogoEasyBread />
 
         <div className={'flex flex-col justify-center'}>

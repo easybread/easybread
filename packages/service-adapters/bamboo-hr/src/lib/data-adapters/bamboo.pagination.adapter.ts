@@ -1,8 +1,9 @@
-import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 import type {
   BreadOperationInputPagination,
   BreadOperationOutputPagination,
 } from '@easybread/core';
+import { breadPaginationAdapter } from '@easybread/pagination-adapter';
+
 import type {
   BambooApplicationList,
   BambooApplicationListQuery,
@@ -15,13 +16,13 @@ export const bambooPaginationAdapter = breadPaginationAdapter<
   BambooApplicationList
 >({
   toExternalParams: {
-    page: (_) => {
+    page: _ => {
       return extractPageNumber(_.page) ?? undefined;
     },
   },
   toInternalData: {
     type: () => 'PREV_NEXT',
-    next: (_) => extractPageNumber(_.nextPageUrl) ?? undefined,
+    next: _ => extractPageNumber(_.nextPageUrl) ?? undefined,
   },
 });
 

@@ -1,4 +1,7 @@
+import type { DistributedOmit } from '@easybread/common';
+
 import { BreadAuthStrategy } from '../auth-strategy';
+import { BreadEventBus } from '../event-bus/bread-event.bus';
 import { BreadOperationContext } from '../operation';
 import {
   BreadServiceAdapter,
@@ -9,10 +12,9 @@ import {
   type InferServiceAdapterOperationName,
 } from '../service-adapter';
 import { BreadStateAdapter } from '../state';
+
 import { AllPagesGenerator } from './all-pages-generator';
-import { BreadEventBus } from '../event-bus/bread-event.bus';
 import type { EasyBreadClientEvent } from './events/easy-bread-client.event';
-import type { DistributedOmit } from '@easybread/common';
 
 /**
  * Main library class.
@@ -20,7 +22,8 @@ import type { DistributedOmit } from '@easybread/common';
 export class EasyBreadClient<
   TServiceAdapter extends BreadServiceAdapter<any, TAuthAdapter, any>,
   TAuthAdapter extends BreadAuthStrategy<object>,
-  TOperation extends InferServiceAdapterOperation<TServiceAdapter> = InferServiceAdapterOperation<TServiceAdapter>
+  TOperation extends
+    InferServiceAdapterOperation<TServiceAdapter> = InferServiceAdapterOperation<TServiceAdapter>,
 > extends BreadEventBus<EasyBreadClientEvent> {
   allPagesGenerator: AllPagesGenerator<TServiceAdapter>;
 
@@ -33,14 +36,14 @@ export class EasyBreadClient<
   constructor(
     private readonly stateAdapter: BreadStateAdapter,
     private readonly serviceAdapter: TServiceAdapter,
-    private readonly authStrategy: TAuthAdapter
+    private readonly authStrategy: TAuthAdapter,
   ) {
     super();
 
     this.authStrategy.forwardEvents(this);
 
     this.allPagesGenerator = new AllPagesGenerator<TServiceAdapter>(
-      (name, data) => this.invoke(name, data)
+      (name, data) => this.invoke(name, data),
     );
   }
 
@@ -49,7 +52,7 @@ export class EasyBreadClient<
     data: DistributedOmit<
       InferServiceAdapterOperationByName<TServiceAdapter, TName>['input'],
       'name'
-    >
+    >,
   ): Promise<
     InferServiceAdapterOperationByName<TServiceAdapter, TName>['output']
   > {
@@ -58,12 +61,12 @@ export class EasyBreadClient<
     const context = this.createContext(input['breadId']);
 
     return this.preProcess(input, context)
-      .then((input) => this.process(input, context))
-      .then((output) => this.postProcess(output, context));
+      .then(input => this.process(input, context))
+      .then(output => this.postProcess(output, context));
   }
 
   allPages<
-    TName extends InferServiceAdapterCollectionOperationName<TServiceAdapter>
+    TName extends InferServiceAdapterCollectionOperationName<TServiceAdapter>,
   >(
     name: TName,
     data: DistributedOmit<
@@ -72,7 +75,7 @@ export class EasyBreadClient<
         TName
       >['input'],
       'name'
-    >
+    >,
   ) {
     return this.allPagesGenerator.generate<
       InferServiceAdapterCollectionOperationByName<TServiceAdapter, TName>
@@ -92,24 +95,24 @@ export class EasyBreadClient<
   }
 
   private async process<
-    O extends InferServiceAdapterOperation<TServiceAdapter>
+    O extends InferServiceAdapterOperation<TServiceAdapter>,
   >(
     input: O['input'],
-    context: BreadOperationContext<TAuthAdapter>
+    context: BreadOperationContext<TAuthAdapter>,
   ): Promise<O['output']> {
     return await this.serviceAdapter.processOperation(input, context);
   }
 
   private async preProcess<I extends TOperation['input']>(
     input: I,
-    _context: BreadOperationContext<TAuthAdapter>
+    _context: BreadOperationContext<TAuthAdapter>,
   ): Promise<I> {
     return input;
   }
 
   private async postProcess<O extends TOperation['output']>(
     output: O,
-    _context: BreadOperationContext<TAuthAdapter>
+    _context: BreadOperationContext<TAuthAdapter>,
   ): Promise<O> {
     // TODO: remove this later hack.
     //   we should instead support optional serialization/deserialization

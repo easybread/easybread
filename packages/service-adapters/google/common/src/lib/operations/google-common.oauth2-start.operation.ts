@@ -9,7 +9,7 @@ import { GoogleCommonOauth2StartOperationOutputRawData } from './google-common.o
 import { GoogleCommonOperationName } from './google-common.operation-name';
 
 export interface GoogleCommonOauth2StartOperation<
-  TScopes extends string = string
+  TScopes extends string = string,
 > extends BreadStandardOperation<GoogleCommonOperationName.AUTH_FLOW_START> {
   input: BreadOperationInputWithPayload<
     GoogleCommonOperationName.AUTH_FLOW_START,
