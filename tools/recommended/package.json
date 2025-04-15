@@ -2,12 +2,10 @@
   "name": "@easybread/recommended",
   "version": "0.0.1",
   "dependencies": {
-    "@nx/devkit": "20.4.3",
+    "@nx/devkit": "20.8.0",
     "tslib": "^2.3.0",
-    "@nx/js": "20.4.3",
-    "@nx/eslint": "20.4.3",
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "~9.20.0",
+    "@nx/js": "20.8.0",
+    "@nx/eslint": "20.8.0",
     "jsonc-eslint-parser": "^2.4.0"
   },
   "type": "commonjs",
