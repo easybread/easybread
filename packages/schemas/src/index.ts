@@ -33,3 +33,5 @@ export * from './lib/auth/auth-any.schema';
 export * from './lib/any.schema';
 
 export * from './lib/util/schema-pick';
+
+export const INDEX = 'module is types only' as const;
