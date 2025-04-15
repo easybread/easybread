@@ -1,5 +1,5 @@
-import { type PropsWithChildren } from 'react';
 import { clsx } from 'clsx';
+import { type PropsWithChildren } from 'react';
 
 export function Pill(props: PropsWithChildren<{ className?: string }>) {
   const { className } = props;
@@ -7,8 +7,8 @@ export function Pill(props: PropsWithChildren<{ className?: string }>) {
   return (
     <div
       className={clsx(
-        `bg-amber-200 text-gray-900 px-2 py-0.5 text-xs rounded-full`,
-        className
+        `rounded-full bg-amber-200 px-2 py-0.5 text-xs text-gray-900`,
+        className,
       )}
     >
       {props.children}

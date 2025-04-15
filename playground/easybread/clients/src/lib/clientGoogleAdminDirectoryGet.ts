@@ -1,17 +1,14 @@
-import { BreadAuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
-import { stateAdapterMongoGet } from 'playground-easybread-state';
 import {
   GoogleAdminDirectoryAdapter,
   GoogleAdminDirectoryAuthStrategy,
 } from '@easybread/adapter-google-admin-directory';
-import { load } from 'ts-dotenv';
+import { AuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
+import { stateAdapterMongoGet } from 'playground-easybread-state';
+import { load } from 'ts-dotenv';
 
-let client: EasyBreadClient<
-  GoogleAdminDirectoryAdapter,
-  GoogleAdminDirectoryAuthStrategy
->;
+let client: EasyBreadClient<GoogleAdminDirectoryAdapter>;
 
 export const clientGoogleAdminDirectoryGet = async () => {
   if (client) return client;
@@ -22,26 +19,18 @@ export const clientGoogleAdminDirectoryGet = async () => {
     GOOGLE_REDIRECT_URI: String,
   });
 
-  const googleAdminDirectoryAdapter = new GoogleAdminDirectoryAdapter();
-
   const stateAdapter = await stateAdapterMongoGet();
+  const authStrategy = new GoogleAdminDirectoryAuthStrategy(stateAdapter, {
+    clientId: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    redirectUri: GOOGLE_REDIRECT_URI,
+  });
 
-  const googleAuthStrategy = new GoogleAdminDirectoryAuthStrategy(
-    stateAdapter,
-    {
-      clientId: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      redirectUri: GOOGLE_REDIRECT_URI,
-    }
-  );
+  const serviceAdapter = new GoogleAdminDirectoryAdapter(authStrategy);
 
-  client = new EasyBreadClient(
-    stateAdapter,
-    googleAdminDirectoryAdapter,
-    googleAuthStrategy
-  );
+  client = new EasyBreadClient(stateAdapter, serviceAdapter);
 
-  client.subscribe(BreadAuthenticationLostEvent.eventName, async (event) => {
+  client.subscribe(AuthenticationLostEvent.eventName, async event => {
     const { breadId } = event.payload;
     const { userId } = parseBreadId(breadId);
 

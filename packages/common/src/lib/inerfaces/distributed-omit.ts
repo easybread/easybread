@@ -1,5 +1,3 @@
-import type { InterfaceToType } from './interface-to-type';
-
 /**
  * Distributed version of Omit.
  *

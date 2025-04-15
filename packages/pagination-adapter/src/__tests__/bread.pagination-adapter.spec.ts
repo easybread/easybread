@@ -29,11 +29,11 @@ const adapter = breadPaginationAdapter<
   ExternalData
 >({
   toExternalParams: {
-    page: (_) => ~~(_.skip / _.count) + 1,
+    page: _ => ~~(_.skip / _.count) + 1,
     pageSize: 'count',
   },
   toInternalData: {
-    skip: (_) => (_.page - 1) * _.pageSize,
+    skip: _ => (_.page - 1) * _.pageSize,
     count: 'pageSize',
     totalCount: 'totalCount',
   },
@@ -49,27 +49,27 @@ it(`should map to external params correctly`, () => {
     adapter.toExternalParams({
       skip: 19,
       count: 20,
-    })
+    }),
   ).toEqual({ page: 1, pageSize: 20 } satisfies ExternalParams);
 
   expect(
     adapter.toExternalParams({
       skip: 20,
       count: 20,
-    })
+    }),
   ).toEqual({ page: 2, pageSize: 20 } satisfies ExternalParams);
 
   expect(
     adapter.toExternalParams({
       skip: 21,
       count: 20,
-    })
+    }),
   ).toEqual({ page: 2, pageSize: 20 } satisfies ExternalParams);
 });
 
 it(`should map to internal data correctly`, () => {
   expect(
-    adapter.toInternalData({ page: 1, pageSize: 20, totalCount: 99 })
+    adapter.toInternalData({ page: 1, pageSize: 20, totalCount: 99 }),
   ).toEqual({
     skip: 0,
     count: 20,
@@ -77,7 +77,7 @@ it(`should map to internal data correctly`, () => {
   });
 
   expect(
-    adapter.toInternalData({ page: 2, pageSize: 20, totalCount: 99 })
+    adapter.toInternalData({ page: 2, pageSize: 20, totalCount: 99 }),
   ).toEqual({
     skip: 20,
     count: 20,
@@ -85,7 +85,7 @@ it(`should map to internal data correctly`, () => {
   });
 
   expect(
-    adapter.toInternalData({ page: 3, pageSize: 20, totalCount: 99 })
+    adapter.toInternalData({ page: 3, pageSize: 20, totalCount: 99 }),
   ).toEqual({
     skip: 40,
     count: 20,

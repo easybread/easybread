@@ -1,24 +1,24 @@
-import { BreadServiceAdapter } from '@easybread/core';
+import { ServiceAdapter } from '@easybread/core';
 
 import { BreezyAuthStrategy } from './breezy.auth-strategy';
 import { BREEZY_PROVIDER_NAME } from './breezy.constants';
-import { BreezyOperation } from './breezy.operation';
 import {
-  BreezyAuthenticateHandler,
-  BreezyCompanySearchHandler
+  BreezyAuthBasicSetHandler,
+  BreezyOrganizationSearchHandler,
 } from './handlers';
 
-export class BreezyAdapter extends BreadServiceAdapter<
-  BreezyOperation,
+const HANDLER_MAP = {
+  [BreezyOrganizationSearchHandler.name]: BreezyOrganizationSearchHandler,
+  [BreezyAuthBasicSetHandler.name]: BreezyAuthBasicSetHandler,
+} as const;
+
+export class BreezyAdapter extends ServiceAdapter<
+  typeof HANDLER_MAP,
   BreezyAuthStrategy
 > {
   provider = BREEZY_PROVIDER_NAME;
 
-  constructor() {
-    super();
-    this.registerOperationHandlers(
-      BreezyAuthenticateHandler,
-      BreezyCompanySearchHandler
-    );
+  constructor(authStrategy: BreezyAuthStrategy) {
+    super(HANDLER_MAP, authStrategy, null);
   }
 }

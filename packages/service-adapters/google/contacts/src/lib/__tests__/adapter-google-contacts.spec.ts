@@ -1,12 +1,15 @@
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
-  GoogleCommonOauth2CompleteOperation,
+  GoogleCommonAuthOauth2CompleteCommand,
   type GoogleCommonOauth2ConnectionAttemptStateData,
   GoogleCommonOauth2StateData,
-  GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
+import {
+  EasyBreadClient,
+  InMemoryStateAdapter,
+  type inferCommandOutput,
+} from '@easybread/core';
 import {
   expectDate,
   expectFormDataValues,
@@ -18,17 +21,18 @@ import {
 import axios, { AxiosRequestConfig } from 'axios';
 
 import {
-  GOOGLE_PROVIDER_NAME,
+  GOOGLE_CONTACTS_COMMAND_NAME,
+  GOOGLE_CONTACTS_PROVIDER_NAME,
   GoogleContactsAdapter,
   GoogleContactsAuthScopes,
   GoogleContactsAuthStrategy,
-  GoogleContactsOperationName,
-  GoogleContactsPeopleByIdOperation,
-  GoogleContactsPeopleCreateOperation,
-  GoogleContactsPeopleDeleteOperation,
-  GoogleContactsPeopleSearchOperation,
-  GoogleContactsPeopleUpdateOperation,
+  GoogleContactsUserByIdCommand,
+  GoogleContactsUserCreateCommand,
+  GoogleContactsUserDeleteCommand,
+  GoogleContactsUserSearchCommand,
+  GoogleContactsUserUpdateCommand,
 } from '../..';
+
 import { CONTACT_FEED_ENTRY_CREATE_MOCK } from './contact-feed-entry-create.mock';
 import { CONTACT_FEED_ENTRY_UPDATE_MOCK } from './contact-feed-entry-update.mock';
 import { CONTACT_FEED_ENTRY_MOCK } from './contact-feed-entry.mock';
@@ -60,25 +64,20 @@ const ACCESS_TOKEN_CREATE_RESPONSE_DATA: GoogleCommonAccessTokenCreateResponse =
 //       - allow running each test case independently
 //       - extract common setup/utils
 //       - clean-up
-describe('Google Plugin', () => {
-  const serviceAdapter = new GoogleContactsAdapter();
+describe('Google Contacts Plugin', () => {
   const stateAdapter = new InMemoryStateAdapter();
   const authStrategy = new GoogleContactsAuthStrategy(stateAdapter, {
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     redirectUri: REDIRECT_URI,
   });
-
-  const client = new EasyBreadClient(
-    stateAdapter,
-    serviceAdapter,
-    authStrategy
-  );
+  const serviceAdapter = new GoogleContactsAdapter(authStrategy);
+  const client = new EasyBreadClient(stateAdapter, serviceAdapter);
 
   async function getAuthAttemptData() {
     const data =
       await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
-        `${GOOGLE_PROVIDER_NAME}:auth-attempt:GoogleContactsAuthStrategy:${USER_ID}`
+        `${GOOGLE_CONTACTS_PROVIDER_NAME}:auth-attempt:GoogleContactsAuthStrategy:${USER_ID}`,
       );
 
     if (!data) throw new Error('Unexpected empty auth attempt data');
@@ -87,44 +86,45 @@ describe('Google Plugin', () => {
   }
 
   async function invokeAuthStart() {
-    return client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
+    return client.invoke(GOOGLE_CONTACTS_COMMAND_NAME.AUTH_OAUTH2_START, {
       breadId: USER_ID,
+      params: null,
       payload: {
-        prompt: 'none',
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'StartOAuth2Request',
         loginHint: 'my hint',
-        includeGrantedScopes: true,
         scope: AUTH_SCOPES,
       },
     });
   }
 
   describe('Operations', () => {
-    describe(GoogleCommonOperationName.AUTH_FLOW_START, () => {
+    describe(GOOGLE_CONTACTS_COMMAND_NAME.AUTH_OAUTH2_START, () => {
       it(`should create the auth uri`, async () => {
         const result = await invokeAuthStart();
         expect(result).toEqual({
-          provider: serviceAdapter.provider,
-          name: 'GOOGLE_COMMON/AUTH_FLOW/START',
-          rawPayload: {
-            data: {
-              authUri: expect.stringMatching(
-                new RegExp(
-                  'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
-                    '\\?client_id=client-id' +
-                    '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
-                    '&response_type=code' +
-                    '&scope=https%3A%2F%2Fwww\\.google\\.com%2Fm8%2Ffeeds%2F\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fcontacts\\.readonly' +
-                    '&access_type=offline' +
-                    '&include_granted_scopes=true' +
-                    '&alt=json' +
-                    '&state=[^&]+' +
-                    '&login_hint=my\\+hint' +
-                    '&prompt=none'
-                )
+          success: true,
+          breadId: USER_ID,
+          payload: {
+            '@context': 'https://schema.easybread.io/auth',
+            '@type': 'StartOAuth2Response',
+            authenticationUrl: expect.stringMatching(
+              new RegExp(
+                'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
+                  '\\?client_id=client-id' +
+                  '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
+                  '&response_type=code' +
+                  '&scope=https%3A%2F%2Fwww\\.google\\.com%2Fm8%2Ffeeds%2F\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fcontacts\\.readonly' +
+                  '&access_type=offline' +
+                  '&include_granted_scopes=true' +
+                  '&alt=json' +
+                  '&state=[^&]+' +
+                  '&prompt=consent' +
+                  '&login_hint=my\\+hint',
               ),
-            },
-            success: true,
+            ),
           },
+          rawPayload: null,
         });
       });
 
@@ -137,16 +137,25 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, () => {
+    describe(GOOGLE_CONTACTS_COMMAND_NAME.AUTH_OAUTH2_COMPLETE, () => {
       let errorMode = false;
 
       async function invokeCompleteAuth(
-        state: string
-      ): Promise<GoogleCommonOauth2CompleteOperation['output']> {
-        return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
-          breadId: USER_ID,
-          payload: { code: 'my-auth-code', state },
-        });
+        state: string,
+      ): Promise<inferCommandOutput<GoogleCommonAuthOauth2CompleteCommand>> {
+        return client.invoke(
+          GOOGLE_CONTACTS_COMMAND_NAME.AUTH_OAUTH2_COMPLETE,
+          {
+            breadId: USER_ID,
+            params: null,
+            payload: {
+              '@context': 'https://schema.easybread.io/auth',
+              '@type': 'CompleteOAuth2Request',
+              code: 'my-auth-code',
+              state,
+            },
+          },
+        );
       }
 
       beforeEach(() => {
@@ -170,32 +179,53 @@ describe('Google Plugin', () => {
         const authAttemptData = await getAuthAttemptData();
 
         expect(
-          await invokeCompleteAuth(authAttemptData.authAttemptToken)
+          await invokeCompleteAuth(authAttemptData.authAttemptToken),
         ).toEqual({
-          provider: serviceAdapter.provider,
-          name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
-          rawPayload: {
-            error: {
-              name: 'ServiceException',
-              message: 'google: Not authorized',
-              originalError: {},
-              provider: 'google',
-            },
-            success: false,
+          breadId: '1',
+          error: {
+            message: `${GOOGLE_CONTACTS_PROVIDER_NAME}: Not authorized`,
+            name: 'ServiceException',
+            provider: GOOGLE_CONTACTS_PROVIDER_NAME,
+            timestamp: expectDate,
           },
+          success: false,
         });
         errorMode = false;
       });
 
-      it(`should return success and raw payload`, async () => {
+      it(`should return success, payload and raw payload`, async () => {
         await invokeAuthStart();
         const authAttemptData = await getAuthAttemptData();
         const result = await invokeCompleteAuth(
-          authAttemptData.authAttemptToken
+          authAttemptData.authAttemptToken,
         );
 
-        expect(result.rawPayload).toEqual({
-          data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
+        expect(result).toEqual({
+          breadId: '1',
+          payload: {
+            '@context': 'https://schema.easybread.io/auth',
+            '@type': 'CompleteOAuth2Response',
+            credential: {
+              '@context': 'https://schema.easybread.io/auth',
+              '@type': 'CredentialOAuth2',
+              accessToken: 'access-token',
+              expiresIn: 3920,
+              refreshToken: 'refresh-token',
+              scope: [
+                'https://www.google.com/m8/feeds/',
+                'https://www.googleapis.com/auth/contacts.readonly',
+              ],
+              tokenType: 'Bearer',
+            },
+          },
+          rawPayload: {
+            access_token: 'access-token',
+            expires_in: 3920,
+            refresh_token: 'refresh-token',
+            scope:
+              'https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly',
+            token_type: 'Bearer',
+          },
           success: true,
         });
       });
@@ -203,7 +233,9 @@ describe('Google Plugin', () => {
       it(`should call google /token api`, async () => {
         await invokeAuthStart();
         const authAttemptData = await getAuthAttemptData();
+
         await invokeCompleteAuth(authAttemptData.authAttemptToken);
+
         expect(axios.request).toHaveBeenCalledWith({
           url: 'https://oauth2.googleapis.com/token',
           method: 'POST',
@@ -219,7 +251,7 @@ describe('Google Plugin', () => {
             code: 'my-auth-code',
             grant_type: 'authorization_code',
             redirect_uri: REDIRECT_URI,
-          }
+          },
         );
       });
 
@@ -236,7 +268,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(GoogleContactsOperationName.PEOPLE_SEARCH, () => {
+    describe(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_SEARCH, () => {
       function setupContactsMock(): void {
         jest.mocked(axios.request).mockImplementationOnce(() => {
           return Promise.resolve({
@@ -261,16 +293,12 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleSearch(
-        query?: string
-      ): Promise<GoogleContactsPeopleSearchOperation['output']> {
-        return client.invoke(GoogleContactsOperationName.PEOPLE_SEARCH, {
+        query?: string,
+      ): Promise<inferCommandOutput<GoogleContactsUserSearchCommand>> {
+        return client.invoke(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_SEARCH, {
           breadId: USER_ID,
-          params: { query },
-          pagination: {
-            type: 'SKIP_COUNT',
-            skip: 0,
-            count: 25,
-          },
+          params: { '@type': 'SearchAction', query },
+          pagination: { type: 'OFFSET', offset: 0, limit: 25 },
         });
       }
 
@@ -319,14 +347,13 @@ describe('Google Plugin', () => {
 
       it(`should return raw payload`, async () => {
         const result = await invokePeopleSearch();
-        expect(result.rawPayload).toEqual({
-          success: true,
-          data: CONTACTS_FEED_MOCK,
-        });
+        if (!result.success) throw new Error('No success');
+        expect(result.rawPayload).toEqual(CONTACTS_FEED_MOCK);
       });
 
       it(`should return Person[] payload`, async () => {
         const result = await invokePeopleSearch();
+        if (!result.success) throw new Error('No success');
         expect(result.payload).toEqual([
           {
             '@type': 'Person',
@@ -388,20 +415,20 @@ describe('Google Plugin', () => {
       it(`should return pagination info`, async () => {
         const result = await invokePeopleSearch();
         expect(result.pagination).toEqual({
-          type: 'SKIP_COUNT',
-          count: 25,
-          skip: 0,
+          type: 'OFFSET',
+          offset: 0,
+          limit: 25,
           totalCount: 374,
         });
       });
 
       it(`should refresh access token if it expired`, async () => {
         // simulate expired access token
-        const oauth2DataStateKey = `google:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
+        const oauth2DataStateKey = `${GOOGLE_CONTACTS_PROVIDER_NAME}:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
 
         const currentAuthData =
           await stateAdapter.read<GoogleCommonOauth2StateData>(
-            oauth2DataStateKey
+            oauth2DataStateKey,
           );
 
         if (!currentAuthData) throw new Error('Unexpected empty auth data');
@@ -436,7 +463,7 @@ describe('Google Plugin', () => {
             client_secret: CLIENT_SECRET,
             grant_type: 'refresh_token',
             refresh_token: 'refresh-token',
-          }
+          },
         );
 
         // check contacts feed uri was called with an updated access token
@@ -461,7 +488,7 @@ describe('Google Plugin', () => {
         // check auth data updated
         const updatedAuthData =
           await stateAdapter.read<GoogleCommonOauth2StateData>(
-            oauth2DataStateKey
+            oauth2DataStateKey,
           );
 
         expect(updatedAuthData).toEqual({
@@ -472,54 +499,56 @@ describe('Google Plugin', () => {
       });
 
       it(`should fail if no auth data is saved for the user`, async () => {
-        const authDataStateKey = `google:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
+        const authDataStateKey = `${GOOGLE_CONTACTS_PROVIDER_NAME}:auth-data:GoogleContactsAuthStrategy:${USER_ID}`;
 
         // cache auth data
-        const authData = await stateAdapter.read<GoogleCommonOauth2StateData>(
-          authDataStateKey
-        );
+        const authData =
+          await stateAdapter.read<GoogleCommonOauth2StateData>(
+            authDataStateKey,
+          );
 
         // rm auth data
         await client.unAuthenticate(USER_ID);
 
         const result = await invokePeopleSearch();
 
-        expect(JSON.parse(JSON.stringify(result.rawPayload))).toEqual({
-          error: {
-            name: 'ServiceException',
-            message: 'google: no auth data in the state for 1',
-            originalError: {
-              name: 'NoAuthDataException',
-              message: 'no auth data in the state for 1',
-            },
-            provider: 'google',
-          },
+        if (result.success) throw new Error('Unexpected success');
+
+        expect(JSON.parse(JSON.stringify(result))).toEqual({
+          breadId: '1',
           success: false,
+          error: {
+            message: `${GOOGLE_CONTACTS_PROVIDER_NAME}: no auth data in the state for 1`,
+            name: 'ServiceException',
+            provider: GOOGLE_CONTACTS_PROVIDER_NAME,
+            timestamp: expectDate,
+          },
         });
 
         // restore auth data
         await stateAdapter.write<GoogleCommonOauth2StateData>(
           authDataStateKey,
-          authData as GoogleCommonOauth2StateData
+          authData as GoogleCommonOauth2StateData,
         );
       });
     });
 
-    describe(GoogleContactsOperationName.PEOPLE_CREATE, () => {
+    describe(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_CREATE, () => {
       function setupCreateContactMock(): void {
         jest.mocked(axios.request).mockImplementationOnce(() =>
           Promise.resolve({
             status: 200,
             data: CONTACT_FEED_ENTRY_CREATE_MOCK,
-          })
+          }),
         );
       }
 
       async function invokePeopleCreate(): Promise<
-        GoogleContactsPeopleCreateOperation['output']
+        inferCommandOutput<GoogleContactsUserCreateCommand>
       > {
-        return client.invoke(GoogleContactsOperationName.PEOPLE_CREATE, {
+        return client.invoke(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_CREATE, {
           breadId: USER_ID,
+          params: null,
           payload: {
             '@type': 'Person',
             givenName: 'Test',
@@ -571,7 +600,7 @@ describe('Google Plugin', () => {
       });
     });
 
-    describe(`${GoogleContactsOperationName.PEOPLE_UPDATE}`, () => {
+    describe(`${GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_UPDATE}`, () => {
       function setupUpdateContactMock(): void {
         jest
           .mocked(axios.request)
@@ -582,18 +611,18 @@ describe('Google Plugin', () => {
                 config.method === 'GET'
                   ? CONTACT_FEED_ENTRY_MOCK
                   : CONTACT_FEED_ENTRY_UPDATE_MOCK,
-            })
+            }),
           );
       }
 
       async function invokePeopleUpdate(): Promise<
-        GoogleContactsPeopleUpdateOperation['output']
+        inferCommandOutput<GoogleContactsUserUpdateCommand>
       > {
-        return client.invoke(GoogleContactsOperationName.PEOPLE_UPDATE, {
+        return client.invoke(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_UPDATE, {
           breadId: USER_ID,
+          params: { '@type': 'Person', identifier: '79ec2071883179b9' },
           payload: {
             '@type': 'Person',
-            identifier: '79ec2071883179b9',
             givenName: 'UpdatedFName',
             familyName: 'UpdatedSName',
             email: 'updated@mail.com',
@@ -718,7 +747,8 @@ describe('Google Plugin', () => {
       it(`should return an updated entity`, async () => {
         const result = await invokePeopleUpdate();
         expect(result).toEqual({
-          name: 'GOOGLE/PEOPLE/UPDATE',
+          success: true,
+          breadId: '1',
           payload: {
             '@type': 'Person',
             email: 'updated@mail.com',
@@ -728,103 +758,28 @@ describe('Google Plugin', () => {
             name: 'UpdatedFName UpdatedSName',
             telephone: '+7 (965) 444 2222',
           },
-          provider: 'google',
-          rawPayload: {
-            data: {
-              encoding: 'UTF-8',
-              entry: {
-                app$edited: {
-                  $t: '2020-04-19T15:41:56.731Z',
-                  xmlns$app: 'http://www.w3.org/2007/app',
-                },
-                category: [
-                  {
-                    scheme: 'http://schemas.google.com/g/2005#kind',
-                    term: 'http://schemas.google.com/contact/2008#contact',
-                  },
-                ],
-                gd$email: [
-                  {
-                    address: 'updated@mail.com',
-                    primary: 'true',
-                    rel: 'http://schemas.google.com/g/2005#work',
-                  },
-                ],
-                gd$etag: '"R3k4eTVSLyt7I2A9XB5UE0wKTgU."',
-                gd$name: {
-                  gd$familyName: {
-                    $t: 'UpdatedSName',
-                  },
-                  gd$fullName: {
-                    $t: 'UpdatedFName UpdatedSName',
-                  },
-                  gd$givenName: {
-                    $t: 'UpdatedFName',
-                  },
-                },
-                gd$phoneNumber: [
-                  {
-                    $t: '+7 (965) 444 2222',
-                    primary: 'true',
-                    rel: 'http://schemas.google.com/g/2005#home',
-                    uri: 'tel:+7-965-444-22-22',
-                  },
-                ],
-                id: {
-                  $t: 'http://www.google.com/m8/feeds/contacts/testuser%40mail.com/base/79ec2071883179b9',
-                },
-                link: [
-                  {
-                    href: 'https://www.google.com/m8/feeds/photos/media/testuser%40mail.com/79ec2071883179b9',
-                    rel: 'http://schemas.google.com/contacts/2008/rel#photo',
-                    type: 'image/*',
-                  },
-                  {
-                    href: 'https://www.google.com/m8/feeds/contacts/testuser%40mail.com/full/79ec2071883179b9',
-                    rel: 'self',
-                    type: 'application/atom+xml',
-                  },
-                  {
-                    href: 'https://www.google.com/m8/feeds/contacts/testuser%40mail.com/full/79ec2071883179b9',
-                    rel: 'edit',
-                    type: 'application/atom+xml',
-                  },
-                ],
-                title: {
-                  $t: 'Test Contact',
-                },
-                updated: {
-                  $t: '2020-04-19T15:41:56.731Z',
-                },
-                xmlns: 'http://www.w3.org/2005/Atom',
-                xmlns$batch: 'http://schemas.google.com/gdata/batch',
-                xmlns$gContact: 'http://schemas.google.com/contact/2008',
-                xmlns$gd: 'http://schemas.google.com/g/2005',
-              },
-              version: '1.0',
-            },
-            success: true,
-          },
+          rawPayload: CONTACT_FEED_ENTRY_UPDATE_MOCK,
         });
       });
     });
 
-    describe(`${GoogleContactsOperationName.PEOPLE_BY_ID}`, () => {
+    describe(`${GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_BY_ID}`, () => {
       function setupGetContactMock(): void {
         jest.mocked(axios.request).mockImplementationOnce(() =>
           Promise.resolve({
             status: 200,
             data: CONTACT_FEED_ENTRY_MOCK,
-          })
+          }),
         );
       }
 
       async function invokePeopleById(): Promise<
-        GoogleContactsPeopleByIdOperation['output']
+        inferCommandOutput<GoogleContactsUserByIdCommand>
       > {
-        return client.invoke(GoogleContactsOperationName.PEOPLE_BY_ID, {
+        return client.invoke(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_BY_ID, {
           breadId: USER_ID,
-          params: { identifier: '79ec2071883179b9' },
+          params: { '@type': 'Person', identifier: '79ec2071883179b9' },
+          payload: null,
         });
       }
 
@@ -853,7 +808,8 @@ describe('Google Plugin', () => {
       it(`should return correct output`, async () => {
         const result = await invokePeopleById();
         expect(result).toEqual({
-          name: 'GOOGLE/PEOPLE/BY_ID',
+          success: true,
+          breadId: '1',
           payload: {
             '@type': 'Person',
             email: 'test@mail.com',
@@ -863,16 +819,12 @@ describe('Google Plugin', () => {
             name: 'Test Contact',
             telephone: '+7 (965) 444 2211',
           },
-          provider: 'google',
-          rawPayload: {
-            data: CONTACT_FEED_ENTRY_MOCK,
-            success: true,
-          },
+          rawPayload: CONTACT_FEED_ENTRY_MOCK,
         });
       });
     });
 
-    describe(`${GoogleContactsOperationName.PEOPLE_DELETE}`, () => {
+    describe(`${GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_DELETE}`, () => {
       function setupGetContactMock(): void {
         jest
           .mocked(axios.request)
@@ -884,14 +836,15 @@ describe('Google Plugin', () => {
       }
 
       async function invokePeopleDelete(): Promise<
-        GoogleContactsPeopleDeleteOperation['output']
+        inferCommandOutput<GoogleContactsUserDeleteCommand>
       > {
-        return client.invoke(GoogleContactsOperationName.PEOPLE_DELETE, {
+        return client.invoke(GOOGLE_CONTACTS_COMMAND_NAME.BASIC_USER_DELETE, {
           breadId: USER_ID,
-          payload: {
+          params: {
             '@type': 'Person',
             identifier: '79ec2071883179b9',
           },
+          payload: null,
         });
       }
 
@@ -943,13 +896,18 @@ describe('Google Plugin', () => {
       it(`should return a Person with identifier field`, async () => {
         const result = await invokePeopleDelete();
         expect(result).toEqual({
-          name: 'GOOGLE/PEOPLE/DELETE',
+          success: true,
+          breadId: '1',
           payload: {
             '@type': 'Person',
+            email: 'test@mail.com',
+            familyName: 'Contact',
+            givenName: 'Test',
             identifier: '79ec2071883179b9',
+            name: 'Test Contact',
+            telephone: '+7 (965) 444 2211',
           },
-          provider: 'google',
-          rawPayload: { success: true },
+          rawPayload: CONTACT_FEED_ENTRY_MOCK,
         });
       });
     });

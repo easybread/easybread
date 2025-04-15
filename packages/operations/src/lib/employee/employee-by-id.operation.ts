@@ -3,7 +3,7 @@ import {
   BreadOperationOutputWithRawDataAndPayload,
   BreadStandardOperation,
 } from '@easybread/core';
-import { BreadSchema, PersonSchema } from '@easybread/schemas';
+import { PersonSchema, ThingSchema } from '@easybread/schemas';
 
 import { BreadOperationName } from '../bread.operation-name';
 
@@ -12,7 +12,7 @@ export interface EmployeeByIdOperation<TOutputRawData extends object = object>
   input: BreadOperationInputWithParams<
     BreadOperationName.EMPLOYEE_BY_ID,
     // TODO: come up with an interface for that
-    Pick<BreadSchema, 'identifier'>
+    Pick<ThingSchema, 'identifier'>
   >;
 
   output: BreadOperationOutputWithRawDataAndPayload<

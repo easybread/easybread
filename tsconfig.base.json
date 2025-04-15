@@ -37,6 +37,7 @@
       "@easybread/adapter-rocket-chat-users": [
         "packages/service-adapters/rocket-chat/users/src/index.ts"
       ],
+      "@easybread/commands": ["packages/commands/src/index.ts"],
       "@easybread/common": ["packages/common/src/index.ts"],
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/data-adapter": ["packages/data-adapter/src/index.ts"],

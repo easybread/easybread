@@ -1,12 +1,11 @@
-import { GoogleCommonOauth2CompleteHandler } from '../handlers';
-import { GoogleCommonOperationName } from '../operations';
+import { GoogleCommonAuthOauth2CompleteHandler } from '../handlers';
+
 import { createContextMock } from './create-context-mock';
-import type { GoogleCommonAccessTokenCreateResponse } from '../interfaces';
 
 describe('name', () => {
-  it(`should be GOOGLE_COMMON/AUTH_FLOW/COMPLETE`, () => {
-    expect(GoogleCommonOauth2CompleteHandler.name).toEqual(
-      'GOOGLE_COMMON/AUTH_FLOW/COMPLETE'
+  it(`should be BREAD/AUTH_OAUTH2_COMPLETE`, () => {
+    expect(GoogleCommonAuthOauth2CompleteHandler.name).toEqual(
+      'BREAD/AUTH_OAUTH2_COMPLETE',
     );
   });
 });
@@ -14,14 +13,19 @@ describe('name', () => {
 describe('handle', () => {
   it(`should call context.auth.authenticate`, async () => {
     const context = createContextMock();
-    await GoogleCommonOauth2CompleteHandler.handle(
+    await GoogleCommonAuthOauth2CompleteHandler.handle(
       {
-        payload: { code: '123', state: 'some-state' },
-        name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+        payload: {
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'CompleteOAuth2Request',
+          code: '123',
+          state: 'some-state',
+        },
+        params: null,
         breadId: '1',
       },
       context,
-      null
+      null,
     );
 
     expect(context.auth.authenticate as jest.Mock).toHaveBeenCalledWith('1', {
@@ -33,39 +37,44 @@ describe('handle', () => {
   it(`should produce correct output with auth data in raw payload`, async () => {
     const context = createContextMock();
 
-    jest.mocked(context.auth.authenticate).mockImplementationOnce(async () => {
-      return {
-        access_token: 'access-token',
-        expires_in: 3600,
-        refresh_token: 'refresh-token',
-        scope: 'some-scope',
-        token_type: 'Bearer',
-      } satisfies GoogleCommonAccessTokenCreateResponse;
-    });
-
-    const output = await GoogleCommonOauth2CompleteHandler.handle(
+    const output = await GoogleCommonAuthOauth2CompleteHandler.handle(
       {
-        payload: { code: '123', state: 'some-state' },
-        name: GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+        params: null,
+        payload: {
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'CompleteOAuth2Request',
+          code: '123',
+          state: 'some-state',
+        },
         breadId: '1',
       },
       context,
-      null
+      null,
     );
 
     expect(output).toEqual({
-      name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
-      rawPayload: {
-        // auth data returned from the auth strategy
-        data: {
-          access_token: 'access-token',
-          expires_in: 3600,
-          refresh_token: 'refresh-token',
-          scope: 'some-scope',
-          token_type: 'Bearer',
+      breadId: '1',
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'CompleteOAuth2Response',
+        credential: {
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'CredentialOAuth2',
+          accessToken: 'access-token',
+          expiresIn: 3600,
+          refreshToken: 'refresh-token',
+          scope: ['some-scope', 'some-other-scope'],
+          tokenType: 'Bearer',
         },
-        success: true,
       },
+      rawPayload: {
+        access_token: 'access-token',
+        expires_in: 3600,
+        refresh_token: 'refresh-token',
+        scope: 'some-scope some-other-scope',
+        token_type: 'Bearer',
+      },
+      success: true,
     });
   });
 });

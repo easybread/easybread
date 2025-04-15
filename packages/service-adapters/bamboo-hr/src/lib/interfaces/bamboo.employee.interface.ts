@@ -18,4 +18,7 @@ export type BambooEmployee = {
   workEmail?: string | null;
   workPhone?: string | null;
   workPhoneExtension?: string | null;
+  skypeUsername?: string | null;
 };
+
+export type BambooEmployeeField = Exclude<keyof BambooEmployee, 'id'>;

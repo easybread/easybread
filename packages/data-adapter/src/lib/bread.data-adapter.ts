@@ -10,7 +10,7 @@ import {
  */
 interface BreadDataAdapterProps<
   I extends BreadDataMapIOConstraint,
-  E extends BreadDataMapIOConstraint
+  E extends BreadDataMapIOConstraint,
 > {
   /** Map definition to map from internal to external type. */
   toExternal: BreadDataMapDefinition<I, E>;
@@ -26,7 +26,7 @@ interface BreadDataAdapterProps<
  */
 export type BreadDataAdapter<
   I extends BreadDataMapIOConstraint,
-  E extends BreadDataMapIOConstraint
+  E extends BreadDataMapIOConstraint,
 > = {
   toExternal(input: I): E;
   toInternal(input: E): I;
@@ -40,7 +40,7 @@ export type BreadDataAdapter<
  */
 export function breadDataAdapter<
   I extends BreadDataMapIOConstraint,
-  E extends BreadDataMapIOConstraint
+  E extends BreadDataMapIOConstraint,
 >(props: BreadDataAdapterProps<I, E>): BreadDataAdapter<I, E> {
   const { toExternal, toInternal } = props;
 

@@ -1,8 +1,16 @@
-export * from './lib/interfaces';
-export * from './lib/operations';
-export * from './lib/breezy.constants';
+export type {
+  BreezyAuthStateData,
+  BreezyCompany,
+  BreezyUser,
+  BreezyAuthenticatePayload,
+  BreezyAuthenticateResponse,
+} from './lib/interfaces';
+export type {
+  BreezyAuthBasicSetCommand,
+  BreezyOrganizationSearchCommand,
+} from './lib/commands';
+export { BREEZY_PROVIDER_NAME } from './lib/breezy.constants';
 
 export { BreezyAdapter } from './lib/breezy.adapter';
 export { BreezyAuthStrategy } from './lib/breezy.auth-strategy';
-export type { BreezyOperation } from './lib/breezy.operation';
-export { BreezyOperationName } from './lib/breezy.operation-name';
+export { BREEZY_COMMAND_NAME } from './lib/breezy.command-name';

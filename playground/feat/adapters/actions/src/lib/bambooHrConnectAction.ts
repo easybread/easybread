@@ -1,13 +1,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import type { BambooHRAdapterConnectionMethod } from 'playground-db';
 import {
   adapterBambooHrConnectApiKey,
   adapterBambooHrOidcStart,
 } from 'playground-feat-adapters-data';
 import { authStatusGet } from 'playground-feat-auth-data';
-import { redirect } from 'next/navigation';
-import type { BambooHRAdapterConnectionMethod } from 'playground-db';
 
 export async function bambooHrConnectAction(formData: FormData) {
   const apiKey = formData.get('apiKey')?.toString();
@@ -37,11 +37,11 @@ export async function bambooHrConnectAction(formData: FormData) {
   if (mode === 'OIDC') {
     if (!companyName) return;
 
-    const { authUri } = await adapterBambooHrOidcStart({
+    const { authenticationUrl } = await adapterBambooHrOidcStart({
       companyName,
       userId: authData.data.userId,
     });
 
-    return redirect(authUri);
+    return redirect(authenticationUrl);
   }
 }

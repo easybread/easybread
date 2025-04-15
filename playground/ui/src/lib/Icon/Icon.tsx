@@ -1,14 +1,16 @@
 import { clsx } from 'clsx';
+
 import { ICON_NAME, type IconName } from './IconName';
-import { SVGGoogleGLetter } from './SVGGoogleGLetter';
-import { SVGChevronDown } from './SVGChevronDown';
 import { SVGBambooHr } from './SVGBambooHr';
+import { SvgBreezyHr } from './SVGBreezyHR';
+import { SVGChevronDown } from './SVGChevronDown';
+import { SVGGoogleGLetter } from './SVGGoogleGLetter';
 import { SVGMapPin } from './SVGMapPin';
 
 export type IconProps = {
   iconName: IconName;
   className?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 };
 
 function RenderIcon({ iconName }: { iconName: IconName }) {
@@ -21,6 +23,8 @@ function RenderIcon({ iconName }: { iconName: IconName }) {
       return <SVGBambooHr />;
     case ICON_NAME.MAP_PIN:
       return <SVGMapPin />;
+    case ICON_NAME.BREEZY:
+      return <SvgBreezyHr />;
     default:
       return <div>no icon</div>;
   }
@@ -33,6 +37,7 @@ export function Icon(props: IconProps) {
     <div
       className={clsx(
         {
+          'w-4 h-4': size === 'xxs',
           'w-6 h-6': size === 'xs',
           'w-8 h-8': size === 'sm',
           'w-10 h-10': size === 'md',
@@ -40,7 +45,7 @@ export function Icon(props: IconProps) {
           'w-16 h-16': size === 'xl',
         },
         'flex items-center justify-center',
-        className
+        className,
       )}
     >
       <RenderIcon iconName={iconName} />

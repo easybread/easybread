@@ -1,7 +1,7 @@
 import { NotFoundException } from '../exception';
-import { BreadStateAdapter } from '../state';
+import { StateAdapter } from '../state';
 
-export class InMemoryStateAdapter extends BreadStateAdapter {
+export class InMemoryStateAdapter extends StateAdapter {
   private db = new Map();
 
   async reset(): Promise<void> {

@@ -1,16 +1,5 @@
-import type { PersonSchema } from './person.schema';
-import type { ActionSchema } from './action.schema';
-import type { AddressSchema } from './address.schema';
-import type { ApplyActionSchema } from './apply-action.schema';
-import type { OrganizationSchema } from './organization.schema';
-import type { JobPostingSchema } from './job-posting.schema';
-import type { RatingSchema } from './rating.schema';
+import type { AuthAnySchema } from './auth/auth-any.schema';
+import type { CommonAnySchema } from './common/common-any.schema';
+import type { HrAnySchema } from './hr/hr-any.schema';
 
-export type AnySchema =
-  | ActionSchema
-  | AddressSchema
-  | ApplyActionSchema
-  | JobPostingSchema
-  | OrganizationSchema
-  | PersonSchema
-  | RatingSchema;
+export type AnySchema = CommonAnySchema | HrAnySchema | AuthAnySchema;

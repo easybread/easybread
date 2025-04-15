@@ -1,7 +1,8 @@
-import { AdapterOauthCompleteGoogleAdmin } from './AdapterOauthCompleteGoogleAdmin';
 import { ADAPTER_NAME } from 'playground-common';
-import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
+
 import { AdapterOauthCompleteBambooHrOidc } from './AdapterOauthCompleteBambooHrOidc';
+import { AdapterOauthCompleteGoogleAdmin } from './AdapterOauthCompleteGoogleAdmin';
+import type { AdapterOauthCompleteProps } from './AdapterOauthCompleteProps';
 
 export async function AdapterOauthComplete(props: AdapterOauthCompleteProps) {
   const { slug } = props;

@@ -1,17 +1,15 @@
-import {
-  BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload,
-} from '@easybread/core';
-import { BreadOperationName } from '@easybread/operations';
+import { type CommandHandler } from '@easybread/core';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
+import { BAMBOO_HR_COMMAND_NAME } from '../bamboo-hr.command-name';
+import type { BambooEmployeeUpdateCommand } from '../commands';
 import { bambooEmployeeAdapter } from '../data-adapters';
-import type { BambooHrEmployeeUpdateOperation } from '../bamboo-hr.operation';
 
-export const BambooEmployeeUpdateHandler: BreadOperationHandler<
-  BambooHrEmployeeUpdateOperation,
+export const BambooEmployeeUpdateHandler: CommandHandler<
+  BambooEmployeeUpdateCommand,
   BambooHrAuthStrategy
 > = {
+  name: BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_UPDATE,
   async handle(input, context) {
     const { breadId, payload } = input;
 
@@ -27,11 +25,11 @@ export const BambooEmployeeUpdateHandler: BreadOperationHandler<
       data: bambooEmployeeAdapter.toExternal(payload),
     });
 
-    return createSuccessfulOutputWithRawDataAndPayload(
-      BreadOperationName.EMPLOYEE_UPDATE,
-      {},
-      payload
-    );
+    return {
+      success: true,
+      breadId,
+      payload,
+      rawPayload: null,
+    };
   },
-  name: BreadOperationName.EMPLOYEE_UPDATE,
 };

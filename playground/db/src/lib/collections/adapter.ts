@@ -1,5 +1,6 @@
-import { playgroundDb } from '../playgroundDb';
 import { ADAPTER_NAME } from 'playground-common';
+
+import { playgroundDb } from '../playgroundDb';
 
 export type AdapterBase = {
   slug: string;
@@ -20,19 +21,31 @@ export type GoogleAdminDirectoryAdapter = AdapterBase & {
   slug: typeof ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY;
 };
 
-export type Adapter = BambooHRAdapter | GoogleAdminDirectoryAdapter;
+export type BreezyAdapter = AdapterBase & {
+  slug: typeof ADAPTER_NAME.BREEZY;
+  email: string;
+};
+
+export type Adapter =
+  | BambooHRAdapter
+  | GoogleAdminDirectoryAdapter
+  | BreezyAdapter;
 
 export const adapterCollection = () =>
   playgroundDb().collection<Adapter>('adapters');
 
 export function isBambooHrAdapter(
-  adapter: Adapter
+  adapter: Adapter,
 ): adapter is BambooHRAdapter {
   return adapter.slug === ADAPTER_NAME.BAMBOO_HR;
 }
 
 export function isGoogleAdminDirectoryAdapter(
-  adapter: Adapter
+  adapter: Adapter,
 ): adapter is GoogleAdminDirectoryAdapter {
   return adapter.slug === ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY;
+}
+
+export function isBreezyAdapter(adapter: Adapter): adapter is BreezyAdapter {
+  return adapter.slug === ADAPTER_NAME.BREEZY;
 }

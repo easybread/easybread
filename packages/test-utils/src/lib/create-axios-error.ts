@@ -1,4 +1,5 @@
 import { AxiosError, type AxiosResponse } from 'axios';
+
 type CreateAxiosErrorResponse = Partial<AxiosResponse> & { status: number };
 
 const DEFAULT_RESPONSE = {
@@ -10,7 +11,7 @@ const DEFAULT_RESPONSE = {
 
 export function createAxiosError(
   errorMessage: string,
-  response: CreateAxiosErrorResponse = { ...DEFAULT_RESPONSE }
+  response: CreateAxiosErrorResponse = { ...DEFAULT_RESPONSE },
 ) {
   return new AxiosError(
     errorMessage,
@@ -21,6 +22,6 @@ export function createAxiosError(
       config: {} as any,
       ...DEFAULT_RESPONSE,
       ...response,
-    }
+    },
   );
 }

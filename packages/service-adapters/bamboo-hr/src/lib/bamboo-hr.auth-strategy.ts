@@ -1,7 +1,7 @@
 import {
-  BreadBasicAuthStrategy,
+  BasicAuthStrategy,
   BreadException,
-  BreadStateAdapter,
+  StateAdapter,
 } from '@easybread/core';
 
 import { BAMBOO_HR_PROVIDER_NAME } from './bamboo-hr.constants';
@@ -28,16 +28,13 @@ interface AuthenticateOidcParams {
   state: string;
 }
 
-export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
+export class BambooHrAuthStrategy extends BasicAuthStrategy<
   BambooAuthStateData,
   BambooOidcConnectionAttemptStateData
 > {
   private options: BambooHrAuthStrategyOptions;
 
-  constructor(
-    state: BreadStateAdapter,
-    options: BambooHrAuthStrategyOptions = {}
-  ) {
+  constructor(state: StateAdapter, options: BambooHrAuthStrategyOptions = {}) {
     super(state, BAMBOO_HR_PROVIDER_NAME);
 
     this.options = options;
@@ -49,7 +46,7 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
 
   async authenticate(
     breadId: string,
-    payload: BambooBasicAuthPayload
+    payload: BambooBasicAuthPayload,
   ): Promise<void> {
     const { apiKey, companyName } = payload;
 
@@ -64,11 +61,11 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
 
   async createOidcAuthUri(
     breadId: string,
-    payload: { companyName: string }
+    payload: { companyName: string },
   ): Promise<string> {
     if (!this.options.oidcOptions) {
       throw new BreadException(
-        'BambooHrAuthStrategy is not configured to support OpenID Connect'
+        'BambooHrAuthStrategy is not configured to support OpenID Connect',
       );
     }
 
@@ -99,11 +96,11 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
 
   async authenticateOidc(
     breadId: string,
-    { code, state }: AuthenticateOidcParams
+    { code, state }: AuthenticateOidcParams,
   ) {
     if (!this.options.oidcOptions) {
       throw new BreadException(
-        'BambooHrAuthStrategy is not configured to support OpenID Connect'
+        'BambooHrAuthStrategy is not configured to support OpenID Connect',
       );
     }
 
@@ -133,7 +130,7 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
 
     if (!tokenResult?.data?.id_token) {
       throw new BreadException(
-        'BambooHrAuthStrategy: id_token is missing from the token response'
+        'BambooHrAuthStrategy: id_token is missing from the token response',
       );
     }
 
@@ -154,7 +151,7 @@ export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
 
     if (!getApiKeyResult?.data?.success) {
       throw new BreadException(
-        'BambooHrAuthStrategy: Failed to get api key with OIDC'
+        'BambooHrAuthStrategy: Failed to get api key with OIDC',
       );
     }
 

@@ -1,22 +1,18 @@
-import {
-  BreadOperationHandler,
-  createDisabledPagination,
-  createSuccessfulCollectionOutputWithRawDataAndPayload,
-} from '@easybread/core';
-import { BreadOperationName } from '@easybread/operations';
+import { type CommandHandler, PAGINATION_TYPE } from '@easybread/core';
 import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
 import { find, isNumber, isObject, isString, pick } from 'lodash';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
+import { BAMBOO_HR_COMMAND_NAME } from '../bamboo-hr.command-name';
+import type { BambooEmployeeSearchCommand } from '../commands';
 import { bambooEmployeeAdapter } from '../data-adapters';
 import { BambooEmployeesDirectory } from '../interfaces';
-import type { BambooHrEmployeeSearchOperation } from '../bamboo-hr.operation';
 
-export const BambooEmployeeSearchHandler: BreadOperationHandler<
-  BambooHrEmployeeSearchOperation,
+export const BambooEmployeeSearchHandler: CommandHandler<
+  BambooEmployeeSearchCommand,
   BambooHrAuthStrategy
 > = {
-  name: BreadOperationName.EMPLOYEE_SEARCH,
+  name: BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_SEARCH,
 
   async handle(input, context) {
     const { breadId } = input;
@@ -44,38 +40,39 @@ export const BambooEmployeeSearchHandler: BreadOperationHandler<
           'jobTitle',
         ] as (keyof PersonSchema)[]),
 
-        (value) => {
+        value => {
           if (isString(value)) return queryRegExp.test(value);
           if (isNumber(value)) return queryRegExp.test(`${value}`);
 
           if (Array.isArray(value)) {
-            return value.some((s) => queryRegExp.test(s));
+            return value.some(s => queryRegExp.test(s));
           }
 
-          if (isObject(value)) {
+          if (isObject(value) && value !== null) {
             if (value['@type'] === 'Organization') {
               const { name, alternateName } = value as OrganizationSchema;
               return !![name, alternateName].find(
-                (v) => v && queryRegExp.test(v)
+                v => v && queryRegExp.test(v),
               );
             }
           }
 
           return false;
-        }
+        },
       );
     };
 
     // bamboo-hr doesn't provide search API. But we can search with filter
     const payload = result.data.employees
-      .map((e) => bambooEmployeeAdapter.toInternal(e))
+      .map(bambooEmployeeAdapter.toInternal)
       .filter(searchFilter);
 
-    return createSuccessfulCollectionOutputWithRawDataAndPayload(
-      BreadOperationName.EMPLOYEE_SEARCH,
-      result.data,
+    return {
+      success: true,
+      breadId: input.breadId,
       payload,
-      createDisabledPagination()
-    );
+      rawPayload: result.data,
+      pagination: { type: PAGINATION_TYPE.DISABLED },
+    };
   },
 };

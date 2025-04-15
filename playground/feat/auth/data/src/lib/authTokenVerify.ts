@@ -4,7 +4,7 @@ import { load } from 'ts-dotenv';
 import type { AuthTokenData } from './AuthTokenData';
 
 export async function authTokenVerify(
-  token?: string
+  token?: string,
 ): Promise<(JWTPayload & { data: AuthTokenData }) | null> {
   const { SHARED_JWT_SECRET } = load({ SHARED_JWT_SECRET: String });
 
@@ -19,13 +19,13 @@ export async function authTokenVerify(
     const result = await jwtVerify<JWTPayload & { data: AuthTokenData }>(
       token,
       encodedKey,
-      { algorithms: ['HS256'] }
+      { algorithms: ['HS256'] },
     );
 
     return result.payload;
   } catch (error) {
     console.log(
-      JSON.stringify({ message: 'Failed to verify token', error, token })
+      JSON.stringify({ message: 'Failed to verify token', error, token }),
     );
 
     if (error instanceof Error) {

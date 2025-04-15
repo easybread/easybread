@@ -1,8 +1,9 @@
 import { cache } from 'react';
-import { getCookieHandlers } from './getCookieHandlers';
+
 import { AUTH_CONFIG } from './authConfig';
 import { authTokenVerify } from './authTokenVerify';
 import type { Authorized } from './authorized';
+import { getCookieHandlers } from './getCookieHandlers';
 import type { Unauthorized } from './unauthorized';
 
 export const authStatusGet = cache(
@@ -17,5 +18,5 @@ export const authStatusGet = cache(
     }
 
     return { authorized: false };
-  }
+  },
 );

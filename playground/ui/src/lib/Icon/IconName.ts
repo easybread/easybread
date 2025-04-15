@@ -4,6 +4,7 @@ export const ICON_NAME = {
   GOOGLE_G_LETTER: 'GOOGLE_G_LETTER',
   CHEVRON_DOWN: 'CHEVRON_DOWN',
   BAMBOO_HR: 'BAMBOO_HR',
+  BREEZY: 'BREEZY',
   MAP_PIN: 'MAP_PIN',
 } as const;
 

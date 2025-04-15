@@ -1,5 +1,5 @@
-import { adapterCollection } from 'playground-db';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
+import { adapterCollection } from 'playground-db';
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 
 export async function adapterGoogleDisconnect(userId: string) {

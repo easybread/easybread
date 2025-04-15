@@ -17,4 +17,9 @@ export const ADAPTERS: AdapterInfo[] = [
     title: 'Bamboo HR',
     description: 'Manage resources in your Bamboo HR',
   },
+  {
+    name: ADAPTER_NAME.BREEZY,
+    title: 'Breezy',
+    description: 'Manage resources in your Breezy',
+  },
 ];

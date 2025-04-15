@@ -1,5 +1,5 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { clsx } from 'clsx';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export type ButtonProps = {
   flex?: boolean;
@@ -20,7 +20,7 @@ export function Button(props: ButtonProps) {
   return (
     <button
       className={clsx(
-        'font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow hover:shadow-sm',
+        'font-semibold shadow transition-colors duration-200 hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2',
         {
           'flex items-center justify-center': flex,
 
@@ -37,7 +37,7 @@ export function Button(props: ButtonProps) {
           'px-4 py-2 rounded-md': size === 'md',
           'px-6 py-3 text-lg rounded-lg': size === 'lg',
         },
-        className
+        className,
       )}
       {...restProps}
     >

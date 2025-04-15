@@ -1,23 +1,19 @@
-import axios from 'axios';
-import { mockAxios } from '@easybread/test-utils';
+import { RocketChatAuthStrategy } from '@easybread/adapter-rocket-chat-common';
 import {
-  BreadOperationSkipCountInputPagination,
   EasyBreadClient,
   InMemoryStateAdapter,
+  type inferCommandInput,
 } from '@easybread/core';
+import { mockAxios } from '@easybread/test-utils';
+import axios from 'axios';
 
 import {
-  RocketChatAuthStrategy,
-  RocketChatOperationName,
-} from '@easybread/adapter-rocket-chat-common';
-import {
+  ROCKET_CHAT_USERS_COMMAND_NAME,
   RocketChatUsersAdapter,
-  RocketChatUsersByIdOperation,
-  RocketChatUsersByIdOperationInputParams,
-  RocketChatUsersOperationName,
-  RocketChatUsersSearchOperation,
-  RocketChatUsersSearchOperationInputParams,
+  RocketChatUsersByIdCommand,
+  RocketChatUsersSearchCommand,
 } from '../..';
+
 import { USERS_INFO_MOCK } from './users-info.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
 
@@ -29,11 +25,11 @@ const USER_ID = 'user-id';
 
 const stateAdapter = new InMemoryStateAdapter();
 const authStrategy = new RocketChatAuthStrategy(stateAdapter);
-const serviceAdapter = new RocketChatUsersAdapter({
+const serviceAdapter = new RocketChatUsersAdapter(authStrategy, {
   serverUrl: 'https://testserver.io',
 });
 
-const client = new EasyBreadClient(stateAdapter, serviceAdapter, authStrategy);
+const client = new EasyBreadClient(stateAdapter, serviceAdapter);
 
 it(`should allow creating the client`, () => {
   expect(client).toBeInstanceOf(EasyBreadClient);
@@ -42,9 +38,15 @@ it(`should allow creating the client`, () => {
 describe('Operations', () => {
   describe('AUTH_CONFIGURE', () => {
     it(`should save auth data to state`, async () => {
-      await client.invoke(RocketChatOperationName.AUTH_CONFIGURE, {
+      await client.invoke(ROCKET_CHAT_USERS_COMMAND_NAME.AUTH_BASIC_SET, {
         breadId: BREAD_ID,
-        params: { authToken: AUTH_TOKEN, userId: USER_ID },
+        params: null,
+        payload: {
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'CredentialBasic',
+          username: USER_ID,
+          password: AUTH_TOKEN,
+        },
       });
 
       expect(await authStrategy.readAuthData(BREAD_ID)).toEqual({
@@ -77,12 +79,13 @@ describe('Operations', () => {
       setupUsersListResponse();
       const output = await invokeUsersSearch();
       expect(output).toEqual({
-        name: 'ROCKET_CHAT/USERS/SEARCH',
+        success: true,
+        breadId: BREAD_ID,
         pagination: {
-          count: 3,
-          skip: 0,
+          limit: 3,
+          offset: 0,
           totalCount: 3,
-          type: 'SKIP_COUNT',
+          type: 'OFFSET',
         },
         payload: [
           {
@@ -102,13 +105,11 @@ describe('Operations', () => {
             '@type': 'Person',
             additionalName: 'user.two',
             identifier: 'id3',
-            knowsLanguage: undefined,
             name: 'User Two',
           },
         ],
-        provider: 'rocket-chat/users',
-        rawPayload: { success: true, data: USERS_LIST_MOCK },
-      });
+        rawPayload: USERS_LIST_MOCK,
+      } satisfies typeof output);
     });
   });
 
@@ -118,7 +119,11 @@ describe('Operations', () => {
     });
 
     it(`should call GET https://testserver.io/api/users.info with expected query params`, async () => {
-      await invokeUsersById({ identifier: 'id1' });
+      await invokeUsersById({
+        '@type': 'Person',
+        identifier: 'id1',
+      });
+
       expect(jest.mocked(axios.request).mock.calls).toEqual([
         [
           {
@@ -133,18 +138,21 @@ describe('Operations', () => {
 
     it(`should produce correct output`, async () => {
       setupUsersInfoResponse();
-      const output = await invokeUsersById({ identifier: 'id1' });
+      const output = await invokeUsersById({
+        '@type': 'Person',
+        identifier: 'id1',
+      });
+
       expect(output).toEqual({
-        name: 'ROCKET_CHAT/USERS/BY_ID',
+        success: true,
+        breadId: BREAD_ID,
         payload: {
           '@type': 'Person',
           additionalName: 'user.one',
           identifier: 'id1',
-          knowsLanguage: undefined,
           name: 'User One',
         },
-        provider: 'rocket-chat/users',
-        rawPayload: { data: USERS_INFO_MOCK, success: true },
+        rawPayload: USERS_INFO_MOCK,
       });
     });
   });
@@ -157,22 +165,26 @@ function setupUsersListResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_LIST_MOCK,
-    })
+    }),
   );
 }
 
-const DEFAULT_PAGINATION: BreadOperationSkipCountInputPagination = {
-  type: 'SKIP_COUNT',
-  skip: 0,
-  count: 20,
-};
+const DEFAULT_PAGINATION: inferCommandInput<RocketChatUsersSearchCommand>['pagination'] =
+  {
+    type: 'OFFSET',
+    offset: 0,
+    limit: 20,
+  };
+
 async function invokeUsersSearch(
-  pagination: BreadOperationSkipCountInputPagination = DEFAULT_PAGINATION,
-  params: RocketChatUsersSearchOperationInputParams = {}
-): Promise<RocketChatUsersSearchOperation['output']> {
-  return await client.invoke(RocketChatUsersOperationName.SEARCH, {
-    pagination,
+  pagination: inferCommandInput<RocketChatUsersSearchCommand>['pagination'] = DEFAULT_PAGINATION,
+  params: inferCommandInput<RocketChatUsersSearchCommand>['params'] = {
+    '@type': 'SearchAction',
+  },
+) {
+  return await client.invoke(ROCKET_CHAT_USERS_COMMAND_NAME.BASIC_USER_SEARCH, {
     breadId: BREAD_ID,
+    pagination,
     params,
   });
 }
@@ -184,15 +196,16 @@ function setupUsersInfoResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_INFO_MOCK,
-    })
+    }),
   );
 }
 
 async function invokeUsersById(
-  params: RocketChatUsersByIdOperationInputParams
-): Promise<RocketChatUsersByIdOperation['output']> {
-  return await client.invoke(RocketChatUsersOperationName.BY_ID, {
+  params: inferCommandInput<RocketChatUsersByIdCommand>['params'],
+) {
+  return await client.invoke(ROCKET_CHAT_USERS_COMMAND_NAME.BASIC_USER_BY_ID, {
     breadId: BREAD_ID,
     params,
+    payload: null,
   });
 }

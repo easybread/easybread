@@ -1,5 +1,5 @@
-import { load } from 'ts-dotenv';
 import { SignJWT } from 'jose';
+import { load } from 'ts-dotenv';
 
 interface AuthTokenEncodeParams<TData extends object> {
   data: TData;

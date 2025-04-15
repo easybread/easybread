@@ -1,35 +1,39 @@
-import { merge } from 'lodash';
-import axios from 'axios';
-
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 import {
   GoogleCommonAccessTokenCreateResponse,
-  GoogleCommonOauth2CompleteOperation,
+  GoogleCommonAuthOauth2CompleteCommand,
+  GoogleCommonAuthOauth2StartCommand,
   type GoogleCommonOauth2ConnectionAttemptStateData,
-  GoogleCommonOauth2StartOperation,
-  GoogleCommonOperationName,
 } from '@easybread/adapter-google-common';
+import {
+  EasyBreadClient,
+  InMemoryStateAdapter,
+  type inferCommandOutput,
+} from '@easybread/core';
 import { PersonSchema } from '@easybread/schemas';
 import {
+  expectDate,
   expectFormDataValues,
   getNthMockCallMthArg,
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
+import axios from 'axios';
+import { merge } from 'lodash';
 
 import {
+  GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME,
   GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
   GoogleAdminDirectoryAdapter,
   GoogleAdminDirectoryAuthScope,
   GoogleAdminDirectoryAuthStrategy,
-  GoogleAdminDirectoryOperationName,
   GoogleAdminDirectoryUser,
-  GoogleAdminDirectoryUsersByIdOperation,
-  GoogleAdminDirectoryUsersCreateOperation,
-  GoogleAdminDirectoryUsersDeleteOperation,
-  GoogleAdminDirectoryUsersSearchOperation,
-  GoogleAdminDirectoryUsersUpdateOperation,
+  GoogleAdminDirectoryUserByIdCommand,
+  GoogleAdminDirectoryUserCreateCommand,
+  GoogleAdminDirectoryUserDeleteCommand,
+  GoogleAdminDirectoryUserSearchCommand,
+  GoogleAdminDirectoryUserUpdateCommand,
 } from '../..';
+
 import { USERS_BY_ID_MOCK } from './users-by-id.mock';
 import { USERS_LIST_MOCK } from './users-list.mock';
 
@@ -52,15 +56,15 @@ const ACCESS_TOKEN_CREATE_RESPONSE_DATA: GoogleCommonAccessTokenCreateResponse =
     token_type: 'Bearer',
   };
 
-const serviceAdapter = new GoogleAdminDirectoryAdapter();
 const stateAdapter = new InMemoryStateAdapter();
 const authStrategy = new GoogleAdminDirectoryAuthStrategy(stateAdapter, {
   redirectUri: REDIRECT_URI,
   clientId: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
 });
+const serviceAdapter = new GoogleAdminDirectoryAdapter(authStrategy);
 
-const client = new EasyBreadClient(stateAdapter, serviceAdapter, authStrategy);
+const client = new EasyBreadClient(stateAdapter, serviceAdapter);
 
 setExtendedTimeout();
 mockAxios();
@@ -72,55 +76,49 @@ beforeEach(() => {
 afterAll(() => jest.resetAllMocks());
 
 describe('Operations', () => {
-  describe(GoogleCommonOperationName.AUTH_FLOW_START, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.AUTH_OAUTH2_START, () => {
     it(`should have the authUri in raw payload`, async () => {
       expect(await invokeStartAuth()).toEqual({
-        name: 'GOOGLE_COMMON/AUTH_FLOW/START',
-        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
-        rawPayload: {
-          data: {
-            authUri: expect.stringMatching(
-              new RegExp(
-                'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
-                  '\\?client_id=client-id' +
-                  '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
-                  '&response_type=code' +
-                  '&scope=https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fadmin\\.directory\\.group\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fadmin\\.directory\\.group\\.member' +
-                  '&access_type=offline' +
-                  '&include_granted_scopes=true' +
-                  '&alt=json' +
-                  '&state=[^&]+' +
-                  '&prompt=consent' +
-                  '&prompt=select_account'
-              )
+        breadId: '1',
+        payload: {
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'StartOAuth2Response',
+          authenticationUrl: expect.stringMatching(
+            new RegExp(
+              'https:\\/\\/accounts\\.google\\.com\\/o\\/oauth2\\/v2\\/auth' +
+                '\\?client_id=client-id' +
+                '&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccept-google-oauth2-code' +
+                '&response_type=code' +
+                '&scope=https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fadmin\\.directory\\.group\\+https%3A%2F%2Fwww\\.googleapis\\.com%2Fauth%2Fadmin\\.directory\\.group\\.member' +
+                '&access_type=offline' +
+                '&include_granted_scopes=true' +
+                '&alt=json' +
+                '&state=[^&]+' +
+                '&prompt=consent' +
+                '&prompt=select_account',
             ),
-          },
-          success: true,
+          ),
         },
+        rawPayload: null,
+        success: true,
       });
     });
   });
 
-  describe(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.AUTH_OAUTH2_COMPLETE, () => {
     beforeEach(async () => {
       setupAccessTokenCreateResponse();
     });
 
     it(`should return an unsuccessful output if the state is invalid`, async () => {
       expect(await invokeCompleteAuth('wrong-state')).toEqual({
-        name: 'GOOGLE_COMMON/AUTH_FLOW/COMPLETE',
-        provider: 'googleAdminDirectory',
-        rawPayload: {
-          error: {
-            message: 'googleAdminDirectory: Auth attempt token mismatch for 1',
-            name: 'ServiceException',
-            originalError: {
-              message: 'Auth attempt token mismatch for 1',
-              name: 'AuthAttemptTokenMismatchException',
-            },
-            provider: 'googleAdminDirectory',
-          },
-          success: false,
+        breadId: '1',
+        success: false,
+        error: {
+          name: 'ServiceException',
+          provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
+          message: `${GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME}: Auth attempt token mismatch for 1`,
+          timestamp: expectDate,
         },
       });
     });
@@ -144,12 +142,12 @@ describe('Operations', () => {
           code: 'my-auth-code',
           grant_type: 'authorization_code',
           redirect_uri: REDIRECT_URI,
-        }
+        },
       );
     });
   });
 
-  describe(GoogleAdminDirectoryOperationName.USERS_SEARCH, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_SEARCH, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersSearch('searchterm');
 
@@ -173,10 +171,12 @@ describe('Operations', () => {
       const output = await invokeUsersSearch();
 
       expect(output).toEqual({
-        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/SEARCH',
+        breadId: BREAD_ID,
+        success: true,
         pagination: {
-          next: 'nextpagetoken',
-          type: 'PREV_NEXT',
+          type: 'CURSOR',
+          cursor: 'requested_page',
+          nextCursor: 'nextpagetoken',
         },
         payload: [
           {
@@ -196,16 +196,12 @@ describe('Operations', () => {
             name: 'William Reiske',
           },
         ],
-        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
-        rawPayload: {
-          data: USERS_LIST_MOCK,
-          success: true,
-        },
+        rawPayload: USERS_LIST_MOCK,
       });
     });
   });
 
-  describe(GoogleAdminDirectoryOperationName.USERS_BY_ID, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_BY_ID, () => {
     it(`should call GET https://www.googleapis.com/admin/directory/v1/users`, async () => {
       await invokeUsersById('114190879825460327746');
       expect(axios.request).toHaveBeenCalledWith({
@@ -219,7 +215,8 @@ describe('Operations', () => {
       setupUsersByIdResponse();
       const output = await invokeUsersById('114190879825460327746');
       expect(output).toEqual({
-        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/BY_ID',
+        breadId: BREAD_ID,
+        success: true,
         payload: {
           '@type': 'Person',
           address: '123 Street Address',
@@ -230,20 +227,15 @@ describe('Operations', () => {
           name: 'Alexandr Cherednichenko',
           telephone: '12345678',
         },
-        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
-        rawPayload: {
-          data: USERS_BY_ID_MOCK,
-          success: true,
-        },
+        rawPayload: USERS_BY_ID_MOCK,
       });
     });
   });
 
-  describe(GoogleAdminDirectoryOperationName.USERS_UPDATE, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_UPDATE, () => {
     it(`should call PUT https://www.googleapis.com/admin/directory/v1/users/userKey API`, async () => {
-      await invokeUsersUpdate({
+      await invokeUsersUpdate('114190879825460327746', {
         '@type': 'Person',
-        identifier: '114190879825460327746',
         givenName: 'updated',
       });
 
@@ -254,7 +246,6 @@ describe('Operations', () => {
         data: {
           addresses: [],
           phones: [],
-          id: '114190879825460327746',
           kind: 'admin#directory#user',
           name: { givenName: 'updated' },
         },
@@ -266,14 +257,14 @@ describe('Operations', () => {
         name: { givenName: 'updated' },
       });
 
-      const output = await invokeUsersUpdate({
+      const output = await invokeUsersUpdate('114190879825460327746', {
         '@type': 'Person',
-        identifier: '114190879825460327746',
         givenName: 'updated',
       });
 
       expect(output).toEqual({
-        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/UPDATE',
+        breadId: BREAD_ID,
+        success: true,
         payload: {
           '@type': 'Person',
           address: '123 Street Address',
@@ -284,16 +275,12 @@ describe('Operations', () => {
           name: 'Alexandr Cherednichenko',
           telephone: '12345678',
         },
-        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
-        rawPayload: {
-          data: updatedRawData,
-          success: true,
-        },
+        rawPayload: updatedRawData,
       });
     });
   });
 
-  describe(GoogleAdminDirectoryOperationName.USERS_CREATE, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_CREATE, () => {
     it(`should call POST https://www.googleapis.com/admin/directory/v1/users API`, async () => {
       await invokeUsersCreate({
         '@type': 'Person',
@@ -324,7 +311,8 @@ describe('Operations', () => {
         familyName: 'Test',
       });
       expect(output).toEqual({
-        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/CREATE',
+        success: true,
+        breadId: BREAD_ID,
         payload: {
           '@type': 'Person',
           address: '123 Street Address',
@@ -335,16 +323,12 @@ describe('Operations', () => {
           name: 'Alexandr Cherednichenko',
           telephone: '12345678',
         },
-        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
-        rawPayload: {
-          data: USERS_BY_ID_MOCK,
-          success: true,
-        },
+        rawPayload: USERS_BY_ID_MOCK,
       });
     });
   });
 
-  describe(GoogleAdminDirectoryOperationName.USERS_DELETE, () => {
+  describe(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_DELETE, () => {
     it(`should call DELETE https://www.googleapis.com/admin/directory/v1/users/userKey`, async () => {
       const id = '114190879825460327746';
       await invokeUsersDelete(id);
@@ -360,11 +344,11 @@ describe('Operations', () => {
       const id = '114190879825460327746';
       const output = await invokeUsersDelete(id);
       expect(output).toEqual({
-        name: 'GOOGLE_ADMIN_DIRECTORY/USERS/DELETE',
-        payload: { '@type': 'Person', identifier: id },
-        provider: GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME,
-        rawPayload: { success: true },
-      });
+        breadId: BREAD_ID,
+        success: true,
+        payload: null,
+        rawPayload: null,
+      } satisfies typeof output);
     });
   });
 });
@@ -372,66 +356,75 @@ describe('Operations', () => {
 // ------------------------------------
 
 function invokeUsersDelete(
-  identifier: string
-): Promise<GoogleAdminDirectoryUsersDeleteOperation['output']> {
-  return client.invoke(GoogleAdminDirectoryOperationName.USERS_DELETE, {
+  identifier: string,
+): Promise<inferCommandOutput<GoogleAdminDirectoryUserDeleteCommand>> {
+  return client.invoke(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_DELETE, {
     breadId: BREAD_ID,
-    payload: { identifier, '@type': 'Person' },
+    params: { identifier, '@type': 'Person' },
+    payload: null,
   });
 }
 function invokeUsersCreate(
-  payload: PersonSchema
-): Promise<GoogleAdminDirectoryUsersCreateOperation['output']> {
-  return client.invoke(GoogleAdminDirectoryOperationName.USERS_CREATE, {
+  payload: PersonSchema,
+): Promise<inferCommandOutput<GoogleAdminDirectoryUserCreateCommand>> {
+  return client.invoke(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_CREATE, {
     breadId: BREAD_ID,
+    params: null,
     payload,
   });
 }
 
 function invokeUsersUpdate(
-  payload: PersonSchema
-): Promise<GoogleAdminDirectoryUsersUpdateOperation['output']> {
-  return client.invoke(GoogleAdminDirectoryOperationName.USERS_UPDATE, {
+  id: string,
+  payload: PersonSchema,
+): Promise<inferCommandOutput<GoogleAdminDirectoryUserUpdateCommand>> {
+  return client.invoke(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_UPDATE, {
     breadId: BREAD_ID,
+    params: { identifier: id, '@type': 'Person' },
     payload,
   });
 }
 
 function invokeUsersSearch(
-  query?: string
-): Promise<GoogleAdminDirectoryUsersSearchOperation['output']> {
-  return client.invoke(GoogleAdminDirectoryOperationName.USERS_SEARCH, {
-    params: { query },
+  query?: string,
+): Promise<inferCommandOutput<GoogleAdminDirectoryUserSearchCommand>> {
+  return client.invoke(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_SEARCH, {
     breadId: BREAD_ID,
-    pagination: { type: 'PREV_NEXT', page: 'requested_page' },
+    params: { '@type': 'SearchAction', query },
+    pagination: { type: 'CURSOR', cursor: 'requested_page' },
   });
 }
 
 function invokeUsersById(
-  id: string
-): Promise<GoogleAdminDirectoryUsersByIdOperation['output']> {
-  return client.invoke(GoogleAdminDirectoryOperationName.USERS_BY_ID, {
-    params: { identifier: id },
+  id: string,
+): Promise<inferCommandOutput<GoogleAdminDirectoryUserByIdCommand>> {
+  return client.invoke(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_BY_ID, {
     breadId: BREAD_ID,
+    params: { identifier: id, '@type': 'Person' },
+    payload: null,
   });
 }
 
 async function invokeStartAuth(): Promise<
-  GoogleCommonOauth2StartOperation<GoogleAdminDirectoryAuthScope>['output']
+  inferCommandOutput<
+    GoogleCommonAuthOauth2StartCommand<GoogleAdminDirectoryAuthScope>
+  >
 > {
-  return client.invoke(GoogleCommonOperationName.AUTH_FLOW_START, {
+  return client.invoke(GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.AUTH_OAUTH2_START, {
     breadId: BREAD_ID,
+    params: null,
     payload: {
+      '@context': 'https://schema.easybread.io/auth',
+      '@type': 'StartOAuth2Request',
       scope: AUTH_SCOPES,
       prompt: ['consent', 'select_account'],
-      includeGrantedScopes: true,
     },
   });
 }
 async function getAuthAttemptData() {
   const data =
     await stateAdapter.read<GoogleCommonOauth2ConnectionAttemptStateData>(
-      `${GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME}:auth-attempt:GoogleAdminDirectoryAuthStrategy:${BREAD_ID}`
+      `${GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME}:auth-attempt:GoogleAdminDirectoryAuthStrategy:${BREAD_ID}`,
     );
 
   if (!data) throw new Error('Unexpected empty auth attempt data');
@@ -440,12 +433,21 @@ async function getAuthAttemptData() {
 }
 
 async function invokeCompleteAuth(
-  state: string
-): Promise<GoogleCommonOauth2CompleteOperation['output']> {
-  return client.invoke(GoogleCommonOperationName.AUTH_FLOW_COMPLETE, {
-    breadId: BREAD_ID,
-    payload: { code: 'my-auth-code', state },
-  });
+  state: string,
+): Promise<inferCommandOutput<GoogleCommonAuthOauth2CompleteCommand>> {
+  return client.invoke(
+    GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.AUTH_OAUTH2_COMPLETE,
+    {
+      breadId: BREAD_ID,
+      params: null,
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'CompleteOAuth2Request',
+        code: 'my-auth-code',
+        state,
+      },
+    },
+  );
 }
 
 // ------------------------------------
@@ -455,7 +457,7 @@ function setupAccessTokenCreateResponse(): void {
     Promise.resolve({
       status: 200,
       data: ACCESS_TOKEN_CREATE_RESPONSE_DATA,
-    })
+    }),
   );
 }
 
@@ -464,7 +466,7 @@ function setupUsersSearchResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_LIST_MOCK,
-    })
+    }),
   );
 }
 
@@ -473,12 +475,12 @@ function setupUsersByIdResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_BY_ID_MOCK,
-    })
+    }),
   );
 }
 
 function setupUsersUpdateResponse(
-  update: Partial<GoogleAdminDirectoryUser>
+  update: Partial<GoogleAdminDirectoryUser>,
 ): GoogleAdminDirectoryUser {
   const updatedData = merge({}, USERS_BY_ID_MOCK, update);
 
@@ -486,7 +488,7 @@ function setupUsersUpdateResponse(
     Promise.resolve({
       status: 200,
       data: updatedData,
-    })
+    }),
   );
 
   return updatedData;
@@ -497,7 +499,7 @@ function setupUsersCreateResponse(): void {
     Promise.resolve({
       status: 200,
       data: USERS_BY_ID_MOCK,
-    })
+    }),
   );
 }
 
@@ -506,6 +508,6 @@ function setupUsersDeleteResponse(): void {
     Promise.resolve({
       status: 200,
       data: '',
-    })
+    }),
   );
 }

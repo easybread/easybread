@@ -1,5 +1,5 @@
-import { BreadBasicAuthStateData } from '@easybread/core';
+import { BasicAuthStateData } from '@easybread/core';
 
-export interface BambooAuthStateData extends BreadBasicAuthStateData {
+export interface BambooAuthStateData extends BasicAuthStateData {
   companyName: string;
 }

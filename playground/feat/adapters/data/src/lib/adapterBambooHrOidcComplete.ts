@@ -1,12 +1,12 @@
+import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
+import { redirect } from 'next/navigation';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import {
-  adapterCollection,
   type BambooHRAdapter,
+  adapterCollection,
   isBambooHrAdapter,
 } from 'playground-db';
 import { clientBambooHrGet } from 'playground-easybread-clients';
-import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
-import { redirect } from 'next/navigation';
 
 export interface AdapterBambooHrOidcCompleteOptions {
   userId: string;
@@ -15,7 +15,7 @@ export interface AdapterBambooHrOidcCompleteOptions {
 }
 
 export async function adapterBambooHrOidcComplete(
-  options: AdapterBambooHrOidcCompleteOptions
+  options: AdapterBambooHrOidcCompleteOptions,
 ) {
   const { userId, code, state } = options;
 
@@ -31,15 +31,23 @@ export async function adapterBambooHrOidcComplete(
   const clientBambooHr = await clientBambooHrGet();
 
   const results = await clientBambooHr.invoke(
-    BambooHrOperationName.OIDC_AUTH_COMPLETE,
+    BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_COMPLETE,
     {
       breadId: makeBreadId(userId),
-      payload: { code, state },
-    }
+      params: null,
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'CompleteOIDCRequest',
+        code,
+        state,
+      },
+    },
   );
 
-  if (results.rawPayload.success === false) {
-    throw new Error('BAMBOO_HR_OIDC_COMPLETE_FAILED');
+  if (!results.success) {
+    throw new Error('BAMBOO_HR_OIDC_COMPLETE_FAILED', {
+      cause: results.error,
+    });
   }
 
   await adapterCollection().updateOne(
@@ -52,7 +60,7 @@ export async function adapterBambooHrOidcComplete(
     {
       $set: {
         connectedAt: new Date(),
-        companyName: results.rawPayload.data.companyName,
+        companyName: results.rawPayload.companyName,
       } satisfies Partial<BambooHRAdapter>,
 
       $setOnInsert: {
@@ -60,7 +68,7 @@ export async function adapterBambooHrOidcComplete(
       } satisfies Partial<BambooHRAdapter>,
     },
 
-    { upsert: true }
+    { upsert: true },
   );
 
   redirect('/adapters');

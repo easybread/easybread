@@ -9,7 +9,7 @@ import { getNthMockCallArgs } from './get-nth-mock-call-args';
 export function getNthMockCallMthArg<TExpectedArgType>(
   value: unknown,
   n: number,
-  m: number
+  m: number,
 ) {
   return getNthMockCallArgs(value, n)[m - 1] as TExpectedArgType;
 }

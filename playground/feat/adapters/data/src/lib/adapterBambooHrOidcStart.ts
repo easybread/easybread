@@ -1,7 +1,7 @@
-import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
-import { clientBambooHrGet } from 'playground-easybread-clients';
+import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
-import { adapterCollection, type BambooHRAdapter } from 'playground-db';
+import { type BambooHRAdapter, adapterCollection } from 'playground-db';
+import { clientBambooHrGet } from 'playground-easybread-clients';
 
 interface AdapterBambooHrOidcStartProps {
   companyName: string;
@@ -9,7 +9,7 @@ interface AdapterBambooHrOidcStartProps {
 }
 
 export async function adapterBambooHrOidcStart(
-  props: AdapterBambooHrOidcStartProps
+  props: AdapterBambooHrOidcStartProps,
 ) {
   const { companyName, userId } = props;
 
@@ -26,24 +26,25 @@ export async function adapterBambooHrOidcStart(
         companyName,
       } satisfies Partial<BambooHRAdapter>,
     },
-    { upsert: true }
+    { upsert: true },
   );
 
   const clientBambooHr = await clientBambooHrGet();
 
   const output = await clientBambooHr.invoke(
-    BambooHrOperationName.OIDC_AUTH_START,
+    BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START,
     {
       breadId: makeBreadId(userId),
-      payload: { companyName },
-    }
+      params: { '@type': 'Organization', name: companyName },
+      payload: null,
+    },
   );
 
-  if (!output.rawPayload.success) {
+  if (!output.success) {
     throw new Error('Bamboo HR Setup Basic Auth Failed', {
-      cause: output.rawPayload.error,
+      cause: output.error,
     });
   }
 
-  return output.rawPayload.data;
+  return output.payload;
 }

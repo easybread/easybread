@@ -1,14 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-
 import { ADAPTER_NAME } from 'playground-common';
-import { Button, Icon, Input } from 'playground-ui';
+import type { BambooHRAdapterConnectionMethod } from 'playground-db';
 import {
   adapterDisconnectAction,
   bambooHrConnectAction,
 } from 'playground-feat-adapters-actions';
-import type { BambooHRAdapterConnectionMethod } from 'playground-db';
+import { Button, Icon, Input } from 'playground-ui';
+import { useState } from 'react';
 
 export type AdapterConnectBambooHrProps = {
   connectedAt?: Date;
@@ -24,7 +23,7 @@ export function AdapterConnectBambooHr(props: AdapterConnectBambooHrProps) {
 
   const disconnectAction = adapterDisconnectAction.bind(
     null,
-    ADAPTER_NAME.BAMBOO_HR
+    ADAPTER_NAME.BAMBOO_HR,
   );
 
   return isConnected ? (
@@ -36,9 +35,9 @@ export function AdapterConnectBambooHr(props: AdapterConnectBambooHrProps) {
     </form>
   ) : (
     <form action={bambooHrConnectAction} className={'flex flex-col'}>
-      <div className={'flex gap-4 mb-4'}>
+      <div className={'mb-4 flex gap-4'}>
         <label
-          className={'flex items-center cursor-pointer'}
+          className={'flex cursor-pointer items-center'}
           htmlFor={'mode-api-key'}
         >
           <input
@@ -53,7 +52,7 @@ export function AdapterConnectBambooHr(props: AdapterConnectBambooHrProps) {
           API Key
         </label>
         <label
-          className={'flex items-center cursor-pointer'}
+          className={'flex cursor-pointer items-center'}
           htmlFor={'mode-oidc'}
         >
           <input

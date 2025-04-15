@@ -9,7 +9,7 @@ import { IsLiteral } from './is-literal';
  */
 export type KeysByValueType<
   TObj extends Record<string | symbol, unknown>,
-  TValueType
+  TValueType,
 > = {
   [K in keyof TObj]: TObj[K] extends TValueType
     ? IsLiteral<TObj[K]> extends true

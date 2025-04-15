@@ -1,26 +1,28 @@
-import {
-  BreadOperationHandler,
-  createSuccessfulOutputWithPayload,
-} from '@easybread/core';
+import type { CommandHandler } from '@easybread/core';
 
-import { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
-import { GoogleAdminDirectoryOperationName } from '../google-admin-directory.operation-name';
-import { GoogleAdminDirectoryUser } from '../interfaces';
-import { GoogleAdminDirectoryUsersDeleteOperation } from '../operations';
+import type { GoogleAdminDirectoryUserDeleteCommand } from '../commands';
+import type { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
+import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '../google-admin-directory.command-name';
+import type { GoogleAdminDirectoryUser } from '../interfaces';
 
-export const GoogleAdminDirectoryUsersDeleteHandler: BreadOperationHandler<
-  GoogleAdminDirectoryUsersDeleteOperation,
+export const GoogleAdminDirectoryUsersDeleteHandler: CommandHandler<
+  GoogleAdminDirectoryUserDeleteCommand,
   GoogleAdminDirectoryAuthStrategy
 > = {
-  name: GoogleAdminDirectoryOperationName.USERS_DELETE,
+  name: GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_DELETE,
   async handle(input, context) {
-    const { name, payload } = input;
+    const { breadId, params } = input;
 
     await context.httpRequest<GoogleAdminDirectoryUser>({
       method: 'DELETE',
-      url: `https://www.googleapis.com/admin/directory/v1/users/${payload.identifier}`,
+      url: `https://www.googleapis.com/admin/directory/v1/users/${params.identifier}`,
     });
 
-    return createSuccessfulOutputWithPayload(name, payload);
+    return {
+      success: true,
+      breadId,
+      payload: null,
+      rawPayload: null,
+    };
   },
 };

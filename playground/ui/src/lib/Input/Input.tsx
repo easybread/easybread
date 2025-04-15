@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { forwardRef, type InputHTMLAttributes } from 'react';
+import { type InputHTMLAttributes, forwardRef } from 'react';
 
 export type InputProps = {
   variant?: 'primary' | 'secondary' | 'outline';
@@ -9,7 +9,7 @@ export type InputProps = {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   { variant = 'primary', size = 'md', error = false, className, ...props },
-  ref
+  ref,
 ) {
   return (
     <input
@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'px-6 py-3 text-lg rounded-lg': size === 'lg',
           'border-red-500 focus:ring-red-500': error,
         },
-        className
+        className,
       )}
       {...props}
     />

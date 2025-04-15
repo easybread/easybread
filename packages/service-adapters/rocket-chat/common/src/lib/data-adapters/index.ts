@@ -1,2 +1,2 @@
-export * from './rocket-chat.pagination.adapter';
-export * from './rocket-chat.user.adapter';
+export { rocketChatPaginationAdapter } from './rocket-chat.pagination.adapter';
+export { rocketChatUserAdapter } from './rocket-chat.user.adapter';

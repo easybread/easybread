@@ -1,5 +1,5 @@
-export { GoogleContactsPeopleSearchHandler } from './google-contacts.people-search.handler';
-export { GoogleContactsPeopleCreateHandler } from './google-contacts.people-create.handler';
-export { GoogleContactsPeopleUpdateHandler } from './google-contacts.people-update.handler';
-export { GoogleContactsPeopleDeleteHandler } from './google-contacts.people-delete.handler';
-export { GoogleContactsPeopleByIdHandler } from './google-contacts.people-by-id.handler';
+export { GoogleContactsUserSearchHandler } from './google-contacts.user-search.handler';
+export { GoogleContactsUserCreateHandler } from './google-contacts.user-create.handler';
+export { GoogleContactsUserUpdateHandler } from './google-contacts.user-update.handler';
+export { GoogleContactsUserDeleteHandler } from './google-contacts.user-delete.handler';
+export { GoogleContactsUserByIdHandler } from './google-contacts.user-by-id.handler';

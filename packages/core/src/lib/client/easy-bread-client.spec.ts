@@ -2,34 +2,34 @@ import { PersonSchema } from '@easybread/schemas';
 import { AxiosRequestConfig } from 'axios';
 
 import {
-  BreadAuthStrategy,
+  AuthStrategy,
   BreadCollectionOperation,
   BreadCollectionOperationInput,
   BreadCollectionOperationOutputWithPayload,
   type BreadOperationInputWithParamsAndPayload,
   type BreadOperationOutputWithRawDataAndPayload,
-  BreadServiceAdapter,
   type BreadStandardOperation,
-  BreadStateAdapter,
   EasyBreadClient,
   InMemoryStateAdapter,
+  ServiceAdapter,
+  StateAdapter,
 } from '../..';
 
-class TestAuthStrategy extends BreadAuthStrategy<object> {
-  constructor(state: BreadStateAdapter) {
+class TestAuthStrategy extends AuthStrategy<object> {
+  constructor(state: StateAdapter) {
     super(state, 'test');
   }
 
   async authenticate(
     _breadId: string,
-    _payload: object | undefined
+    _payload: object | undefined,
   ): Promise<void> {
     return;
   }
 
   async authorizeHttp(
     _breadId: string,
-    requestConfig: AxiosRequestConfig
+    requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     return requestConfig;
   }
@@ -85,10 +85,7 @@ type OperationTypes =
   | TestPrevNextOperation
   | TestPayloadOperation;
 
-class TestAdapter extends BreadServiceAdapter<
-  OperationTypes,
-  TestAuthStrategy
-> {
+class TestAdapter extends ServiceAdapter<OperationTypes, TestAuthStrategy> {
   provider = 'Test';
 }
 
@@ -235,7 +232,7 @@ describe('allPages() async generator function', () => {
     beforeEach(() => {
       const lastPage = 3;
       const createNextPage = (
-        currentPage?: number | string
+        currentPage?: number | string,
       ): number | undefined => {
         const numberCurrent = Number(currentPage);
 
@@ -258,7 +255,7 @@ describe('allPages() async generator function', () => {
 
         return {
           name,
-          pagination: { type: 'PREV_NEXT', next },
+          pagination: { type: 'PREV_NEXT', pipe: next },
           provider: 'Test',
           payload: [],
           rawPayload: { success: true },
@@ -345,7 +342,7 @@ describe('allPages() async generator function', () => {
       const id = '1';
       await client.unAuthenticate(id);
       await expect(authStrategy.readAuthData(id)).rejects.toThrowError(
-        `no auth data in the state for 1`
+        `no auth data in the state for 1`,
       );
     });
   });

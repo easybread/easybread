@@ -1,57 +1,57 @@
-import { BreadServiceAdapter } from '@easybread/core';
-import { AxiosError } from 'axios';
-import { uniq } from 'lodash';
+import { HttpTransport, ServiceAdapter } from '@easybread/core';
 
 import { BambooHrAuthStrategy } from './bamboo-hr.auth-strategy';
 import { BAMBOO_HR_PROVIDER_NAME } from './bamboo-hr.constants';
-import { BambooHrOperation } from './bamboo-hr.operation';
 import {
+  BambooAuthBasicSetHandler,
+  BambooAuthOidcCompleteHandler,
+  BambooAuthOidcStartHandler,
   BambooEmployeeByIdHandler,
   BambooEmployeeCreateHandler,
   BambooEmployeeSearchHandler,
-  BambooEmployeeUpdateHandler,
   BambooJobApplicantSearchHandler,
   BambooJobApplicationSearchHandler,
-  BambooOidcAuthCompleteHandler,
-  BambooOidcAuthStartHandler,
-  BambooSetupBasicAuthHandler,
 } from './handlers';
+import { BambooEmployeeUpdateHandler } from './handlers/bamboo.employee-update.handler';
 
-export class BambooHrAdapter extends BreadServiceAdapter<
-  BambooHrOperation,
+const HANDLER_MAP = {
+  [BambooAuthOidcStartHandler.name]: BambooAuthOidcStartHandler,
+  [BambooAuthBasicSetHandler.name]: BambooAuthBasicSetHandler,
+  [BambooAuthOidcCompleteHandler.name]: BambooAuthOidcCompleteHandler,
+  [BambooEmployeeSearchHandler.name]: BambooEmployeeSearchHandler,
+  [BambooEmployeeByIdHandler.name]: BambooEmployeeByIdHandler,
+  [BambooEmployeeCreateHandler.name]: BambooEmployeeCreateHandler,
+  [BambooJobApplicationSearchHandler.name]: BambooJobApplicationSearchHandler,
+  [BambooJobApplicantSearchHandler.name]: BambooJobApplicantSearchHandler,
+  [BambooEmployeeUpdateHandler.name]: BambooEmployeeUpdateHandler,
+} as const;
+
+export class BambooHrAdapter extends ServiceAdapter<
+  typeof HANDLER_MAP,
   BambooHrAuthStrategy
 > {
-  provider = BAMBOO_HR_PROVIDER_NAME;
+  readonly provider = BAMBOO_HR_PROVIDER_NAME;
 
-  constructor() {
-    super();
-    this.registerOperationHandlers(
-      BambooSetupBasicAuthHandler,
-      BambooEmployeeSearchHandler,
-      BambooEmployeeCreateHandler,
-      BambooEmployeeUpdateHandler,
-      BambooEmployeeByIdHandler,
-      BambooJobApplicationSearchHandler,
-      BambooJobApplicantSearchHandler,
-      BambooOidcAuthStartHandler,
-      BambooOidcAuthCompleteHandler
-    );
+  constructor(auth: BambooHrAuthStrategy) {
+    super(HANDLER_MAP, auth, null);
   }
 
-  protected override createServiceExceptionMessageFromAxiosError(
-    error: AxiosError
-  ): string {
+  override transformError(error: unknown) {
+    if (!HttpTransport.isHttpError(error)) return super.transformError(error);
+
     // this might be a comma separated list possibly with duplicates
     const bambooErrorMessagesString =
       error.response?.headers['x-bamboohr-error-message'];
 
     if (!bambooErrorMessagesString) {
-      return super.createServiceExceptionMessageFromAxiosError(error);
+      return super.transformError(error);
     }
 
     // get rid of duplicates and set extended message.
-    const message = uniq(bambooErrorMessagesString.split(/,\s?/)).join(', ');
+    const message = Array.from(
+      new Set(bambooErrorMessagesString.split(/,\s?/)),
+    ).join(', ');
 
-    return `${error.message}. ${message}`;
+    return super.transformError(`${error.message}. ${message}`);
   }
 }

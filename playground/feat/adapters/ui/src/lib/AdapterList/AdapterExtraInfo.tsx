@@ -13,14 +13,14 @@ export function AdapterExtraInfo(props: AdapterExtraInfoProps) {
   switch (data.slug) {
     case 'BAMBOO_HR':
       return (
-        <div className="flex mb-2 gap-2">
+        <div className="mb-2 flex gap-2">
           <Pill className="bg-amber-200">{data.companyName}</Pill>
           <Pill className="bg-gray-200">{data.connectionMethod}</Pill>
         </div>
       );
     case 'GOOGLE_ADMIN_DIRECTORY':
       return (
-        <div className="flex mb-2 gap-2">
+        <div className="mb-2 flex gap-2">
           <Pill className="bg-gray-200">OAuth2.0</Pill>
         </div>
       );

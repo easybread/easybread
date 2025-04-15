@@ -1,6 +1,7 @@
 import { IsLiteral, KeysByValueType } from '@easybread/common';
 
 export const NO_MAP = 'NO_MAP' as const;
+
 export type BreadDataMapNoMapLiteral = typeof NO_MAP;
 /**
  * Value factory for producing a value of a certain type.
@@ -11,7 +12,7 @@ export type BreadDataMapNoMapLiteral = typeof NO_MAP;
  * @template O output type
  */
 export type BreadValueFactory<I extends object, O> = (
-  input: I
+  input: I,
 ) => O | BreadDataMapNoMapLiteral;
 
 /**
@@ -28,7 +29,7 @@ export type BreadDataMapIOConstraint = Record<string | symbol, unknown>;
 
 export type BreadDataMapperClass<
   TInput extends BreadDataMapIOConstraint,
-  TOutput extends BreadDataMapIOConstraint
+  TOutput extends BreadDataMapIOConstraint,
 > = {
   map(input: TInput): TOutput;
 };
@@ -41,7 +42,7 @@ export type BreadDataMapperClass<
  */
 export type BreadDataMapValueResolverDefinition<
   I extends BreadDataMapIOConstraint,
-  O
+  O,
 > =
   | (O extends Array<unknown> ? BreadValueFactory<I, O> : never)
   // if the output[key] is an object, then map recursively.
@@ -66,7 +67,26 @@ export type BreadDataMapValueResolverDefinition<
  */
 export type BreadDataMapDefinition<
   I extends BreadDataMapIOConstraint,
-  O extends BreadDataMapIOConstraint
+  O extends BreadDataMapIOConstraint,
 > = {
   [K in keyof O]: BreadDataMapValueResolverDefinition<I, O[K]>;
 };
+
+export type BreadDataMapDefinitionAny = BreadDataMapDefinition<
+  BreadDataMapIOConstraint,
+  BreadDataMapIOConstraint
+>;
+
+export type inferBreadDataMapDefinitionInput<
+  T extends BreadDataMapDefinitionAny,
+> =
+  T extends BreadDataMapDefinition<infer I, BreadDataMapIOConstraint>
+    ? I
+    : never;
+
+export type inferBreadDataMapDefinitionOutput<
+  T extends BreadDataMapDefinitionAny,
+> =
+  T extends BreadDataMapDefinition<BreadDataMapIOConstraint, infer O>
+    ? O
+    : never;

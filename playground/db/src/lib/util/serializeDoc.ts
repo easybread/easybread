@@ -5,7 +5,7 @@ export type SerializedDoc<T extends object> = Omit<T, '_id'> & {
 };
 
 export const serializeDoc = <T extends WithId<object>>(
-  document: T
+  document: T,
 ): SerializedDoc<T> => {
   const { _id, ...rest } = document;
   return { _id: String(_id), ...rest };

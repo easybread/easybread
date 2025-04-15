@@ -1,27 +1,26 @@
+import type { PaginationInput, PaginationOutput } from '@easybread/core';
 import { breadPaginationAdapter } from '@easybread/pagination-adapter';
-import type {
-  BreadOperationInputPagination,
-  BreadOperationOutputPagination,
-} from '@easybread/core';
+
 import type {
   BambooApplicationList,
   BambooApplicationListQuery,
 } from '../interfaces';
 
 export const bambooPaginationAdapter = breadPaginationAdapter<
-  BreadOperationInputPagination<'PREV_NEXT'>,
-  BreadOperationOutputPagination<'PREV_NEXT'>,
+  PaginationInput<'CURSOR'>,
+  PaginationOutput<'CURSOR'>,
   Pick<BambooApplicationListQuery, 'page'>,
-  BambooApplicationList
+  BambooApplicationList & { currentPage: number }
 >({
   toExternalParams: {
-    page: (_) => {
-      return extractPageNumber(_.page) ?? undefined;
-    },
+    page: _ => extractPageNumber(_.cursor),
   },
   toInternalData: {
-    type: () => 'PREV_NEXT',
-    next: (_) => extractPageNumber(_.nextPageUrl) ?? undefined,
+    type: () => 'CURSOR',
+    cursor: _ => _.currentPage.toString(),
+    nextCursor: _ => extractPageNumber(_.nextPageUrl)?.toString() ?? null,
+    prevCursor: _ => (_.currentPage >= 2 ? `${_.currentPage - 1}` : null),
+    limit: 'NO_MAP',
   },
 });
 

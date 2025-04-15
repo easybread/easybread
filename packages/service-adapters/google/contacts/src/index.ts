@@ -1,8 +1,8 @@
-export * from './lib/operations';
+export * from './lib/commands';
 export * from './lib/interfaces';
-export * from './lib/google-contacts.constants';
 
 export { GoogleContactsAdapter } from './lib/google-contacts.adapter';
 export { GoogleContactsAuthStrategy } from './lib/google-contacts.auth-strategy';
-export type { GoogleContactsOperation } from './lib/google-contacts.operation';
-export { GoogleContactsOperationName } from './lib/google-contacts.operation-name';
+
+export { GOOGLE_CONTACTS_PROVIDER_NAME } from './lib/google-contacts.constants';
+export { GOOGLE_CONTACTS_COMMAND_NAME } from './lib/google-contacts.command-name';

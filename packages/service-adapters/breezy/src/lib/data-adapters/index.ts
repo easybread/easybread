@@ -1,1 +1,2 @@
-export * from './breezy.company.adapter';
+export { breezyCompanyAdapter } from './breezy.company.adapter';
+export { breezyUserAdapter } from './breezy.user.adapter';

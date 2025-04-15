@@ -1,7 +1,7 @@
 import {
   BreadOperationInputWithParams,
   BreadOperationOutputWithRawData,
-  BreadStandardOperation
+  BreadStandardOperation,
 } from '@easybread/core';
 
 import { BreadOperationName } from '../bread.operation-name';

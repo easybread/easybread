@@ -1,28 +1,26 @@
+import { type PaginationInput, type PaginationOutput } from '@easybread/core';
 import { breadPaginationAdapter } from '@easybread/pagination-adapter';
-import {
-  BreadOperationInputPagination,
-  BreadOperationOutputPagination,
-} from '@easybread/core';
+
 import {
   GoogleContactsFeedPaginationParams,
   GoogleContactsFeedResponse,
 } from '../interfaces';
 
 export const googleContactsPaginationAdapter = breadPaginationAdapter<
-  BreadOperationInputPagination<'SKIP_COUNT'>,
-  BreadOperationOutputPagination<'SKIP_COUNT'>,
+  PaginationInput<'OFFSET'>,
+  PaginationOutput<'OFFSET'>,
   GoogleContactsFeedPaginationParams,
   GoogleContactsFeedResponse
 >({
   toExternalParams: {
-    'max-results': 'count',
-    'start-index': (_) => _.skip + 1,
+    'max-results': _ => _.limit ?? 20,
+    'start-index': _ => _.offset + 1,
   },
 
   toInternalData: {
-    type: () => 'SKIP_COUNT',
-    count: (_) => Number(_.feed.openSearch$itemsPerPage.$t),
-    skip: (_) => Number(_.feed.openSearch$startIndex.$t) - 1,
-    totalCount: (_) => Number(_.feed.openSearch$totalResults.$t),
+    type: () => 'OFFSET' as const,
+    offset: _ => Number(_.feed.openSearch$startIndex.$t) - 1,
+    limit: _ => Number(_.feed.openSearch$itemsPerPage.$t),
+    totalCount: _ => Number(_.feed.openSearch$totalResults.$t),
   },
 });

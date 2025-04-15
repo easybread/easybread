@@ -1,6 +1,7 @@
-import { mongoClient } from './mongoClient';
-import { load } from 'ts-dotenv';
 import type { Db } from 'mongodb';
+import { load } from 'ts-dotenv';
+
+import { mongoClient } from './mongoClient';
 
 let db: Db;
 

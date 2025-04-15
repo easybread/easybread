@@ -1,43 +1,39 @@
 import {
-  type BreadOperationOutputPagination,
   EasyBreadClient,
   InMemoryStateAdapter,
+  type PaginationOutput,
+  ServiceException,
+  type inferCommandOutput,
 } from '@easybread/core';
 import type { ApplyActionSchema } from '@easybread/schemas';
-import {
-  BreadOperationName,
-  EmployeeByIdOperation,
-  EmployeeCreateOperation,
-  EmployeeSearchOperation,
-} from '@easybread/operations';
 import {
   createAxiosError,
   expectFormDataValues,
   getNthMockCallArgs,
   getNthMockCallMthArg,
   mockAxios,
-  setExtendedTimeout,
 } from '@easybread/test-utils';
+import axios, { type AxiosResponse } from 'axios';
 
-import axios, { AxiosResponse } from 'axios';
 import {
   BAMBOO_HR_PROVIDER_NAME,
   type BambooApplicationList,
-  type BambooEmployee,
-  type BambooEmployeesDirectory,
+  type BambooEmployeeByIdCommand,
+  type BambooEmployeeSearchCommand,
   BambooHrAdapter,
   BambooHrAuthStrategy,
-  BambooHrOperationName,
   type BambooOidcConnectionAttemptStateData,
   type BambooOidcLoginPayload,
   type BambooOidcTokenPayload,
 } from '../..';
+import { BAMBOO_HR_COMMAND_NAME } from '../bamboo-hr.command-name';
+
+import { BAMBOO_APPLICATIONS_MOCK } from './bamboo.applications.mock';
 import { BAMBOO_EMPLOYEE_MOCK } from './bamboo.employee.mock';
 import { BAMBOO_EMPLOYEES_DIR_MOCK } from './bamboo.employees-dir.mock';
-import { BAMBOO_APPLICATIONS_MOCK } from './bamboo.applications.mock';
 
 mockAxios();
-setExtendedTimeout();
+// setExtendedTimeout();
 
 const API_KEY = 'user-secret-key';
 const BREAD_ID = 'user-one';
@@ -50,16 +46,40 @@ const OIDC_APPLICATION_KEY = 'application-key';
 
 async function readAuthAttemptData(breadId: string = BREAD_ID) {
   return stateAdapter.read<BambooOidcConnectionAttemptStateData>(
-    `${BAMBOO_HR_PROVIDER_NAME}:auth-attempt:BambooHrAuthStrategy:${breadId}`
+    `${BAMBOO_HR_PROVIDER_NAME}:auth-attempt:BambooHrAuthStrategy:${breadId}`,
   );
 }
 
+async function callOidcStart() {
+  await client.invoke(BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START, {
+    breadId: BREAD_ID,
+    payload: null,
+    params: { '@type': 'Organization', name: COMPANY_NAME },
+  });
+}
+
+async function callOidcComplete() {
+  const attemptData = await readAuthAttemptData();
+
+  if (!attemptData) throw new Error('No connection attempt found');
+
+  return client.invoke(BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_COMPLETE, {
+    breadId: BREAD_ID,
+    params: null,
+    payload: {
+      '@context': 'https://schema.easybread.io/auth',
+      '@type': 'CompleteOIDCRequest',
+      code: 'some-code',
+      state: attemptData.authAttemptToken,
+    },
+  });
+}
 // create adapters
-const bambooHrAdapter = new BambooHrAdapter();
 const stateAdapter = new InMemoryStateAdapter();
 const authStrategy = new BambooHrAuthStrategy(stateAdapter);
+const bambooHrAdapter = new BambooHrAdapter(authStrategy);
 
-const client = new EasyBreadClient(stateAdapter, bambooHrAdapter, authStrategy);
+const client = new EasyBreadClient(stateAdapter, bambooHrAdapter);
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -70,25 +90,27 @@ afterAll(async () => {
   jest.restoreAllMocks();
 });
 
-describe(`${BreadOperationName.SETUP_BASIC_AUTH}`, () => {
+describe(`BAMBOO_HR_COMMAND_NAME.AUTH_BASIC_SET`, () => {
   it(`should store auth data`, async () => {
     const authResult = await client.invoke(
-      BreadOperationName.SETUP_BASIC_AUTH,
+      BAMBOO_HR_COMMAND_NAME.AUTH_BASIC_SET,
       {
         breadId: BREAD_ID,
         payload: {
-          apiKey: API_KEY,
-          companyName: COMPANY_NAME,
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'CredentialBasic',
+          username: COMPANY_NAME,
+          password: API_KEY,
         },
-      }
+        params: null,
+      },
     );
 
     expect(authResult).toEqual({
-      provider: bambooHrAdapter.provider,
-      name: 'BREAD/SETUP_BASIC_AUTH',
-      rawPayload: {
-        success: true,
-      },
+      success: true,
+      breadId: BREAD_ID,
+      payload: null,
+      rawPayload: null,
     });
 
     const authData = await authStrategy.readAuthData(BREAD_ID);
@@ -100,31 +122,25 @@ describe(`${BreadOperationName.SETUP_BASIC_AUTH}`, () => {
   });
 });
 
-describe(BambooHrOperationName.OIDC_AUTH_START, () => {
-  it('should throw if no oidc config wes provided to the ', async () => {
-    const result = await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+describe(`BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START`, () => {
+  it('should throw if no oidc config was provided to the AuthStrategy', async () => {
+    const result = await client.invoke(BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START, {
       breadId: BREAD_ID,
-      payload: { companyName: COMPANY_NAME },
+      params: { '@type': 'Organization', name: COMPANY_NAME },
+      payload: null,
     });
 
     expect(result).toEqual({
-      name: BambooHrOperationName.OIDC_AUTH_START,
-      provider: BAMBOO_HR_PROVIDER_NAME,
-      rawPayload: {
-        success: false,
-        error: {
-          name: 'ServiceException',
-          provider: BAMBOO_HR_PROVIDER_NAME,
-          message:
-            'bamboo: BambooHrAuthStrategy is not configured to support OpenID Connect',
-          originalError: {
-            message:
-              'BambooHrAuthStrategy is not configured to support OpenID Connect',
-            name: 'BreadException',
-          },
-        },
-      },
-    });
+      breadId: BREAD_ID,
+      success: false,
+      error: {
+        name: 'ServiceException',
+        provider: BAMBOO_HR_PROVIDER_NAME,
+        timestamp: expect.any(String),
+        message:
+          'bamboo: BambooHrAuthStrategy is not configured to support OpenID Connect',
+      } as ServiceException,
+    } satisfies typeof result);
   });
 
   it(`should return the redirect url`, async () => {
@@ -135,29 +151,33 @@ describe(BambooHrOperationName.OIDC_AUTH_START, () => {
       redirectUri: OIDC_REDIRECT_URI,
     });
 
-    const result = await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+    const result = await client.invoke(BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START, {
       breadId: BREAD_ID,
-      payload: { companyName: COMPANY_NAME },
+      params: { '@type': 'Organization', name: COMPANY_NAME },
+      payload: null,
     });
 
+    const expectAuthUrl = expect.stringMatching(
+      /^https:\/\/company-one\.bamboohr\.com\/authorize\.php\?request=authorize&response_type=code&scope=openid\+email&state=[^&]+&client_id=client-id&redirect_uri=http:\/\/localhost:3000\/accept-bamboo-oidc-code$/,
+    );
+
     expect(result).toEqual({
-      name: 'BAMBOO_HR/OIDC_AUTH/START',
-      provider: 'bamboo',
-      rawPayload: {
-        data: {
-          authUri: expect.stringMatching(
-            /^https:\/\/company-one\.bamboohr\.com\/authorize\.php\?request=authorize&response_type=code&scope=openid\+email&state=[^&]+&client_id=client-id&redirect_uri=http:\/\/localhost:3000\/accept-bamboo-oidc-code$/
-          ),
-        },
-        success: true,
+      breadId: BREAD_ID,
+      success: true,
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'StartOAuth2Response',
+        authenticationUrl: expectAuthUrl,
       },
+      rawPayload: { authUri: expectAuthUrl },
     });
   });
 
   it(`should store the connection attempt`, async () => {
-    await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+    await client.invoke(BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START, {
       breadId: BREAD_ID,
-      payload: { companyName: COMPANY_NAME },
+      params: { '@type': 'Organization', name: COMPANY_NAME },
+      payload: null,
     });
 
     await expect(readAuthAttemptData()).resolves.toEqual({
@@ -168,7 +188,7 @@ describe(BambooHrOperationName.OIDC_AUTH_START, () => {
   });
 });
 
-describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
+describe(`${BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_COMPLETE}`, () => {
   beforeEach(async () => {
     jest.resetAllMocks();
     jest
@@ -184,7 +204,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
             company_domain: COMPANY_NAME,
             id_token: 'ID_TOKEN',
           } satisfies BambooOidcTokenPayload,
-        })
+        }),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -196,74 +216,55 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
             userId: 'BAMBOO_USER_ID',
             employeeId: 'BAMBOO_EMPLOYEE_ID',
           } satisfies BambooOidcLoginPayload,
-        })
+        }),
       );
   });
 
-  async function callOidcComplete() {
-    await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
-      breadId: BREAD_ID,
-      payload: { companyName: COMPANY_NAME },
-    });
-
-    const attemptData = await readAuthAttemptData();
-
-    if (!attemptData) throw new Error('No connection attempt found');
-
-    return client.invoke(BambooHrOperationName.OIDC_AUTH_COMPLETE, {
-      breadId: BREAD_ID,
-      payload: {
-        code: 'some-code',
-        state: attemptData.authAttemptToken,
-      },
-    });
-  }
-
   it(`should throw if the state is invalid`, async () => {
-    await client.invoke(BambooHrOperationName.OIDC_AUTH_START, {
+    await client.invoke(BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START, {
       breadId: BREAD_ID,
-      payload: { companyName: COMPANY_NAME },
+      params: {
+        '@type': 'Organization',
+        name: COMPANY_NAME,
+      },
+      payload: null,
     });
 
     const result = await client.invoke(
-      BambooHrOperationName.OIDC_AUTH_COMPLETE,
+      BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_COMPLETE,
       {
         breadId: BREAD_ID,
+        params: null,
         payload: {
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'CompleteOIDCRequest',
           code: 'some-code',
           state: 'wrong-state',
         },
-      }
+      },
     );
 
     expect(result).toEqual({
-      name: BambooHrOperationName.OIDC_AUTH_COMPLETE,
-      provider: BAMBOO_HR_PROVIDER_NAME,
-      rawPayload: {
-        error: {
-          message: 'bamboo: Auth attempt token mismatch for user-one',
-          name: 'ServiceException',
-          originalError: {
-            message: 'Auth attempt token mismatch for user-one',
-            name: 'AuthAttemptTokenMismatchException',
-          },
-          provider: BAMBOO_HR_PROVIDER_NAME,
-        },
-        success: false,
+      success: false,
+      breadId: BREAD_ID,
+      error: {
+        message: 'bamboo: Auth attempt token mismatch for user-one',
+        name: 'ServiceException',
+        provider: BAMBOO_HR_PROVIDER_NAME,
+        timestamp: expect.any(String),
       },
     });
   });
 
   it(`should return successful result`, async () => {
+    await callOidcStart();
     const result = await callOidcComplete();
 
     expect(result).toEqual({
-      name: BambooHrOperationName.OIDC_AUTH_COMPLETE,
-      provider: bambooHrAdapter.provider,
-      rawPayload: {
-        success: true,
-        data: { companyName: COMPANY_NAME },
-      },
+      breadId: BREAD_ID,
+      success: true,
+      payload: null,
+      rawPayload: { companyName: COMPANY_NAME },
     });
   });
 
@@ -277,6 +278,7 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
   });
 
   it(`should call the token endpoint`, async () => {
+    await callOidcStart();
     await callOidcComplete();
     expect(getNthMockCallArgs(axios.request, 1)).toEqual([
       {
@@ -299,11 +301,12 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
         grant_type: 'authorization_code',
         redirect_uri: 'http://localhost:3000/accept-bamboo-oidc-code',
         scope: 'openid email',
-      }
+      },
     );
   });
 
   it(`should call the login endpoint`, async () => {
+    await callOidcStart();
     await callOidcComplete();
     expect(getNthMockCallArgs(axios.request, 2)).toEqual([
       {
@@ -322,27 +325,27 @@ describe(`${BambooHrOperationName.OIDC_AUTH_COMPLETE}`, () => {
       {
         applicationKey: 'application-key',
         id_token: 'ID_TOKEN',
-      }
+      },
     );
   });
 });
 
-describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
+describe(`BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_SEARCH`, () => {
   beforeEach(async () => {
     jest.mocked(axios.request).mockImplementationOnce(() =>
       Promise.resolve({
         status: 200,
         data: BAMBOO_EMPLOYEES_DIR_MOCK,
-      })
+      }),
     );
   });
 
   function invokeEmployeeSearch(
-    query?: string
-  ): Promise<EmployeeSearchOperation<BambooEmployeesDirectory>['output']> {
-    return client.invoke(BreadOperationName.EMPLOYEE_SEARCH, {
+    query?: string,
+  ): Promise<inferCommandOutput<BambooEmployeeSearchCommand>> {
+    return client.invoke(BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_SEARCH, {
       breadId: BREAD_ID,
-      params: { query },
+      params: { '@type': 'SearchAction', query },
       pagination: { type: 'DISABLED' },
     });
   }
@@ -363,7 +366,8 @@ describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
   it(`should have correct output`, async () => {
     const employees = await invokeEmployeeSearch();
     expect(employees).toEqual({
-      name: 'BREAD/EMPLOYEE/SEARCH',
+      success: true,
+      breadId: BREAD_ID,
       pagination: { type: 'DISABLED' },
       payload: [
         {
@@ -395,18 +399,15 @@ describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
           workLocation: 'Remote',
         },
       ],
-      provider: 'bamboo',
-      rawPayload: {
-        data: BAMBOO_EMPLOYEES_DIR_MOCK,
-        success: true,
-      },
+      rawPayload: BAMBOO_EMPLOYEES_DIR_MOCK,
     });
   });
 
   it(`should support search query`, async () => {
     const employees = await invokeEmployeeSearch('employee2');
     expect(employees).toEqual({
-      name: 'BREAD/EMPLOYEE/SEARCH',
+      breadId: BREAD_ID,
+      success: true,
       pagination: { type: 'DISABLED' },
       payload: [
         {
@@ -424,35 +425,35 @@ describe(`${BreadOperationName.EMPLOYEE_SEARCH}`, () => {
           workLocation: 'Remote',
         },
       ],
-      provider: 'bamboo',
-      rawPayload: {
-        // raw payload contains more results. that is expected
-        // because the BambooHR API doesn't support searching.
-        data: BAMBOO_EMPLOYEES_DIR_MOCK,
-        success: true,
-      },
+      // raw payload contains more results. that is expected
+      // because the BambooHR API doesn't support searching.
+      rawPayload: BAMBOO_EMPLOYEES_DIR_MOCK,
     });
   });
 });
 
 // ------------------------------------
 
-describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
+describe(`BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_BY_ID`, () => {
   beforeEach(async () => {
     (axios.request as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
         status: 200,
         data: BAMBOO_EMPLOYEE_MOCK,
-      } as AxiosResponse)
+      } as AxiosResponse),
     );
   });
 
   function invokeEmployeeById(): Promise<
-    EmployeeByIdOperation<BambooEmployee>['output']
+    inferCommandOutput<BambooEmployeeByIdCommand>
   > {
-    return client.invoke(BreadOperationName.EMPLOYEE_BY_ID, {
+    return client.invoke(BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_BY_ID, {
       breadId: BREAD_ID,
-      params: { identifier: '112' },
+      payload: null,
+      params: {
+        '@type': 'Person',
+        identifier: '112',
+      },
     });
   }
 
@@ -467,6 +468,7 @@ describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
       method: 'GET',
       params: {
         fields: [
+          'avatar',
           'canUploadPhoto',
           'department',
           'displayName',
@@ -481,10 +483,10 @@ describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
           'photoUploaded',
           'photoUrl',
           'preferredName',
+          'skypeUsername',
           'workEmail',
           'workPhone',
           'workPhoneExtension',
-          'skypeUsername',
         ].join(','),
       },
       url: 'https://api.bamboohr.com/api/gateway.php/company-one/v1/employees/112',
@@ -494,7 +496,8 @@ describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
   it(`should return correct output`, async () => {
     const result = await invokeEmployeeById();
     expect(result).toEqual({
-      name: 'BREAD/EMPLOYEE/BY_ID',
+      success: true,
+      breadId: BREAD_ID,
       payload: {
         '@type': 'Person',
         email: '2110pro@mail.ru',
@@ -509,15 +512,14 @@ describe(`${BreadOperationName.EMPLOYEE_BY_ID}`, () => {
         telephone: '+71231231212',
         workLocation: 'Remote',
       },
-      provider: 'bamboo',
-      rawPayload: { data: BAMBOO_EMPLOYEE_MOCK, success: true },
+      rawPayload: BAMBOO_EMPLOYEE_MOCK,
     });
   });
 });
 
 // ------------------------------------
 
-describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
+describe('BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_CREATE', () => {
   beforeEach(async () => {
     (axios.request as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
@@ -528,13 +530,14 @@ describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
             'https://api.bamboohr.com/api/gateway.php/mietest/v1/employees/27',
         },
         // TODO: remove as unknown and fix ts error
-      } as unknown as AxiosResponse)
+      } as unknown as AxiosResponse),
     );
   });
 
-  function invokeEmployeeCreate(): Promise<EmployeeCreateOperation['output']> {
-    return client.invoke(BreadOperationName.EMPLOYEE_CREATE, {
+  function invokeEmployeeCreate() {
+    return client.invoke(BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_CREATE, {
       breadId: BREAD_ID,
+      params: null,
       payload: {
         '@type': 'Person',
         email: '2110pro@mail.ru',
@@ -567,7 +570,8 @@ describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
   it(`should have correct output`, async () => {
     const result = await invokeEmployeeCreate();
     expect(result).toEqual({
-      name: 'BREAD/EMPLOYEE/CREATE',
+      success: true,
+      breadId: BREAD_ID,
       payload: {
         '@type': 'Person',
         identifier: '27',
@@ -576,11 +580,7 @@ describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
         givenName: 'New',
         telephone: '+71231231212',
       },
-      provider: 'bamboo',
-      rawPayload: {
-        data: {},
-        success: true,
-      },
+      rawPayload: null,
     });
   });
 
@@ -602,34 +602,23 @@ describe(`${BreadOperationName.EMPLOYEE_CREATE}`, () => {
 
     // get what the res.json would send
     expect(result).toEqual({
-      name: 'BREAD/EMPLOYEE/CREATE',
-      provider: 'bamboo',
-      rawPayload: {
-        error: {
-          name: 'ServiceException',
-          message:
-            'bamboo: Request failed with status code 409. Duplicate email',
-          originalError: {
-            code: 'TEST_CODE',
-            config: {},
-            message: 'Request failed with status code 409',
-            name: 'AxiosError',
-            stack: expect.any(String),
-            status: 409,
-          },
-          provider: 'bamboo',
-        },
-        success: false,
+      breadId: BREAD_ID,
+      success: false,
+      error: {
+        name: 'ServiceException',
+        message: 'bamboo: Request failed with status code 409. Duplicate email',
+        provider: 'bamboo',
+        timestamp: expect.any(String),
       },
     });
   });
 });
 
-describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
+describe('BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICATION_SEARCH', () => {
   it(`should return an expected rawData and payload`, async () => {
     const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
     const applicationsFilteredByStartTime = BAMBOO_APPLICATIONS_MOCK.filter(
-      (a) => a.appliedDate >= `2024-10-11 00:00:00`
+      a => a.appliedDate >= `2024-10-11 00:00:00`,
     );
 
     jest.mocked(axios.request).mockImplementationOnce(() =>
@@ -640,29 +629,31 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           nextPageUrl: null,
           paginationComplete: true,
         } satisfies BambooApplicationList,
-      })
+      }),
     );
 
     const result = await client.invoke(
-      BreadOperationName.JOB_APPLICATION_SEARCH,
+      BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICATION_SEARCH,
       {
         breadId: BREAD_ID,
-        pagination: { type: 'PREV_NEXT', page: 1 },
-        params: { startTime },
-      }
+        pagination: { type: 'CURSOR', cursor: '1' },
+        params: { '@type': 'SearchAction', startTime },
+      },
     );
 
+    if (!result.success) throw new Error('No success');
+
     expect(result.rawPayload).toEqual({
-      data: {
-        applications: applicationsFilteredByStartTime,
-        nextPageUrl: null,
-        paginationComplete: true,
-      },
-      success: true,
+      applications: applicationsFilteredByStartTime,
+      nextPageUrl: null,
+      paginationComplete: true,
     });
 
     expect(result.pagination).toEqual({
-      type: 'PREV_NEXT',
+      type: 'CURSOR',
+      cursor: '1',
+      nextCursor: null,
+      prevCursor: null,
     });
 
     expect(result.payload).toEqual([
@@ -683,7 +674,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           identifier: '19',
           title: 'General Application',
         },
-        starTime: '2024-10-19T17:08:59+00:00',
+        startTime: '2024-10-19T17:08:59+00:00',
       },
       {
         '@type': 'ApplyAction',
@@ -702,7 +693,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           identifier: '21',
           title: 'Marketing Manager',
         },
-        starTime: '2024-10-11T22:46:01+00:00',
+        startTime: '2024-10-11T22:46:01+00:00',
       },
       {
         '@type': 'ApplyAction',
@@ -721,7 +712,7 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           identifier: '19',
           title: 'General Application',
         },
-        starTime: '2024-10-11T20:07:43+00:00',
+        startTime: '2024-10-11T20:07:43+00:00',
       },
     ] satisfies ApplyActionSchema[]);
   });
@@ -735,46 +726,48 @@ describe(`${BambooHrOperationName.JOB_APPLICATION_SEARCH}`, () => {
           nextPageUrl: `https://api.bamboohr.com/api/gateway.php/${COMPANY_NAME}/v1/applicant_tracking/applications?page=2`,
           paginationComplete: false,
         } satisfies BambooApplicationList,
-      })
+      }),
     );
 
     const result = await client.invoke(
-      BreadOperationName.JOB_APPLICATION_SEARCH,
+      BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICATION_SEARCH,
       {
         breadId: BREAD_ID,
-        pagination: { type: 'PREV_NEXT', page: 1 },
-        params: {},
-      }
+        pagination: { type: 'CURSOR', cursor: '1' },
+        params: { '@type': 'SearchAction' },
+      },
     );
 
     expect(result.pagination).toEqual({
-      type: 'PREV_NEXT',
-      next: 2,
-    } satisfies BreadOperationOutputPagination<'PREV_NEXT'>);
+      type: 'CURSOR',
+      cursor: '1',
+      nextCursor: '2',
+      prevCursor: null,
+    } satisfies PaginationOutput<'CURSOR'>);
 
-    await client.invoke(BreadOperationName.JOB_APPLICATION_SEARCH, {
+    await client.invoke(BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICATION_SEARCH, {
       breadId: BREAD_ID,
       pagination: {
-        type: 'PREV_NEXT',
-        page: result.pagination.next,
+        type: 'CURSOR',
+        cursor: result.pagination.nextCursor ?? undefined,
       },
-      params: {},
+      params: { '@type': 'SearchAction' },
     });
 
     expect(jest.mocked(axios.request)).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
         params: expect.objectContaining({ page: 2 }),
-      })
+      }),
     );
   });
 });
 
-describe(`${BambooHrOperationName.JOB_APPLICANT_SEARCH}`, () => {
+describe(`${BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICANT_SEARCH}`, () => {
   it(`should return an expected rawData and payload`, async () => {
     const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
     const applicationsFilteredByStartTime = BAMBOO_APPLICATIONS_MOCK.filter(
-      (a) => a.appliedDate >= `2024-10-11 00:00:00`
+      a => a.appliedDate >= `2024-10-11 00:00:00`,
     );
 
     jest.mocked(axios.request).mockImplementationOnce(() =>
@@ -785,25 +778,24 @@ describe(`${BambooHrOperationName.JOB_APPLICANT_SEARCH}`, () => {
           nextPageUrl: null,
           paginationComplete: true,
         } satisfies BambooApplicationList,
-      })
+      }),
     );
 
     const result = await client.invoke(
-      BreadOperationName.JOB_APPLICANT_SEARCH,
+      BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICANT_SEARCH,
       {
         breadId: BREAD_ID,
-        pagination: { type: 'PREV_NEXT', page: 1 },
-        params: { startTime },
-      }
+        pagination: { type: 'CURSOR', cursor: '1' },
+        params: { '@type': 'SearchAction', startTime },
+      },
     );
 
+    if (!result.success) throw new Error('No success');
+
     expect(result.rawPayload).toEqual({
-      data: {
-        applications: applicationsFilteredByStartTime,
-        nextPageUrl: null,
-        paginationComplete: true,
-      },
-      success: true,
+      applications: applicationsFilteredByStartTime,
+      nextPageUrl: null,
+      paginationComplete: true,
     });
 
     expect(result.payload).toEqual([

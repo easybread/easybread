@@ -1,36 +1,37 @@
-import { BreadServiceAdapter } from '@easybread/core';
 import {
-  GoogleCommonOauth2CompleteHandler,
-  GoogleCommonOauth2StartHandler,
+  GoogleCommonAuthOauth2CompleteHandler,
+  GoogleCommonAuthOauth2StartHandler,
 } from '@easybread/adapter-google-common';
+import { ServiceAdapter } from '@easybread/core';
 
 import { GoogleContactsAuthStrategy } from './google-contacts.auth-strategy';
-import { GOOGLE_PROVIDER_NAME } from './google-contacts.constants';
-import { GoogleContactsOperation } from './google-contacts.operation';
+import { GOOGLE_CONTACTS_PROVIDER_NAME } from './google-contacts.constants';
 import {
-  GoogleContactsPeopleByIdHandler,
-  GoogleContactsPeopleCreateHandler,
-  GoogleContactsPeopleDeleteHandler,
-  GoogleContactsPeopleSearchHandler,
-  GoogleContactsPeopleUpdateHandler,
+  GoogleContactsUserByIdHandler,
+  GoogleContactsUserCreateHandler,
+  GoogleContactsUserDeleteHandler,
+  GoogleContactsUserSearchHandler,
+  GoogleContactsUserUpdateHandler,
 } from './handlers';
 
-export class GoogleContactsAdapter extends BreadServiceAdapter<
-  GoogleContactsOperation,
+const HANDLER_MAP = {
+  [GoogleContactsUserSearchHandler.name]: GoogleContactsUserSearchHandler,
+  [GoogleContactsUserCreateHandler.name]: GoogleContactsUserCreateHandler,
+  [GoogleContactsUserUpdateHandler.name]: GoogleContactsUserUpdateHandler,
+  [GoogleContactsUserDeleteHandler.name]: GoogleContactsUserDeleteHandler,
+  [GoogleContactsUserByIdHandler.name]: GoogleContactsUserByIdHandler,
+  [GoogleCommonAuthOauth2StartHandler.name]: GoogleCommonAuthOauth2StartHandler,
+  [GoogleCommonAuthOauth2CompleteHandler.name]:
+    GoogleCommonAuthOauth2CompleteHandler,
+} as const;
+
+export class GoogleContactsAdapter extends ServiceAdapter<
+  typeof HANDLER_MAP,
   GoogleContactsAuthStrategy
 > {
-  provider = GOOGLE_PROVIDER_NAME;
+  provider = GOOGLE_CONTACTS_PROVIDER_NAME;
 
-  constructor() {
-    super();
-    this.registerOperationHandlers(
-      GoogleCommonOauth2StartHandler,
-      GoogleCommonOauth2CompleteHandler,
-      GoogleContactsPeopleSearchHandler,
-      GoogleContactsPeopleCreateHandler,
-      GoogleContactsPeopleUpdateHandler,
-      GoogleContactsPeopleDeleteHandler,
-      GoogleContactsPeopleByIdHandler
-    );
+  constructor(auth: GoogleContactsAuthStrategy) {
+    super(HANDLER_MAP, auth, null);
   }
 }

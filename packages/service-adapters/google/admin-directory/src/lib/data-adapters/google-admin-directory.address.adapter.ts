@@ -1,5 +1,5 @@
-import { AddressSchema } from '@easybread/schemas';
 import { breadDataAdapter } from '@easybread/data-adapter';
+import { AddressSchema } from '@easybread/schemas';
 
 import { GoogleAdminDirectoryAddress } from '../interfaces';
 

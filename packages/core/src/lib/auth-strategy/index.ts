@@ -1,7 +1,8 @@
 export * from './interfaces';
-export * from './events/bread.auth-strategy.event';
-export * from './events/bread.authentication-lost.event';
+export * from './events/auth-strategy.event';
+export * from './events/authentication-lost.event';
 
-export { BreadAuthStrategy } from './bread.auth-strategy';
-export { BreadOAuth2AuthStrategy } from './bread.oauth2.auth-strategy';
-export { BreadBasicAuthStrategy } from './bread.basic.auth-strategy';
+export { AuthStrategy } from './auth-strategy';
+export type { AuthStrategyAny } from './auth-strategy-util';
+export { Oauth2AuthStrategy } from './oauth2.auth-strategy';
+export { BasicAuthStrategy } from './basic.auth-strategy';

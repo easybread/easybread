@@ -1,6 +1,6 @@
 export function expectFormDataValues(
   formData: FormData,
-  expectedData: Record<string, unknown>
+  expectedData: Record<string, unknown>,
 ) {
   const fdData: Record<string, unknown> = {};
 

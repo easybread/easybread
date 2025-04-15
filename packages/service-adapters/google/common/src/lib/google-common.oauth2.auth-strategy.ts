@@ -1,33 +1,33 @@
-import { BreadOAuth2AuthStrategy, BreadStateAdapter } from '@easybread/core';
+import { injectIntoUrlSearchParams, toFormData } from '@easybread/common';
+import { Oauth2AuthStrategy, StateAdapter } from '@easybread/core';
+import type {
+  AuthCompleteOauth2RequestSchema,
+  AuthStartOauth2RequestSchema,
+} from '@easybread/schemas';
 
+import type { GoogleCommonOauth2ConnectionAttemptStateData } from './interfaces';
 import {
   GoogleCommonAccessTokenCreateRequestData,
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshRequestData,
   GoogleCommonAccessTokenRefreshResponse,
-  GoogleCommonAuthorizationParameters,
   GoogleCommonAuthStrategyOptions,
+  GoogleCommonAuthorizationParameters,
   GoogleCommonOauth2StateData,
 } from './interfaces';
-import {
-  GoogleCommonOauth2CompleteOperationInputPayload,
-  GoogleCommonOauth2StartOperationInputPayload,
-} from './operations';
-import type { GoogleCommonOauth2ConnectionAttemptStateData } from './interfaces/google-common.oauth2-connection-attempt.state-data.interface';
-import { toFormData, toUrlSearchParams } from '@easybread/common';
 
 export class GoogleCommonOauth2AuthStrategy<
-  TScopes extends string = string
-> extends BreadOAuth2AuthStrategy<
+  TScopes extends string = string,
+> extends Oauth2AuthStrategy<
   GoogleCommonOauth2StateData,
   GoogleCommonOauth2ConnectionAttemptStateData
 > {
   private readonly options: GoogleCommonAuthStrategyOptions;
 
   constructor(
-    state: BreadStateAdapter,
+    state: StateAdapter,
     providerName: string,
-    options: GoogleCommonAuthStrategyOptions
+    options: GoogleCommonAuthStrategyOptions,
   ) {
     super(state, providerName);
     this.options = options;
@@ -35,16 +35,12 @@ export class GoogleCommonOauth2AuthStrategy<
 
   async createAuthUri(
     breadId: string,
-    payload: GoogleCommonOauth2StartOperationInputPayload<TScopes>
+    payload: Omit<AuthStartOauth2RequestSchema<TScopes>, '@context' | '@type'>,
   ): Promise<string> {
-    const {
-      prompt,
-      includeGrantedScopes = true,
-      loginHint,
-      scope = [],
-    } = payload;
-
+    const { loginHint, scope = [], prompt = ['consent'] } = payload;
     const { clientId, redirectUri } = this.options;
+
+    const includeGrantedScopes = true;
 
     const { authAttemptToken } = await this.createAuthAttempt(breadId, {});
 
@@ -58,21 +54,21 @@ export class GoogleCommonOauth2AuthStrategy<
       // This is to make google return json instead of atom+xml
       alt: 'json',
       state: authAttemptToken,
+      prompt,
     };
 
     if (loginHint) params.login_hint = loginHint;
-    if (prompt) params.prompt = prompt;
 
     const url = new URL('/o/oauth2/v2/auth', 'https://accounts.google.com');
 
-    toUrlSearchParams(params, url.searchParams);
+    injectIntoUrlSearchParams(url.searchParams, params);
 
     return url.href;
   }
 
   async authenticate(
     breadId: string,
-    payload: GoogleCommonOauth2CompleteOperationInputPayload
+    payload: Omit<AuthCompleteOauth2RequestSchema, '@context' | '@type'>,
   ): Promise<GoogleCommonAccessTokenCreateResponse> {
     const { code, state } = payload;
     const { clientId, clientSecret, redirectUri } = this.options;

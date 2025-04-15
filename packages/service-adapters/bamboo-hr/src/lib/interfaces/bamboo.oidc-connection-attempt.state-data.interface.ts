@@ -1,7 +1,7 @@
-import type { BreadAuthAttemptStateDataBase } from '@easybread/core';
+import type { AuthAttemptStateDataBase } from '@easybread/core';
 
 export interface BambooOidcConnectionAttemptStateData
-  extends BreadAuthAttemptStateDataBase {
+  extends AuthAttemptStateDataBase {
   breadId: string;
   companyName: string;
 }

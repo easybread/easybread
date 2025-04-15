@@ -1,10 +1,10 @@
-import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
-import { GoogleCommonOperationName } from '@easybread/adapter-google-common';
+import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '@easybread/adapter-google-admin-directory';
+import { isAdapterName, makeBreadId } from 'playground-common';
 import {
   adapterCollection,
   isGoogleAdminDirectoryAdapter,
 } from 'playground-db';
-import { isAdapterName, makeBreadId } from 'playground-common';
+import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';
 
 interface AdapterGoogleAuthCompleteParams {
   userId: string;
@@ -32,15 +32,21 @@ export async function adapterGoogleAuthComplete({
   }
 
   const results = await clientGoogleAdminDirectory.invoke(
-    GoogleCommonOperationName.AUTH_FLOW_COMPLETE,
+    GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.AUTH_OAUTH2_COMPLETE,
     {
       breadId: makeBreadId(userId),
-      payload: { code, state },
-    }
+      params: null,
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'CompleteOAuth2Request',
+        code,
+        state,
+      },
+    },
   );
 
-  if (!results.rawPayload.success) {
-    new Error('Google Auth Failed', { cause: results.rawPayload });
+  if (!results.success) {
+    new Error('Google Auth Failed', { cause: results.error });
   }
 
   await adapterCollection().updateOne(
@@ -48,6 +54,6 @@ export async function adapterGoogleAuthComplete({
     {
       $set: { connectedAt: new Date() },
       $setOnInsert: { createdAt: new Date() },
-    }
+    },
   );
 }

@@ -1,45 +1,39 @@
 import {
-  BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload,
-} from '@easybread/core';
-import {
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions,
   rocketChatUserAdapter,
 } from '@easybread/adapter-rocket-chat-common';
-import { resolve } from 'url';
+import { type CommandHandler } from '@easybread/core';
 
+import { RocketChatUsersByIdCommand } from '../commands';
 import { RocketChatUsersInfo } from '../interfaces';
-import { RocketChatUsersByIdOperation } from '../operations';
-import { RocketChatUsersOperationName } from '../rocket-chat-users.operation-name';
+import { ROCKET_CHAT_USERS_COMMAND_NAME } from '../rocket-chat-users.command-name';
 
-export const RocketChatUsersByIdHandler: BreadOperationHandler<
-  RocketChatUsersByIdOperation,
+export const RocketChatUsersByIdHandler: CommandHandler<
+  RocketChatUsersByIdCommand,
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions
 > = {
-  name: RocketChatUsersOperationName.BY_ID,
+  name: ROCKET_CHAT_USERS_COMMAND_NAME.BASIC_USER_BY_ID,
   async handle(input, context, options) {
-    const { name, params } = input;
+    const { params } = input;
     const { serverUrl } = options;
 
     const result = await context.httpRequest<RocketChatUsersInfo>({
       method: 'GET',
-      url: resolve(serverUrl, '/api/v1/users.info'),
-      params: rocketChatUserAdapter.toExternal({
-        '@type': 'Person',
-        ...params,
-      }),
+      url: new URL('/api/v1/users.info', serverUrl).href,
+      params: rocketChatUserAdapter.toExternal(params),
     });
 
     if (!result.data.success) {
       throw new Error(JSON.stringify(result.data));
     }
 
-    return createSuccessfulOutputWithRawDataAndPayload(
-      name,
-      result.data,
-      rocketChatUserAdapter.toInternal(result.data.user)
-    );
+    return {
+      success: true,
+      breadId: input.breadId,
+      payload: rocketChatUserAdapter.toInternal(result.data.user),
+      rawPayload: result.data,
+    };
   },
 };

@@ -1,6 +1,7 @@
 import { PersonSchema } from '@easybread/schemas';
 
 import { rocketChatUserAdapter } from '../..';
+
 import { USER_MOCK } from './user.mock';
 
 describe('toRemoteMap()', () => {

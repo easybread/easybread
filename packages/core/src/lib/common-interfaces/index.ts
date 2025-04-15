@@ -1,1 +1,1 @@
-export * from './bread-service-adapter.options';
+export * from './service-adapter.options';

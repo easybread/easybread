@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "dependencies": {
     "@easybread/core": "0.0.1",
-    "@easybread/operations": "0.0.1",
     "@easybread/schemas": "0.0.1",
     "axios": "^1.7.4",
     "lodash": "^4.17.21",

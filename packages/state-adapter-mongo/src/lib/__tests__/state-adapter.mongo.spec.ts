@@ -1,7 +1,8 @@
-import { BreadStateAdapter } from '@easybread/core';
+import { StateAdapter } from '@easybread/core';
 import { Db, MongoClient, ObjectId } from 'mongodb';
 
 import { StateAdapterMongo } from '../state-adapter.mongo';
+
 import { getMongoUrl } from './get-mongo-url';
 
 const url = getMongoUrl() as string;
@@ -15,7 +16,7 @@ let adapterMongo: StateAdapterMongo;
 beforeAll(async () => {
   client = await MongoClient.connect(
     url,
-    StateAdapterMongo.DEFAULT_CLIENT_OPTIONS
+    StateAdapterMongo.DEFAULT_CLIENT_OPTIONS,
   );
   db = client.db();
 });
@@ -42,13 +43,13 @@ afterEach(() => {
 describe('static fromMongoClient()', () => {
   it(`should create instance`, async () => {
     adapterMongo = await StateAdapterMongo.fromMongoClient(client);
-    expect(adapterMongo).toBeInstanceOf(BreadStateAdapter);
+    expect(adapterMongo).toBeInstanceOf(StateAdapter);
     expect(adapterMongo).toBeInstanceOf(StateAdapterMongo);
   });
 
   it(`should create index`, async () => {
     const info = await db.indexInformation(
-      StateAdapterMongo.DEFAULT_COLLECTION_NAME
+      StateAdapterMongo.DEFAULT_COLLECTION_NAME,
     );
 
     expect(info).toEqual({
@@ -66,12 +67,12 @@ describe('static fromConnectionUrl', () => {
   it(`should creating instance`, async () => {
     adapterMongo = await StateAdapterMongo.fromConnectionUrl(url, {});
     expect(adapterMongo).toBeInstanceOf(StateAdapterMongo);
-    expect(adapterMongo).toBeInstanceOf(BreadStateAdapter);
+    expect(adapterMongo).toBeInstanceOf(StateAdapter);
   });
 
   it(`should create index`, async () => {
     const info = await db.indexInformation(
-      StateAdapterMongo.DEFAULT_COLLECTION_NAME
+      StateAdapterMongo.DEFAULT_COLLECTION_NAME,
     );
 
     expect(info).toEqual({
@@ -95,7 +96,7 @@ describe('write()', () => {
     await adapterMongo.write(objectValueKey, objectValue);
 
     expect(
-      await getCollectionData(StateAdapterMongo.DEFAULT_COLLECTION_NAME)
+      await getCollectionData(StateAdapterMongo.DEFAULT_COLLECTION_NAME),
     ).toEqual([
       {
         _id: expect.any(ObjectId),
@@ -114,7 +115,7 @@ describe('write()', () => {
     await adapterMongo.write('foo', 'bar');
     await adapterMongo.write('foo', 'baz');
     expect(
-      await getCollectionData(StateAdapterMongo.DEFAULT_COLLECTION_NAME)
+      await getCollectionData(StateAdapterMongo.DEFAULT_COLLECTION_NAME),
     ).toEqual([
       {
         _id: expect.any(ObjectId),

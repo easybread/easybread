@@ -30,5 +30,5 @@ it(`should be able to read/write`, async () => {
   await testCollection.drop();
 
   const collections = await db.collections();
-  expect(collections.map((c) => c.collectionName)).toEqual([]);
+  expect(collections.map(c => c.collectionName)).toEqual([]);
 });

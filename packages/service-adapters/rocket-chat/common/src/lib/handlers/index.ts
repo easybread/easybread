@@ -1,1 +1,1 @@
-export { RocketChatAuthConfigureHandler } from './rocket-chat.auth-configure.handler';
+export { RocketChatAuthBasicSetHandler } from './rocket-chat.auth-basic-set.handler';

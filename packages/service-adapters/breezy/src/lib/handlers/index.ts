@@ -1,2 +1,2 @@
-export { BreezyAuthenticateHandler } from './breezy-authenticate.handler';
-export { BreezyCompanySearchHandler } from './breezy-company-search.handler';
+export { BreezyAuthBasicSetHandler } from './breezy.auth-basic-set.handler';
+export { BreezyOrganizationSearchHandler } from './breezy.organization-search.handler';

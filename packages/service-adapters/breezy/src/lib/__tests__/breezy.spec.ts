@@ -1,13 +1,19 @@
-import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
+import {
+  EasyBreadClient,
+  InMemoryStateAdapter,
+  type inferCommandOutput,
+} from '@easybread/core';
+import { mockAxios } from '@easybread/test-utils';
 import axiosMock from 'axios';
 
 import {
+  BREEZY_COMMAND_NAME,
   BreezyAdapter,
-  BreezyAuthenticateOperation,
+  BreezyAuthBasicSetCommand,
   BreezyAuthStrategy,
-  BreezyCompanySearchOperation,
-  BreezyOperationName,
+  type BreezyOrganizationSearchCommand,
 } from '../..';
+
 import {
   COMPANIES_SEARCH_RESPONSE_MOCK,
   EMAIL,
@@ -15,16 +21,15 @@ import {
   SIGN_IN_RESPONSE_MOCK,
   USER_ID,
 } from './mocks';
-import { mockAxios } from '@easybread/test-utils';
 
 mockAxios();
 
 describe('Breezy', () => {
-  const breezyAdapter = new BreezyAdapter();
   const stateAdapter = new InMemoryStateAdapter();
   const authStrategy = new BreezyAuthStrategy(stateAdapter);
+  const breezyAdapter = new BreezyAdapter(authStrategy);
 
-  const client = new EasyBreadClient(stateAdapter, breezyAdapter, authStrategy);
+  const client = new EasyBreadClient(stateAdapter, breezyAdapter);
 
   afterEach(async () => {
     jest.resetAllMocks();
@@ -37,13 +42,19 @@ describe('Breezy', () => {
 
   // TODO: refactor: move operation tests in separate spec files & etc
   describe('operations', () => {
-    describe(BreezyOperationName.AUTHENTICATE, () => {
+    describe('BREEZY_COMMAND_NAME.AUTH_BASIC_SET', () => {
       function invokeAuthenticate(): Promise<
-        BreezyAuthenticateOperation['output']
+        inferCommandOutput<BreezyAuthBasicSetCommand>
       > {
-        return client.invoke(BreezyOperationName.AUTHENTICATE, {
+        return client.invoke(BREEZY_COMMAND_NAME.AUTH_BASIC_SET, {
           breadId: USER_ID,
-          payload: { email: EMAIL, password: PASSWORD },
+          params: null,
+          payload: {
+            '@context': 'https://schema.easybread.io/auth',
+            '@type': 'CredentialBasic',
+            username: EMAIL,
+            password: PASSWORD,
+          },
         });
       }
 
@@ -52,7 +63,7 @@ describe('Breezy', () => {
           Promise.resolve({
             status: 200,
             data: SIGN_IN_RESPONSE_MOCK,
-          })
+          }),
         );
       });
 
@@ -76,24 +87,32 @@ describe('Breezy', () => {
         const result = await invokeAuthenticate();
 
         expect(result).toEqual({
-          provider: breezyAdapter.provider,
-          name: BreezyOperationName.AUTHENTICATE,
-          rawPayload: {
-            data: SIGN_IN_RESPONSE_MOCK,
-            success: true,
+          breadId: USER_ID,
+          success: true,
+          payload: {
+            '@type': 'Person',
+            createdAt: '2025-03-30T01:00:00.000Z',
+            email: 'test@mail.com',
+            emailVerified: true,
+            givenName: 'Test',
+            identifier: '123',
+            name: 'Test',
+            updatedAt: '2025-04-02T01:00:00.000Z',
           },
+          rawPayload: SIGN_IN_RESPONSE_MOCK,
         });
       });
     });
 
     // ------------------------------------
 
-    describe(BreezyOperationName.COMPANY_SEARCH, () => {
+    describe(BREEZY_COMMAND_NAME.HR_ORGANIZATION_SEARCH, () => {
       function invokeCompanySearch(): Promise<
-        BreezyCompanySearchOperation['output']
+        inferCommandOutput<BreezyOrganizationSearchCommand>
       > {
-        return client.invoke(BreezyOperationName.COMPANY_SEARCH, {
+        return client.invoke(BREEZY_COMMAND_NAME.HR_ORGANIZATION_SEARCH, {
           breadId: USER_ID,
+          params: null,
           pagination: { type: 'DISABLED' },
         });
       }
@@ -103,7 +122,7 @@ describe('Breezy', () => {
           Promise.resolve({
             status: 200,
             data: COMPANIES_SEARCH_RESPONSE_MOCK,
-          })
+          }),
         );
       });
 
@@ -118,14 +137,15 @@ describe('Breezy', () => {
 
       it(`should return raw payload`, async () => {
         const result = await invokeCompanySearch();
-        expect(result.rawPayload).toEqual({
-          success: true,
-          data: COMPANIES_SEARCH_RESPONSE_MOCK,
-        });
+
+        if (!result.success) throw new Error('No success');
+
+        expect(result.rawPayload).toEqual(COMPANIES_SEARCH_RESPONSE_MOCK);
       });
 
       it(`should return schema payload`, async () => {
         const result = await invokeCompanySearch();
+        if (!result.success) throw new Error('No success');
         expect(result.payload).toEqual([
           {
             '@type': 'Organization',
