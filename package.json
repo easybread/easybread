@@ -76,7 +76,7 @@
     "@nx/workspace": "20.8.0",
     "axios": "^1.8.4",
     "clsx": "^2.1.1",
-    "jose": "^5.9.6",
+    "jose": "^6.0.10",
     "jsonc-eslint-parser": "^2.4.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
