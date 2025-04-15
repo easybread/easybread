@@ -3,7 +3,7 @@ export type {
   RocketChatUsersList,
 } from './lib/interfaces';
 
-export {
+export type {
   RocketChatUsersByIdCommand,
   RocketChatUsersSearchCommand,
 } from './lib/commands';
