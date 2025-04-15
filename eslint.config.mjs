@@ -4,33 +4,12 @@ import tailwind from 'eslint-plugin-tailwindcss';
 
 export default [
   {
-    ignores: ['**/dist', "**/.docusaurus"],
+    ignores: ['**/dist', '**/.docusaurus'],
   },
   {
     files: ['**/*.json'],
     // Override or add rules here
     rules: {},
-    languageOptions: {
-      parser: await import('jsonc-eslint-parser'),
-    },
-  },
-  {
-    files: ['package.json'],
-    rules: {
-      '@nx/dependency-checks': [
-        'error',
-        {
-          ignoredFiles: [
-            '{projectRoot}/rollup.config.{js,ts,mjs,mts}',
-            '{projectRoot}/**/__tests__/**',
-            '{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)',
-            '{projectRoot}/eslint.config.js',
-            '{projectRoot}/.eslintrc.json',
-            '{projectRoot}/vite.config.{js,ts,mjs,mts}',
-          ],
-        },
-      ],
-    },
     languageOptions: {
       parser: await import('jsonc-eslint-parser'),
     },
@@ -78,6 +57,28 @@ export default [
           varsIgnorePattern: '^_',
         },
       ],
+    },
+  },
+
+  {
+    files: ['**/package.json'],
+    rules: {
+      '@nx/dependency-checks': [
+        'error',
+        {
+          ignoredFiles: [
+            '{projectRoot}/rollup.config.{js,ts,mjs,mts}',
+            '{projectRoot}/**/__tests__/**',
+            '{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)',
+            '{projectRoot}/eslint.config.js',
+            '{projectRoot}/.eslintrc.json',
+            '{projectRoot}/vite.config.{js,ts,mjs,mts}',
+          ],
+        },
+      ],
+    },
+    languageOptions: {
+      parser: await import('jsonc-eslint-parser'),
     },
   },
 ];
