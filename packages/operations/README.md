@@ -1,3 +1,0 @@
-# EasyBREAD Operations
-
-> DEPRECATED

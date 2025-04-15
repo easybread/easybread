@@ -42,7 +42,6 @@
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/data-adapter": ["packages/data-adapter/src/index.ts"],
       "@easybread/data-mapper": ["packages/data-mapper/src/index.ts"],
-      "@easybread/operations": ["packages/operations/src/index.ts"],
       "@easybread/pagination-adapter": [
         "packages/pagination-adapter/src/index.ts"
       ],
