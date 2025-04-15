@@ -13,6 +13,6 @@ export function enumPickKeys<
     (res, k) => {
       return Object.assign(res, { [k]: enumObject[k] });
     },
-    {} as EnumPickKeys<E, K>,
+    {} as Simplify<EnumPickKeys<E, K>>,
   );
 }
