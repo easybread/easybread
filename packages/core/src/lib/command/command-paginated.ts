@@ -24,7 +24,7 @@ export type CommandPaginatedInput<
 export type CommandPaginatedOutputSuccessful<
   TPaginationType extends PaginationType,
   TOutputPayload extends AnySchema[],
-  TOutputRawPayload extends object[] | object,
+  TOutputRawPayload extends object[] | object | null,
 > = CommandBaseOutputSuccessful & {
   pagination: PaginationOutput<TPaginationType>;
   payload: TOutputPayload;
@@ -42,7 +42,7 @@ export type CommandPaginated<
   TName extends string,
   TInputParams extends AnySchema | null,
   TOutputPayload extends AnySchema[],
-  TOutputRawPayload extends object[] | object,
+  TOutputRawPayload extends object[] | object | null,
   TError = unknown,
 > = CommandBase<
   'PAGINATED',
