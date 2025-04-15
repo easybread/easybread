@@ -4,7 +4,7 @@ import tailwind from 'eslint-plugin-tailwindcss';
 
 export default [
   {
-    ignores: ['**/dist'],
+    ignores: ['**/dist', "**/.docusaurus"],
   },
   {
     files: ['**/*.json'],
