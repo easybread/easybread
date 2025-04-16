@@ -1,16 +1,14 @@
 import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
+import { BREEZY_COMMAND_NAME } from '@easybread/adapter-breezy';
 import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '@easybread/adapter-google-admin-directory';
-import { ADAPTER_NAME, type AdapterName, makeBreadId } from 'playground-common';
+import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import {
   clientBambooHrGet,
+  clientBreezyGet,
   clientGoogleAdminDirectoryGet,
 } from 'playground-easybread-clients';
 
-interface PeopleSearchParams {
-  userId: string;
-  adapter: AdapterName;
-  query?: string;
-}
+import type { PeopleSearchParams } from './peopleSearchParams';
 
 export async function peopleSearch({
   userId,
@@ -42,7 +40,19 @@ export async function peopleSearch({
       );
     }
 
+    case ADAPTER_NAME.BREEZY: {
+      const clientBreezy = await clientBreezyGet();
+      return await clientBreezy.invoke(
+        BREEZY_COMMAND_NAME.HR_JOB_APPLICANT_SEARCH,
+        {
+          breadId: makeBreadId(userId),
+          params: null,
+          pagination: { type: 'DISABLED' },
+        },
+      );
+    }
+
     default:
-      throw new Error(`Unknown adapter ${adapter}`);
+      throw new Error(`Unknown adapter ${adapter satisfies never}`);
   }
 }

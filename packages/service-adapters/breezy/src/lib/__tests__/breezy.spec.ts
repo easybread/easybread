@@ -129,7 +129,7 @@ describe('Breezy', () => {
       it(`should call companies api`, async () => {
         await invokeCompanySearch();
         expect(axiosMock.request).toHaveBeenCalledWith({
-          headers: { authorization: 'Bearer accessToken' },
+          headers: { authorization: 'accessToken' },
           method: 'GET',
           url: 'https://api.breezy.hr/v3/companies',
         });

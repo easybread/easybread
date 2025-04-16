@@ -22,6 +22,10 @@ export class EasyBreadClient<
   readonly stateAdapter: StateAdapter;
   readonly serviceAdapter: TAdapter;
 
+  get providerName(): string {
+    return this.serviceAdapter.provider;
+  }
+
   /**
    * @param stateAdapter state adapter to use for persistence (save tokens & etc.)
    * @param serviceAdapter a "plugin" service adapter.

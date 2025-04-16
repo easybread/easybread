@@ -19,7 +19,7 @@ export async function peopleSearchAction({
 
   if (!authStatus.authorized) return redirect('/login');
 
-  return await peopleSearch({
+  const result = await peopleSearch({
     userId: authStatus.data.userId,
     query,
     adapter,
@@ -28,4 +28,16 @@ export async function peopleSearchAction({
     revalidatePath('/people');
     throw error;
   });
+
+  if (!result.success) {
+    return {
+      success: false,
+      error: result.error,
+    } as const;
+  }
+
+  return {
+    success: true,
+    payload: result.payload,
+  } as const;
 }

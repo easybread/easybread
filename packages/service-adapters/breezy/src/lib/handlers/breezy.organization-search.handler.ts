@@ -4,7 +4,8 @@ import { BreezyAuthStrategy } from '../breezy.auth-strategy';
 import { BREEZY_COMMAND_NAME } from '../breezy.command-name';
 import { type BreezyOrganizationSearchCommand } from '../commands';
 import { breezyCompanyAdapter } from '../data-adapters';
-import { BreezyCompany } from '../interfaces';
+
+import { companyList } from './lib/company-list';
 
 export const BreezyOrganizationSearchHandler: CommandHandler<
   BreezyOrganizationSearchCommand,
@@ -13,17 +14,14 @@ export const BreezyOrganizationSearchHandler: CommandHandler<
   name: BREEZY_COMMAND_NAME.HR_ORGANIZATION_SEARCH,
 
   async handle(input, context) {
-    const result = await context.httpRequest<BreezyCompany[]>({
-      method: 'GET',
-      url: 'https://api.breezy.hr/v3/companies',
-    });
+    const companies = await companyList(context);
 
     return {
       breadId: input.breadId,
       success: true,
       pagination: { type: 'DISABLED' },
-      payload: result.data.map(breezyCompanyAdapter.toInternal),
-      rawPayload: result.data,
+      payload: companies.map(breezyCompanyAdapter.toInternal),
+      rawPayload: companies,
     };
   },
 };

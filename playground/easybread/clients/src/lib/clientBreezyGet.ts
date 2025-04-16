@@ -19,6 +19,10 @@ export async function clientBreezyGet() {
     const { breadId } = event.payload;
     const { userId } = parseBreadId(breadId);
 
+    console.log(
+      `authentication lost at ${client.providerName} for user ${userId}`,
+    );
+
     await adapterCollection().deleteOne({
       userId,
       slug: ADAPTER_NAME.BREEZY,

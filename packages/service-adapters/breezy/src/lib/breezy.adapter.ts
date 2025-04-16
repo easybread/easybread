@@ -5,11 +5,13 @@ import { BREEZY_PROVIDER_NAME } from './breezy.constants';
 import {
   BreezyAuthBasicSetHandler,
   BreezyOrganizationSearchHandler,
+  breezyJobApplicantSearchHandler,
 } from './handlers';
 
 const HANDLER_MAP = {
   [BreezyOrganizationSearchHandler.name]: BreezyOrganizationSearchHandler,
   [BreezyAuthBasicSetHandler.name]: BreezyAuthBasicSetHandler,
+  [breezyJobApplicantSearchHandler.name]: breezyJobApplicantSearchHandler,
 } as const;
 
 export class BreezyAdapter extends ServiceAdapter<

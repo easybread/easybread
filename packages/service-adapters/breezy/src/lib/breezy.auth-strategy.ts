@@ -35,6 +35,6 @@ export class BreezyAuthStrategy extends AuthStrategy<BreezyAuthStateData> {
     requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     const { accessToken } = await this.readAuthData(breadId);
-    return this.addAuthorizationHeader(requestConfig, `Bearer ${accessToken}`);
+    return this.addAuthorizationHeader(requestConfig, accessToken);
   }
 }

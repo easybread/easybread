@@ -10,3 +10,4 @@ export { adapterBambooHrOidcStart } from './lib/adapterBambooHrOidcStart';
 export { adapterBambooHrOidcComplete } from './lib/adapterBambooHrOidcComplete';
 export { adapterBambooHrDisconnect } from './lib/adapterBambooHrDisconnect';
 export { adapterBreezyConnect } from './lib/adapterBreezyConnect';
+export { adapterBreezyDisconnect } from './lib/adapterBreezyDisconnect';

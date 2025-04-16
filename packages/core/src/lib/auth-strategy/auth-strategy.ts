@@ -39,7 +39,10 @@ export abstract class AuthStrategy<
       this.createAuthDataStateKey(breadId),
     );
 
-    if (!authData) throw new NoAuthDataException(breadId);
+    if (!authData) {
+      console.log('No Auth Data', this.createAuthDataStateKey(breadId));
+      throw new NoAuthDataException(breadId);
+    }
 
     return authData;
   }

@@ -30,8 +30,9 @@ export * from './lib/auth/auth-start-oidc-request.schema';
 export * from './lib/auth/auth-start-oidc-response.schema';
 export * from './lib/auth/auth-any.schema';
 
-export * from './lib/any.schema';
+export type { AnySchema } from './lib/any.schema';
 
-export * from './lib/util/schema-pick';
+export type { SchemaPick } from './lib/util/schema-pick';
+export type { CompositeSchema } from './lib/util/composite.schema';
 
 export const INDEX = 'module is types only' as const;

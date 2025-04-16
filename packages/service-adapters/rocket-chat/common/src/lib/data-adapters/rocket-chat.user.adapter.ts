@@ -10,7 +10,7 @@ export const rocketChatUserAdapter = breadDataAdapter<
 >({
   toExternal: {
     _id: 'identifier',
-    language: 'knowsLanguage',
+    language: _ => _.knowsLanguage,
     name: 'name',
     username: 'additionalName',
     active: NO_MAP,

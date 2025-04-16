@@ -70,7 +70,7 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
         <p>No adapters available. Please connect one.</p>
 
         <Link
-          className={'text-md font-bold text-blue-600 hover:text-blue-400'}
+          className={'font-bold text-blue-600 hover:text-blue-400'}
           href={'/adapters'}
         >
           Go to Adapters
@@ -94,6 +94,7 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
           autoFocus
           disabled={state === 'loading'}
           type="text"
+          name="query"
           value={query}
           onChange={e => setQuery(e.target.value)}
         />
