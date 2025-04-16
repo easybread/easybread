@@ -1,20 +1,26 @@
+/// <reference lib="es2022.error" />
 export class BreadException extends Error {
-  constructor(message: string) {
-    super(message);
+  public readonly timestamp = new Date().toISOString();
+
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+
+    this.name = new.target.name;
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 
   toJSON(): object {
-    return {
-      ...this.valueOf(),
-      name: this.constructor.name,
-      message: this.message,
-    };
+    return this.toObject();
   }
 
   toObject(): object {
     return {
       ...this.valueOf(),
-      name: this.constructor.name,
+      timestamp: this.timestamp,
+      name: this.name,
       message: this.message,
     };
   }

@@ -1,0 +1,12 @@
+{
+  "name": "@easybread/commands",
+  "version": "0.0.1",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@easybread/common": "0.0.1"
+  }
+}

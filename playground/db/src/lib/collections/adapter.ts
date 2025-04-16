@@ -21,7 +21,15 @@ export type GoogleAdminDirectoryAdapter = AdapterBase & {
   slug: typeof ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY;
 };
 
-export type Adapter = BambooHRAdapter | GoogleAdminDirectoryAdapter;
+export type BreezyAdapter = AdapterBase & {
+  slug: typeof ADAPTER_NAME.BREEZY;
+  email: string;
+};
+
+export type Adapter =
+  | BambooHRAdapter
+  | GoogleAdminDirectoryAdapter
+  | BreezyAdapter;
 
 export const adapterCollection = () =>
   playgroundDb().collection<Adapter>('adapters');
@@ -36,4 +44,8 @@ export function isGoogleAdminDirectoryAdapter(
   adapter: Adapter,
 ): adapter is GoogleAdminDirectoryAdapter {
   return adapter.slug === ADAPTER_NAME.GOOGLE_ADMIN_DIRECTORY;
+}
+
+export function isBreezyAdapter(adapter: Adapter): adapter is BreezyAdapter {
+  return adapter.slug === ADAPTER_NAME.BREEZY;
 }

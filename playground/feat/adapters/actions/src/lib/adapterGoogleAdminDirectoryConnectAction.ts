@@ -9,7 +9,9 @@ export async function adapterGoogleAdminDirectoryConnectAction() {
 
   if (!authStatus.authorized) return redirect(`/login`);
 
-  const { authUri } = await adapterGoogleAuthStart(authStatus.data.userId);
+  const { authenticationUrl } = await adapterGoogleAuthStart(
+    authStatus.data.userId,
+  );
 
-  redirect(authUri);
+  redirect(authenticationUrl);
 }

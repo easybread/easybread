@@ -1,8 +1,8 @@
 export * from './lib/interfaces';
-export * from './lib/operations';
-export * from './lib/google-admin-directory.constants';
+export * from './lib/commands';
 
 export { GoogleAdminDirectoryAdapter } from './lib/google-admin-directory.adapter';
 export { GoogleAdminDirectoryAuthStrategy } from './lib/google-admin-directory.auth-strategy';
-export type { GoogleAdminDirectoryOperation } from './lib/google-admin-directory.operation';
-export { GoogleAdminDirectoryOperationName } from './lib/google-admin-directory.operation-name';
+
+export { GOOGLE_ADMIN_DIRECTORY_PROVIDER_NAME } from './lib/google-admin-directory.constants';
+export { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from './lib/google-admin-directory.command-name';

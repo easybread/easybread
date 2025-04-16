@@ -20,7 +20,7 @@ export function Button(props: ButtonProps) {
   return (
     <button
       className={clsx(
-        'font-semibold shadow transition-colors duration-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2',
+        'font-semibold shadow transition-colors duration-200 hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2',
         {
           'flex items-center justify-center': flex,
 

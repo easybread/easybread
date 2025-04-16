@@ -1,4 +1,4 @@
-import { BreadStateAdapter } from '@easybread/core';
+import { StateAdapter } from '@easybread/core';
 import { Db, MongoClient, ObjectId } from 'mongodb';
 
 import { StateAdapterMongo } from '../state-adapter.mongo';
@@ -43,7 +43,7 @@ afterEach(() => {
 describe('static fromMongoClient()', () => {
   it(`should create instance`, async () => {
     adapterMongo = await StateAdapterMongo.fromMongoClient(client);
-    expect(adapterMongo).toBeInstanceOf(BreadStateAdapter);
+    expect(adapterMongo).toBeInstanceOf(StateAdapter);
     expect(adapterMongo).toBeInstanceOf(StateAdapterMongo);
   });
 
@@ -67,7 +67,7 @@ describe('static fromConnectionUrl', () => {
   it(`should creating instance`, async () => {
     adapterMongo = await StateAdapterMongo.fromConnectionUrl(url, {});
     expect(adapterMongo).toBeInstanceOf(StateAdapterMongo);
-    expect(adapterMongo).toBeInstanceOf(BreadStateAdapter);
+    expect(adapterMongo).toBeInstanceOf(StateAdapter);
   });
 
   it(`should create index`, async () => {

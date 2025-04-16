@@ -11,8 +11,8 @@ export type KeysByValueType<
   TObj extends Record<string | symbol, unknown>,
   TValueType,
 > = {
-  [K in keyof TObj]: TObj[K] extends TValueType
-    ? IsLiteral<TObj[K]> extends true
+  [K in keyof TObj]: TObj[K] & {} extends TValueType & {}
+    ? IsLiteral<TObj[K] & {}> extends true
       ? never
       : K
     : never;

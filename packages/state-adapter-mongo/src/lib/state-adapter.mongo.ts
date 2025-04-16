@@ -1,4 +1,4 @@
-import { BreadStateAdapter, NotFoundException } from '@easybread/core';
+import { NotFoundException, StateAdapter } from '@easybread/core';
 import { Collection, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
 
 interface MongoDBModel<T> {
@@ -18,7 +18,7 @@ interface FromMongoClientOptions {
   createIndex?: boolean;
 }
 
-export class StateAdapterMongo extends BreadStateAdapter {
+export class StateAdapterMongo extends StateAdapter {
   static readonly DEFAULT_COLLECTION_NAME = 'easybread';
   static readonly DEFAULT_CLIENT_OPTIONS: MongoClientOptions = {};
 

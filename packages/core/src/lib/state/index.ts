@@ -1,1 +1,1 @@
-export { BreadStateAdapter } from './bread-state-adapter';
+export { StateAdapter } from './state-adapter';

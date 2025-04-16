@@ -4,24 +4,21 @@ import {
   rocketChatPaginationAdapter,
   rocketChatUserAdapter,
 } from '@easybread/adapter-rocket-chat-common';
-import {
-  BreadOperationHandler,
-  createSuccessfulCollectionOutputWithRawDataAndPayload,
-} from '@easybread/core';
+import { type CommandHandler } from '@easybread/core';
 import { resolve } from 'url';
 
+import { RocketChatUsersSearchCommand } from '../commands';
 import { RocketChatUsersList } from '../interfaces';
-import { RocketChatUsersSearchOperation } from '../operations';
-import { RocketChatUsersOperationName } from '../rocket-chat-users.operation-name';
+import { ROCKET_CHAT_USERS_COMMAND_NAME } from '../rocket-chat-users.command-name';
 
-export const RocketChatUsersSearchHandler: BreadOperationHandler<
-  RocketChatUsersSearchOperation,
+export const RocketChatUsersSearchHandler: CommandHandler<
+  RocketChatUsersSearchCommand,
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions
 > = {
-  name: RocketChatUsersOperationName.SEARCH,
+  name: ROCKET_CHAT_USERS_COMMAND_NAME.BASIC_USER_SEARCH,
   async handle(input, context, options) {
-    const { name, pagination } = input;
+    const { pagination } = input;
     const { serverUrl } = options;
 
     const result = await context.httpRequest<RocketChatUsersList>({
@@ -32,11 +29,12 @@ export const RocketChatUsersSearchHandler: BreadOperationHandler<
 
     if (!result.data.success) throw new Error(JSON.stringify(result.data));
 
-    return createSuccessfulCollectionOutputWithRawDataAndPayload(
-      name,
-      result.data,
-      result.data.users.map(user => rocketChatUserAdapter.toInternal(user)),
-      rocketChatPaginationAdapter.toInternalData(result.data),
-    );
+    return {
+      success: true,
+      breadId: input.breadId,
+      payload: result.data.users.map(rocketChatUserAdapter.toInternal),
+      pagination: rocketChatPaginationAdapter.toInternalData(result.data),
+      rawPayload: result.data,
+    };
   },
 };

@@ -1,49 +1,48 @@
-import {
-  BreadOperationHandler,
-  createSuccessfulCollectionOutputWithRawDataAndPayload,
-} from '@easybread/core';
+import type { CommandHandler } from '@easybread/core';
 
+import type { GoogleAdminDirectoryUserSearchCommand } from '../commands';
 import {
   googleAdminDirectoryPaginationAdapter,
   googleAdminDirectoryUserAdapter,
 } from '../data-adapters';
-import { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
-import { GoogleAdminDirectoryOperationName } from '../google-admin-directory.operation-name';
-import { GoogleAdminDirectoryUsersList } from '../interfaces';
-import { GoogleAdminDirectoryUsersSearchOperation } from '../operations';
+import type { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
+import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '../google-admin-directory.command-name';
+import type { GoogleAdminDirectoryUsersList } from '../interfaces';
 
-export const GoogleAdminDirectoryUsersSearchHandler: BreadOperationHandler<
-  GoogleAdminDirectoryUsersSearchOperation,
+export const GoogleAdminDirectoryUsersSearchHandler: CommandHandler<
+  GoogleAdminDirectoryUserSearchCommand,
   GoogleAdminDirectoryAuthStrategy
 > = {
+  name: GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_SEARCH,
   async handle(input, context) {
-    const { name, params, pagination } = input;
+    const { breadId, params, pagination } = input;
     const { query } = params;
+    const { maxResults = 300, pageToken } =
+      googleAdminDirectoryPaginationAdapter.toExternalParams(pagination);
 
     const response = await context.httpRequest<GoogleAdminDirectoryUsersList>({
       method: 'GET',
       url: 'https://www.googleapis.com/admin/directory/v1/users',
       params: {
         customer: 'my_customer',
-        // TODO: think about the best value.
-        maxResults: 300,
-        // TODO: implement pagination handling
-        // pageToken: 'token',
         // See https://developers.google.com/admin-sdk/directory/v1/guides/search-users
         query,
-        ...googleAdminDirectoryPaginationAdapter.toExternalParams(pagination),
+        maxResults,
+        pageToken,
       },
     });
 
-    return createSuccessfulCollectionOutputWithRawDataAndPayload(
-      name,
-      response.data,
-      (response.data.users ?? []).map(
+    return {
+      success: true,
+      breadId,
+      payload: (response.data.users ?? []).map(
         googleAdminDirectoryUserAdapter.toInternal,
       ),
-      googleAdminDirectoryPaginationAdapter.toInternalData(response.data),
-    );
+      pagination: googleAdminDirectoryPaginationAdapter.toInternalData({
+        ...response.data,
+        currentPageToken: pageToken,
+      }),
+      rawPayload: response.data,
+    };
   },
-
-  name: GoogleAdminDirectoryOperationName.USERS_SEARCH,
 };

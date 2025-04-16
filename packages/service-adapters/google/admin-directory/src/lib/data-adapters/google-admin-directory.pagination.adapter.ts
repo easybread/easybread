@@ -1,7 +1,4 @@
-import {
-  BreadOperationInputPagination,
-  BreadOperationOutputPagination,
-} from '@easybread/core';
+import { type PaginationInput, type PaginationOutput } from '@easybread/core';
 import { breadPaginationAdapter } from '@easybread/pagination-adapter';
 
 import {
@@ -10,20 +7,25 @@ import {
 } from '../interfaces';
 
 export const googleAdminDirectoryPaginationAdapter = breadPaginationAdapter<
-  BreadOperationInputPagination<'PREV_NEXT'>,
-  BreadOperationOutputPagination<'PREV_NEXT'>,
+  PaginationInput<'CURSOR'>,
+  PaginationOutput<'CURSOR'>,
   GoogleAdminDirectoryUsersListPaginationParams,
-  GoogleAdminDirectoryUsersList
+  GoogleAdminDirectoryUsersList & {
+    prevPageToken?: string;
+    currentPageToken: string;
+  }
 >({
   toExternalParams: {
     pageToken: _ => {
-      if (!_.page) return '';
-      return _.page.toString();
+      return _.cursor?.toString() ?? '';
     },
+    maxResults: 'limit',
   },
 
   toInternalData: {
-    type: () => 'PREV_NEXT',
-    next: 'nextPageToken',
+    type: () => 'CURSOR',
+    cursor: 'currentPageToken',
+    prevCursor: 'NO_MAP',
+    nextCursor: _ => _.nextPageToken ?? null,
   },
 });

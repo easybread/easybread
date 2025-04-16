@@ -37,11 +37,11 @@ export async function bambooHrConnectAction(formData: FormData) {
   if (mode === 'OIDC') {
     if (!companyName) return;
 
-    const { authUri } = await adapterBambooHrOidcStart({
+    const { authenticationUrl } = await adapterBambooHrOidcStart({
       companyName,
       userId: authData.data.userId,
     });
 
-    return redirect(authUri);
+    return redirect(authenticationUrl);
   }
 }

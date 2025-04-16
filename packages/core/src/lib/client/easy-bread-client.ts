@@ -1,120 +1,112 @@
-import type { DistributedOmit } from '@easybread/common';
+import type { Simplify } from '@easybread/common';
 
-import { BreadAuthStrategy } from '../auth-strategy';
+import { CommandContext } from '../command-context';
 import { BreadEventBus } from '../event-bus/bread-event.bus';
-import { BreadOperationContext } from '../operation';
-import {
-  BreadServiceAdapter,
-  type InferServiceAdapterCollectionOperationByName,
-  type InferServiceAdapterCollectionOperationName,
-  type InferServiceAdapterOperation,
-  type InferServiceAdapterOperationByName,
-  type InferServiceAdapterOperationName,
+import type {
+  ServiceAdapterAny,
+  inferServiceAdapterAuth,
+  inferServiceAdapterCommandInputByName,
+  inferServiceAdapterCommandName,
+  inferServiceAdapterCommandOutputByName,
 } from '../service-adapter';
-import { BreadStateAdapter } from '../state';
+import { StateAdapter } from '../state';
 
-import { AllPagesGenerator } from './all-pages-generator';
 import type { EasyBreadClientEvent } from './events/easy-bread-client.event';
 
 /**
  * Main library class.
  */
 export class EasyBreadClient<
-  TServiceAdapter extends BreadServiceAdapter<any, TAuthAdapter, any>,
-  TAuthAdapter extends BreadAuthStrategy<object>,
-  TOperation extends
-    InferServiceAdapterOperation<TServiceAdapter> = InferServiceAdapterOperation<TServiceAdapter>,
+  TAdapter extends ServiceAdapterAny,
 > extends BreadEventBus<EasyBreadClientEvent> {
-  allPagesGenerator: AllPagesGenerator<TServiceAdapter>;
+  readonly stateAdapter: StateAdapter;
+  readonly serviceAdapter: TAdapter;
+
+  get providerName(): string {
+    return this.serviceAdapter.provider;
+  }
 
   /**
    * @param stateAdapter state adapter to use for persistence (save tokens & etc.)
    * @param serviceAdapter a "plugin" service adapter.
    *                       Provides logic for requesting and transforming data
-   * @param authStrategy an Auth strategy to use
    */
-  constructor(
-    private readonly stateAdapter: BreadStateAdapter,
-    private readonly serviceAdapter: TServiceAdapter,
-    private readonly authStrategy: TAuthAdapter,
-  ) {
+  constructor(stateAdapter: StateAdapter, serviceAdapter: TAdapter) {
     super();
+    this.serviceAdapter = serviceAdapter;
+    this.stateAdapter = stateAdapter;
 
-    this.authStrategy.forwardEvents(this);
-
-    this.allPagesGenerator = new AllPagesGenerator<TServiceAdapter>(
-      (name, data) => this.invoke(name, data),
-    );
+    this.serviceAdapter.auth.forwardEvents(this);
   }
 
-  async invoke<TName extends InferServiceAdapterOperationName<TServiceAdapter>>(
+  // TODO: figure out what variant is better
+  // async invoke<
+  //   TName extends inferServiceAdapterCommandName<TAdapter>,
+  //   TCmd extends inferServiceAdapterCommandByName<
+  //     TAdapter,
+  //     TName
+  //   > = inferServiceAdapterCommandByName<TAdapter, TName>,
+  // >(
+  //   name: TName,
+  //   input: Simplify<inferCommandInput<TCmd>>,
+  // ): Promise<Simplify<inferCommandOutput<TCmd>>> {
+  //   const context = this.createContext(input.breadId);
+  //
+  //   return this.preProcess(name, input, context)
+  //     .then(input => this.process(name, input, context))
+  //     .then(output => this.postProcess(name, output, context));
+  // }
+
+  async invoke<TName extends inferServiceAdapterCommandName<TAdapter>>(
     name: TName,
-    data: DistributedOmit<
-      InferServiceAdapterOperationByName<TServiceAdapter, TName>['input'],
-      'name'
-    >,
+    input: Simplify<inferServiceAdapterCommandInputByName<TAdapter, TName>>,
   ): Promise<
-    InferServiceAdapterOperationByName<TServiceAdapter, TName>['output']
+    Simplify<inferServiceAdapterCommandOutputByName<TAdapter, TName>>
   > {
-    const input: TOperation['input'] = { name, ...data };
+    const context = this.createContext(input.breadId);
 
-    const context = this.createContext(input['breadId']);
-
-    return this.preProcess(input, context)
-      .then(input => this.process(input, context))
-      .then(output => this.postProcess(output, context));
-  }
-
-  allPages<
-    TName extends InferServiceAdapterCollectionOperationName<TServiceAdapter>,
-  >(
-    name: TName,
-    data: DistributedOmit<
-      InferServiceAdapterCollectionOperationByName<
-        TServiceAdapter,
-        TName
-      >['input'],
-      'name'
-    >,
-  ) {
-    return this.allPagesGenerator.generate<
-      InferServiceAdapterCollectionOperationByName<TServiceAdapter, TName>
-    >(name, data);
+    return this.preProcess(name, input, context)
+      .then(input => this.process(name, input, context))
+      .then(output => this.postProcess(name, output, context));
   }
 
   async unAuthenticate(breadId: string): Promise<void> {
-    await this.authStrategy.unAuthenticate(breadId);
+    await this.serviceAdapter.auth.unAuthenticate(breadId);
   }
 
-  private createContext(breadId: string): BreadOperationContext<TAuthAdapter> {
-    return new BreadOperationContext({
-      state: this.stateAdapter,
-      auth: this.authStrategy,
+  private createContext(
+    breadId: string,
+  ): CommandContext<inferServiceAdapterAuth<TAdapter>> {
+    return new CommandContext({
       breadId,
+      provider: this.serviceAdapter.provider,
+      state: this.stateAdapter,
+      auth: this.serviceAdapter.auth,
     });
   }
 
-  private async process<
-    O extends InferServiceAdapterOperation<TServiceAdapter>,
-  >(
-    input: O['input'],
-    context: BreadOperationContext<TAuthAdapter>,
-  ): Promise<O['output']> {
-    return await this.serviceAdapter.processOperation(input, context);
+  private async process<TName extends inferServiceAdapterCommandName<TAdapter>>(
+    name: TName,
+    input: inferServiceAdapterCommandInputByName<TAdapter, TName>,
+    context: CommandContext<inferServiceAdapterAuth<TAdapter>>,
+  ): Promise<inferServiceAdapterCommandOutputByName<TAdapter, TName>> {
+    return await this.serviceAdapter.processCommand(name, input, context);
   }
 
-  private async preProcess<I extends TOperation['input']>(
-    input: I,
-    _context: BreadOperationContext<TAuthAdapter>,
-  ): Promise<I> {
+  private async preProcess<TName, TInput, TContext>(
+    _name: TName,
+    input: TInput,
+    _context: TContext,
+  ): Promise<TInput> {
     return input;
   }
 
-  private async postProcess<O extends TOperation['output']>(
-    output: O,
-    _context: BreadOperationContext<TAuthAdapter>,
-  ): Promise<O> {
-    // TODO: remove this later hack.
+  private async postProcess<TName, TOutput, TContext>(
+    _name: TName,
+    output: TOutput,
+    _context: TContext,
+  ): Promise<Simplify<TOutput>> {
+    // TODO: remove this hack.
     //   we should instead support optional serialization/deserialization
     return JSON.parse(JSON.stringify(output));
   }

@@ -2,14 +2,14 @@ import {
   BambooHrAdapter,
   BambooHrAuthStrategy,
 } from '@easybread/adapter-bamboo-hr';
-import { BreadAuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
+import { AuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
 import { revalidatePath } from 'next/cache';
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import { stateAdapterMongoGet } from 'playground-easybread-state';
 import { load } from 'ts-dotenv';
 
-let client: EasyBreadClient<BambooHrAdapter, BambooHrAuthStrategy>;
+let client: EasyBreadClient<BambooHrAdapter>;
 
 export async function clientBambooHrGet() {
   if (client) return client;
@@ -26,7 +26,6 @@ export async function clientBambooHrGet() {
     BAMBOO_HR_OID_APPLICATION_API_KEY: String,
   });
 
-  const adapter = new BambooHrAdapter();
   const stateAdapter = await stateAdapterMongoGet();
   const authStrategy = new BambooHrAuthStrategy(stateAdapter, {
     oidcOptions: {
@@ -36,10 +35,11 @@ export async function clientBambooHrGet() {
       applicationKey: BAMBOO_HR_OID_APPLICATION_API_KEY,
     },
   });
+  const adapter = new BambooHrAdapter(authStrategy);
 
-  client = new EasyBreadClient(stateAdapter, adapter, authStrategy);
+  client = new EasyBreadClient(stateAdapter, adapter);
 
-  client.subscribe(BreadAuthenticationLostEvent.eventName, async event => {
+  client.subscribe(AuthenticationLostEvent.eventName, async event => {
     const { breadId } = event.payload;
     const { userId } = parseBreadId(breadId);
 

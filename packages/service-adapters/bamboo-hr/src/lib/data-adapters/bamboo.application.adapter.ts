@@ -23,7 +23,7 @@ export const bambooApplicationAdapter = breadDataAdapter<
   toInternal: {
     '@type': () => 'ApplyAction',
     identifier: _ => _.id.toString(),
-    starTime: 'appliedDate',
+    startTime: 'appliedDate',
     result: _ => {
       if (_.rating === null) return NO_MAP;
       return {

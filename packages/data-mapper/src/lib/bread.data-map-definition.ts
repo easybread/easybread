@@ -1,6 +1,7 @@
-import { IsLiteral, KeysByValueType } from '@easybread/common';
+import { IsLiteral, type KeysByValueType } from '@easybread/common';
 
 export const NO_MAP = 'NO_MAP' as const;
+
 export type BreadDataMapNoMapLiteral = typeof NO_MAP;
 /**
  * Value factory for producing a value of a certain type.
@@ -19,7 +20,7 @@ export type BreadValueFactory<I extends object, O> = (
  *
  * @template O output type
  */
-export type BreadLiteralFactory<O> = () => O;
+export type BreadLiteralFactory<I, O> = (input: I) => O;
 
 /**
  * Constraint for the input and output types of a BreadDataMapper.
@@ -43,21 +44,34 @@ export type BreadDataMapValueResolverDefinition<
   I extends BreadDataMapIOConstraint,
   O,
 > =
-  | (O extends Array<unknown> ? BreadValueFactory<I, O> : never)
-  // if the output[key] is an object, then map recursively.
-  | (O extends Record<string | symbol, unknown>
-      ? BreadDataMapDefinition<I, O> | BreadDataMapperClass<I, O>
+  // if the output[key] is an array, then a Factory Producing the array or no map
+  | (O extends Array<unknown>
+      ? BreadValueFactory<I, O> | BreadDataMapNoMapLiteral
       : never)
-  // if the output[key] is a literal type, then a Factory Producing the literal
+
+  // if the output[key] is an object, then map recursively, or no map
+  | (O extends Record<string | symbol, unknown>
+      ?
+          | BreadDataMapDefinition<I, O> // object to map input to output[key]
+          | BreadDataMapperClass<I, O> // class to map input to output[key]
+          | BreadDataMapNoMapLiteral // no map
+      : never)
+
+  // if the output[key] IS a literal type
   | (IsLiteral<O> extends true
-      ? // keys of input whose values have same type as the output[key]
-        BreadLiteralFactory<O>
-      :
-          | KeysByValueType<I, O>
-          // a function to create the output value from the input
-          | BreadValueFactory<I, O>
-          // BreadDataMapNoMapLiteral is a special case. It means that the property is not mapped.
-          | BreadDataMapNoMapLiteral);
+      ?
+          | BreadLiteralFactory<I, O> // fn in input -> expected literal
+          | BreadDataMapNoMapLiteral // no map
+      : never)
+
+  // if the output[key] IS NOT a literal type
+  | (IsLiteral<O> extends false
+      ?
+          | KeysByValueType<I, O> // input keys with values of same type as output[key]
+          | BreadValueFactory<I, O> // fn in input -> output[key]
+          | BreadDataMapNoMapLiteral // no map
+      : never);
+
 /**
  * Map definition for mapping data from one type to another.
  *
@@ -70,3 +84,22 @@ export type BreadDataMapDefinition<
 > = {
   [K in keyof O]: BreadDataMapValueResolverDefinition<I, O[K]>;
 };
+
+export type BreadDataMapDefinitionAny = BreadDataMapDefinition<
+  BreadDataMapIOConstraint,
+  BreadDataMapIOConstraint
+>;
+
+export type inferBreadDataMapDefinitionInput<
+  T extends BreadDataMapDefinitionAny,
+> =
+  T extends BreadDataMapDefinition<infer I, BreadDataMapIOConstraint>
+    ? I
+    : never;
+
+export type inferBreadDataMapDefinitionOutput<
+  T extends BreadDataMapDefinitionAny,
+> =
+  T extends BreadDataMapDefinition<BreadDataMapIOConstraint, infer O>
+    ? O
+    : never;

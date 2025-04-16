@@ -213,10 +213,10 @@ it(`should work with missing properties`, async () => {
 
 it(`should work with optional properties`, async () => {
   type Input = { a: string; b?: string; type: 'Input' };
-  type Output = { a: string; b?: string; __type: 'Output' };
+  type Output = { outputA: string; b?: string; __type: 'Output' };
 
   const mapper = BreadDataMapper.create<Input, Output>({
-    a: 'a',
+    outputA: 'a',
     b: 'b',
     __type: () => 'Output',
   });
@@ -228,8 +228,8 @@ it(`should work with optional properties`, async () => {
       type: 'Input',
     }),
   ).toEqual({
-    a: '1',
     b: '2',
+    outputA: '1',
     __type: 'Output',
   } satisfies Output);
 });

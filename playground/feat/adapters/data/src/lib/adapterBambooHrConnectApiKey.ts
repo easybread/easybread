@@ -1,4 +1,4 @@
-import { BreadOperationName } from '@easybread/operations';
+import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { type BambooHRAdapter, adapterCollection } from 'playground-db';
 import { clientBambooHrGet } from 'playground-easybread-clients';
@@ -17,15 +17,23 @@ export async function adapterBambooHrConnectApiKey({
   const clientBambooHr = await clientBambooHrGet();
 
   const output = await clientBambooHr.invoke(
-    BreadOperationName.SETUP_BASIC_AUTH,
+    BAMBOO_HR_COMMAND_NAME.AUTH_BASIC_SET,
     {
       breadId: makeBreadId(userId),
-      payload: { apiKey, companyName },
+      params: null,
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'CredentialBasic',
+        username: companyName,
+        password: apiKey,
+      },
     },
   );
 
-  if (!output.rawPayload.success) {
-    throw new Error('Bamboo HR Setup Basic Auth Failed');
+  if (!output.success) {
+    throw new Error('Bamboo HR Setup Basic Auth Failed', {
+      cause: output.error,
+    });
   }
 
   await adapterCollection().updateOne(

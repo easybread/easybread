@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@easybread/core": "0.0.1",
-    "@shelf/jest-mongodb": "^4.3.2",
+    "@shelf/jest-mongodb": "^5.1.0",
     "mongodb": "^6.10.0"
   },
   "main": "./index.cjs",

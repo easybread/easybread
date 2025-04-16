@@ -16,8 +16,8 @@ import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
   GoogleCommonOauth2AuthStrategy,
+  type GoogleCommonOauth2ConnectionAttemptStateData,
 } from '../..';
-import type { GoogleCommonOauth2ConnectionAttemptStateData } from '../interfaces/google-common.oauth2-connection-attempt.state-data.interface';
 
 type TestScopes =
   | 'https://www.google.com/m8/feeds/'
@@ -75,9 +75,7 @@ afterAll(() => {
 describe('createAuthUri()', () => {
   it(`should create correct uri`, async () => {
     const actual = await authStrategy.createAuthUri(BREAD_ID, {
-      includeGrantedScopes: true,
       loginHint: 'hint',
-      prompt: ['consent'],
       scope: [
         'https://www.google.com/m8/feeds/',
         'https://www.googleapis.com/auth/contacts.readonly',
@@ -97,8 +95,8 @@ describe('createAuthUri()', () => {
             '&include_granted_scopes=true' +
             '&alt=json' +
             '&state=[^&]+' +
-            '&login_hint=hint' +
-            '&prompt=consent',
+            '&prompt=consent' +
+            '&login_hint=hint',
         ),
       ),
     );
@@ -266,9 +264,7 @@ function setupRefreshTokenMock(): void {
 
 async function createAuthUrlAndGetAuthAttemptToken() {
   await authStrategy.createAuthUri(BREAD_ID, {
-    includeGrantedScopes: true,
     loginHint: 'hint',
-    prompt: ['consent'],
     scope: [
       'https://www.google.com/m8/feeds/',
       'https://www.googleapis.com/auth/contacts.readonly',

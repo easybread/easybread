@@ -2,6 +2,7 @@ import { ADAPTER_NAME, type AdapterName } from 'playground-common';
 import type { Adapter } from 'playground-db';
 
 import { AdapterConnectBambooHr } from './bambooHr/AdapterConnectBambooHr';
+import { AdapterConnectBreezy } from './breezy/AdapterConnectBreezy';
 import { AdapterConnectGoogleAdminDirectory } from './googleAdmin/AdapterConnectGoogleAdminDirectory';
 
 export type AdapterConnectProps = {
@@ -27,6 +28,8 @@ export async function AdapterConnect(props: AdapterConnectProps) {
           }
         />
       );
+    case ADAPTER_NAME.BREEZY:
+      return <AdapterConnectBreezy connectedAt={data?.connectedAt} />;
     default:
       return <div>Unknown adapter</div>;
   }

@@ -1,4 +1,4 @@
-import { BreadAuthStrategy, BreadStateAdapter } from '@easybread/core';
+import { AuthStrategy, StateAdapter } from '@easybread/core';
 import { AxiosRequestConfig } from 'axios';
 
 import { BREEZY_PROVIDER_NAME } from './breezy.constants';
@@ -8,8 +8,8 @@ import {
   BreezyAuthenticateResponse,
 } from './interfaces';
 
-export class BreezyAuthStrategy extends BreadAuthStrategy<BreezyAuthStateData> {
-  constructor(state: BreadStateAdapter) {
+export class BreezyAuthStrategy extends AuthStrategy<BreezyAuthStateData> {
+  constructor(state: StateAdapter) {
     super(state, BREEZY_PROVIDER_NAME);
   }
 
@@ -35,6 +35,6 @@ export class BreezyAuthStrategy extends BreadAuthStrategy<BreezyAuthStateData> {
     requestConfig: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig> {
     const { accessToken } = await this.readAuthData(breadId);
-    return this.addAuthorizationHeader(requestConfig, `Bearer ${accessToken}`);
+    return this.addAuthorizationHeader(requestConfig, accessToken);
   }
 }

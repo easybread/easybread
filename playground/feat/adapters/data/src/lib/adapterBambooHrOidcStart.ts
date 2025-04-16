@@ -1,4 +1,4 @@
-import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
+import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { type BambooHRAdapter, adapterCollection } from 'playground-db';
 import { clientBambooHrGet } from 'playground-easybread-clients';
@@ -32,18 +32,19 @@ export async function adapterBambooHrOidcStart(
   const clientBambooHr = await clientBambooHrGet();
 
   const output = await clientBambooHr.invoke(
-    BambooHrOperationName.OIDC_AUTH_START,
+    BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_START,
     {
       breadId: makeBreadId(userId),
-      payload: { companyName },
+      params: { '@type': 'Organization', name: companyName },
+      payload: null,
     },
   );
 
-  if (!output.rawPayload.success) {
+  if (!output.success) {
     throw new Error('Bamboo HR Setup Basic Auth Failed', {
-      cause: output.rawPayload.error,
+      cause: output.error,
     });
   }
 
-  return output.rawPayload.data;
+  return output.payload;
 }

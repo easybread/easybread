@@ -18,7 +18,7 @@ export async function AdapterListItem(props: AdapterListItemProps) {
     <div className={'flex flex-col rounded-lg bg-white p-4 shadow-md'}>
       <h2 className={'text-xl font-bold'}>{title}</h2>
 
-      <p className={'text-md mb-2 h-full'}>{description}</p>
+      <p className={'mb-2 h-full'}>{description}</p>
 
       <AdapterExtraInfo data={adapterData} />
 

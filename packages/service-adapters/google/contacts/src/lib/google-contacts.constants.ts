@@ -1,1 +1,1 @@
-export const GOOGLE_PROVIDER_NAME = 'google';
+export const GOOGLE_CONTACTS_PROVIDER_NAME = 'google/contacts';

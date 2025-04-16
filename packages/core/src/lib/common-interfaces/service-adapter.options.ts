@@ -1,0 +1,1 @@
+export type ServiceAdapterOptions = object;

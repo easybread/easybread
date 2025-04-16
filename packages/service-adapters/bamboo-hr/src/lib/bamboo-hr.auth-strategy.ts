@@ -1,7 +1,7 @@
 import {
-  BreadBasicAuthStrategy,
+  BasicAuthStrategy,
   BreadException,
-  BreadStateAdapter,
+  StateAdapter,
 } from '@easybread/core';
 
 import { BAMBOO_HR_PROVIDER_NAME } from './bamboo-hr.constants';
@@ -28,16 +28,13 @@ interface AuthenticateOidcParams {
   state: string;
 }
 
-export class BambooHrAuthStrategy extends BreadBasicAuthStrategy<
+export class BambooHrAuthStrategy extends BasicAuthStrategy<
   BambooAuthStateData,
   BambooOidcConnectionAttemptStateData
 > {
   private options: BambooHrAuthStrategyOptions;
 
-  constructor(
-    state: BreadStateAdapter,
-    options: BambooHrAuthStrategyOptions = {},
-  ) {
+  constructor(state: StateAdapter, options: BambooHrAuthStrategyOptions = {}) {
     super(state, BAMBOO_HR_PROVIDER_NAME);
 
     this.options = options;

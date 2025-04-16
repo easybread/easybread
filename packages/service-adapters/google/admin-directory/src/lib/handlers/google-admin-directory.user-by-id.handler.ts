@@ -1,24 +1,21 @@
-import {
-  BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload,
-} from '@easybread/core';
+import { type CommandHandler } from '@easybread/core';
 
+import { GoogleAdminDirectoryUserByIdCommand } from '../commands';
 import { googleAdminDirectoryUserAdapter } from '../data-adapters';
 import { GoogleAdminDirectoryAuthStrategy } from '../google-admin-directory.auth-strategy';
-import { GoogleAdminDirectoryOperationName } from '../google-admin-directory.operation-name';
+import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '../google-admin-directory.command-name';
 import { GoogleAdminDirectoryUser } from '../interfaces';
-import { GoogleAdminDirectoryUsersByIdOperation } from '../operations';
 
-export const GoogleAdminDirectoryUserByIdHandler: BreadOperationHandler<
-  GoogleAdminDirectoryUsersByIdOperation,
+export const GoogleAdminDirectoryUserByIdHandler: CommandHandler<
+  GoogleAdminDirectoryUserByIdCommand,
   GoogleAdminDirectoryAuthStrategy
 > = {
-  name: GoogleAdminDirectoryOperationName.USERS_BY_ID,
+  name: GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME.BASIC_USER_BY_ID,
 
   async handle(input, context) {
     const {
-      name,
       params: { identifier },
+      breadId,
     } = input;
 
     const result = await context.httpRequest<GoogleAdminDirectoryUser>({
@@ -26,10 +23,11 @@ export const GoogleAdminDirectoryUserByIdHandler: BreadOperationHandler<
       url: `https://www.googleapis.com/admin/directory/v1/users/${identifier}`,
     });
 
-    return createSuccessfulOutputWithRawDataAndPayload(
-      name,
-      result.data,
-      googleAdminDirectoryUserAdapter.toInternal(result.data),
-    );
+    return {
+      success: true,
+      breadId,
+      payload: googleAdminDirectoryUserAdapter.toInternal(result.data),
+      rawPayload: result.data,
+    };
   },
 };

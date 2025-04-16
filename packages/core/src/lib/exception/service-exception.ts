@@ -1,20 +1,37 @@
-import { AxiosError } from 'axios';
-
 import { BreadException } from './bread-exception';
 
-// TODO: improve and refactor
 export class ServiceException extends BreadException {
-  provider: string;
-  originalError?: Error | AxiosError;
+  static fromUnknown(provider: string, error: unknown): ServiceException {
+    if (this.isServiceException(error)) {
+      return error.provider === provider
+        ? error
+        : new ServiceException(provider, error.message, error);
+    }
 
-  constructor(provider: string, message: string, error?: Error | AxiosError) {
-    super(`${provider}: ${message}`);
+    if (typeof error === 'string') {
+      return new ServiceException(provider, error);
+    }
 
-    this.provider = provider;
-    this.originalError = error;
+    if (error instanceof Error) {
+      return new ServiceException(provider, error.message, error);
+    }
+
+    if (error) {
+      return new ServiceException(provider, `${error}`);
+    }
+
+    return new ServiceException(provider, 'Unknown error');
   }
 
-  static isServiceException(error: unknown): error is ServiceException {
-    return error instanceof ServiceException;
+  static isServiceException(value: unknown): value is ServiceException {
+    return value instanceof ServiceException;
+  }
+
+  readonly provider: string;
+
+  constructor(provider: string, message: string, error?: unknown) {
+    super(`${provider}: ${message}`, { cause: error });
+
+    this.provider = provider;
   }
 }

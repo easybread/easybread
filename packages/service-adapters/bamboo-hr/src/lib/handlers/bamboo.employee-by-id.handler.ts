@@ -1,19 +1,17 @@
-import {
-  BreadOperationHandler,
-  createSuccessfulOutputWithRawDataAndPayload,
-} from '@easybread/core';
-import { BreadOperationName } from '@easybread/operations';
+import { type CommandHandler } from '@easybread/core';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
-import type { BambooHrEmployeeByIdOperation } from '../bamboo-hr.operation';
+import { BAMBOO_HR_COMMAND_NAME } from '../bamboo-hr.command-name';
+import type { BambooEmployeeByIdCommand } from '../commands';
+import { BAMBOO_EMPLOYEE_FIELD_LIST } from '../constants/bamboo.employee-field-list';
 import { bambooEmployeeAdapter } from '../data-adapters';
 import { BambooEmployee } from '../interfaces';
 
-export const BambooEmployeeByIdHandler: BreadOperationHandler<
-  BambooHrEmployeeByIdOperation,
+export const BambooEmployeeByIdHandler: CommandHandler<
+  BambooEmployeeByIdCommand,
   BambooHrAuthStrategy
 > = {
-  name: BreadOperationName.EMPLOYEE_BY_ID,
+  name: BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_BY_ID,
   async handle(input, context) {
     const { breadId, params } = input;
 
@@ -27,35 +25,15 @@ export const BambooEmployeeByIdHandler: BreadOperationHandler<
         'Content-Type': 'application/json',
       },
       params: {
-        // TODO: come up with a good way to keep it consistent
-        //       with the BambooEmployee interface definition
-        fields: [
-          'canUploadPhoto',
-          'department',
-          'displayName',
-          'division',
-          'firstName',
-          'gender',
-          'jobTitle',
-          'lastName',
-          'linkedIn',
-          'location',
-          'mobilePhone',
-          'photoUploaded',
-          'photoUrl',
-          'preferredName',
-          'workEmail',
-          'workPhone',
-          'workPhoneExtension',
-          'skypeUsername',
-        ].join(','),
+        fields: BAMBOO_EMPLOYEE_FIELD_LIST.join(','),
       },
     });
 
-    return createSuccessfulOutputWithRawDataAndPayload(
-      BreadOperationName.EMPLOYEE_BY_ID,
-      response.data,
-      bambooEmployeeAdapter.toInternal(response.data),
-    );
+    return {
+      success: true,
+      breadId,
+      payload: bambooEmployeeAdapter.toInternal(response.data),
+      rawPayload: response.data,
+    };
   },
 };

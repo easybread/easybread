@@ -1,4 +1,4 @@
-import type { BreadAuthAttemptStateDataBase } from '@easybread/core';
+import type { AuthAttemptStateDataBase } from '@easybread/core';
 
 export type GoogleCommonOauth2ConnectionAttemptStateData =
-  BreadAuthAttemptStateDataBase;
+  AuthAttemptStateDataBase;

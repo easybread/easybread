@@ -1,4 +1,4 @@
-import { BambooHrOperationName } from '@easybread/adapter-bamboo-hr';
+import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
 import { redirect } from 'next/navigation';
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import {
@@ -31,15 +31,23 @@ export async function adapterBambooHrOidcComplete(
   const clientBambooHr = await clientBambooHrGet();
 
   const results = await clientBambooHr.invoke(
-    BambooHrOperationName.OIDC_AUTH_COMPLETE,
+    BAMBOO_HR_COMMAND_NAME.AUTH_OIDC_COMPLETE,
     {
       breadId: makeBreadId(userId),
-      payload: { code, state },
+      params: null,
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'CompleteOIDCRequest',
+        code,
+        state,
+      },
     },
   );
 
-  if (results.rawPayload.success === false) {
-    throw new Error('BAMBOO_HR_OIDC_COMPLETE_FAILED');
+  if (!results.success) {
+    throw new Error('BAMBOO_HR_OIDC_COMPLETE_FAILED', {
+      cause: results.error,
+    });
   }
 
   await adapterCollection().updateOne(
@@ -52,7 +60,7 @@ export async function adapterBambooHrOidcComplete(
     {
       $set: {
         connectedAt: new Date(),
-        companyName: results.rawPayload.data.companyName,
+        companyName: results.rawPayload.companyName,
       } satisfies Partial<BambooHRAdapter>,
 
       $setOnInsert: {

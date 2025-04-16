@@ -5,7 +5,6 @@ export * from './bamboo.basic-auth-payload.interface';
 export * from './bamboo.application.interface';
 export * from './bamboo.application-list.interface';
 export * from './bamboo.application-list.query.interface';
-export * from './bamboo.oidc-auth.state-data.interface';
 export * from './bamboo.oidc-token-payload.interface';
 export * from './bamboo.oidc-login-payload.interface';
 export * from './bamboo.oidc-connection-attempt.state-data.interface';

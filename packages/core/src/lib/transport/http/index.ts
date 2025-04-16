@@ -1,2 +1,2 @@
-export * from './bread-http.transport';
-export * from './bread-http.transport-error';
+export * from './http.transport';
+export * from './http.transport-error';

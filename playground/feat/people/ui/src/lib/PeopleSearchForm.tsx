@@ -25,6 +25,10 @@ const ADAPTERS_SELECT_OPTIONS: SelectOption<AdapterName>[] = [
     value: ADAPTER_NAME.BAMBOO_HR,
     label: 'Bamboo HR',
   },
+  {
+    value: ADAPTER_NAME.BREEZY,
+    label: 'Breezy',
+  },
 ];
 
 export function PeopleSearchForm(props: PeopleSearchFormProps) {
@@ -50,15 +54,11 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
     setState('loading');
 
     peopleSearchAction({ query, adapter }).then(r => {
-      if (r.rawPayload.success) {
+      if (r.success) {
         onData(r.payload);
       } else {
-        console.error(r.rawPayload.error);
-        setError(
-          typeof r.rawPayload.error === 'string'
-            ? r.rawPayload.error
-            : (r.rawPayload.error as { message: string }).message,
-        );
+        console.error(r.error);
+        setError(r.error.message);
       }
       setState('idle');
     });
@@ -70,7 +70,7 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
         <p>No adapters available. Please connect one.</p>
 
         <Link
-          className={'text-md font-bold text-blue-600 hover:text-blue-400'}
+          className={'font-bold text-blue-600 hover:text-blue-400'}
           href={'/adapters'}
         >
           Go to Adapters
@@ -94,6 +94,7 @@ export function PeopleSearchForm(props: PeopleSearchFormProps) {
           autoFocus
           disabled={state === 'loading'}
           type="text"
+          name="query"
           value={query}
           onChange={e => setQuery(e.target.value)}
         />

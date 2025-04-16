@@ -1,6 +1,5 @@
-import { BreadServiceAdapterOptions } from '@easybread/core';
+import { ServiceAdapterOptions } from '@easybread/core';
 
-export interface RocketChatServiceAdapterOptions
-  extends BreadServiceAdapterOptions {
+export interface RocketChatServiceAdapterOptions extends ServiceAdapterOptions {
   serverUrl: string;
 }

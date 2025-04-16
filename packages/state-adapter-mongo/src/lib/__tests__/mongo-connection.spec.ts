@@ -16,7 +16,7 @@ it(`should connect`, async () => {
 });
 
 it(`should get db`, () => {
-  db = client.db('');
+  db = client.db();
   expect(db.databaseName).toEqual(expect.any(String));
 });
 

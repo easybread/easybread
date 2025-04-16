@@ -1,11 +1,11 @@
 import { breadDataAdapter } from '@easybread/data-adapter';
 import { NO_MAP } from '@easybread/data-mapper';
-import type { JobApplicantSearchOperationInputParams } from '@easybread/operations';
+import type { SearchActionSchema } from '@easybread/schemas';
 
 import type { BambooApplicationListQuery } from '../interfaces';
 
 export const bambooApplicationsListQueryAdapter = breadDataAdapter<
-  JobApplicantSearchOperationInputParams,
+  SearchActionSchema,
   BambooApplicationListQuery
 >({
   toExternal: {
@@ -44,6 +44,7 @@ export const bambooApplicationsListQueryAdapter = breadDataAdapter<
   },
 
   toInternal: {
+    '@type': () => 'SearchAction' as const,
     actionStatus: _ => {
       switch (_.applicationStatus) {
         case 'ACTIVE':

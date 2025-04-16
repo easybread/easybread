@@ -1,10 +1,10 @@
-import { BreadAuthStrategy, BreadStateAdapter } from '@easybread/core';
+import { AuthStrategy, StateAdapter } from '@easybread/core';
 import { AxiosRequestConfig } from 'axios';
 
 import { RocketChatAuthStateData } from './interfaces';
 
-export class RocketChatAuthStrategy extends BreadAuthStrategy<RocketChatAuthStateData> {
-  constructor(state: BreadStateAdapter, provider = 'ROCKET_CHAT') {
+export class RocketChatAuthStrategy extends AuthStrategy<RocketChatAuthStateData> {
+  constructor(state: StateAdapter, provider = 'ROCKET_CHAT') {
     super(state, provider);
   }
 

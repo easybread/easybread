@@ -1,12 +1,11 @@
-import { GoogleCommonOauth2StartHandler } from '../handlers';
-import { GoogleCommonOperationName } from '../operations';
+import { GoogleCommonAuthOauth2StartHandler } from '../handlers';
 
 import { createContextMock } from './create-context-mock';
 
 describe('name', () => {
-  it(`should be`, () => {
-    expect(GoogleCommonOauth2StartHandler.name).toBe(
-      'GOOGLE_COMMON/AUTH_FLOW/START',
+  it(`should be "BREAD/AUTH_OAUTH2_START"`, () => {
+    expect(GoogleCommonAuthOauth2StartHandler.name).toBe(
+      'BREAD/AUTH_OAUTH2_START',
     );
   });
 });
@@ -14,14 +13,14 @@ describe('name', () => {
 describe('handle()', () => {
   it(`should call context.auth.createAuthUri()`, () => {
     const context = createContextMock();
-    GoogleCommonOauth2StartHandler.handle(
+    GoogleCommonAuthOauth2StartHandler.handle(
       {
-        name: GoogleCommonOperationName.AUTH_FLOW_START,
         breadId: '1',
+        params: null,
         payload: {
-          includeGrantedScopes: true,
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'StartOAuth2Request',
           loginHint: 'hint',
-          prompt: ['select_account', 'consent'],
           scope: ['test-scope'],
         },
       },
@@ -29,9 +28,7 @@ describe('handle()', () => {
       null,
     );
     expect(context.auth.createAuthUri).toHaveBeenCalledWith('1', {
-      includeGrantedScopes: true,
       loginHint: 'hint',
-      prompt: ['select_account', 'consent'],
       scope: ['test-scope'],
     });
   });
@@ -43,14 +40,14 @@ describe('handle()', () => {
       .mocked(context.auth.createAuthUri)
       .mockImplementationOnce(async () => 'http://authurl');
 
-    const output = await GoogleCommonOauth2StartHandler.handle(
+    const output = await GoogleCommonAuthOauth2StartHandler.handle(
       {
-        name: GoogleCommonOperationName.AUTH_FLOW_START,
         breadId: '1',
+        params: null,
         payload: {
-          includeGrantedScopes: true,
+          '@context': 'https://schema.easybread.io/auth',
+          '@type': 'StartOAuth2Request',
           loginHint: 'hint',
-          prompt: ['select_account', 'consent'],
           scope: ['test-scope'],
         },
       },
@@ -59,11 +56,14 @@ describe('handle()', () => {
     );
 
     expect(output).toEqual({
-      name: 'GOOGLE_COMMON/AUTH_FLOW/START',
-      rawPayload: {
-        data: { authUri: 'http://authurl' },
-        success: true,
+      breadId: '1',
+      payload: {
+        '@context': 'https://schema.easybread.io/auth',
+        '@type': 'StartOAuth2Response',
+        authenticationUrl: 'http://authurl',
       },
+      rawPayload: null,
+      success: true,
     });
   });
 });

@@ -1,16 +1,12 @@
-import type { ActionSchema } from './action.schema';
-import type { AddressSchema } from './address.schema';
-import type { ApplyActionSchema } from './apply-action.schema';
-import type { JobPostingSchema } from './job-posting.schema';
-import type { OrganizationSchema } from './organization.schema';
-import type { PersonSchema } from './person.schema';
-import type { RatingSchema } from './rating.schema';
+import type { AuthAnySchema } from './auth/auth-any.schema';
+import type { CommonAnySchema } from './common/common-any.schema';
+import type { HrAnySchema } from './hr/hr-any.schema';
+import type { CompositeSchema } from './util/composite.schema';
 
-export type AnySchema =
-  | ActionSchema
-  | AddressSchema
-  | ApplyActionSchema
-  | JobPostingSchema
-  | OrganizationSchema
-  | PersonSchema
-  | RatingSchema;
+/**
+ * @private
+ * Private type to avoid recursive types
+ */
+export type _AnySchema = CommonAnySchema | HrAnySchema | AuthAnySchema;
+
+export type AnySchema = _AnySchema | CompositeSchema<_AnySchema[]>;
