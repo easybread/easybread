@@ -47,17 +47,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "build": {
-      "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/apps/saas/pg",
-        "main": "apps/saas/pg/src/index.ts",
-        "tsConfig": "apps/saas/pg/tsconfig.lib.json",
-        "assets": [],
-        "format": ["cjs"]
-      }
-    },
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],

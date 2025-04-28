@@ -5,17 +5,6 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/apps/saas/errors",
-        "main": "apps/saas/errors/src/index.ts",
-        "tsConfig": "apps/saas/errors/tsconfig.lib.json",
-        "assets": [],
-        "format": ["cjs"]
-      }
-    },
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],

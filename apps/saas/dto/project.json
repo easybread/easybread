@@ -5,17 +5,6 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/apps/saas/dto",
-        "main": "apps/saas/dto/src/index.ts",
-        "tsConfig": "apps/saas/dto/tsconfig.lib.json",
-        "assets": [],
-        "format": ["cjs"]
-      }
-    },
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
