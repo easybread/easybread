@@ -1,6 +1,7 @@
+import { find, isNumber, isObject, isString, pick } from 'lodash';
+
 import { type CommandHandler, PAGINATION_TYPE } from '@easybread/core';
 import { OrganizationSchema, PersonSchema } from '@easybread/schemas';
-import { find, isNumber, isObject, isString, pick } from 'lodash';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { BAMBOO_HR_COMMAND_NAME } from '../bamboo-hr.command-name';

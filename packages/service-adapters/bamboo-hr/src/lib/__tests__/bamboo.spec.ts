@@ -1,3 +1,5 @@
+import axios, { type AxiosResponse } from 'axios';
+
 import {
   EasyBreadClient,
   InMemoryStateAdapter,
@@ -13,7 +15,6 @@ import {
   getNthMockCallMthArg,
   mockAxios,
 } from '@easybread/test-utils';
-import axios, { type AxiosResponse } from 'axios';
 
 import {
   BAMBOO_HR_PROVIDER_NAME,

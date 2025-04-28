@@ -1,0 +1,69 @@
+{
+  "name": "saas-pg",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/saas/pg/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "db:seed": {
+      "command": "tsx src/lib/seed/seed.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:reset": {
+      "command": "tsx src/lib/seed/reset.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:mig:apply": {
+      "command": "drizzle-kit migrate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:mig:gen": {
+      "command": "drizzle-kit generate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:mig:gen:c": {
+      "command": "drizzle-kit generate --custom --name {args.name}",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:push": {
+      "command": "drizzle-kit push",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:pull": {
+      "command": "drizzle-kit pull",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/saas/pg",
+        "main": "apps/saas/pg/src/index.ts",
+        "tsConfig": "apps/saas/pg/tsconfig.lib.json",
+        "assets": [],
+        "format": ["cjs"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../../coverage/apps/saas/pg"
+      }
+    }
+  }
+}

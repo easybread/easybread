@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
+
 import { TopNav } from 'playground-feat-nav-ui';
 import { PageContent } from 'playground-ui';
-import { ReactNode } from 'react';
 
 import './global.css';
 

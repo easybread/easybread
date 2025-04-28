@@ -1,0 +1,27 @@
+{
+  "name": "saas-redis",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/saas/redis/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/saas/redis",
+        "main": "apps/saas/redis/src/index.ts",
+        "tsConfig": "apps/saas/redis/tsconfig.lib.json",
+        "assets": [],
+        "format": ["cjs"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../../coverage/apps/saas/redis"
+      }
+    }
+  }
+}

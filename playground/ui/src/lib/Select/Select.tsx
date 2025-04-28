@@ -69,7 +69,8 @@ export function Select<T>({
     <div ref={selectRef} className={clsx('relative', className)}>
       <div
         className={clsx(
-          'cursor-pointer font-semibold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+          `cursor-pointer font-semibold shadow transition-colors duration-200
+          focus:outline-none focus:ring-2 focus:ring-offset-2`,
           {
             'flex items-center justify-between': flex,
             'bg-amber-200 hover:bg-amber-100 focus:ring-amber-500':
@@ -98,7 +99,8 @@ export function Select<T>({
       {isOpen && !disabled && (
         <ul
           className={clsx(
-            'absolute z-10 mt-1 w-full overflow-auto border border-gray-300 bg-white shadow-lg',
+            `absolute z-10 mt-1 w-full overflow-auto border border-gray-300 bg-white
+            shadow-lg`,
             {
               rounded: size === 'sm',
               'rounded-md': size === 'md',

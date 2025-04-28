@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { RocketChatAuthStrategy } from '@easybread/adapter-rocket-chat-common';
 import {
   EasyBreadClient,
@@ -5,7 +7,6 @@ import {
   type inferCommandInput,
 } from '@easybread/core';
 import { mockAxios } from '@easybread/test-utils';
-import axios from 'axios';
 
 import {
   ROCKET_CHAT_USERS_COMMAND_NAME,

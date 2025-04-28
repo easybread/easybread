@@ -1,5 +1,6 @@
-import { type CommandHandler } from '@easybread/core';
 import { AxiosResponse } from 'axios';
+
+import { type CommandHandler } from '@easybread/core';
 
 import { BambooHrAuthStrategy } from '../bamboo-hr.auth-strategy';
 import { BAMBOO_HR_COMMAND_NAME } from '../bamboo-hr.command-name';

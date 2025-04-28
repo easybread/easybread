@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import {
   AuthAttemptTokenMismatchException,
   InMemoryStateAdapter,
@@ -10,7 +12,6 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-import axios from 'axios';
 
 import {
   GoogleCommonAccessTokenCreateResponse,

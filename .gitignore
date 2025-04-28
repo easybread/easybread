@@ -38,3 +38,5 @@ out
 # Generated Docusaurus files
 .docusaurus/
 .cache-loader/
+vite.config.*.timestamp*
+vitest.config.*.timestamp*

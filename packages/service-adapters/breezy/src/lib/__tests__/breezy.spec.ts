@@ -1,10 +1,11 @@
+import axiosMock from 'axios';
+
 import {
   EasyBreadClient,
   InMemoryStateAdapter,
   type inferCommandOutput,
 } from '@easybread/core';
 import { mockAxios } from '@easybread/test-utils';
-import axiosMock from 'axios';
 
 import {
   BREEZY_COMMAND_NAME,

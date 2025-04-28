@@ -1,3 +1,6 @@
+import axios from 'axios';
+import { merge } from 'lodash';
+
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAuthOauth2CompleteCommand,
@@ -17,8 +20,6 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-import axios from 'axios';
-import { merge } from 'lodash';
 
 import {
   GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME,

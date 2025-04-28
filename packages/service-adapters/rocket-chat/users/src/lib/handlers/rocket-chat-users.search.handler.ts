@@ -1,3 +1,5 @@
+import { resolve } from 'url';
+
 import {
   RocketChatAuthStrategy,
   RocketChatServiceAdapterOptions,
@@ -5,7 +7,6 @@ import {
   rocketChatUserAdapter,
 } from '@easybread/adapter-rocket-chat-common';
 import { type CommandHandler } from '@easybread/core';
-import { resolve } from 'url';
 
 import { RocketChatUsersSearchCommand } from '../commands';
 import { RocketChatUsersList } from '../interfaces';
