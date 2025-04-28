@@ -4,6 +4,8 @@ import { TrpcHydrateClient, trpcPrefetch, trpcServer } from 'saas-trpc/server';
 import { ConnectionsList } from 'saas-ui/components/ConnectionsList/ConnectionsList';
 import { ConnectionsListLoading } from 'saas-ui/components/ConnectionsList/ConnectionsListLoading';
 
+export const dynamic = 'force-dynamic';
+
 export default function ConnectionsPage() {
   trpcPrefetch(trpcServer.connections.list.queryOptions());
   return (

@@ -20,4 +20,6 @@ const handler = (req: NextRequest) =>
     createContext: createTrpcContextInFetchHandler,
   });
 
+export const dynamic = 'force-dynamic';
+
 export { handler as GET, handler as POST };
