@@ -9,6 +9,8 @@ import { NavSidebar } from 'saas-ui/components/NavSidebar/NavSidebar';
 import { PageHeader } from 'saas-ui/components/PageHeader/PageHeader';
 import { SidebarInset, SidebarProvider } from 'saas-ui/shadcn/sidebar';
 
+export const dynamic = 'force-dynamic';
+
 export default async function WithSidebarLayout(props: PropsWithChildren) {
   await trpcFetchQuery(trpcServer.auth.info.queryOptions());
 
