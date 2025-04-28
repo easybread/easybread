@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ADAPTER_NAME } from 'playground-common';
 import type { BambooHRAdapterConnectionMethod } from 'playground-db';
 import {
@@ -7,7 +9,6 @@ import {
   bambooHrConnectAction,
 } from 'playground-feat-adapters-actions';
 import { Button, Icon, Input } from 'playground-ui';
-import { useState } from 'react';
 
 export type AdapterConnectBambooHrProps = {
   connectedAt?: Date;

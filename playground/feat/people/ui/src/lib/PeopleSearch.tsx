@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
+
 import type { PersonSchema } from '@easybread/schemas';
+
 import type { Adapter, SerializedDoc } from 'playground-db';
 import { PageHeading } from 'playground-ui';
-import { useState } from 'react';
 
 import { PeopleList } from './PeopleList';
 import { PeopleSearchForm } from './PeopleSearchForm';
@@ -20,7 +22,7 @@ export function PeopleSearch(props: PeopleSearchProps) {
       <PageHeading text={'People'} />
       <PeopleSearchForm
         onData={setPeople}
-        className={'mb-8 mt-4'}
+        className={'mt-4 mb-8'}
         adapters={props.adapters}
       />
       <PeopleList people={people} />

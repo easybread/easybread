@@ -69,20 +69,20 @@ export function Select<T>({
     <div ref={selectRef} className={clsx('relative', className)}>
       <div
         className={clsx(
-          `cursor-pointer font-semibold shadow transition-colors duration-200
-          focus:outline-none focus:ring-2 focus:ring-offset-2`,
+          `cursor-pointer font-semibold shadow transition-colors duration-200 focus:ring-2
+          focus:ring-offset-2 focus:outline-none`,
           {
             'flex items-center justify-between': flex,
             'bg-amber-200 hover:bg-amber-100 focus:ring-amber-500':
               variant === 'primary',
             'bg-gray-200 hover:bg-amber-100 focus:ring-amber-500':
               variant === 'secondary',
-            'border-gray-300 border hover:bg-amber-200 focus:ring-amber-500':
+            'border border-gray-300 hover:bg-amber-200 focus:ring-amber-500':
               variant === 'outline',
-            'px-2 py-1 text-sm rounded': size === 'sm',
-            'px-4 py-2 rounded-md': size === 'md',
-            'px-6 py-3 text-lg rounded-lg': size === 'lg',
-            'opacity-50 cursor-not-allowed': disabled,
+            'rounded px-2 py-1 text-sm': size === 'sm',
+            'rounded-md px-4 py-2': size === 'md',
+            'rounded-lg px-6 py-3 text-lg': size === 'lg',
+            'cursor-not-allowed opacity-50': disabled,
           },
         )}
         onClick={handleToggle}

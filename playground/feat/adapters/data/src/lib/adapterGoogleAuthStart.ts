@@ -1,4 +1,5 @@
 import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '@easybread/adapter-google-admin-directory';
+
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import { clientGoogleAdminDirectoryGet } from 'playground-easybread-clients';

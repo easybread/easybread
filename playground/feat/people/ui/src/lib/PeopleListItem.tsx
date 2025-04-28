@@ -1,4 +1,5 @@
 import type { PersonSchema } from '@easybread/schemas';
+
 import { Card, Icon } from 'playground-ui';
 
 import { PeopleListItemPhoto } from './PeopleListItemPhoto';
@@ -16,7 +17,7 @@ export function PeopleListItem(props: PeopleListItemProps) {
         <PeopleListItemPhoto person={person} />
 
         <div className={'flex w-full flex-col overflow-hidden'}>
-          <span className={'w-full overflow-hidden text-ellipsis font-bold'}>
+          <span className={'w-full overflow-hidden font-bold text-ellipsis'}>
             {person.givenName} {person.familyName}
           </span>
 

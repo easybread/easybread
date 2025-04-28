@@ -1,12 +1,14 @@
 'use client';
 
-import type { PersonSchema } from '@easybread/schemas';
 import { clsx } from 'clsx';
 import Link from 'next/link';
+import { type FormEventHandler, useMemo, useState } from 'react';
+
+import type { PersonSchema } from '@easybread/schemas';
+
 import { ADAPTER_NAME, type AdapterName } from 'playground-common';
 import type { Adapter, SerializedDoc } from 'playground-db';
 import { Button, Input, Select, type SelectOption } from 'playground-ui';
-import { type FormEventHandler, useMemo, useState } from 'react';
 
 import { peopleSearchAction } from './peopleSearchAction';
 
