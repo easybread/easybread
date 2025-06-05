@@ -7,7 +7,7 @@ export function Pill(props: PropsWithChildren<{ className?: string }>) {
   return (
     <div
       className={clsx(
-        `rounded-full bg-amber-200 px-2 py-0.5 text-xs text-gray-900`,
+        'rounded-full bg-amber-200 px-2 py-0.5 text-xs text-gray-900',
         className,
       )}
     >

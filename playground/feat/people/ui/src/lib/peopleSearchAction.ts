@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
 import type { AdapterName } from 'playground-common';
 import { authStatusGet } from 'playground-feat-auth-data';
 import { peopleSearch } from 'playground-feat-people-data';

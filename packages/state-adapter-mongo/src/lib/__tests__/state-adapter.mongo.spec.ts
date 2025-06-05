@@ -1,5 +1,6 @@
-import { StateAdapter } from '@easybread/core';
 import { Db, MongoClient, ObjectId } from 'mongodb';
+
+import { StateAdapter } from '@easybread/core';
 
 import { StateAdapterMongo } from '../state-adapter.mongo';
 

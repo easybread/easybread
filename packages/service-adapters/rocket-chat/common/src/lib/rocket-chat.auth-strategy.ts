@@ -1,5 +1,6 @@
-import { AuthStrategy, StateAdapter } from '@easybread/core';
 import { AxiosRequestConfig } from 'axios';
+
+import { AuthStrategy, StateAdapter } from '@easybread/core';
 
 import { RocketChatAuthStateData } from './interfaces';
 

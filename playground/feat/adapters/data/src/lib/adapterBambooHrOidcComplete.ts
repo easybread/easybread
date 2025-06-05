@@ -1,5 +1,7 @@
-import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
 import { redirect } from 'next/navigation';
+
+import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
+
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import {
   type BambooHRAdapter,

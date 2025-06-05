@@ -1,5 +1,6 @@
 import { BreezyAdapter, BreezyAuthStrategy } from '@easybread/adapter-breezy';
 import { AuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
+
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import { stateAdapterMongoGet } from 'playground-easybread-state';

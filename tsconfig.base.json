@@ -9,12 +9,13 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "ES2023",
+    "target": "ES2024",
     "module": "esnext",
-    "lib": ["ES2023", "dom"],
+    "lib": ["ES2024", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "esModuleInterop": true,
     "paths": {
       "@easybread/adapter-bamboo-hr": [
         "packages/service-adapters/bamboo-hr/src/index.ts"
@@ -88,7 +89,20 @@
       ],
       "playground-feat-users-data": ["playground/feat/users/data/src/index.ts"],
       "playground-ui": ["playground/ui/src/index.ts"],
-      "playground-ui/server": ["playground/ui/src/server.ts"]
+      "saas-auth": ["apps/saas/auth/src/index.ts"],
+      "saas-auth/server": ["apps/saas/auth/src/server.ts"],
+      "saas-core": ["apps/saas/core/src/index.ts"],
+      "saas-dto": ["apps/saas/dto/src/index.ts"],
+      "saas-errors": ["apps/saas/errors/src/index.ts"],
+      "saas-neverthrow-util": ["apps/saas/neverthrow-util/src/index.ts"],
+      "saas-pg": ["apps/saas/pg/src/index.ts"],
+      "saas-pg/enums": ["apps/saas/pg/src/lib/enums/index.ts"],
+      "saas-pg/types": ["apps/saas/pg/src/lib/types.ts"],
+      "saas-redis": ["apps/saas/redis/src/index.ts"],
+      "saas-trpc": ["apps/saas/trpc/src/index.ts"],
+      "saas-trpc/server": ["apps/saas/trpc/src/server.ts"],
+      "saas-ui": ["apps/saas/ui/src/index.ts"],
+      "saas-ui/*": ["apps/saas/ui/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

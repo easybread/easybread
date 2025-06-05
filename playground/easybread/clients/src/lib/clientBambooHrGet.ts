@@ -1,13 +1,15 @@
+import { revalidatePath } from 'next/cache';
+import { load } from 'ts-dotenv';
+
 import {
   BambooHrAdapter,
   BambooHrAuthStrategy,
 } from '@easybread/adapter-bamboo-hr';
 import { AuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
-import { revalidatePath } from 'next/cache';
+
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import { stateAdapterMongoGet } from 'playground-easybread-state';
-import { load } from 'ts-dotenv';
 
 let client: EasyBreadClient<BambooHrAdapter>;
 

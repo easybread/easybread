@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "AppLibrary",
+  "title": "Standard App Library Generator",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "description": "The kind of library to create",
+      "type": "string",
+      "enum": ["next", "js", "node"],
+      "x-prompt": {
+        "type": "list",
+        "message": "What kind of library do you want to create?",
+        "items": [
+          {
+            "label": "next",
+            "value": "next"
+          },
+          {
+            "label": "js",
+            "value": "js"
+          },
+          {
+            "label": "node",
+            "value": "node"
+          },
+          {
+            "label": "cdk",
+            "value": "cdk"
+          }
+        ]
+      }
+    },
+    "path": {
+      "type": "string",
+      "description": "path to create the library, including the name",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Enter the full path to create the library, including the name"
+    }
+  },
+  "required": ["path", "kind"]
+}

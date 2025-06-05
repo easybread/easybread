@@ -1,3 +1,5 @@
+import axios, { AxiosRequestConfig } from 'axios';
+
 import {
   GoogleCommonAccessTokenCreateResponse,
   GoogleCommonAccessTokenRefreshResponse,
@@ -18,7 +20,6 @@ import {
   mockAxios,
   setExtendedTimeout,
 } from '@easybread/test-utils';
-import axios, { AxiosRequestConfig } from 'axios';
 
 import {
   GOOGLE_CONTACTS_COMMAND_NAME,

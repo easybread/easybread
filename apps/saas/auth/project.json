@@ -1,0 +1,22 @@
+{
+  "name": "saas-auth",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/saas/auth/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "auth:generate": {
+      "command": "pnpm dlx @better-auth/cli generate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../../coverage/apps/saas/auth"
+      }
+    }
+  }
+}

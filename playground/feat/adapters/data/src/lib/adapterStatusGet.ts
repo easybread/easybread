@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+
 import { isAdapterName } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import { authStatusGet } from 'playground-feat-auth-data';

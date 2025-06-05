@@ -37,12 +37,12 @@ export function Icon(props: IconProps) {
     <div
       className={clsx(
         {
-          'w-4 h-4': size === 'xxs',
-          'w-6 h-6': size === 'xs',
-          'w-8 h-8': size === 'sm',
-          'w-10 h-10': size === 'md',
-          'w-12 h-12': size === 'lg',
-          'w-16 h-16': size === 'xl',
+          'h-4 w-4': size === 'xxs',
+          'h-6 w-6': size === 'xs',
+          'h-8 w-8': size === 'sm',
+          'h-10 w-10': size === 'md',
+          'h-12 w-12': size === 'lg',
+          'h-16 w-16': size === 'xl',
         },
         'flex items-center justify-center',
         className,

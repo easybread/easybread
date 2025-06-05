@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import { logoutAction } from 'playground-feat-auth-actions';
 import { authStatusGet } from 'playground-feat-auth-data';
 import { Button, LogoEasyBread } from 'playground-ui';
@@ -18,10 +19,10 @@ export async function TopNav(props: TopNavProps) {
         <LogoEasyBread />
 
         <div className={'flex flex-col justify-center'}>
-          <span className={'text-lg font-bold leading-none tracking-normal'}>
+          <span className={'text-lg leading-none font-bold tracking-normal'}>
             EasyBREAD
           </span>
-          <span className={'text-sm font-light leading-tight tracking-widest'}>
+          <span className={'text-sm leading-tight font-light tracking-widest'}>
             Playground
           </span>
         </div>

@@ -1,6 +1,7 @@
+import { Suspense } from 'react';
+
 import { isAdapterName } from 'playground-common';
 import { AdapterOauthComplete } from 'playground-feat-adapters-ui';
-import { Suspense } from 'react';
 
 type AdapterRedirectPageProps = {
   params: Promise<{ slug: string }>;

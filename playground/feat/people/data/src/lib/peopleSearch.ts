@@ -1,6 +1,7 @@
 import { BAMBOO_HR_COMMAND_NAME } from '@easybread/adapter-bamboo-hr';
 import { BREEZY_COMMAND_NAME } from '@easybread/adapter-breezy';
 import { GOOGLE_ADMIN_DIRECTORY_COMMAND_NAME } from '@easybread/adapter-google-admin-directory';
+
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import {
   clientBambooHrGet,

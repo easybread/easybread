@@ -1,4 +1,5 @@
 import { BREEZY_COMMAND_NAME } from '@easybread/adapter-breezy';
+
 import { ADAPTER_NAME, makeBreadId } from 'playground-common';
 import { type BreezyAdapter, adapterCollection } from 'playground-db';
 import { clientBreezyGet } from 'playground-easybread-clients';

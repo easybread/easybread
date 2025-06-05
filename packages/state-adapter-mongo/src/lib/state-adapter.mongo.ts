@@ -1,5 +1,6 @@
-import { NotFoundException, StateAdapter } from '@easybread/core';
 import { Collection, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
+
+import { NotFoundException, StateAdapter } from '@easybread/core';
 
 interface MongoDBModel<T> {
   _id: string | ObjectId;

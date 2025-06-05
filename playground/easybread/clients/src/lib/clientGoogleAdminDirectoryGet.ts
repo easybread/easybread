@@ -1,12 +1,14 @@
+import { load } from 'ts-dotenv';
+
 import {
   GoogleAdminDirectoryAdapter,
   GoogleAdminDirectoryAuthStrategy,
 } from '@easybread/adapter-google-admin-directory';
 import { AuthenticationLostEvent, EasyBreadClient } from '@easybread/core';
+
 import { ADAPTER_NAME, parseBreadId } from 'playground-common';
 import { adapterCollection } from 'playground-db';
 import { stateAdapterMongoGet } from 'playground-easybread-state';
-import { load } from 'ts-dotenv';
 
 let client: EasyBreadClient<GoogleAdminDirectoryAdapter>;
 

@@ -10,6 +10,12 @@
       "factory": "./src/generators/make-public/generator",
       "schema": "./src/generators/make-public/schema.json",
       "description": "make-public generator"
+    },
+    "app-library": {
+      "aliases": ["app-lib", "alib"],
+      "factory": "./src/generators/app-library/appLibraryGenerator",
+      "schema": "./src/generators/app-library/schema.json",
+      "description": "app-library generator"
     }
   }
 }

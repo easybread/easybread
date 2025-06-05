@@ -2,9 +2,7 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultBase": "develop",
   "release": {
-    "projects": [
-      "packages/**"
-    ],
+    "projects": ["packages/**"],
     "version": {
       "preVersionCommand": "pnpm dlx nx run-many -t build"
     }
@@ -12,20 +10,27 @@
   "targetDefaults": {
     "test": {
       "options": {
-        "args": [
-          "--passWithNoTests"
-        ]
+        "args": ["--passWithNoTests"]
       }
     },
     "@nx/js:tsc": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     }
   },
   "plugins": [
@@ -76,7 +81,9 @@
       }
     },
     "@nx/react": {
-      "library": {}
+      "library": {
+        "unitTestRunner": "vitest"
+      }
     }
   }
 }

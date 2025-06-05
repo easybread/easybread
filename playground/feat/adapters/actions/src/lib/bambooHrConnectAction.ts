@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
 import type { BambooHRAdapterConnectionMethod } from 'playground-db';
 import {
   adapterBambooHrConnectApiKey,

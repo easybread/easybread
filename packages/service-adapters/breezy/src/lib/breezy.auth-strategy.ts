@@ -1,5 +1,6 @@
-import { AuthStrategy, StateAdapter } from '@easybread/core';
 import { AxiosRequestConfig } from 'axios';
+
+import { AuthStrategy, StateAdapter } from '@easybread/core';
 
 import { BREEZY_PROVIDER_NAME } from './breezy.constants';
 import {

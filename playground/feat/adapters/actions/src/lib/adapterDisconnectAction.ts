@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
 import { ADAPTER_NAME, isAdapterName } from 'playground-common';
 import {
   adapterBambooHrDisconnect,
