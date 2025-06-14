@@ -2,8 +2,8 @@ import { getSessionCookie } from 'better-auth/cookies';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(req: NextRequest) {
+  console.log('middleware!');
   const sessionCookie = getSessionCookie(req);
-
   if (isPublicPath(req.nextUrl.pathname)) return NextResponse.next();
 
   if (!sessionCookie) {

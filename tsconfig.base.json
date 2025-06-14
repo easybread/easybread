@@ -94,11 +94,17 @@
       "saas-core": ["apps/saas/core/src/index.ts"],
       "saas-dto": ["apps/saas/dto/src/index.ts"],
       "saas-errors": ["apps/saas/errors/src/index.ts"],
+      "saas-fake-bar-db": ["apps/saas/fake/bar-db/src/index.ts"],
+      "saas-fake-foo-db": ["apps/saas/fake/foo-db/src/index.ts"],
       "saas-neverthrow-util": ["apps/saas/neverthrow-util/src/index.ts"],
       "saas-pg": ["apps/saas/pg/src/index.ts"],
       "saas-pg/enums": ["apps/saas/pg/src/lib/enums/index.ts"],
       "saas-pg/types": ["apps/saas/pg/src/lib/types.ts"],
       "saas-redis": ["apps/saas/redis/src/index.ts"],
+      "saas-shared-drizzle-util": [
+        "apps/saas/shared/drizzle-util/src/index.ts"
+      ],
+      "saas-shared-enum": ["apps/saas/shared/enum/src/index.ts"],
       "saas-trpc": ["apps/saas/trpc/src/index.ts"],
       "saas-trpc/server": ["apps/saas/trpc/src/server.ts"],
       "saas-ui": ["apps/saas/ui/src/index.ts"],

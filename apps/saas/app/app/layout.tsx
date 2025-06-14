@@ -13,16 +13,16 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <Providers>
-        <body>
+      <body>
+        <Providers>
           {children}
           <Toaster
             position={'bottom-center'}
             richColors={true}
             theme={'light'}
           />
-        </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }

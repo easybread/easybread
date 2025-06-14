@@ -8,8 +8,9 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 
+import { uuidV7 } from 'saas-shared-drizzle-util';
+
 import type { ConnectionSettingsJsonb } from '../jsonb/ConnectionSettingsJsonb';
-import { uuidV7 } from '../util/uuidv7';
 
 export const users = pgTable('users', {
   id: uuidV7('id').primaryKey(),

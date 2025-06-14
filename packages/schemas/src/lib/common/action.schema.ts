@@ -1,4 +1,4 @@
-import type { _AnySchema } from '../any.schema';
+import type { AnySchema } from '../any.schema';
 import type { ThingSchema } from '../base/thing.schema';
 import type { OrganizationSchema } from '../hr/organization.schema';
 import type { ExtendableSchema } from '../util/extendable-schema';
@@ -24,7 +24,7 @@ export type ActionSchema = ExtendableSchema<ThingSchema> & {
    * Also known as the semantic roles patient,
    * affected or undergoer (which change their state) or theme (which doesn't).
    */
-  object?: _AnySchema;
+  object?: AnySchema;
 
   /**
    * Other co-agents that participated in the action indirectly.
@@ -43,7 +43,7 @@ export type ActionSchema = ExtendableSchema<ThingSchema> & {
   /**
    * The result produced in the action.
    */
-  result?: _AnySchema;
+  result?: AnySchema;
 
   startTime?: string;
   endTime?: string;

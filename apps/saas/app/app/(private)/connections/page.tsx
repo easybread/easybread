@@ -10,6 +10,7 @@ export default function ConnectionsPage() {
   trpcPrefetch(trpcServer.connections.list.queryOptions());
   return (
     <TrpcHydrateClient>
+      <div>afsasf</div>
       <Suspense fallback={<ConnectionsListLoading />}>
         <ConnectionsList />
       </Suspense>

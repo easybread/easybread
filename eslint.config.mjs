@@ -10,7 +10,7 @@ export default [
       '**/.docusaurus',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
-      '**/shadcn/**/*.tsx'
+      '**/shadcn/**/*.tsx',
     ],
   },
   {
