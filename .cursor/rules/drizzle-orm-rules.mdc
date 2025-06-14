@@ -1,0 +1,113 @@
+---
+description: USE WHEN need to design/create/improve/analyze/modify database schema or write code that uses Drizzle ORM.
+globs: 
+alwaysApply: true
+---
+
+# Drizzle ORM Rules and Database Schema Design Guidelines
+
+## When to apply
+
+USE WHEN need to design/create/improve/analyze/modify database schema or write code that uses Drizzle ORM.
+
+## Core Principles
+
+### Database Design Rules
+- Use latest drizzle version
+- Design production-grade, well-architected schemas
+- Follow relational database design principles and best practices
+- Always design normalized schemas (avoid denormalization unless specifically needed)
+- Use camelCase for table names and column names
+- Use UPPER_SCREAMING_CASE for enum members
+- Use shorter, concise enum member names
+- Follow YAGNI and KISS principles - avoid over-engineering
+
+### Drizzle-Specific Rules
+- Use `.references()` method on column definitions instead of `relations()` helper for FK constraints
+- Define database-level relations using `.references()` for referential integrity
+- Avoid using `relations()` helper
+- Leverage reusable Drizzle utilities from the project's shared libraries
+- Create appropriate indexes for performance optimization
+
+### Schema Organization
+- Export enums first, then tables, then indexes, then relations
+- Group related indexes with their tables using naming convention: `{tableName}Indexes`
+- Use descriptive index names: `{table}_{column(s)}_{idx/unique}_idx`
+- Place complex constraints and checks close to table definitions
+
+## Implementation Process
+
+### Before Writing Code
+1. **Always** Ensure the latest Drizzle documentation is available in your context. **Use** Context7 mcp to fetch the latest docs.
+2. Conduct thorough analysis of the requested task
+3. Review existing schema and drizzle usage patterns in the project
+4. Check for reusable utilities in shared libraries
+
+### Iterative Development
+
+**ALWAYS** work in iterative loop:
+
+1. **Plan**: Create implementation plan
+2. **Implement**: Make changes / Write new code
+3. **Analyze**: Conduct a thorough analysis for:
+   - Any nonsense or halucinations
+   - Poor schema design or architecture choices
+   - Design mistakes or inconsistencies
+   - Performance problems
+   - Missing indexes or constraints
+   - Normalization issues
+   - Code reusability opportunities
+4. Write report about your findings
+5. **Iterate**: If there is anything to fix/improve - repeat from step "1". If optimal solution is achieved, exit the iteration loop.
+
+## Common Patterns
+
+### Primary Keys
+```typescript
+id: uuidV7('id').primaryKey()
+```
+
+### Foreign Key References
+```typescript
+userId: uuidV7('userId')
+  .notNull()
+  .references(() => users.id, { onDelete: 'cascade' })
+```
+
+### Enums
+```typescript
+export const statusEnum = pgEnum('status', ['ACTIVE', 'INACTIVE']);
+```
+
+### Indexes
+```typescript
+// AS A SEPARATE OBJECT
+export const usersIndexes = {
+  emailIdx: uniqueIndex('users_email_idx').on(users.email),
+  statusIdx: index('users_status_idx').on(users.status),
+};
+
+// DIRECTLY ON THE TABLE DEFINITION
+
+export const users = pgTable('users', {
+  id: uuidV7('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('passwordHash').notNull(),
+  passwordSalt: text('passwordSalt').notNull(),
+}, table => [uniqueIndex('email_idx').on(table.email)]);
+```
+
+## Performance Considerations
+- Create indexes on frequently queried columns
+- Use composite indexes for multi-column queries
+- Consider partial indexes for filtered queries
+- Avoid over-indexing (impacts write performance)
+- Use appropriate data types (varchar with length limits vs text)
+- Consider query patterns when designing relations
+
+## Security and Data Integrity
+- Always use appropriate onDelete actions (cascade, restrict, set null)
+- Validate data constraints at database level
+- Use NOT NULL constraints where appropriate
+- Implement unique constraints for business rules
+- Consider row-level security for multi-tenant scenarios

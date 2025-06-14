@@ -1,7 +1,7 @@
 ---
-description: Typescript rules
+description: USE WHEN editing/creating/writing/engineering/architecting any TypeScript (.ts or .tsx) Code
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # TypeScript Rules
 

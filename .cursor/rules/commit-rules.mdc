@@ -1,5 +1,5 @@
 ---
-description: Git Commit Rules / Commit Changes Rules
+description: USE WHEN committing changes to git
 globs: 
 alwaysApply: false
 ---

@@ -95,7 +95,13 @@
       "saas-dto": ["apps/saas/dto/src/index.ts"],
       "saas-errors": ["apps/saas/errors/src/index.ts"],
       "saas-fake-bar-db": ["apps/saas/fake/bar-db/src/index.ts"],
+      "saas-fake-bar-db-enums": [
+        "apps/saas/fake/bar-db/src/lib/schema/enums.ts"
+      ],
       "saas-fake-foo-db": ["apps/saas/fake/foo-db/src/index.ts"],
+      "saas-fake-foo-db-enums": [
+        "apps/saas/fake/foo-db/src/lib/schema/enums.ts"
+      ],
       "saas-neverthrow-util": ["apps/saas/neverthrow-util/src/index.ts"],
       "saas-pg": ["apps/saas/pg/src/index.ts"],
       "saas-pg/enums": ["apps/saas/pg/src/lib/enums/index.ts"],

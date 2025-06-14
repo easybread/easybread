@@ -27,6 +27,48 @@
       "options": {
         "reportsDirectory": "../../../../coverage/apps/saas/fake/foo-db"
       }
+    },
+    "db:seed": {
+      "command": "tsx src/lib/seed/seed.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:reset": {
+      "command": "tsx src/lib/seed/reset.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:mig:apply": {
+      "command": "drizzle-kit migrate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:mig:gen": {
+      "command": "drizzle-kit generate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:mig:gen:c": {
+      "command": "drizzle-kit generate --custom --name {args.name}",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:push": {
+      "command": "drizzle-kit push",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "db:pull": {
+      "command": "drizzle-kit pull",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }

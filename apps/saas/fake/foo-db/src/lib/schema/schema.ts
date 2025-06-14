@@ -5,26 +5,27 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
+  varchar,
 } from 'drizzle-orm/pg-core';
 
 import { uuidV7, uuidV7Nullable } from 'saas-shared-drizzle-util';
-
-/*
- * This schema simulates advanced HR portal where each applicant and employee
- * can login.
- **/
 
 export const orgs = pgTable('organization', {
   id: uuidV7('id').primaryKey(),
   name: text('name'),
 });
 
-export const users = pgTable('users', {
-  id: uuidV7('id').primaryKey(),
-  email: text('email').notNull().unique(),
-  passwordHash: text('passwordHash').notNull(),
-  passwordSalt: text('passwordSalt').notNull(),
-});
+export const users = pgTable(
+  'users',
+  {
+    id: uuidV7('id').primaryKey(),
+    email: text('email').notNull().unique(),
+    passwordHash: text('passwordHash').notNull(),
+    passwordSalt: text('passwordSalt').notNull(),
+  },
+  table => [uniqueIndex('email_idx').on(table.email)],
+);
 
 export const addresses = pgTable('addresses', {
   id: uuidV7('id').primaryKey(),
@@ -92,20 +93,13 @@ export const jobPosts = pgTable('jobPosts', {
   location: text('location').notNull(),
 });
 
-export const jobPostSkills = pgTable('jobSkills', {
-  id: uuidV7('id').primaryKey(),
-  jobPostId: uuidV7('jobPostId').references(() => jobPosts.id, {
-    onDelete: 'cascade',
-  }),
-  skillId: uuidV7('skillId').references(() => skills.id, {
-    onDelete: 'cascade',
-  }),
-  isEssential: boolean('isEssential'),
-});
+export const skillTypeEnum = pgEnum('skillTypeEnum', ['SOFT', 'TECHNICAL']);
 
 export const skills = pgTable('skills', {
   id: uuidV7('id').primaryKey(),
-  label: text('label').unique(),
+  label: varchar('label', { length: 255 }).notNull().unique(),
+  description: text('description'),
+  type: skillTypeEnum('type').notNull().default('TECHNICAL'),
 });
 
 export const skillsets = pgTable('skillsets', {
@@ -120,8 +114,7 @@ export const skillsetSkills = pgTable('skillsetSkills', {
   skillsetId: uuidV7('skillsetId').references(() => skillsets.id, {
     onDelete: 'cascade',
   }),
-  /** Experience in months */
-  experience: integer('experience'),
+  experienceMonths: integer('experienceMonths'),
   isEssential: boolean('isEssential').notNull().default(false),
 });
 
