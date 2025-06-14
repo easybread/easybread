@@ -1,0 +1,48 @@
+---
+description: Drizzle ORM Rules. Use it when you need to implement drizzle db related logic or design a database model/schema.
+globs: 
+alwaysApply: false
+---
+
+# Rules to for Drizzle ORM related questions / tasks
+
+### Role 
+
+Act as an expert in Relational DB design, Drizzle ORM, SQL (with focus on Postgres), TypeScript and Software Design in general.
+
+### General Rules
+
+- Use Drizzle ORM docs
+- Use latest drizzle version
+
+### DB (Schema) Design Rules
+
+- design production-grade well architected schema
+- always follow Relational DB design principles, patterns, and best practices
+- always design normalized schema
+- use camelCase names for table names and column names
+- use UPPER_SCREAMING_CASE enum members.
+- use shorter enum members.
+- use `.references()` method on column definition instead of `relations` helper function to define relations between models. I want db schema level relations to be defined.
+- avoid over-engineering
+- follow YAGNI and KISS principles
+- make sure to use reusable drizzle utilities if there are any in the project
+
+
+### Execution Process
+
+**Preparation:** before writing any code,
+
+- make sure you have the latest Drizzle Documentation in your context.
+- conduct a thorough analysis of the requested task and current project state.
+
+**Iterative implementation:** work iteratively:
+
+1. make a plan
+2. implement changes
+3. analyze the results and write detailed summary of your findings regarding the following:
+  3.1 any mistakes or non-sense or hallucinations
+  3.2 poor design choices
+  3.3 potential performance issues
+  3.4 other improvement oportunities
+4. if there is something to fix/improve - make a new iteration starting with "1". Repeat until there is nothing to fix/improve.

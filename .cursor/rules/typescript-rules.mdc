@@ -1,0 +1,72 @@
+---
+description: Typescript rules
+globs: 
+alwaysApply: false
+---
+# TypeScript Rules
+
+These rules relevant to any typescript-related work and should be applied on top of the @core.mdc rules
+
+## MCP Context & Documentation Lookup
+- **Context First:** Always query MCP documentation tools (e.g. `context7`) for the latest official docs, examples, and type definitions.
+- **Fallback:** If MCP yields incomplete info, perform a web search against authoritative sources (TypeScript Handbook, official library sites).
+- **Integrate Findings:** Merge examples or code snippets from MCP/web search into your solution—adapt, do not copy verbatim.
+
+## Monorepo & Nx Awareness
+- Detect an Nx workspace by presence of `nx.json`
+- Run `cd` to the monorepo root **in a separate command** before issuing any `nx` CLI calls.
+- Use Nx commands (`nx build`, `nx test`, `nx g`) rather than ad-hoc scripts, so project boundaries and dependencies are respected.
+- If an Nx MCP tool is available (e.g. `nx_workspace`, `nx_docs`), leverage it for workspace graph queries and code generation.
+
+## Package Manager
+- Always check what package manager is being used in the project.
+- Use the correct package manager to call scripts (eg `pnpm dlx` instead of `npx` and `pnpm start` instead of `npm start` and so on)
+
+## TypeScript Code Standards
+- **Self-Documenting Code:** Favor clear, descriptive names and types over comments.  
+- **Pure & Composable:** Write small, pure functions and modules. Prefer functional patterns (`map`, `filter`, pipelines) over imperative loops.  
+- **No Clever Tricks:** Avoid deeply nested logic and complex `.reduce()` chains; extract helpers if needed.  
+- **ES Modules Only:** Use `import`/`export`; do not use `namespace` syntax.  
+- **No Native Enums:**  
+  - If `@space-architects/util-enum` is installed, use its API.  
+  - Otherwise, define “enum objects” with `as const` and string-literal unions:  
+    ```ts
+    export const FOO = { A: 'A', B: 'B' } as const;
+    export type Foo = (typeof FOO)[keyof typeof FOO];
+    ```
+
+## Error Handling
+- Check if the project uses `neverthrow` npm package.
+- if project uses `neverthrow`, Wrap risky code in utils from the `neverthrow` library. 
+  - Avoid manually typing the return type - let TS infer the type.
+  - Define error codes as enum objects (using `@space-architects/util-enum` utilities like `enumPrefixed`).
+- If project DOES NOT use `neverthrow` follow standard error handling best-practices
+
+## Modern Language & Compiler Features
+- Read `lib` and `target` from the project's `tsconfig.json`/`tsconfig.base.json`.
+- If `lib` and `target` are set to ESNext you should use all the latest cutting edge language features and specs
+- If `lib` and `target` are set to `ES20xx` you should use corresponding latest ECMAScript language features and specs
+- Use all latest supported ES/TS features (optional chaining, nullish coalescing, top-level await, `replaceAll`, etc.).
+- Avoid down-leveling unless required for compatibility.
+
+## Testing & Verification
+- Write or update unit tests for new code or bug fixes using the project's test framework.
+- Run the TypeScript compiler (`tsc`), ESLint, and test runner via MCP or CLI—do not finalize until all pass.
+- In an Nx monorepo, prefer nx commands like `nx test`, `nx lint`, `nx build` over direct tool calls.
+- Make sure the tests pass.
+
+## Documentation & Comments
+- Only add comments to explain *why* a non-obvious decision exists; avoid “what” comments.
+- Use JSDoc/TSDoc for public APIs; keep descriptions brief and to-the-point.
+- Do not document self-explanatory code: strive for code clarity instead.
+- Update README or project docs only if usage or setup has changed.
+
+## Output Formatting & Code Style
+- Adhere to the project's Prettier and ESLint configurations.
+- Follow best practices
+
+## Communication & Proactive Suggestions
+- Present only relevant diffs or code snippets; avoid full-file dumps.
+- If requirements are ambiguous, ask a concise clarification question.
+- After fulfilling the user's request, you may offer up to **two** brief, optional improvement suggestions—clearly label them as “Optional: …”.
+
