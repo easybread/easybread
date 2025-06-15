@@ -1,3 +1,5 @@
+import { pgEnum } from 'drizzle-orm/pg-core';
+
 export const jobStatusEnum = pgEnum('jobStatus', ['DRAFT', 'ACTIVE', 'CLOSED']);
 
 export const applicationStatusEnum = pgEnum('applicationStatus', [

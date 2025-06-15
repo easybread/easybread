@@ -1,3 +1,4 @@
+import { propTupleFromArray } from '@space-architects/util-ts';
 import {
   boolean,
   integer,
@@ -10,6 +11,8 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { uuidV7, uuidV7Nullable } from 'saas-shared-drizzle-util';
+
+import { COUNTRIES } from '../constants/COUNTRIES';
 
 export const orgs = pgTable('organization', {
   id: uuidV7('id').primaryKey(),
@@ -27,9 +30,14 @@ export const users = pgTable(
   table => [uniqueIndex('email_idx').on(table.email)],
 );
 
+export const countryCodeEnum = pgEnum(
+  'countryCodeEnum',
+  propTupleFromArray(COUNTRIES, 'code'),
+);
+
 export const addresses = pgTable('addresses', {
   id: uuidV7('id').primaryKey(),
-  countryCode: text('countryCode').notNull(),
+  countryCode: countryCodeEnum('countryCode').notNull(),
 });
 
 export const orgMemberRoleEnum = pgEnum('orgMemberRoleEnum', [

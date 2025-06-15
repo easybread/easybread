@@ -34,7 +34,7 @@
     "@nx/vite": "21.2.0",
     "@nx/web": "21.2.0",
     "@shelf/jest-mongodb": "^5.2.2",
-    "@space-architects/nx-plugin-std": "^0.4.0",
+    "@space-architects/nx-plugin-std": "^1.0.0",
     "@swc-node/register": "~1.10.10",
     "@swc/cli": "0.7.7",
     "@swc/core": "~1.12.1",
@@ -75,7 +75,7 @@
     "nx": "21.2.0",
     "postcss": "8.5.5",
     "prettier": "^3.5.3",
-    "prettier-plugin-classnames": "^0.7.8",
+    "prettier-plugin-classnames": "^0.7.9",
     "prettier-plugin-merge": "^0.7.4",
     "rollup": "^4.43.0",
     "swc-loader": "0.2.6",
@@ -111,8 +111,8 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "@space-architects/util-enum": "^0.4.0",
-    "@space-architects/util-ts": "^0.4.0",
+    "@space-architects/util-enum": "^1.0.0",
+    "@space-architects/util-ts": "^1.0.0",
     "@standard-schema/spec": "^1.0.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query": "^5.80.7",
@@ -142,7 +142,7 @@
     "prism-react-renderer": "^2.3.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hook-form": "^7.57.0",
+    "react-hook-form": "^7.58.0",
     "server-only": "^0.0.1",
     "sharp": "^0.34.2",
     "sonner": "^2.0.5",
@@ -175,6 +175,12 @@
       "nx",
       "sharp",
       "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "better-sqlite3",
+      "prisma"
     ]
   }
 }

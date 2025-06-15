@@ -14,7 +14,7 @@ import { uuidV7 } from 'saas-shared-drizzle-util';
 
 import {
   applicationStatusEnum,
-  type employmentTypeEnum,
+  employmentTypeEnum,
   interviewStatusEnum,
   jobStatusEnum,
   userRoleEnum,
