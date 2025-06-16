@@ -1,8 +1,7 @@
-import { propTupleFromArray } from '@space-architects/util-ts';
+import { uuidV7, uuidV7Nullable } from '@space-architects/util-drizzle';
 import {
   boolean,
   integer,
-  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -10,13 +9,24 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { uuidV7, uuidV7Nullable } from 'saas-shared-drizzle-util';
-
-import { COUNTRIES } from '../constants/COUNTRIES';
+import {
+  commitmentTypeEnum,
+  countryCodeEnum,
+  engagementTypeEnum,
+  jobTypeEnum,
+  orgMemberRoleEnum,
+  skillTypeEnum,
+} from './enums';
 
 export const orgs = pgTable('organization', {
   id: uuidV7('id').primaryKey(),
   name: text('name'),
+});
+
+export const departments = pgTable('departments', {
+  id: uuidV7('id').primaryKey(),
+  name: text('name').notNull(),
+  orgId: uuidV7('orgId').references(() => orgs.id, { onDelete: 'cascade' }),
 });
 
 export const users = pgTable(
@@ -30,21 +40,17 @@ export const users = pgTable(
   table => [uniqueIndex('email_idx').on(table.email)],
 );
 
-export const countryCodeEnum = pgEnum(
-  'countryCodeEnum',
-  propTupleFromArray(COUNTRIES, 'code'),
-);
-
 export const addresses = pgTable('addresses', {
   id: uuidV7('id').primaryKey(),
+  street1: text('street1'),
+  street2: text('street2'),
+  city: text('city'),
+  state: text('state'),
+  postalCode: text('postalCode'),
   countryCode: countryCodeEnum('countryCode').notNull(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });
-
-export const orgMemberRoleEnum = pgEnum('orgMemberRoleEnum', [
-  'ADMIN',
-  'MANAGER',
-  'EMPLOYEE',
-]);
 
 export const orgMembers = pgTable('orgMembers', {
   id: uuidV7('id').primaryKey(),
@@ -53,40 +59,25 @@ export const orgMembers = pgTable('orgMembers', {
   role: orgMemberRoleEnum('role').notNull().default('MANAGER'),
 });
 
-export const engagementTypeEnum = pgEnum('employmentTypeEnum', [
-  'CONTRACT',
-  'PERMANENT',
-  'OUT_STAFF',
-]);
-
-export const commitmentTypeEnum = pgEnum('commitmentTypeEnum', [
-  'FULL_TIME',
-  'PART_TIME',
-]);
-
 export const employeeProfiles = pgTable('employeeProfile', {
   id: uuidV7('id'),
   userId: uuidV7('userId').references(() => users.id, { onDelete: 'cascade' }),
-  jobId: uuidV7('jobId').references(() => jobs.id, { onDelete: 'cascade' }),
   startedAt: timestamp('startedAt').notNull(),
   endedAt: timestamp('startedAt'),
   skillsetId: uuidV7Nullable('skillsetId').references(() => skillsets.id, {
     onDelete: 'set null',
   }),
+  jobTitle: text('jobTitle').notNull(),
   engagementType: engagementTypeEnum('engagementType').notNull(),
   commitmentType: commitmentTypeEnum('commitmentType').notNull(),
+  addressId: uuidV7Nullable('addressId').references(() => addresses.id, {
+    onDelete: 'set null',
+  }),
+  departmentId: uuidV7Nullable('departmentId').references(
+    () => departments.id,
+    { onDelete: 'set null' },
+  ),
 });
-
-export const jobs = pgTable('jobs', {
-  id: uuidV7('id').primaryKey(),
-  title: text('jobTitle').notNull(),
-});
-
-export const jobTypeEnum = pgEnum('jobTypeEnum', [
-  'ON_SITE',
-  'REMOTE',
-  'HYBRID',
-]);
 
 export const jobPosts = pgTable('jobPosts', {
   id: uuidV7('id').primaryKey(),
@@ -95,13 +86,17 @@ export const jobPosts = pgTable('jobPosts', {
   skillsetId: uuidV7Nullable('skillsetId').references(() => skillsets.id, {
     onDelete: 'set null',
   }),
+  jobType: jobTypeEnum('jobType').notNull(),
   engagementType: engagementTypeEnum('engagementType').notNull(),
   commitmentType: commitmentTypeEnum('commitmentType').notNull(),
   createdAt: timestamp().notNull().defaultNow(),
-  location: text('location').notNull(),
+  addressesId: uuidV7Nullable('addressesId').references(() => addresses.id, {
+    onDelete: 'set null',
+  }),
+  minSalary: integer('minSalary'),
+  maxSalary: integer('maxSalary'),
+  currency: varchar('currency', { length: 10 }).notNull().default('USD'),
 });
-
-export const skillTypeEnum = pgEnum('skillTypeEnum', ['SOFT', 'TECHNICAL']);
 
 export const skills = pgTable('skills', {
   id: uuidV7('id').primaryKey(),
@@ -129,7 +124,31 @@ export const skillsetSkills = pgTable('skillsetSkills', {
 export const candidateProfiles = pgTable('candidateProfiles', {
   id: uuidV7('id').primaryKey(),
   userId: uuidV7('userId').references(() => users.id, { onDelete: 'cascade' }),
+  cvUrl: text('cvUrl'),
   skillsetId: uuidV7Nullable('skillsetId').references(() => skillsets.id, {
     onDelete: 'set null',
   }),
+  addressesId: uuidV7Nullable('addressesId').references(() => addresses.id, {
+    onDelete: 'set null',
+  }),
+});
+
+export const workHistoryItems = pgTable('workHistoryItems', {
+  id: uuidV7('id').primaryKey(),
+  order: integer('order'),
+  candidateProfileId: uuidV7('candidateProfileId').references(
+    () => candidateProfiles.id,
+    { onDelete: 'cascade' },
+  ),
+  startedAt: timestamp('startedAt').notNull(),
+  endedAt: timestamp('endedAt'),
+  title: text('title').notNull(),
+  description: text('description'),
+  companyName: text('companyName').notNull(),
+  addressId: uuidV7Nullable('addressesId').references(() => addresses.id, {
+    onDelete: 'set null',
+  }),
+  engagementType: engagementTypeEnum('engagementType').notNull(),
+  commitmentType: commitmentTypeEnum('commitmentType').notNull(),
+  jobType: jobTypeEnum('jobType').notNull(),
 });

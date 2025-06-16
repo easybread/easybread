@@ -73,12 +73,15 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.7
         version: 1.2.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      '@space-architects/util-drizzle':
+        specifier: ^1.1.3
+        version: 1.1.3(drizzle-orm@0.44.2(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(@types/better-sqlite3@7.6.13)(@types/pg@8.15.4)(@upstash/redis@1.35.0)(better-sqlite3@11.10.0)(kysely@0.28.2)(postgres@3.4.7)(prisma@6.9.0(typescript@5.8.3)))(uuid@11.1.0)
       '@space-architects/util-enum':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.1.3
+        version: 1.1.3
       '@space-architects/util-ts':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.1.3
+        version: 1.1.3
       '@standard-schema/spec':
         specifier: ^1.0.0
         version: 1.0.0
@@ -270,8 +273,8 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2(jest-environment-node@30.0.0)(mongodb@6.17.0(socks@2.8.4))(socks@2.8.4)
       '@space-architects/nx-plugin-std':
-        specifier: ^1.0.0
-        version: 1.0.0(c811c1f777c035ea5206cad2bb354443)
+        specifier: ^1.1.3
+        version: 1.1.3(c811c1f777c035ea5206cad2bb354443)
       '@swc-node/register':
         specifier: ~1.10.10
         version: 1.10.10(@swc/core@1.12.1(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3)
@@ -4726,8 +4729,8 @@ packages:
   '@slorber/remark-comment@1.0.0':
     resolution: {integrity: sha512-RCE24n7jsOj1M0UPvIQCHTe7fI0sFL4S2nwKVWwHyVr/wI/H8GosgsJGyhnsZoGFnD/P2hLf1mSbrrgSLN93NA==}
 
-  '@space-architects/nx-plugin-std@1.0.0':
-    resolution: {integrity: sha512-GsLpRl1+HmVw9JV3OQv2wpAYoXgt8IFGJK0cWmaVSvfzqR4dukqP1TuvfOMR0UQnR3BdfTI6/rFn28DAAF1tQQ==}
+  '@space-architects/nx-plugin-std@1.1.3':
+    resolution: {integrity: sha512-r/qv8r0o6C+FlpEsoOee40xh1nPIbiJCa0kr67XDJp96tiyXghoOTBffBV0pyz38tG/e9wgsVAI81VCvvONOhQ==}
     peerDependencies:
       '@nx/devkit': '>=21.1.3 <22.0.0'
       '@nx/eslint': '>=21.1.3 <22.0.0'
@@ -4736,11 +4739,17 @@ packages:
       tslib: '>=2.3.0'
       vitest: '>=3.2.3'
 
-  '@space-architects/util-enum@1.0.0':
-    resolution: {integrity: sha512-z1LZZQcKo8sGAVKILiMuUo6nt5m61THESZSu/rmtDH9so/QCGou+alEPAcJ83HZ1lWHEeuwAOrP5Hym0TT+HAg==}
+  '@space-architects/util-drizzle@1.1.3':
+    resolution: {integrity: sha512-e5KH3bXT/qwcb7/yGHLC4PG4H5oQPghN4nmSfRirhWFEq2/mIgPhvDJhytloKKBa8Esopvh8TMWHLZknh1r3Rg==}
+    peerDependencies:
+      drizzle-orm: ^0.44.2
+      uuid: ^11.1.0
 
-  '@space-architects/util-ts@1.0.0':
-    resolution: {integrity: sha512-qOXK998wwfREvQTWf0OJlOqBk6Jh/KWwbGAx9EE1D40V72uMsIUTeyDD88LbE8r93FSQuAzTvKJj/m8/ND0sYg==}
+  '@space-architects/util-enum@1.1.3':
+    resolution: {integrity: sha512-SleWVCeh40x8wzZ3YZlxU9xJEJlfsoiOT7f72q+fEsDz0c++gYy6NIs3AcNTZ0QB2LrxlPXHfcyhFM397NMglA==}
+
+  '@space-architects/util-ts@1.1.3':
+    resolution: {integrity: sha512-nenAdGfxYvDkRR4bA3Z47tNANExsBDXTJh89V2PxfFaiKlEaXqOyHz+78LZnOAnK+ebzWr0UoM4c942zl5uylA==}
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -19354,7 +19363,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-symbol: 1.1.0
 
-  '@space-architects/nx-plugin-std@1.0.0(c811c1f777c035ea5206cad2bb354443)':
+  '@space-architects/nx-plugin-std@1.1.3(c811c1f777c035ea5206cad2bb354443)':
     dependencies:
       '@nx/devkit': 21.2.0(nx@21.2.0(@swc-node/register@1.10.10(@swc/core@1.12.1(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.1(@swc/helpers@0.5.17)))
       '@nx/eslint': 21.2.0(@babel/traverse@7.27.4)(@swc-node/register@1.10.10(@swc/core@1.12.1(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.1(@swc/helpers@0.5.17))(@zkochan/js-yaml@0.0.7)(eslint@9.29.0(jiti@2.4.2))(nx@21.2.0(@swc-node/register@1.10.10(@swc/core@1.12.1(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.1(@swc/helpers@0.5.17)))(verdaccio@6.1.2(encoding@0.1.13)(typanion@3.14.0))
@@ -19364,11 +19373,16 @@ snapshots:
       vitest: 3.2.3(@types/debug@4.1.12)(@types/node@24.0.1)(@vitest/ui@3.2.3)(jiti@2.4.2)(jsdom@26.1.0)(less@4.1.3)(lightningcss@1.30.1)(sass-embedded@1.86.3)(sass@1.86.3)(stylus@0.64.0)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0)
       zod: 3.25.64
 
-  '@space-architects/util-enum@1.0.0':
+  '@space-architects/util-drizzle@1.1.3(drizzle-orm@0.44.2(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(@types/better-sqlite3@7.6.13)(@types/pg@8.15.4)(@upstash/redis@1.35.0)(better-sqlite3@11.10.0)(kysely@0.28.2)(postgres@3.4.7)(prisma@6.9.0(typescript@5.8.3)))(uuid@11.1.0)':
     dependencies:
-      '@space-architects/util-ts': 1.0.0
+      drizzle-orm: 0.44.2(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(@types/better-sqlite3@7.6.13)(@types/pg@8.15.4)(@upstash/redis@1.35.0)(better-sqlite3@11.10.0)(kysely@0.28.2)(postgres@3.4.7)(prisma@6.9.0(typescript@5.8.3))
+      uuid: 11.1.0
 
-  '@space-architects/util-ts@1.0.0': {}
+  '@space-architects/util-enum@1.1.3':
+    dependencies:
+      '@space-architects/util-ts': 1.1.3
+
+  '@space-architects/util-ts@1.1.3': {}
 
   '@standard-schema/spec@1.0.0': {}
 
@@ -21213,7 +21227,7 @@ snapshots:
 
   babel-plugin-macros@3.1.0:
     dependencies:
-      '@babel/runtime': 7.27.4
+      '@babel/runtime': 7.27.6
       cosmiconfig: 7.1.0
       resolve: 1.22.10
 
@@ -27809,7 +27823,7 @@ snapshots:
 
   regenerator-transform@0.15.2:
     dependencies:
-      '@babel/runtime': 7.27.4
+      '@babel/runtime': 7.27.6
 
   regexp.prototype.flags@1.5.4:
     dependencies:

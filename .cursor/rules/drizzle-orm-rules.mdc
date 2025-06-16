@@ -1,12 +1,9 @@
 ---
-description: USE WHEN need to design/create/improve/analyze/modify database schema or write code that uses Drizzle ORM.
+description:
 globs: 
 alwaysApply: true
 ---
-
 # Drizzle ORM Rules and Database Schema Design Guidelines
-
-## When to apply
 
 USE WHEN need to design/create/improve/analyze/modify database schema or write code that uses Drizzle ORM.
 

@@ -1,10 +1,11 @@
 import { seed } from 'drizzle-seed';
 
 import { bardb } from '../bardb';
-import * as schema from '../schema/schema';
+
+import { seedSchema } from './seedSchema';
 
 async function main() {
-  await seed(bardb, schema);
+  await seed(bardb, seedSchema);
 }
 
 main()

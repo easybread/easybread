@@ -2,10 +2,10 @@ import { reset } from 'drizzle-seed';
 
 import { bardb } from '../bardb';
 
-import * as schema from './seedSchema';
+import { seedSchema } from './seedSchema';
 
 async function main() {
-  await reset(bardb, schema);
+  await reset(bardb, seedSchema);
 }
 
 main()

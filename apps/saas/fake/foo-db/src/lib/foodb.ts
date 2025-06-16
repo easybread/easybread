@@ -1,9 +1,8 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { lazyDrizzle } from '@space-architects/util-drizzle';
+import { drizzle } from 'drizzle-orm/neon-http';
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const client = postgres(process.env['POSTGRES_FOO_CONN_URL']!, {
-  prepare: false,
-});
-
-export const foodb = drizzle({ client });
+export const foodb = lazyDrizzle(
+  drizzle,
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  () => process.env['POSTGRES_FOO_CONN_URL']!,
+);
