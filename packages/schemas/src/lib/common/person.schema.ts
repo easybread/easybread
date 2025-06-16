@@ -2,14 +2,14 @@ import { ThingSchema } from '../base/thing.schema';
 import { OrganizationSchema } from '../hr/organization.schema';
 import type { ExtendableSchema } from '../util/extendable-schema';
 
-import { AddressSchema } from './address.schema';
 import { Bcp47LanguageCode } from './bcp47-language-code';
+import { PostalAddressSchema } from './postal-address.schema';
 
 export type PersonSchema = ExtendableSchema<ThingSchema> & {
   '@type': 'Person';
   // TODO: think about allowing any string
   knowsLanguage?: Bcp47LanguageCode;
-  address?: AddressSchema | string;
+  address?: PostalAddressSchema | string;
   alternateName?: string;
   givenName?: string;
   familyName?: string;

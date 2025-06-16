@@ -2,12 +2,13 @@ import { seed } from 'drizzle-seed';
 
 import { foodb } from '../foodb';
 
-import { sessions, users } from './seedSchema';
+import * as seedSchema from './seedSchema';
 
 async function main() {
-  await seed(foodb, {
-    users,
-    sessions,
+  await seed(foodb, seedSchema).refine(ctx => {
+    return {
+      users: {},
+    };
   });
 }
 
