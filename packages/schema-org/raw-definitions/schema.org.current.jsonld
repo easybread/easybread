@@ -1,4 +1,5 @@
 {
+  "LLM_INFO": "This is the current version of the schema.org vocabulary. It is a complete spec of the vocabulary. For a simplified tree of classes see schema.org.tree.jsonld",
   "@context": {
     "brick": "https://brickschema.org/schema/Brick#",
     "csvw": "http://www.w3.org/ns/csvw#",

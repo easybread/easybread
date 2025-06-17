@@ -1,0 +1,243 @@
+[
+  {
+    "@id": "schema:ContactPoint",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "A contact point&#x2014;for example, a Customer Complaints department.",
+    "rdfs:label": "ContactPoint",
+    "rdfs:subClassOf": {
+      "@id": "schema:StructuredValue"
+    }
+  },
+  {
+    "@id": "schema:areaServed",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The geographic area where a service or offered item is provided.",
+    "rdfs:label": "areaServed",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Offer"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:FinancialIncentive"
+      },
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:DeliveryChargeSpecification"
+      },
+      {
+        "@id": "schema:Demand"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:AdministrativeArea"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:GeoShape"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ]
+  },
+  {
+    "@id": "schema:availableLanguage",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A language someone may use with or at the item, service or place. Please use one of the language codes from the [IETF BCP 47 standard](http://tools.ietf.org/html/bcp47). See also [[inLanguage]].",
+    "rdfs:label": "availableLanguage",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:LodgingBusiness"
+      },
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Course"
+      },
+      {
+        "@id": "schema:ServiceChannel"
+      },
+      {
+        "@id": "schema:TouristAttraction"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:Language"
+      }
+    ]
+  },
+  {
+    "@id": "schema:contactOption",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An option available on this contact point (e.g. a toll-free number or support for hearing-impaired callers).",
+    "rdfs:label": "contactOption",
+    "schema:domainIncludes": {
+      "@id": "schema:ContactPoint"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:ContactPointOption"
+    }
+  },
+  {
+    "@id": "schema:contactType",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A person or organization can have different contact points, for different purposes. For example, a sales contact point, a PR contact point and so on. This property is used to specify the kind of contact point.",
+    "rdfs:label": "contactType",
+    "schema:domainIncludes": {
+      "@id": "schema:ContactPoint"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:email",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Email address.",
+    "rdfs:label": "email",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:faxNumber",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The fax number.",
+    "rdfs:label": "faxNumber",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:hoursAvailable",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The hours during which this service or contact is available.",
+    "rdfs:label": "hoursAvailable",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:LocationFeatureSpecification"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:ContactPoint"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:OpeningHoursSpecification"
+    }
+  },
+  {
+    "@id": "schema:productSupported",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The product or service this support contact point is related to (such as product support for a particular product line). This can be a specific product or product line (e.g. \"iPhone\") or a general category of products or services (e.g. \"smartphones\").",
+    "rdfs:label": "productSupported",
+    "schema:domainIncludes": {
+      "@id": "schema:ContactPoint"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:Product"
+      }
+    ]
+  },
+  {
+    "@id": "schema:serviceArea",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The geographic area where the service is provided.",
+    "rdfs:label": "serviceArea",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:ContactPoint"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:AdministrativeArea"
+      },
+      {
+        "@id": "schema:GeoShape"
+      }
+    ],
+    "schema:supersededBy": {
+      "@id": "schema:areaServed"
+    }
+  },
+  {
+    "@id": "schema:telephone",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The telephone number.",
+    "rdfs:label": "telephone",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  }
+]

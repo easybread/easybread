@@ -1,0 +1,11 @@
+[
+  {
+    "@id": "schema:Integer",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "Data type: Integer.",
+    "rdfs:label": "Integer",
+    "rdfs:subClassOf": {
+      "@id": "schema:Number"
+    }
+  }
+]

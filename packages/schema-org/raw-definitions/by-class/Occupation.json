@@ -1,0 +1,255 @@
+[
+  {
+    "@id": "schema:Occupation",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "A profession, may involve prolonged training and/or a formal qualification.",
+    "rdfs:label": "Occupation",
+    "rdfs:subClassOf": {
+      "@id": "schema:Intangible"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+    }
+  },
+  {
+    "@id": "schema:educationRequirements",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Educational background needed for the position or Occupation.",
+    "rdfs:label": "educationRequirements",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:EducationalOccupationalCredential"
+      }
+    ],
+    "schema:source": [
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1779"
+      }
+    ]
+  },
+  {
+    "@id": "schema:estimatedSalary",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An estimated salary for a job posting or occupation, based on a variety of variables including, but not limited to industry, job title, and location. Estimated salaries  are often computed by outside organizations rather than the hiring organization, who may not have committed to the estimated value.",
+    "rdfs:label": "estimatedSalary",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:MonetaryAmount"
+      },
+      {
+        "@id": "schema:MonetaryAmountDistribution"
+      },
+      {
+        "@id": "schema:Number"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+    }
+  },
+  {
+    "@id": "schema:experienceRequirements",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Description of skills and experience needed for the position or Occupation.",
+    "rdfs:label": "experienceRequirements",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:OccupationalExperienceRequirements"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+    }
+  },
+  {
+    "@id": "schema:occupationalCategory",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A category describing the job, preferably using a term from a taxonomy such as [BLS O*NET-SOC](http://www.onetcenter.org/taxonomy.html), [ISCO-08](https://www.ilo.org/public/english/bureau/stat/isco/isco08/) or similar, with the property repeated for each applicable value. Ideally the taxonomy should be identified, and both the textual label and formal code for the category should be provided.\\n\nNote: for historical reasons, any textual label and formal code provided as a literal may be assumed to be from O*NET-SOC.",
+    "rdfs:label": "occupationalCategory",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:JobPosting"
+      },
+      {
+        "@id": "schema:Physician"
+      },
+      {
+        "@id": "schema:WorkBasedProgram"
+      },
+      {
+        "@id": "schema:EducationalOccupationalProgram"
+      },
+      {
+        "@id": "schema:Occupation"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:CategoryCode"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ],
+    "schema:source": [
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/2289"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/2460"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/2192"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/3420"
+      }
+    ]
+  },
+  {
+    "@id": "schema:occupationLocation",
+    "@type": "rdf:Property",
+    "rdfs:comment": " The region/country for which this occupational description is appropriate. Note that educational requirements and qualifications can vary between jurisdictions.",
+    "rdfs:label": "occupationLocation",
+    "schema:domainIncludes": {
+      "@id": "schema:Occupation"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:AdministrativeArea"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+    }
+  },
+  {
+    "@id": "schema:qualifications",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Specific qualifications required for this role or Occupation.",
+    "rdfs:label": "qualifications",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:EducationalOccupationalCredential"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ],
+    "schema:source": [
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1779"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      }
+    ]
+  },
+  {
+    "@id": "schema:responsibilities",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Responsibilities associated with this role or Occupation.",
+    "rdfs:label": "responsibilities",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+    }
+  },
+  {
+    "@id": "schema:skills",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A statement of knowledge, skill, ability, task or any other assertion expressing a competency that is either claimed by a person, an organization or desired or required to fulfill a role or to work in an occupation.",
+    "rdfs:label": "skills",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:DefinedTerm"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ],
+    "schema:source": [
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/2322"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      }
+    ]
+  }
+]

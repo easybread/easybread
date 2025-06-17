@@ -1,0 +1,61 @@
+[
+  {
+    "@id": "schema:DefinedTerm",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "A word, name, acronym, phrase, etc. with a formal definition. Often used in the context of category or subject classification, glossaries or dictionaries, product or creative work types, etc. Use the name property for the term being defined, use termCode if the term has an alpha-numeric code allocated, use description to provide the definition of the term.",
+    "rdfs:label": "DefinedTerm",
+    "rdfs:subClassOf": {
+      "@id": "schema:Intangible"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/894"
+    }
+  },
+  {
+    "@id": "schema:inDefinedTermSet",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A [[DefinedTermSet]] that contains this term.",
+    "rdfs:label": "inDefinedTermSet",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:isPartOf"
+    },
+    "schema:domainIncludes": {
+      "@id": "schema:DefinedTerm"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:DefinedTermSet"
+      },
+      {
+        "@id": "schema:URL"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/894"
+    }
+  },
+  {
+    "@id": "schema:termCode",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A code that identifies this [[DefinedTerm]] within a [[DefinedTermSet]].",
+    "rdfs:label": "termCode",
+    "schema:domainIncludes": {
+      "@id": "schema:DefinedTerm"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/894"
+    }
+  }
+]

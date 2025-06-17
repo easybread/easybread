@@ -4,25 +4,39 @@ import type { ExtendableSchema } from '../util/extendable-schema';
 
 import type { OrganizationSchema } from './organization.schema';
 
-export type JobCountryRequirementSchema = {
-  '@type': 'Country';
+export type PlaceSchema = {
+  '@type': 'Place';
+  name?: string;
+  address?: PostalAddressSchema;
+};
+
+export type AdministrativeAreaSchema = {
+  '@type': 'AdministrativeArea';
   name: string;
-  sameAs?: string;
 };
 
 export type JobMonetaryAmountSchema = {
   '@type': 'MonetaryAmount';
   value: number;
   currency: string;
-  unitText?: 'HOUR' | 'DAY' | 'WEEK' | 'MONTH' | 'YEAR';
+  unitText?: string;
 };
 
-export type JobSalaryRangeSchema = {
+export type MonetaryAmountDistributionSchema = {
   '@type': 'MonetaryAmountDistribution';
-  minValue?: number;
-  maxValue?: number;
+  median?: number;
+  percentile10?: number;
+  percentile25?: number;
+  percentile75?: number;
+  percentile90?: number;
   currency: string;
-  unitText?: 'HOUR' | 'DAY' | 'WEEK' | 'MONTH' | 'YEAR';
+  duration?: string;
+};
+
+export type PriceSpecificationSchema = {
+  '@type': 'PriceSpecification';
+  price?: number;
+  priceCurrency?: string;
 };
 
 export type JobEducationRequirementSchema = {
@@ -38,11 +52,9 @@ export type JobExperienceRequirementSchema = {
   description?: string;
 };
 
-export type JobCategorySchema = {
-  '@type': 'CategoryCode';
-  codeValue: string;
-  name: string;
-  url?: string;
+export type OccupationSchema = {
+  '@type': 'Occupation';
+  name?: string;
 };
 
 export type JobContactPointSchema = {
@@ -52,69 +64,57 @@ export type JobContactPointSchema = {
   contactType?: string;
 };
 
-export type JobEmploymentTypeEnum =
-  | 'FULL_TIME'
-  | 'PART_TIME'
-  | 'CONTRACTOR'
-  | 'TEMPORARY'
-  | 'SEASONAL'
-  | 'INTERN'
-  | 'VOLUNTEER'
-  | 'PER_DIEM';
-
-export type JobLocationTypeEnum = 'TELECOMMUTE' | 'ONSITE' | 'HYBRID';
-
 /**
  * A listing that describes a job opening in a certain organization.
  * Based on Schema.org JobPosting (https://schema.org/JobPosting)
+ * Strictly compliant - no extensions allowed.
  */
 export type JobPostingSchema = ExtendableSchema<ThingSchema> & {
   '@type': 'JobPosting';
 
-  // Core fields
-  title: string; // Required
+  // Required field
+  title: string;
+
+  // Optional fields (all from schema.org)
   description?: string;
   datePosted?: string; // Date
   validThrough?: string; // Date
 
   // Organization & Location
   hiringOrganization?: OrganizationSchema;
-  employmentUnit?: OrganizationSchema; // Department/unit where the employee reports
-  jobLocation?: PostalAddressSchema;
-  applicantLocationRequirements?: JobCountryRequirementSchema;
+  jobLocation?: PlaceSchema | PostalAddressSchema;
+  applicantLocationRequirements?: AdministrativeAreaSchema;
 
   // Employment Details
-  employmentType?: Array<JobEmploymentTypeEnum>;
-  jobLocationType?: JobLocationTypeEnum;
+  employmentType?: string[];
+  jobLocationTypes?: string[]; // Note: plural form per schema.org
   workHours?: string;
 
-  // Compensation & Benefits
-  baseSalary?: JobMonetaryAmountSchema;
-  estimatedSalary?: JobSalaryRangeSchema;
+  // Compensation
+  baseSalary?: JobMonetaryAmountSchema | number | PriceSpecificationSchema;
+  estimatedSalary?:
+    | MonetaryAmountDistributionSchema
+    | JobMonetaryAmountSchema
+    | number;
+  salaryCurrency?: string;
   incentiveCompensation?: string;
   jobBenefits?: string;
 
-  // Requirements & Qualifications
-  educationRequirements?: JobEducationRequirementSchema;
-  experienceRequirements?: JobExperienceRequirementSchema;
-  experienceInPlaceOfEducation?: boolean;
+  // Requirements
+  educationalRequirements?: string | JobEducationRequirementSchema;
+  experienceRequirements?: string | JobExperienceRequirementSchema;
   qualifications?: string;
   skills?: string;
   responsibilities?: string;
 
   // Industry & Occupation
   industry?: string;
-  occupationalCategory?: JobCategorySchema;
+  occupationalCategory?: string;
+  relevantOccupation?: OccupationSchema;
 
-  // Application Process
+  // Application
   applicationContact?: JobContactPointSchema;
-  directApply?: boolean;
   jobImmediateStart?: boolean;
-  applicationDeadline?: string; // Date
-
-  // Additional Details
   eligibilityToWorkRequirement?: string;
-  employerOverview?: string;
-  numberOfPositions?: number;
-  specialCommitments?: string;
+  totalJobOpenings?: number;
 };

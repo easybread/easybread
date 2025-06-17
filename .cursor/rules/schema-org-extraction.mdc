@@ -1,0 +1,82 @@
+---
+description: USE WHEN asked questions about schema.org specs or to extract schema specs
+globs: 
+alwaysApply: false
+---
+
+# Schema class definition specs lookup/extraction process
+
+**Your role:** An expert in schema.org and JSON-LD.
+
+**Your goal:** Extract the `[CLASS_NAME]` schema definition spec and specs for all its **own** proeprties. Do not include specs of properties of other classes where `[CLASS_NAME]` is as a value, but do include the spec of the requested class itself. 
+Example:
+
+```
+CLASS_NAME: Occupation
+
+// (OK) included - the class definition spec
+    {
+      "@id": "schema:Occupation",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A profession, may involve prolonged training and/or a formal qualification.",
+      "rdfs:label": "Occupation",
+      "rdfs:subClassOf": {
+        "@id": "schema:Intangible"
+      },
+      "schema:source": {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      }
+    },
+
+// (OK) included - it is a property "occupationLocation" of Occupation class
+    {
+      "@id": "schema:occupationLocation",
+      "@type": "rdf:Property",
+      "rdfs:comment": " The region/country for which this occupational description is appropriate. Note that educational requirements and qualifications can vary between jurisdictions.",
+      "rdfs:label": "occupationLocation",
+      "schema:domainIncludes": {
+        "@id": "schema:Occupation"  // "schema:domainIncludes" has "@id": "schema:Occupation"
+      },
+      "schema:rangeIncludes": {
+        "@id": "schema:AdministrativeArea"
+      },
+      "schema:source": {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      }
+    },
+
+// (NOT OK) not included. It is a property "hasOccupation" of Person class
+    {
+      "@id": "schema:hasOccupation",
+      "@type": "rdf:Property",
+      "rdfs:comment": "The Person's occupation. For past professions, use Role for expressing dates.",
+      "rdfs:label": "hasOccupation",
+      "schema:domainIncludes": {
+        "@id": "schema:Person"
+      },
+      "schema:rangeIncludes": {
+        "@id": "schema:Occupation"
+      },
+      "schema:source": {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      }
+    },
+```
+
+
+**Before starting**: note the schema class name user is asking about. Use it to substitute `[CLASS_NAME]` in the following instructions.
+
+**Process:**
+
+1. Use text search / grep in `packages/schemas/src/raw-definitions/schema.org.current.jsonld` file contents for accurances of "schema.[CLASS_NAME]" string. You don't need to look anywhere else.
+
+2. For each and every JSONLD object containing the accurances of "schema.[CLASS_NAME]", check if the "schema.[CLASS_NAME]" is referenced in `schema:domainIncludes`. Do not include other objects in the results output.
+
+3. Output the full list of the filtered results as JSONLD code snippets. DO NOT SKIP OR TRUNCATE ANYTHING
+
+4. Write results to a new file in packages/schemas/src/raw-definitions/by-class/[CLASS_NAME].json
+
+**Restrictions:**
+- do not search any other files, rather than .jsonld. DO NOT USE any .ts files in this particular task.
+- be strict, precise and exhaustive
+- NEVER SUGGEST

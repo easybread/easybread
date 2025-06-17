@@ -1,0 +1,1896 @@
+[
+  {
+    "@id": "schema:Organization",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "An organization such as a school, NGO, corporation, club, etc.",
+    "rdfs:label": "Organization",
+    "rdfs:subClassOf": {
+      "@id": "schema:Thing"
+    }
+  },
+  {
+    "@id": "schema:acceptedPaymentMethod",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The payment method(s) that are accepted in general by an organization, or for some specific demand or offer.",
+    "rdfs:label": "acceptedPaymentMethod",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Demand"
+      },
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Offer"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:LoanOrCredit"
+      },
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:PaymentMethod"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/3537"
+    }
+  },
+  {
+    "@id": "schema:actionableFeedbackPolicy",
+    "@type": "rdf:Property",
+    "rdfs:comment": "For a [[NewsMediaOrganization]] or other news-related [[Organization]], a statement about public engagement activities (for news media, the newsroom’s), including involving the public - digitally or otherwise -- in coverage decisions, reporting and activities after publication.",
+    "rdfs:label": "actionableFeedbackPolicy",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:publishingPrinciples"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:NewsMediaOrganization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:URL"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:address",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Physical address of the item.",
+    "rdfs:label": "address",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:GeoCoordinates"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:GeoShape"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:PostalAddress"
+      }
+    ]
+  },
+  {
+    "@id": "schema:agentInteractionStatistic",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The number of completed interactions for this entity, in a particular role (the 'agent'), in a particular action (indicated in the statistic), and in a particular context (i.e. interactionService).",
+    "rdfs:label": "agentInteractionStatistic",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:InteractionCounter"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/2858"
+    }
+  },
+  {
+    "@id": "schema:aggregateRating",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The overall rating, based on a collection of reviews or ratings, of the item.",
+    "rdfs:label": "aggregateRating",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Offer"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Event"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Brand"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:AggregateRating"
+    }
+  },
+  {
+    "@id": "schema:alumni",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Alumni of an organization.",
+    "rdfs:label": "alumni",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:EducationalOrganization"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:inverseOf": {
+      "@id": "schema:alumniOf"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Person"
+    }
+  },
+  {
+    "@id": "schema:areaServed",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The geographic area where a service or offered item is provided.",
+    "rdfs:label": "areaServed",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Offer"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:FinancialIncentive"
+      },
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:DeliveryChargeSpecification"
+      },
+      {
+        "@id": "schema:Demand"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:AdministrativeArea"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:GeoShape"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ]
+  },
+  {
+    "@id": "schema:award",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An award won by or for this item.",
+    "rdfs:label": "award",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Service"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:awards",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Awards won by or for this item.",
+    "rdfs:label": "awards",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    },
+    "schema:supersededBy": {
+      "@id": "schema:award"
+    }
+  },
+  {
+    "@id": "schema:brand",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The brand(s) associated with a product or service, or the brand(s) maintained by an organization or business person.",
+    "rdfs:label": "brand",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Brand"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ]
+  },
+  {
+    "@id": "schema:companyRegistration",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The official registration number of a business including the organization that issued it such as Company House or Chamber of Commerce.",
+    "rdfs:label": "companyRegistration",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Certification"
+    }
+  },
+  {
+    "@id": "schema:contactPoint",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A contact point for a person or organization.",
+    "rdfs:label": "contactPoint",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:HealthInsurancePlan"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:ContactPoint"
+    }
+  },
+  {
+    "@id": "schema:contactPoints",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A contact point for a person or organization.",
+    "rdfs:label": "contactPoints",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:ContactPoint"
+    },
+    "schema:supersededBy": {
+      "@id": "schema:contactPoint"
+    }
+  },
+  {
+    "@id": "schema:correctionsPolicy",
+    "@type": "rdf:Property",
+    "rdfs:comment": "For an [[Organization]] (e.g. [[NewsMediaOrganization]]), a statement describing (in news media, the newsroom’s) disclosure and correction policy for errors.",
+    "rdfs:label": "correctionsPolicy",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:publishingPrinciples"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:NewsMediaOrganization"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:department",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A relationship between an organization and a department of that organization, also described as an organization (allowing different urls, logos, opening hours). For example: a store with a pharmacy, or a bakery with a cafe.",
+    "rdfs:label": "department",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Organization"
+    }
+  },
+  {
+    "@id": "schema:dissolutionDate",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The date that this organization was dissolved.",
+    "rdfs:label": "dissolutionDate",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Date"
+    }
+  },
+  {
+    "@id": "schema:diversityPolicy",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Statement on diversity policy by an [[Organization]] e.g. a [[NewsMediaOrganization]]. For a [[NewsMediaOrganization]], a statement describing the newsroom’s diversity policy on both staffing and sources, typically providing staffing data.",
+    "rdfs:label": "diversityPolicy",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:NewsMediaOrganization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:diversityStaffingReport",
+    "@type": "rdf:Property",
+    "rdfs:comment": "For an [[Organization]] (often but not necessarily a [[NewsMediaOrganization]]), a report on staffing diversity issues. In a news context this might be for example ASNE or RTDNA (US) reports, or self-reported.",
+    "rdfs:label": "diversityStaffingReport",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:publishingPrinciples"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:NewsMediaOrganization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Article"
+      },
+      {
+        "@id": "schema:URL"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:duns",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The Dun & Bradstreet DUNS number for identifying an organization or business person.",
+    "rdfs:label": "duns",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:identifier"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:email",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Email address.",
+    "rdfs:label": "email",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:employee",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Someone working for this organization.",
+    "rdfs:label": "employee",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Person"
+    }
+  },
+  {
+    "@id": "schema:employees",
+    "@type": "rdf:Property",
+    "rdfs:comment": "People working for this organization.",
+    "rdfs:label": "employees",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Person"
+    },
+    "schema:supersededBy": {
+      "@id": "schema:employee"
+    }
+  },
+  {
+    "@id": "schema:ethicsPolicy",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Statement about ethics policy, e.g. of a [[NewsMediaOrganization]] regarding journalistic and publishing practices, or of a [[Restaurant]], a page describing food source policies. In the case of a [[NewsMediaOrganization]], an ethicsPolicy is typically a statement describing the personal, organizational, and corporate standards of behavior expected by the organization.",
+    "rdfs:label": "ethicsPolicy",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:NewsMediaOrganization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:URL"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:event",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Upcoming or past event associated with this place, organization, or action.",
+    "rdfs:label": "event",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:LeaveAction"
+      },
+      {
+        "@id": "schema:InformAction"
+      },
+      {
+        "@id": "schema:JoinAction"
+      },
+      {
+        "@id": "schema:InviteAction"
+      },
+      {
+        "@id": "schema:PlayAction"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Event"
+    }
+  },
+  {
+    "@id": "schema:events",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Upcoming or past events associated with this place or organization.",
+    "rdfs:label": "events",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Place"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Event"
+    },
+    "schema:supersededBy": {
+      "@id": "schema:event"
+    }
+  },
+  {
+    "@id": "schema:faxNumber",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The fax number.",
+    "rdfs:label": "faxNumber",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:founder",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A person or organization who founded this organization.",
+    "rdfs:label": "founder",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ]
+  },
+  {
+    "@id": "schema:founders",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A person who founded this organization.",
+    "rdfs:label": "founders",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Person"
+    },
+    "schema:supersededBy": {
+      "@id": "schema:founder"
+    }
+  },
+  {
+    "@id": "schema:foundingDate",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The date that this organization was founded.",
+    "rdfs:label": "foundingDate",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Date"
+    }
+  },
+  {
+    "@id": "schema:foundingLocation",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The place where the Organization was founded.",
+    "rdfs:label": "foundingLocation",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Place"
+    }
+  },
+  {
+    "@id": "schema:funder",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A person or organization that supports (sponsors) something through some kind of financial contribution.",
+    "rdfs:label": "funder",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:sponsor"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Grant"
+      },
+      {
+        "@id": "schema:MonetaryGrant"
+      },
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Event"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ]
+  },
+  {
+    "@id": "schema:funding",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A [[Grant]] that directly or indirectly provide funding or sponsorship for this item. See also [[ownershipFundingInfo]].",
+    "rdfs:label": "funding",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Event"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:MedicalEntity"
+      },
+      {
+        "@id": "schema:BioChemEntity"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:inverseOf": {
+      "@id": "schema:fundedItem"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Grant"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/383"
+    }
+  },
+  {
+    "@id": "schema:globalLocationNumber",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The [Global Location Number](http://www.gs1.org/gln) (GLN, sometimes also referred to as International Location Number or ILN) of the respective organization, person, or place. The GLN is a 13-digit number used to identify parties and physical locations.",
+    "rdfs:label": "globalLocationNumber",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:identifier"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:hasCertification",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Certification information about a product, organization, service, place, or person.",
+    "rdfs:label": "hasCertification",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Certification"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/3230"
+    }
+  },
+  {
+    "@id": "schema:hasCredential",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A credential awarded to the Person or Organization.",
+    "rdfs:label": "hasCredential",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:EducationalOccupationalCredential"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/2289"
+    }
+  },
+  {
+    "@id": "schema:hasGS1DigitalLink",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The <a href=\"https://www.gs1.org/standards/gs1-digital-link\">GS1 digital link</a> associated with the object. This URL should conform to the particular requirements of digital links. The link should only contain the Application Identifiers (AIs) that are relevant for the entity being annotated, for instance a [[Product]] or an [[Organization]], and for the correct granularity. In particular, for products:<ul><li>A Digital Link that contains a serial number (AI <code>21</code>) should only be present on instances of [[IndividualProduct]]</li><li>A Digital Link that contains a lot number (AI <code>10</code>) should be annotated as [[SomeProduct]] if only products from that lot are sold, or [[IndividualProduct]] if there is only a specific product.</li><li>A Digital Link that contains a global model number (AI <code>8013</code>)  should be attached to a [[Product]] or a [[ProductModel]].</li></ul> Other item types should be adapted similarly.",
+    "rdfs:label": "hasGS1DigitalLink",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:identifier"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Offer"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Product"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:URL"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/3475"
+    }
+  },
+  {
+    "@id": "schema:hasMemberProgram",
+    "@type": "rdf:Property",
+    "rdfs:comment": "MemberProgram offered by an Organization, for example an eCommerce merchant or an airline.",
+    "rdfs:label": "hasMemberProgram",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:MemberProgram"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/3563"
+    }
+  },
+  {
+    "@id": "schema:hasMerchantReturnPolicy",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Specifies a MerchantReturnPolicy that may be applicable.",
+    "rdfs:label": "hasMerchantReturnPolicy",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Offer"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:MerchantReturnPolicy"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/2288"
+    }
+  },
+  {
+    "@id": "schema:hasOfferCatalog",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Indicates an OfferCatalog listing for this Organization, Person, or Service.",
+    "rdfs:label": "hasOfferCatalog",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:OfferCatalog"
+    }
+  },
+  {
+    "@id": "schema:hasPOS",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Points-of-Sales operated by the organization or person.",
+    "rdfs:label": "hasPOS",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Place"
+    }
+  },
+  {
+    "@id": "schema:hasShippingService",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Specification of a shipping service offered by the organization.",
+    "rdfs:label": "hasShippingService",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:OfferShippingDetails"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:ShippingService"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/3617"
+    }
+  },
+  {
+    "@id": "schema:interactionStatistic",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The number of interactions for the CreativeWork using the WebSite or SoftwareApplication. The most specific child type of InteractionCounter should be used.",
+    "rdfs:label": "interactionStatistic",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:InteractionCounter"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/2421"
+    }
+  },
+  {
+    "@id": "schema:isicV4",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The International Standard of Industrial Classification of All Economic Activities (ISIC), Revision 4 code for a particular organization, business person, or place.",
+    "rdfs:label": "isicV4",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:iso6523Code",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An organization identifier as defined in [ISO 6523(-1)](https://en.wikipedia.org/wiki/ISO/IEC_6523). The identifier should be in the `XXXX:YYYYYY:ZZZ` or `XXXX:YYYYYY`format. Where `XXXX` is a 4 digit _ICD_ (International Code Designator), `YYYYYY` is an _OID_ (Organization Identifier) with all formatting characters (dots, dashes, spaces) removed with a maximal length of 35 characters, and `ZZZ` is an optional OPI (Organization Part Identifier) with a maximum length of 35 characters. The various components (ICD, OID, OPI) are joined with a colon character (ASCII `0x3a`). Note that many existing organization identifiers defined as attributes like [leiCode](https://schema.org/leiCode) (`0199`), [duns](https://schema.org/duns) (`0060`) or [GLN](https://schema.org/globalLocationNumber) (`0088`) can be expressed using ISO-6523. If possible, ISO-6523 codes should be preferred to populating [vatID](https://schema.org/vatID) or [taxID](https://schema.org/taxID), as ISO identifiers are less ambiguous.",
+    "rdfs:label": "iso6523Code",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/2915"
+    }
+  },
+  {
+    "@id": "schema:keywords",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Keywords or tags used to describe some item. Multiple textual entries in a keywords list are typically delimited by commas, or by repeating the property.",
+    "rdfs:label": "keywords",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Event"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Product"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:DefinedTerm"
+      }
+    ]
+  },
+  {
+    "@id": "schema:knowsAbout",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Of a [[Person]], and less typically of an [[Organization]], to indicate a topic that is known about - suggesting possible expertise but not implying it. We do not distinguish skill levels here, or relate this to educational content, events, objectives or [[JobPosting]] descriptions.",
+    "rdfs:label": "knowsAbout",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:Thing"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1688"
+    }
+  },
+  {
+    "@id": "schema:knowsLanguage",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Of a [[Person]], and less typically of an [[Organization]], to indicate a known language. We do not distinguish skill levels or reading/writing/speaking/signing here. Use language codes from the [IETF BCP 47 standard](http://tools.ietf.org/html/bcp47).",
+    "rdfs:label": "knowsLanguage",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:Language"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1688"
+    }
+  },
+  {
+    "@id": "schema:legalAddress",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The legal address of an organization which acts as the officially registered address used for legal and tax purposes. The legal address can be different from the place of operations of a business and other addresses can be part of an organization.",
+    "rdfs:label": "legalAddress",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:PostalAddress"
+    }
+  },
+  {
+    "@id": "schema:legalName",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The official name of the organization, e.g. the registered company name.",
+    "rdfs:label": "legalName",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:legalRepresentative",
+    "@type": "rdf:Property",
+    "rdfs:comment": "One or multiple persons who represent this organization legally such as CEO or sole administrator.",
+    "rdfs:label": "legalRepresentative",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Person"
+    }
+  },
+  {
+    "@id": "schema:leiCode",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An organization identifier that uniquely identifies a legal entity as defined in ISO 17442.",
+    "rdfs:label": "leiCode",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:identifier"
+    },
+    "schema:contributor": [
+      {
+        "@id": "https://schema.org/docs/collab/GLEIF"
+      },
+      {
+        "@id": "https://schema.org/docs/collab/FIBO"
+      }
+    ],
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:location",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The location of, for example, where an event is happening, where an organization is located, or where an action takes place.",
+    "rdfs:label": "location",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:InteractionCounter"
+      },
+      {
+        "@id": "schema:Action"
+      },
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Event"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:VirtualLocation"
+      },
+      {
+        "@id": "schema:PostalAddress"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ]
+  },
+  {
+    "@id": "schema:logo",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An associated logo.",
+    "rdfs:label": "logo",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:image"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Brand"
+      },
+      {
+        "@id": "schema:Certification"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:ImageObject"
+      }
+    ]
+  },
+  {
+    "@id": "schema:makesOffer",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A pointer to products or services offered by the organization or person.",
+    "rdfs:label": "makesOffer",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:inverseOf": {
+      "@id": "schema:offeredBy"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Offer"
+    }
+  },
+  {
+    "@id": "schema:member",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A member of an Organization or a ProgramMembership. Organizations can be members of organizations; ProgramMembership is typically for individuals.",
+    "rdfs:label": "member",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:ProgramMembership"
+      }
+    ],
+    "schema:inverseOf": {
+      "@id": "schema:memberOf"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ]
+  },
+  {
+    "@id": "schema:memberOf",
+    "@type": "rdf:Property",
+    "rdfs:comment": "An Organization (or ProgramMembership) to which this Person or Organization belongs.",
+    "rdfs:label": "memberOf",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:inverseOf": {
+      "@id": "schema:member"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:ProgramMembership"
+      },
+      {
+        "@id": "schema:MemberProgramTier"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ]
+  },
+  {
+    "@id": "schema:members",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A member of this organization.",
+    "rdfs:label": "members",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:ProgramMembership"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:supersededBy": {
+      "@id": "schema:member"
+    }
+  },
+  {
+    "@id": "schema:naics",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The North American Industry Classification System (NAICS) code for a particular organization or business person.",
+    "rdfs:label": "naics",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:nonprofitStatus",
+    "@type": "rdf:Property",
+    "rdfs:comment": "nonprofitStatus indicates the legal status of a non-profit organization in its primary place of business.",
+    "rdfs:label": "nonprofitStatus",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:NonprofitType"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/2543"
+    }
+  },
+  {
+    "@id": "schema:numberOfEmployees",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The number of employees in an organization, e.g. business.",
+    "rdfs:label": "numberOfEmployees",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:BusinessAudience"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:QuantitativeValue"
+    }
+  },
+  {
+    "@id": "schema:ownershipFundingInfo",
+    "@type": "rdf:Property",
+    "rdfs:comment": "For an [[Organization]] (often but not necessarily a [[NewsMediaOrganization]]), a description of organizational ownership structure; funding and grants. In a news/media setting, this is with particular reference to editorial independence.   Note that the [[funder]] is also available and can be used to make basic funder information machine-readable.",
+    "rdfs:label": "ownershipFundingInfo",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:publishingPrinciples"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:NewsMediaOrganization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:AboutPage"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Text"
+      },
+      {
+        "@id": "schema:URL"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:owns",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Products owned by the organization or person.",
+    "rdfs:label": "owns",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:OwnershipInfo"
+      }
+    ]
+  },
+  {
+    "@id": "schema:parentOrganization",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The larger organization that this organization is a [[subOrganization]] of, if any.",
+    "rdfs:label": "parentOrganization",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:inverseOf": {
+      "@id": "schema:subOrganization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Organization"
+    }
+  },
+  {
+    "@id": "schema:publishingPrinciples",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The publishingPrinciples property indicates (typically via [[URL]]) a document describing the editorial principles of an [[Organization]] (or individual, e.g. a [[Person]] writing a blog) that relate to their activities as a publisher, e.g. ethics or diversity policies. When applied to a [[CreativeWork]] (e.g. [[NewsArticle]]) the principles are those of the party primarily responsible for the creation of the [[CreativeWork]].\n\nWhile such policies are most typically expressed in natural language, sometimes related information (e.g. indicating a [[funder]]) can be expressed using schema.org terminology.\n",
+    "rdfs:label": "publishingPrinciples",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      }
+    ]
+  },
+  {
+    "@id": "schema:review",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A review of the item.",
+    "rdfs:label": "review",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Brand"
+      },
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Offer"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Event"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Product"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Review"
+    }
+  },
+  {
+    "@id": "schema:reviews",
+    "@type": "rdf:Property",
+    "rdfs:comment": "Review of the item.",
+    "rdfs:label": "reviews",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Offer"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Review"
+    },
+    "schema:supersededBy": {
+      "@id": "schema:review"
+    }
+  },
+  {
+    "@id": "schema:seeks",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A pointer to products or services sought by the organization or person (demand).",
+    "rdfs:label": "seeks",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Demand"
+    }
+  },
+  {
+    "@id": "schema:serviceArea",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The geographic area where the service is provided.",
+    "rdfs:label": "serviceArea",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:ContactPoint"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:AdministrativeArea"
+      },
+      {
+        "@id": "schema:GeoShape"
+      }
+    ],
+    "schema:supersededBy": {
+      "@id": "schema:areaServed"
+    }
+  },
+  {
+    "@id": "schema:skills",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A statement of knowledge, skill, ability, task or any other assertion expressing a competency that is either claimed by a person, an organization or desired or required to fulfill a role or to work in an occupation.",
+    "rdfs:label": "skills",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Occupation"
+      },
+      {
+        "@id": "schema:JobPosting"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:DefinedTerm"
+      },
+      {
+        "@id": "schema:Text"
+      }
+    ],
+    "schema:source": [
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/2322"
+      },
+      {
+        "@id": "https://github.com/schemaorg/schemaorg/issues/1698"
+      }
+    ]
+  },
+  {
+    "@id": "schema:slogan",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A slogan or motto associated with the item.",
+    "rdfs:label": "slogan",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Service"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Product"
+      },
+      {
+        "@id": "schema:Brand"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:sponsor",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A person or organization that supports a thing through a pledge, promise, or financial contribution. E.g. a sponsor of a Medical Study or a corporate sponsor of an event.",
+    "rdfs:label": "sponsor",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Event"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Grant"
+      },
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:MedicalStudy"
+      }
+    ],
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ]
+  },
+  {
+    "@id": "schema:subOrganization",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A relationship between two organizations where the first includes the second, e.g., as a subsidiary. See also: the more specific 'department' property.",
+    "rdfs:label": "subOrganization",
+    "schema:domainIncludes": {
+      "@id": "schema:Organization"
+    },
+    "schema:inverseOf": {
+      "@id": "schema:parentOrganization"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Organization"
+    }
+  },
+  {
+    "@id": "schema:taxID",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.",
+    "rdfs:label": "taxID",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:identifier"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:telephone",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The telephone number.",
+    "rdfs:label": "telephone",
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:ContactPoint"
+      },
+      {
+        "@id": "schema:Place"
+      },
+      {
+        "@id": "schema:Person"
+      },
+      {
+        "@id": "schema:Organization"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  },
+  {
+    "@id": "schema:unnamedSourcesPolicy",
+    "@type": "rdf:Property",
+    "rdfs:comment": "For an [[Organization]] (typically a [[NewsMediaOrganization]]), a statement about policy on use of unnamed sources and the decision process required.",
+    "rdfs:label": "unnamedSourcesPolicy",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:publishingPrinciples"
+    },
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/TP"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:NewsMediaOrganization"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:CreativeWork"
+      },
+      {
+        "@id": "schema:URL"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/1525"
+    }
+  },
+  {
+    "@id": "schema:vatID",
+    "@type": "rdf:Property",
+    "rdfs:comment": "The Value-added Tax ID of the organization or person.",
+    "rdfs:label": "vatID",
+    "schema:contributor": {
+      "@id": "https://schema.org/docs/collab/GoodRelationsTerms"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:Organization"
+      },
+      {
+        "@id": "schema:Person"
+      }
+    ],
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    }
+  }
+]
