@@ -7,5 +7,29 @@
     "rdfs:subClassOf": {
       "@id": "schema:StatusEnumeration"
     }
+  },
+  {
+    "@id": "schema:ActiveActionStatus",
+    "@type": "schema:ActionStatusType",
+    "rdfs:comment": "An in-progress action (e.g., while watching the movie, or driving to a location).",
+    "rdfs:label": "ActiveActionStatus"
+  },
+  {
+    "@id": "schema:CompletedActionStatus",
+    "@type": "schema:ActionStatusType",
+    "rdfs:comment": "An action that has already taken place.",
+    "rdfs:label": "CompletedActionStatus"
+  },
+  {
+    "@id": "schema:FailedActionStatus",
+    "@type": "schema:ActionStatusType",
+    "rdfs:comment": "An action that failed to complete. The action's error property and the HTTP return code contain more information about the failure.",
+    "rdfs:label": "FailedActionStatus"
+  },
+  {
+    "@id": "schema:PotentialActionStatus",
+    "@type": "schema:ActionStatusType",
+    "rdfs:comment": "A description of an action that is supported.",
+    "rdfs:label": "PotentialActionStatus"
   }
 ]

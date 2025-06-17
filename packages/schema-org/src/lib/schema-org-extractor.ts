@@ -1,6 +1,20 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Helper to get schema path that works in both CommonJS and ES modules
+function getDefaultSchemaPath(): string {
+  // Try __dirname first (CommonJS)
+  if (typeof __dirname !== 'undefined') {
+    return join(__dirname, '../raw-definitions/schema.org.current.jsonld');
+  }
+
+  // Fallback for ES modules - use working directory relative path
+  return join(
+    process.cwd(),
+    'packages/schema-org/raw-definitions/schema.org.current.jsonld',
+  );
+}
+
 /**
  * Schema.org JSON-LD file content
  */
@@ -33,9 +47,38 @@ interface SchemaDefinition {
  * Efficient schema.org extractor using modern TypeScript and Node.js features
  */
 export class SchemaOrgExtractor {
+  /**
+   * Check if a schema definition is an enumeration value
+   * Enumeration values have @type that points to an enumeration class
+   */
+  static isEnumerationValue(definition: SchemaDefinition): boolean {
+    return (
+      typeof definition['@type'] === 'string' &&
+      definition['@type'].startsWith('schema:') &&
+      definition['@type'] !== 'rdf:Property' &&
+      definition['@type'] !== 'rdfs:Class'
+    );
+  }
+
+  static isClass(definition: SchemaDefinition): boolean {
+    return (
+      definition['@type'] === 'rdfs:Class' ||
+      (Array.isArray(definition['@type']) &&
+        definition['@type'].includes('rdfs:Class'))
+    );
+  }
+
+  static isProperty(definition: SchemaDefinition): boolean {
+    return definition['@type'] === 'rdf:Property';
+  }
+
   private readonly schemaFilePath: string;
   private readonly definitionsMap = new Map<string, SchemaDefinition>();
   private readonly classToDomainPropsMap = new Map<
+    string,
+    Set<SchemaDefinition>
+  >();
+  private readonly classToEnumValuesMap = new Map<
     string,
     Set<SchemaDefinition>
   >();
@@ -72,11 +115,22 @@ export class SchemaOrgExtractor {
           this.classToDomainPropsMap.get(classId)!.add(definition);
         }
       }
+
+      // Build reverse index: enumeration class -> enumeration values
+      if (SchemaOrgExtractor.isEnumerationValue(definition)) {
+        const enumClassId = definition['@type'] as string;
+        if (!this.classToEnumValuesMap.has(enumClassId)) {
+          this.classToEnumValuesMap.set(enumClassId, new Set());
+        }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.classToEnumValuesMap.get(enumClassId)!.add(definition);
+      }
     }
   }
 
   /**
-   * Extract class definition and all properties that have the class in their domainIncludes
+   * Extract class definition, all properties that have the class in their domainIncludes,
+   * and all enumeration values that have the class as their @type
    */
   lookupClass(className: string): Set<SchemaDefinition> {
     const results = new Map<string, SchemaDefinition>();
@@ -103,6 +157,15 @@ export class SchemaOrgExtractor {
       }
     }
 
+    // Add all enumeration values that have this class as their @type
+    const enumValues = this.classToEnumValuesMap.get(classId);
+
+    if (enumValues) {
+      for (const enumValue of enumValues) {
+        results.set(enumValue['@id'], enumValue);
+      }
+    }
+
     return new Set(results.values());
   }
 
@@ -113,19 +176,19 @@ export class SchemaOrgExtractor {
     totalDefinitions: number;
     totalClasses: number;
     totalProperties: number;
+    totalEnumValues: number;
   } {
     const classes = new Set<string>();
     const properties = new Set<string>();
+    const enumValues = new Set<string>();
 
     for (const [id, definition] of this.definitionsMap) {
-      if (
-        definition['@type'] === 'rdfs:Class' ||
-        (Array.isArray(definition['@type']) &&
-          definition['@type'].includes('rdfs:Class'))
-      ) {
+      if (SchemaOrgExtractor.isClass(definition)) {
         classes.add(id);
       } else if (definition['@type'] === 'rdf:Property') {
         properties.add(id);
+      } else if (SchemaOrgExtractor.isEnumerationValue(definition)) {
+        enumValues.add(id);
       }
     }
 
@@ -133,6 +196,7 @@ export class SchemaOrgExtractor {
       totalDefinitions: this.definitionsMap.size,
       totalClasses: classes.size,
       totalProperties: properties.size,
+      totalEnumValues: enumValues.size,
     };
   }
 
@@ -155,17 +219,26 @@ export function writeResults(
 ): void {
   const resultsArray = Array.from(results);
 
-  // Sort results: class definitions first, then properties alphabetically
+  // Sort results: class definitions first, then properties, then enumeration values, all alphabetically
   resultsArray.sort((a, b) => {
-    const aIsClass =
-      a['@type'] === 'rdfs:Class' ||
-      (Array.isArray(a['@type']) && a['@type'].includes('rdfs:Class'));
-    const bIsClass =
-      b['@type'] === 'rdfs:Class' ||
-      (Array.isArray(b['@type']) && b['@type'].includes('rdfs:Class'));
+    const aIsClass = SchemaOrgExtractor.isClass(a);
+    const bIsClass = SchemaOrgExtractor.isClass(b);
 
+    const aIsProperty = a['@type'] === 'rdf:Property';
+    const bIsProperty = b['@type'] === 'rdf:Property';
+
+    const aIsEnumValue = SchemaOrgExtractor.isEnumerationValue(a);
+    const bIsEnumValue = SchemaOrgExtractor.isEnumerationValue(b);
+
+    // Sort order: classes first, then properties, then enum values
     if (aIsClass && !bIsClass) return -1;
     if (!aIsClass && bIsClass) return 1;
+
+    if (aIsProperty && !bIsProperty) return -1;
+    if (!aIsProperty && bIsProperty) return 1;
+
+    if (aIsEnumValue && !bIsEnumValue) return -1;
+    if (!aIsEnumValue && bIsEnumValue) return 1;
 
     return a['@id'].localeCompare(b['@id']);
   });
@@ -194,11 +267,7 @@ export function lookupClass(
   className: string,
   schemaFilePath?: string,
 ): Set<SchemaDefinition> {
-  const defaultPath = join(
-    __dirname,
-    '../raw-definitions/schema.org.current.jsonld',
-  );
-  const filePath = schemaFilePath ?? defaultPath;
+  const filePath = schemaFilePath ?? getDefaultSchemaPath();
 
   const extractor = new SchemaOrgExtractor(filePath);
   return extractor.lookupClass(className);

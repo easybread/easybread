@@ -50,17 +50,19 @@ the class in their domainIncludes.
 
     // Show what was found
     const definitions = Array.from(results);
-    const classDefinitions = definitions.filter(
-      d =>
-        d['@type'] === 'rdfs:Class' ||
-        (Array.isArray(d['@type']) && d['@type'].includes('rdfs:Class')),
-    );
+    const classDefinitions = definitions.filter(SchemaOrgExtractor.isClass);
     const propertyDefinitions = definitions.filter(
-      d => d['@type'] === 'rdf:Property',
+      SchemaOrgExtractor.isProperty,
+    );
+    const enumValueDefinitions = definitions.filter(
+      SchemaOrgExtractor.isEnumerationValue,
     );
 
     console.log(`  📋 Class definitions: ${classDefinitions.length}`);
     console.log(`  🔧 Property definitions: ${propertyDefinitions.length}`);
+    console.log(`  🔢 Enum value definitions: ${enumValueDefinitions.length}`);
+
+    console.log('--------------------------------');
 
     if (classDefinitions.length > 0) {
       console.log(
@@ -76,6 +78,15 @@ the class in their domainIncludes.
           .join(
             ', ',
           )}${propertyDefinitions.length > 5 ? ` ... and ${propertyDefinitions.length - 5} more` : ''}`,
+      );
+    }
+
+    if (enumValueDefinitions.length > 0) {
+      console.log(
+        `  🔢 Enum values: ${enumValueDefinitions
+          .slice(0, 5)
+          .map(d => d['@id'])
+          .join(', ')}`,
       );
     }
 

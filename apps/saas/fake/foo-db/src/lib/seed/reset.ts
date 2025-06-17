@@ -2,10 +2,11 @@ import { reset } from 'drizzle-seed';
 
 import { foodb } from '../foodb';
 
-import * as schema from './seedSchema';
+import * as enums from './../schema/enums';
+import * as schema from './../schema/schema';
 
 async function main() {
-  await reset(foodb, schema);
+  await reset(foodb, { ...schema, ...enums });
 }
 
 main()

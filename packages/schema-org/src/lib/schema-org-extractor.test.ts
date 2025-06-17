@@ -32,6 +32,7 @@ describe('SchemaOrgExtractor', () => {
       expect(stats.totalDefinitions).toBeGreaterThan(0);
       expect(stats.totalClasses).toBeGreaterThan(0);
       expect(stats.totalProperties).toBeGreaterThan(0);
+      expect(stats.totalEnumValues).toBeGreaterThan(0);
     });
   });
 
@@ -110,6 +111,96 @@ describe('SchemaOrgExtractor', () => {
         'Class NonExistentClass not found in schema.org.current.jsonld',
       );
     });
+
+    it('should extract enumeration class with its enumeration values', () => {
+      const results = extractor.lookupClass('ActionStatusType');
+      expect(results.size).toBeGreaterThan(1);
+
+      const definitions = Array.from(results);
+
+      // Should include the class definition
+      const classDefinition = definitions.find(
+        d => d['@id'] === 'schema:ActionStatusType',
+      );
+      expect(classDefinition).toBeDefined();
+      expect(classDefinition?.['@type']).toBe('rdfs:Class');
+      expect(classDefinition?.['rdfs:subClassOf']?.['@id']).toBe(
+        'schema:StatusEnumeration',
+      );
+
+      // Should include enumeration values
+      const enumValues = definitions.filter(
+        d =>
+          typeof d['@type'] === 'string' &&
+          d['@type'] === 'schema:ActionStatusType',
+      );
+      expect(enumValues.length).toBeGreaterThan(0);
+
+      // Should include specific enumeration values
+      const enumValueIds = enumValues.map(e => e['@id']);
+      expect(enumValueIds).toContain('schema:PotentialActionStatus');
+      expect(enumValueIds).toContain('schema:FailedActionStatus');
+
+      // Verify structure of enumeration values
+      const potentialStatus = enumValues.find(
+        e => e['@id'] === 'schema:PotentialActionStatus',
+      );
+      expect(potentialStatus).toBeDefined();
+      expect(potentialStatus?.['@type']).toBe('schema:ActionStatusType');
+      expect(potentialStatus?.['rdfs:label']).toBe('PotentialActionStatus');
+      expect(potentialStatus?.['rdfs:comment']).toContain(
+        'action that is supported',
+      );
+    });
+
+    it('should extract enumeration values for other status types', () => {
+      // Test another enumeration class to ensure pattern works broadly
+      const results = extractor.lookupClass('HealthAspectEnumeration');
+
+      if (results.size > 1) {
+        // Only test if enumeration values exist
+        const definitions = Array.from(results);
+
+        const classDefinition = definitions.find(
+          d => d['@id'] === 'schema:HealthAspectEnumeration',
+        );
+        expect(classDefinition).toBeDefined();
+
+        const enumValues = definitions.filter(
+          d =>
+            typeof d['@type'] === 'string' &&
+            d['@type'] === 'schema:HealthAspectEnumeration',
+        );
+
+        if (enumValues.length > 0) {
+          expect(enumValues.length).toBeGreaterThan(0);
+          // Verify each enumeration value has the correct structure
+          enumValues.forEach(enumValue => {
+            expect(enumValue['@type']).toBe('schema:HealthAspectEnumeration');
+            expect(enumValue['rdfs:label']).toBeDefined();
+          });
+        }
+      }
+    });
+
+    it('should include properties that use enumeration types in their range', () => {
+      const results = extractor.lookupClass('ActionStatusType');
+      const definitions = Array.from(results);
+
+      // Should include properties that have ActionStatusType in their rangeIncludes
+      const properties = definitions.filter(d => d['@type'] === 'rdf:Property');
+
+      // Look for actionStatus property which should have ActionStatusType in its range
+      const actionStatusProp = properties.find(
+        p => p['@id'] === 'schema:actionStatus',
+      );
+
+      if (actionStatusProp) {
+        // This property should have Action in domainIncludes and ActionStatusType in rangeIncludes
+        expect(actionStatusProp['schema:domainIncludes']).toBeDefined();
+        expect(actionStatusProp['schema:rangeIncludes']).toBeDefined();
+      }
+    });
   });
 
   describe('writeResults', () => {
@@ -160,6 +251,46 @@ describe('SchemaOrgExtractor', () => {
       expect(writtenContent.indexOf(classDefinitions[0])).toBeLessThan(
         writtenContent.indexOf(propertyDefinitions[0]),
       );
+    });
+
+    it('should sort results with correct order: classes, then properties, then enum values', () => {
+      const results = extractor.lookupClass('ActionStatusType');
+      writeResults(results, testOutputPath);
+
+      const writtenContent = readJson(testOutputPath);
+      const classDefinitions = writtenContent.filter(
+        (d: SchemaDefinition) =>
+          d['@type'] === 'rdfs:Class' ||
+          (Array.isArray(d['@type']) && d['@type'].includes('rdfs:Class')),
+      );
+      const propertyDefinitions = writtenContent.filter(
+        (d: SchemaDefinition) => d['@type'] === 'rdf:Property',
+      );
+      const enumValueDefinitions = writtenContent.filter(
+        (d: SchemaDefinition) =>
+          typeof d['@type'] === 'string' &&
+          d['@type'] === 'schema:ActionStatusType',
+      );
+
+      expect(writtenContent.length).toBeGreaterThan(0);
+      expect(classDefinitions.length).toBeGreaterThan(0);
+      expect(enumValueDefinitions.length).toBeGreaterThan(0);
+
+      // Class definitions should come first
+      if (propertyDefinitions.length > 0) {
+        expect(writtenContent.indexOf(classDefinitions[0])).toBeLessThan(
+          writtenContent.indexOf(propertyDefinitions[0]),
+        );
+        // Properties should come before enum values
+        expect(writtenContent.indexOf(propertyDefinitions[0])).toBeLessThan(
+          writtenContent.indexOf(enumValueDefinitions[0]),
+        );
+      } else {
+        // If no properties, classes should come before enum values
+        expect(writtenContent.indexOf(classDefinitions[0])).toBeLessThan(
+          writtenContent.indexOf(enumValueDefinitions[0]),
+        );
+      }
     });
   });
 

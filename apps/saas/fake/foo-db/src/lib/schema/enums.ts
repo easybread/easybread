@@ -12,6 +12,7 @@ export const orgMemberRoleEnum = pgEnum('orgMemberRoleEnum', [
   'ADMIN',
   'MANAGER',
   'EMPLOYEE',
+  'CANDIDATE',
 ]);
 
 export const engagementTypeEnum = pgEnum('employmentTypeEnum', [
@@ -32,3 +33,16 @@ export const jobTypeEnum = pgEnum('jobTypeEnum', [
 ]);
 
 export const skillTypeEnum = pgEnum('skillTypeEnum', ['SOFT', 'TECHNICAL']);
+
+export const genderEnum = pgEnum('genderEnum', ['MALE', 'FEMALE']);
+
+export const jobApplicationStatusEnum = pgEnum('jobApplicationStatusEnum', [
+  'PENDING',
+  'SHORTLISTED',
+  'INTERVIEW',
+  'OFFER',
+  'HIRED',
+  'REJECTED_BY_EMPLOYER',
+  'REJECTED_BY_CANDIDATE',
+  'CANCELLED',
+]);
