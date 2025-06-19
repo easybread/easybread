@@ -1,9 +1,9 @@
-import type { DataModelDef } from '../../../data-model.js';
+import type { DataModelDef } from '../../../DataModel.js';
 import { IntrospectionStrategy } from '../../IntrospectionStrategy.js';
 
-import type { DbmlSchema } from './dbml-schema.js';
-import { SchemaFetcherDbml } from './schema-fetcher-dbml.js';
-import { SchemaTransformerDbml } from './schema-transformer-dbml.js';
+import type { DbmlSchema } from './DbmlSchema.js';
+import { SchemaFetcherDbml } from './SchemaFetcherDbml.js';
+import { SchemaTransformerDbml } from './SchemaTransformerDbml.js';
 
 export interface IntrospectionFactoryPostgresConfig {
   connectionString: string;

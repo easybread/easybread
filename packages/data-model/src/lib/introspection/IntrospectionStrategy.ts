@@ -1,4 +1,4 @@
-import type { DataModelDef } from '../data-model.js';
+import type { DataModelDef } from '../DataModel.js';
 
 import { IntrospectionError, UnknownError } from './IntrospectionError.js';
 import { type SchemaFetcher } from './SchemaFetcher.js';

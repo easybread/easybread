@@ -9,16 +9,11 @@ import {
   type RelationDef,
   UUID_ALGORITHM,
   type ValueDef,
-} from '../../../data-model.js';
+} from '../../../DataModel.js';
 import { TransformationError } from '../../IntrospectionError.js';
 import { type SchemaTransformer } from '../../SchemaTransformer.js';
 
-import type {
-  DbmlEnum,
-  DbmlField,
-  DbmlRef,
-  DbmlSchema,
-} from './dbml-schema.js';
+import type { DbmlEnum, DbmlField, DbmlRef, DbmlSchema } from './DbmlSchema.js';
 
 export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
   transform(dbmlSchema: DbmlSchema, modelName: string): DataModelDef {

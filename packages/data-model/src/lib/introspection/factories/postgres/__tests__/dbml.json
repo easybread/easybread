@@ -1,0 +1,1671 @@
+{
+  "tables": [
+    {
+      "name": "__drizzle_migrations",
+      "schemaName": "drizzle",
+      "note": { "value": "" }
+    },
+    { "name": "addresses", "schemaName": "public", "note": { "value": "" } },
+    {
+      "name": "candidateProfiles",
+      "schemaName": "public",
+      "note": { "value": "" }
+    },
+    { "name": "departments", "schemaName": "public", "note": { "value": "" } },
+    {
+      "name": "employeeProfile",
+      "schemaName": "public",
+      "note": { "value": "" }
+    },
+    { "name": "jobPosts", "schemaName": "public", "note": { "value": "" } },
+    { "name": "orgMembers", "schemaName": "public", "note": { "value": "" } },
+    { "name": "organization", "schemaName": "public", "note": { "value": "" } },
+    { "name": "skills", "schemaName": "public", "note": { "value": "" } },
+    {
+      "name": "skillsetSkills",
+      "schemaName": "public",
+      "note": { "value": "" }
+    },
+    { "name": "skillsets", "schemaName": "public", "note": { "value": "" } },
+    { "name": "users", "schemaName": "public", "note": { "value": "" } },
+    {
+      "name": "workHistoryItems",
+      "schemaName": "public",
+      "note": { "value": "" }
+    },
+    {
+      "name": "jobApplications",
+      "schemaName": "public",
+      "note": { "value": "" }
+    },
+    {
+      "name": "personalDetails",
+      "schemaName": "public",
+      "note": { "value": "" }
+    }
+  ],
+  "fields": {
+    "drizzle.__drizzle_migrations": [
+      {
+        "name": "id",
+        "type": { "type_name": "int4", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": true,
+        "note": { "value": "" }
+      },
+      {
+        "name": "hash",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "created_at",
+        "type": { "type_name": "int8", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.addresses": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "street1",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "street2",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "city",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "state",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "postalCode",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "countryCode",
+        "type": { "type_name": "countryCodeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "createdAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "updatedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.candidateProfiles": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "userId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "cvUrl",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "skillsetId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "addressesId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "title",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "orgId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "personalDetailsId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "createdAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "updatedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.departments": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "name",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "orgId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.employeeProfile": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "userId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "startedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "skillsetId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "jobTitle",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "engagementType",
+        "type": { "type_name": "employmentTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "commitmentType",
+        "type": { "type_name": "commitmentTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "addressId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "departmentId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "endedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "orgId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "personalDetailsId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.jobPosts": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "jobTitle",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "text",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "skillsetId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "jobType",
+        "type": { "type_name": "jobTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "engagementType",
+        "type": { "type_name": "employmentTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "commitmentType",
+        "type": { "type_name": "commitmentTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "createdAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "addressesId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "minSalary",
+        "type": { "type_name": "int4", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "maxSalary",
+        "type": { "type_name": "int4", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "currency",
+        "type": { "type_name": "varchar(10)", "schemaName": null },
+        "dbdefault": { "type": "string", "value": "USD" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "orgId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.orgMembers": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "userId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "orgId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "role",
+        "type": { "type_name": "orgMemberRoleEnum", "schemaName": "public" },
+        "dbdefault": { "type": "string", "value": "MANAGER" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.organization": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "name",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.skills": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "label",
+        "type": { "type_name": "varchar(255)", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "description",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "type",
+        "type": { "type_name": "skillTypeEnum", "schemaName": "public" },
+        "dbdefault": { "type": "string", "value": "TECHNICAL" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.skillsetSkills": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "skillId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "skillsetId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "experienceMonths",
+        "type": { "type_name": "int4", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "isEssential",
+        "type": { "type_name": "bool", "schemaName": null },
+        "dbdefault": { "type": "boolean", "value": "false" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.skillsets": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.users": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "email",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "passwordHash",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "passwordSalt",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.workHistoryItems": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "order",
+        "type": { "type_name": "int4", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "candidateProfileId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "startedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "endedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "title",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "description",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "companyName",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "addressesId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "engagementType",
+        "type": { "type_name": "employmentTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "commitmentType",
+        "type": { "type_name": "commitmentTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "jobType",
+        "type": { "type_name": "jobTypeEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.jobApplications": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "orgId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "jobPostId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "candidateProfileId",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "status",
+        "type": {
+          "type_name": "jobApplicationStatusEnum",
+          "schemaName": "public"
+        },
+        "dbdefault": { "type": "string", "value": "PENDING" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "createdAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "updatedAt",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": { "type": "expression", "value": "now()" },
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ],
+    "public.personalDetails": [
+      {
+        "name": "id",
+        "type": { "type_name": "uuid", "schemaName": null },
+        "dbdefault": null,
+        "not_null": true,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "firstName",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "lastName",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "gender",
+        "type": { "type_name": "genderEnum", "schemaName": "public" },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "phone",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "dateOfBirth",
+        "type": { "type_name": "timestamp", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      },
+      {
+        "name": "nationality",
+        "type": { "type_name": "text", "schemaName": null },
+        "dbdefault": null,
+        "not_null": false,
+        "increment": false,
+        "note": { "value": "" }
+      }
+    ]
+  },
+  "refs": [
+    {
+      "name": "candidateProfiles_addressesId_addresses_id_fk",
+      "endpoints": [
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["addressesId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "addresses",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "candidateProfiles_orgId_organization_id_fk",
+      "endpoints": [
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["orgId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "organization",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "candidateProfiles_personalDetailsId_personalDetails_id_fk",
+      "endpoints": [
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["personalDetailsId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "personalDetails",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "candidateProfiles_skillsetId_skillsets_id_fk",
+      "endpoints": [
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["skillsetId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "skillsets",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "candidateProfiles_userId_users_id_fk",
+      "endpoints": [
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["userId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "users",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "departments_orgId_organization_id_fk",
+      "endpoints": [
+        {
+          "tableName": "departments",
+          "schemaName": "public",
+          "fieldNames": ["orgId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "organization",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "employeeProfile_addressId_addresses_id_fk",
+      "endpoints": [
+        {
+          "tableName": "employeeProfile",
+          "schemaName": "public",
+          "fieldNames": ["addressId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "addresses",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "employeeProfile_departmentId_departments_id_fk",
+      "endpoints": [
+        {
+          "tableName": "employeeProfile",
+          "schemaName": "public",
+          "fieldNames": ["departmentId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "departments",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "employeeProfile_orgId_organization_id_fk",
+      "endpoints": [
+        {
+          "tableName": "employeeProfile",
+          "schemaName": "public",
+          "fieldNames": ["orgId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "organization",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "employeeProfile_personalDetailsId_personalDetails_id_fk",
+      "endpoints": [
+        {
+          "tableName": "employeeProfile",
+          "schemaName": "public",
+          "fieldNames": ["personalDetailsId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "personalDetails",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "employeeProfile_skillsetId_skillsets_id_fk",
+      "endpoints": [
+        {
+          "tableName": "employeeProfile",
+          "schemaName": "public",
+          "fieldNames": ["skillsetId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "skillsets",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "employeeProfile_userId_users_id_fk",
+      "endpoints": [
+        {
+          "tableName": "employeeProfile",
+          "schemaName": "public",
+          "fieldNames": ["userId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "users",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "jobApplications_candidateProfileId_candidateProfiles_id_fk",
+      "endpoints": [
+        {
+          "tableName": "jobApplications",
+          "schemaName": "public",
+          "fieldNames": ["candidateProfileId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "jobApplications_jobPostId_jobPosts_id_fk",
+      "endpoints": [
+        {
+          "tableName": "jobApplications",
+          "schemaName": "public",
+          "fieldNames": ["jobPostId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "jobPosts",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "jobApplications_orgId_organization_id_fk",
+      "endpoints": [
+        {
+          "tableName": "jobApplications",
+          "schemaName": "public",
+          "fieldNames": ["orgId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "organization",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "jobPosts_addressesId_addresses_id_fk",
+      "endpoints": [
+        {
+          "tableName": "jobPosts",
+          "schemaName": "public",
+          "fieldNames": ["addressesId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "addresses",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "jobPosts_orgId_organization_id_fk",
+      "endpoints": [
+        {
+          "tableName": "jobPosts",
+          "schemaName": "public",
+          "fieldNames": ["orgId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "organization",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "jobPosts_skillsetId_skillsets_id_fk",
+      "endpoints": [
+        {
+          "tableName": "jobPosts",
+          "schemaName": "public",
+          "fieldNames": ["skillsetId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "skillsets",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "orgMembers_orgId_organization_id_fk",
+      "endpoints": [
+        {
+          "tableName": "orgMembers",
+          "schemaName": "public",
+          "fieldNames": ["orgId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "organization",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "orgMembers_userId_users_id_fk",
+      "endpoints": [
+        {
+          "tableName": "orgMembers",
+          "schemaName": "public",
+          "fieldNames": ["userId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "users",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "skillsetSkills_skillId_skills_id_fk",
+      "endpoints": [
+        {
+          "tableName": "skillsetSkills",
+          "schemaName": "public",
+          "fieldNames": ["skillId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "skills",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "skillsetSkills_skillsetId_skillsets_id_fk",
+      "endpoints": [
+        {
+          "tableName": "skillsetSkills",
+          "schemaName": "public",
+          "fieldNames": ["skillsetId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "skillsets",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    },
+    {
+      "name": "workHistoryItems_addressesId_addresses_id_fk",
+      "endpoints": [
+        {
+          "tableName": "workHistoryItems",
+          "schemaName": "public",
+          "fieldNames": ["addressesId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "addresses",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "SET NULL",
+      "onUpdate": null
+    },
+    {
+      "name": "workHistoryItems_candidateProfileId_candidateProfiles_id_fk",
+      "endpoints": [
+        {
+          "tableName": "workHistoryItems",
+          "schemaName": "public",
+          "fieldNames": ["candidateProfileId"],
+          "relation": "*"
+        },
+        {
+          "tableName": "candidateProfiles",
+          "schemaName": "public",
+          "fieldNames": ["id"],
+          "relation": "1"
+        }
+      ],
+      "onDelete": "CASCADE",
+      "onUpdate": null
+    }
+  ],
+  "enums": [
+    {
+      "name": "commitmentTypeEnum",
+      "schemaName": "public",
+      "values": [{ "name": "FULL_TIME" }, { "name": "PART_TIME" }]
+    },
+    {
+      "name": "countryCodeEnum",
+      "schemaName": "public",
+      "values": [
+        { "name": "IR" },
+        { "name": "GM" },
+        { "name": "NC" },
+        { "name": "KS" },
+        { "name": "RU" },
+        { "name": "VG" },
+        { "name": "C1" },
+        { "name": "SB" },
+        { "name": "SN" },
+        { "name": "NF" },
+        { "name": "KN" },
+        { "name": "BT" },
+        { "name": "PW" },
+        { "name": "KZ" },
+        { "name": "BJ" },
+        { "name": "AW" },
+        { "name": "CS" },
+        { "name": "DO" },
+        { "name": "Y1" },
+        { "name": "LB" },
+        { "name": "LR" },
+        { "name": "AZ" },
+        { "name": "ES" },
+        { "name": "QA" },
+        { "name": "OM" },
+        { "name": "SK" },
+        { "name": "CV" },
+        { "name": "GB" },
+        { "name": "T1" },
+        { "name": "UA" },
+        { "name": "ZW" },
+        { "name": "SY" },
+        { "name": "TO" },
+        { "name": "SM" },
+        { "name": "ER" },
+        { "name": "GL" },
+        { "name": "TM" },
+        { "name": "KE" },
+        { "name": "TJ" },
+        { "name": "AI" },
+        { "name": "FO" },
+        { "name": "MG" },
+        { "name": "LI" },
+        { "name": "CF" },
+        { "name": "DZ" },
+        { "name": "GU" },
+        { "name": "GD" },
+        { "name": "FR" },
+        { "name": "MZ" },
+        { "name": "EE" },
+        { "name": "CL" },
+        { "name": "PR" },
+        { "name": "CR" },
+        { "name": "AM" },
+        { "name": "GG" },
+        { "name": "FK" },
+        { "name": "MD" },
+        { "name": "GT" },
+        { "name": "AO" },
+        { "name": "VN" },
+        { "name": "RS" },
+        { "name": "KM" },
+        { "name": "GH" },
+        { "name": "TZ" },
+        { "name": "MQ" },
+        { "name": "SZ" },
+        { "name": "WF" },
+        { "name": "TH" },
+        { "name": "TL" },
+        { "name": "BE" },
+        { "name": "IS" },
+        { "name": "BG" },
+        { "name": "SS" },
+        { "name": "TR" },
+        { "name": "MW" },
+        { "name": "GN" },
+        { "name": "MY" },
+        { "name": "BB" },
+        { "name": "IE" },
+        { "name": "CI" },
+        { "name": "RW" },
+        { "name": "TV" },
+        { "name": "VE" },
+        { "name": "RE" },
+        { "name": "GY" },
+        { "name": "BI" },
+        { "name": "KI" },
+        { "name": "JO" },
+        { "name": "AU" },
+        { "name": "EH" },
+        { "name": "GE" },
+        { "name": "EC" },
+        { "name": "NI" },
+        { "name": "CU" },
+        { "name": "KW" },
+        { "name": "PT" },
+        { "name": "Y2" },
+        { "name": "GR" },
+        { "name": "MT" },
+        { "name": "IL" },
+        { "name": "LS" },
+        { "name": "LA" },
+        { "name": "BF" },
+        { "name": "VC" },
+        { "name": "PM" },
+        { "name": "SI" },
+        { "name": "BN" },
+        { "name": "BR" },
+        { "name": "NO" },
+        { "name": "GA" },
+        { "name": "T2" },
+        { "name": "IQ" },
+        { "name": "SU" },
+        { "name": "DJ" },
+        { "name": "PL" },
+        { "name": "SO" },
+        { "name": "NL" },
+        { "name": "TN" },
+        { "name": "CY" },
+        { "name": "M3" },
+        { "name": "KP" },
+        { "name": "SC" },
+        { "name": "MO" },
+        { "name": "UG" },
+        { "name": "MA" },
+        { "name": "IN" },
+        { "name": "JE" },
+        { "name": "MS" },
+        { "name": "MN" },
+        { "name": "HU" },
+        { "name": "ID" },
+        { "name": "BM" },
+        { "name": "DM" },
+        { "name": "NE" },
+        { "name": "FJ" },
+        { "name": "CM" },
+        { "name": "DK" },
+        { "name": "PF" },
+        { "name": "EG" },
+        { "name": "WS" },
+        { "name": "BY" },
+        { "name": "PA" },
+        { "name": "HT" },
+        { "name": "BD" },
+        { "name": "BW" },
+        { "name": "TK" },
+        { "name": "HK" },
+        { "name": "SG" },
+        { "name": "KR" },
+        { "name": "ML" },
+        { "name": "AS" },
+        { "name": "LT" },
+        { "name": "ZA" },
+        { "name": "SH" },
+        { "name": "NA" },
+        { "name": "AD" },
+        { "name": "NP" },
+        { "name": "UY" },
+        { "name": "LC" },
+        { "name": "D1" },
+        { "name": "GI" },
+        { "name": "TW" },
+        { "name": "CD" },
+        { "name": "MP" },
+        { "name": "ET" },
+        { "name": "AT" },
+        { "name": "CN" },
+        { "name": "M1" },
+        { "name": "SE" },
+        { "name": "PK" },
+        { "name": "KY" },
+        { "name": "MC" },
+        { "name": "BS" },
+        { "name": "E1" },
+        { "name": "CO" },
+        { "name": "SV" },
+        { "name": "PH" },
+        { "name": "LU" },
+        { "name": "JP" },
+        { "name": "BO" },
+        { "name": "D2" },
+        { "name": "AL" },
+        { "name": "ME" },
+        { "name": "US" },
+        { "name": "BA" },
+        { "name": "PG" },
+        { "name": "LV" },
+        { "name": "YE" },
+        { "name": "M2" },
+        { "name": "IM" },
+        { "name": "TC" },
+        { "name": "LY" },
+        { "name": "HR" },
+        { "name": "TG" },
+        { "name": "KH" },
+        { "name": "CH" },
+        { "name": "NG" },
+        { "name": "CZ" },
+        { "name": "UZ" },
+        { "name": "GF" },
+        { "name": "DE" },
+        { "name": "BH" },
+        { "name": "MH" },
+        { "name": "VU" },
+        { "name": "ST" },
+        { "name": "TD" },
+        { "name": "NZ" },
+        { "name": "CA" },
+        { "name": "KG" },
+        { "name": "JG" },
+        { "name": "TT" },
+        { "name": "GQ" },
+        { "name": "SD" },
+        { "name": "NU" },
+        { "name": "D3" },
+        { "name": "BZ" },
+        { "name": "IT" },
+        { "name": "FI" },
+        { "name": "PY" },
+        { "name": "AF" },
+        { "name": "AE" },
+        { "name": "PE" },
+        { "name": "CG" },
+        { "name": "HN" },
+        { "name": "VI" },
+        { "name": "CK" },
+        { "name": "SL" },
+        { "name": "AG" },
+        { "name": "AR" },
+        { "name": "RO" },
+        { "name": "PS" },
+        { "name": "JM" },
+        { "name": "MV" },
+        { "name": "GW" },
+        { "name": "MR" },
+        { "name": "SR" },
+        { "name": "ZM" },
+        { "name": "AN" },
+        { "name": "Y3" },
+        { "name": "MM" },
+        { "name": "GP" },
+        { "name": "MX" },
+        { "name": "MU" },
+        { "name": "SA" },
+        { "name": "LK" },
+        { "name": "NR" },
+        { "name": "MK" }
+      ]
+    },
+    {
+      "name": "employmentTypeEnum",
+      "schemaName": "public",
+      "values": [
+        { "name": "CONTRACT" },
+        { "name": "PERMANENT" },
+        { "name": "OUT_STAFF" }
+      ]
+    },
+    {
+      "name": "genderEnum",
+      "schemaName": "public",
+      "values": [{ "name": "MALE" }, { "name": "FEMALE" }]
+    },
+    {
+      "name": "jobApplicationStatusEnum",
+      "schemaName": "public",
+      "values": [
+        { "name": "PENDING" },
+        { "name": "SHORTLISTED" },
+        { "name": "INTERVIEW" },
+        { "name": "OFFER" },
+        { "name": "HIRED" },
+        { "name": "REJECTED_BY_EMPLOYER" },
+        { "name": "REJECTED_BY_CANDIDATE" },
+        { "name": "CANCELLED" }
+      ]
+    },
+    {
+      "name": "jobTypeEnum",
+      "schemaName": "public",
+      "values": [
+        { "name": "ON_SITE" },
+        { "name": "REMOTE" },
+        { "name": "HYBRID" }
+      ]
+    },
+    {
+      "name": "orgMemberRoleEnum",
+      "schemaName": "public",
+      "values": [
+        { "name": "ADMIN" },
+        { "name": "MANAGER" },
+        { "name": "EMPLOYEE" },
+        { "name": "CANDIDATE" }
+      ]
+    },
+    {
+      "name": "skillTypeEnum",
+      "schemaName": "public",
+      "values": [{ "name": "SOFT" }, { "name": "TECHNICAL" }]
+    }
+  ],
+  "indexes": {
+    "public.employeeProfile": [
+      {
+        "name": "employeeProfiles_skillsetId_idx",
+        "type": "btree",
+        "columns": [{ "type": "column", "value": "skillsetId" }]
+      },
+      {
+        "name": "employeeProfiles_userId_idx",
+        "type": "btree",
+        "columns": [{ "type": "column", "value": "userId" }]
+      }
+    ],
+    "public.skillsetSkills": [
+      {
+        "name": "skillsetSkills_skillId_idx",
+        "type": "btree",
+        "columns": [{ "type": "column", "value": "skillId" }]
+      },
+      {
+        "name": "skillsetSkills_skillsetId_idx",
+        "type": "btree",
+        "columns": [{ "type": "column", "value": "skillsetId" }]
+      },
+      {
+        "name": "skillsetSkills_skillsetId_skillId_idx",
+        "type": "btree",
+        "columns": [
+          { "type": "column", "value": "skillsetId" },
+          { "type": "column", "value": "skillId" }
+        ]
+      }
+    ]
+  },
+  "tableConstraints": {
+    "drizzle.__drizzle_migrations": { "id": { "pk": true } },
+    "public.addresses": { "id": { "pk": true } },
+    "public.candidateProfiles": { "id": { "pk": true } },
+    "public.departments": { "id": { "pk": true } },
+    "public.employeeProfile": { "id": { "pk": true } },
+    "public.jobApplications": { "id": { "pk": true } },
+    "public.jobPosts": { "id": { "pk": true } },
+    "public.orgMembers": { "id": { "pk": true } },
+    "public.organization": { "id": { "pk": true } },
+    "public.personalDetails": { "id": { "pk": true } },
+    "public.skills": { "id": { "pk": true }, "label": { "unique": true } },
+    "public.skillsetSkills": { "id": { "pk": true } },
+    "public.skillsets": { "id": { "pk": true } },
+    "public.users": { "id": { "pk": true }, "email": { "unique": true } },
+    "public.workHistoryItems": { "id": { "pk": true } }
+  }
+}

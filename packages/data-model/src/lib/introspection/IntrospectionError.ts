@@ -1,7 +1,3 @@
-// ========================================
-// ERROR HIERARCHY
-// ========================================
-
 export abstract class IntrospectionError extends Error {
   readonly name: string;
 

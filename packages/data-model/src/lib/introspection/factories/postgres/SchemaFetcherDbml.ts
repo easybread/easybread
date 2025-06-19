@@ -5,7 +5,7 @@ import {
 } from '../../IntrospectionError.js';
 import { type SchemaFetcher } from '../../SchemaFetcher.js';
 
-import type { DbmlSchema } from './dbml-schema.js';
+import type { DbmlSchema } from './DbmlSchema.js';
 
 export interface SchemaFetcherPostgresConfig {
   connectionString: string;
