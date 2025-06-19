@@ -1,8 +1,9 @@
+import { connector } from '@dbml/connector';
+import type { DatabaseSchema as DbmlDatabaseSchema } from '@dbml/connector/dist/connectors/types';
 import { load } from 'ts-dotenv';
 
 async function mainTwo() {
-  import { connector } from '@dbml/connector';
-  const databaseSchema = await connector.fetchSchemaJson(
+  const databaseSchema: DbmlDatabaseSchema = await connector.fetchSchemaJson(
     load({ POSTGRES_FOO_CONN_URL: String }).POSTGRES_FOO_CONN_URL,
     'postgres',
   );
