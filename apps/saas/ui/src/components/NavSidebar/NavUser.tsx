@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-import type { PgUserSelect } from 'saas-pg/types';
+import type { PgUserSelect } from 'saas-db/types';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../../shadcn/avatar';
 import {

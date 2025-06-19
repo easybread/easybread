@@ -3,7 +3,7 @@ import { z } from 'zod';
 import {
   PG_CONNECTION_SETTINGS_BAMBOO_AUTH_STRATEGY,
   PG_CONNECTION_TYPE,
-} from 'saas-pg/enums';
+} from 'saas-db/enums';
 
 export const DtoConnectionSchema = z.object({
   id: z.string(),

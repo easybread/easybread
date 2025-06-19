@@ -1,4 +1,4 @@
-import type { PgConnectionType } from 'saas-pg/enums';
+import type { PgConnectionType } from 'saas-db/enums';
 
 import { Badge } from '../../shadcn/badge';
 

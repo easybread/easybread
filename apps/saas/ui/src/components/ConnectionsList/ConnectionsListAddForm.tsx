@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { PG_CONNECTION_TYPE, type PgConnectionType } from 'saas-pg/enums';
+import { PG_CONNECTION_TYPE, type PgConnectionType } from 'saas-db/enums';
 import { useTRPC } from 'saas-trpc';
 
 import { Button } from '../../shadcn/button';

@@ -1,7 +1,8 @@
 import { Cog, Trash } from 'lucide-react';
+import Link from 'next/link';
 import { useMemo } from 'react';
 
-import type { PgConnectionSelect } from 'saas-pg/types';
+import type { PgConnectionSelect } from 'saas-db/types';
 
 import { Card, CardFooter, CardHeader, CardTitle } from '../../shadcn/card';
 
@@ -30,7 +31,9 @@ export function ConnectionsListItemCard(props: { data: PgConnectionSelect }) {
     >
       <CardHeader>
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="w-full">{name}</CardTitle>
+          <CardTitle className="w-full">
+            <Link href={`/connections/${id}`}>{name}</Link>
+          </CardTitle>
 
           <div className="flex items-center gap-2">
             <Trash

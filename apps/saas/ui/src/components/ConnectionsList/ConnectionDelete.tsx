@@ -8,7 +8,8 @@ import {
   useState,
 } from 'react';
 
-import type { PgConnectionSelect } from 'saas-pg/types';
+import type { PgConnectionSelect } from 'saas-db/types';
+
 import { useTRPC } from 'saas-trpc';
 
 import { useToastPromiseControl } from '../../hooks/use-toast-promise-control';

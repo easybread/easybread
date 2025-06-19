@@ -12,6 +12,11 @@ export function ConnectionsList() {
   const trpc = useTRPC();
   const query = useSuspenseQuery(trpc.connections.list.queryOptions());
 
+  if (query.error) {
+    console.error(query.error);
+    return <div>Error loading connections</div>;
+  }
+
   const connections = query.data?.data ?? [];
 
   return (

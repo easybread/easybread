@@ -1,3 +1,4 @@
+import { uuidV7 } from '@space-architects/util-drizzle';
 import { relations } from 'drizzle-orm';
 import {
   boolean,
@@ -9,8 +10,6 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-
-import { uuidV7 } from 'saas-shared-drizzle-util';
 
 import {
   applicationStatusEnum,

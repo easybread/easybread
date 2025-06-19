@@ -47,6 +47,8 @@ interface SchemaDefinition {
  * Efficient schema.org extractor using modern TypeScript and Node.js features
  */
 export class SchemaOrgExtractor {
+  static FOO = 'foo';
+
   /**
    * Check if a schema definition is an enumeration value
    * Enumeration values have @type that points to an enumeration class

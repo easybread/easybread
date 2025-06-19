@@ -86,42 +86,61 @@ const TECHNICAL_SKILLS = [
 const MIN_DATE = new Date('2020-01-01');
 const MAX_DATE = new Date();
 
-async function main() {
-  await seedSkills();
-  await Promise.all([...Array(3)].map(createOrganization));
+// Helper to create short identifiers for better log tracing
+function shortId(id: string): string {
+  return id.slice(-8);
 }
 
-async function createOrganization() {
-  console.debug('createOrganization');
+async function main() {
+  console.log('🌱 Starting seed process');
 
-  const [org] = await foodb
-    .insert(orgs)
-    .values({ name: f.randCompanyName() })
-    .returning();
+  await seedSkills();
 
-  await createOrgUser(org.id, 'ADMIN');
-  await createOrgUser(org.id, 'MANAGER');
-  await createOrgUser(org.id, 'MANAGER');
+  console.log('📦 Creating 3 organizations in parallel...');
+  await Promise.all([...Array(3)].map((_, i) => createOrganization(i + 1)));
 
-  await makeRandomNumberOf(2, 3, () =>
-    createDepartment(org.id, f.randDepartment()),
+  console.log('✅ Seed process completed');
+}
+
+async function createOrganization(orgIndex: number) {
+  const orgName = f.randCompanyName();
+  console.log(`🏢 [ORG-${orgIndex}] Creating organization: ${orgName}`);
+
+  const [org] = await foodb.insert(orgs).values({ name: orgName }).returning();
+
+  const orgId = shortId(org.id);
+  console.log(
+    `🏢 [ORG-${orgIndex}:${orgId}] Organization created, setting up structure...`,
   );
 
-  await makeRandomNumberOf(5, 10, () => createJobPost(org.id));
+  await createOrgUser(org.id, 'ADMIN', `ORG-${orgIndex}:${orgId}`);
+  await createOrgUser(org.id, 'MANAGER', `ORG-${orgIndex}:${orgId}`);
+  await createOrgUser(org.id, 'MANAGER', `ORG-${orgIndex}:${orgId}`);
 
+  await makeRandomNumberOf(2, 3, () =>
+    createDepartment(org.id, f.randDepartment(), `ORG-${orgIndex}:${orgId}`),
+  );
+
+  await makeRandomNumberOf(5, 10, () =>
+    createJobPost(org.id, `ORG-${orgIndex}:${orgId}`),
+  );
+
+  console.log(`✅ [ORG-${orgIndex}:${orgId}] Organization setup completed`);
   return org;
 }
 
 async function createOrgUser(
   orgId: string,
   role: (typeof orgMemberRoleEnum.enumValues)[number],
+  context: string,
 ) {
-  console.debug(`createOrgUser orgId: ${orgId} role: ${role}`);
+  const email = f.randEmail();
+  console.log(`👤 [${context}] Creating ${role.toLowerCase()}: ${email}`);
 
   const [user] = await foodb
     .insert(users)
     .values({
-      email: f.randEmail(),
+      email,
       passwordHash: '123456',
       passwordSalt: '123456',
     })
@@ -133,31 +152,43 @@ async function createOrgUser(
     role,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return user!;
+  console.log(`✓ [${context}] User created: ${shortId(user.id)}`);
+  return user;
 }
 
-async function createDepartment(orgId: string, name: string) {
-  console.debug(`createDepartment orgId: ${orgId} name: ${name}`);
+async function createDepartment(orgId: string, name: string, context: string) {
+  console.log(`🏬 [${context}] Creating department: ${name}`);
 
   const [department] = await foodb
     .insert(departments)
     .values({ name, orgId })
     .returning();
 
-  await makeRandomNumberOf(1, 10, () => createEmployee(orgId, department.id));
+  const deptId = shortId(department.id);
+  const deptContext = `${context}/DEPT:${deptId}`;
+  console.log(`🏬 [${deptContext}] Department created, adding employees...`);
 
+  await makeRandomNumberOf(1, 10, () =>
+    createEmployee(orgId, department.id, deptContext),
+  );
+
+  console.log(`✓ [${deptContext}] Department setup completed`);
   return department;
 }
 
-async function createEmployee(orgId: string, departmentId: string) {
-  console.debug(`createEmployee orgId: ${orgId} departmentId: ${departmentId}`);
+async function createEmployee(
+  orgId: string,
+  departmentId: string,
+  context: string,
+) {
+  const jobTitle = f.randJobTitle();
+  console.log(`👷 [${context}] Creating employee: ${jobTitle}`);
 
-  const user = await createOrgUser(orgId, 'EMPLOYEE');
+  const user = await createOrgUser(orgId, 'EMPLOYEE', context);
 
-  const address = await createAddress();
-  const skillset = await createSkillset();
-  const personalDetails = await createPersonalDetails();
+  const address = await createAddress(context);
+  const skillset = await createSkillset(context);
+  const personalDetails = await createPersonalDetails(context);
 
   const [employeeProfile] = await foodb
     .insert(employeeProfiles)
@@ -165,7 +196,7 @@ async function createEmployee(orgId: string, departmentId: string) {
       userId: user.id.toString(),
       orgId,
       departmentId,
-      jobTitle: f.randJobTitle(),
+      jobTitle,
       commitmentType: f.rand(commitmentTypeEnum.enumValues),
       engagementType: f.rand(engagementTypeEnum.enumValues),
       startedAt: f.randBetweenDate({ from: MIN_DATE, to: MAX_DATE }),
@@ -175,11 +206,14 @@ async function createEmployee(orgId: string, departmentId: string) {
     })
     .returning();
 
+  console.log(
+    `✓ [${context}] Employee profile created: ${shortId(employeeProfile.id)}`,
+  );
   return employeeProfile;
 }
 
 async function seedSkills() {
-  console.debug('seedSkills');
+  console.log('🎯 Seeding skills...');
 
   // Create soft skills
   await foodb.insert(skills).values(
@@ -198,9 +232,13 @@ async function seedSkills() {
       description: `${skill} technical skill`,
     })),
   );
+
+  console.log(
+    `✓ Skills seeded: ${SOFT_SKILLS.length} soft + ${TECHNICAL_SKILLS.length} technical`,
+  );
 }
 
-async function createSkillset() {
+async function createSkillset(context?: string) {
   const [skillset] = await foodb.insert(skillsets).values({}).returning();
 
   // Get all available skills
@@ -221,10 +259,13 @@ async function createSkillset() {
     })),
   );
 
+  if (context) {
+    console.log(`🎯 [${context}] Skillset created: ${numberOfSkills} skills`);
+  }
   return skillset;
 }
 
-async function createAddress() {
+async function createAddress(context?: string) {
   const [address] = await foodb
     .insert(addresses)
     .values({
@@ -239,20 +280,24 @@ async function createAddress() {
     })
     .returning();
 
+  if (context) {
+    console.log(`📍 [${context}] Address created: ${address.city}`);
+  }
   return address;
 }
 
-async function createJobPost(orgId: string) {
-  console.debug(`createJobPost orgId: ${orgId}`);
+async function createJobPost(orgId: string, context: string) {
+  const title = f.randJobTitle();
+  console.log(`💼 [${context}] Creating job post: ${title}`);
 
-  const skillset = await createSkillset();
-  const address = await createAddress();
+  const skillset = await createSkillset(context);
+  const address = await createAddress(context);
 
   const [jobPost] = await foodb
     .insert(jobPosts)
     .values({
       orgId,
-      title: f.randJobTitle(),
+      title,
       text: f.randText({ charCount: 1000 }),
       skillsetId: skillset.id,
       jobType: f.rand(jobTypeEnum.enumValues),
@@ -266,16 +311,25 @@ async function createJobPost(orgId: string) {
     })
     .returning();
 
+  const jobId = shortId(jobPost.id);
+  const jobContext = `${context}/JOB:${jobId}`;
+  console.log(`💼 [${jobContext}] Job post created, adding applications...`);
+
   await makeRandomNumberOf(1, 10, () =>
-    createJobApplication(orgId, jobPost.id),
+    createJobApplication(orgId, jobPost.id, jobContext),
   );
 
+  console.log(`✓ [${jobContext}] Job post setup completed`);
   return jobPost;
 }
 
-async function createJobApplication(orgId: string, jobPostId: string) {
-  console.debug(`createJobApplication orgId: ${orgId} jobPostId: ${jobPostId}`);
-  const candidateProfile = await createCandidate(orgId);
+async function createJobApplication(
+  orgId: string,
+  jobPostId: string,
+  context: string,
+) {
+  console.log(`📝 [${context}] Creating job application`);
+  const candidateProfile = await createCandidate(orgId, context);
 
   const [jobApplication] = await foodb
     .insert(jobApplications)
@@ -286,24 +340,28 @@ async function createJobApplication(orgId: string, jobPostId: string) {
     })
     .returning();
 
+  console.log(
+    `✓ [${context}] Application created: ${shortId(jobApplication.id)}`,
+  );
   return jobApplication;
 }
 
-async function createCandidate(orgId: string) {
-  console.debug(`createCandidate orgId: ${orgId}`);
+async function createCandidate(orgId: string, context: string) {
+  const title = f.randJobTitle();
+  console.log(`🎯 [${context}] Creating candidate: ${title}`);
 
-  const user = await createOrgUser(orgId, 'CANDIDATE');
+  const user = await createOrgUser(orgId, 'CANDIDATE', context);
 
-  const address = await createAddress();
-  const skillset = await createSkillset();
-  const personalDetails = await createPersonalDetails();
+  const address = await createAddress(context);
+  const skillset = await createSkillset(context);
+  const personalDetails = await createPersonalDetails(context);
 
   const [candidateProfile] = await foodb
     .insert(candidateProfiles)
     .values({
       orgId,
       userId: user.id,
-      title: f.randJobTitle(),
+      title,
       addressesId: address.id,
       skillsetId: skillset.id,
       personalDetailsId: personalDetails.id,
@@ -311,10 +369,13 @@ async function createCandidate(orgId: string) {
     })
     .returning();
 
+  console.log(
+    `✓ [${context}] Candidate profile created: ${shortId(candidateProfile.id)}`,
+  );
   return candidateProfile;
 }
 
-async function createPersonalDetails() {
+async function createPersonalDetails(context?: string) {
   const [data] = await foodb
     .insert(personalDetails)
     .values({
@@ -330,6 +391,11 @@ async function createPersonalDetails() {
     })
     .returning();
 
+  if (context) {
+    console.log(
+      `👤 [${context}] Personal details created: ${data.firstName} ${data.lastName}`,
+    );
+  }
   return data;
 }
 

@@ -8,6 +8,8 @@ export function intoTrpcError<T extends { readonly name: PossibleErrorName }>(
   cause: T,
   message?: string,
 ) {
+  console.error(cause);
+
   // Runtime guardrails
   if (!cause) {
     console.warn('unexpected cause type', cause);

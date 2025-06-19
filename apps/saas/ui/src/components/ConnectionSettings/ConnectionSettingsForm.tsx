@@ -1,4 +1,4 @@
-import { PG_CONNECTION_TYPE, type PgConnectionType } from 'saas-pg/enums';
+import { PG_CONNECTION_TYPE, type PgConnectionType } from 'saas-db/enums';
 
 import { DbPostgresStrategy } from './lib/DbPostgresStrategy';
 

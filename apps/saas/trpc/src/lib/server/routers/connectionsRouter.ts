@@ -21,7 +21,9 @@ export const connectionsRouter = {
     .input(z.void())
     .output(DtoConnectionListSchema)
     .query(async ({ ctx }) => {
+      console.time('connectionListByOrg');
       const list = await connectionListByOrg(ctx.userOrgs.activeOrg);
+      console.timeEnd('connectionListByOrg');
 
       if (list.isErr()) throw intoTrpcError(list.error);
 
