@@ -1,13 +1,13 @@
-import type { DataModelDef } from '../data-model.js';
+import type { DataModelDef } from '../../../data-model.js';
+import { GenericIntrospectionStrategy } from '../../generic-strategy.js';
+import type { IntrospectionStrategy } from '../../types.js';
 
-import type { DbmlSchema } from './dbml-types.js';
-import { GenericIntrospectionStrategy } from './generic-strategy.js';
+import type { DbmlSchema } from './dbml-schema.js';
 import {
-  PostgresSchemaFetcher,
   type PostgresSchemaFetcherConfig,
-} from './postgres-fetcher.js';
-import { DbmlToDataModelTransformer } from './transformer.js';
-import type { IntrospectionStrategy } from './types.js';
+  SchemaFetcherDbml,
+} from './schema-fetcher-dbml.js';
+import { SchemaTransformerDbml } from './schema-transformer-dbml.js';
 
 export interface PostgresIntrospectionFactoryConfig {
   connectionString: string;
@@ -19,7 +19,7 @@ export interface PostgresIntrospectionFactoryConfig {
 }
 
 export class PostgresIntrospectionFactory {
-  private static sharedTransformer = new DbmlToDataModelTransformer();
+  private static sharedTransformer = new SchemaTransformerDbml();
 
   static create(
     config: PostgresIntrospectionFactoryConfig,
@@ -32,7 +32,7 @@ export class PostgresIntrospectionFactory {
       schemaFilter: config.schemaFilter,
     };
 
-    const fetcher = new PostgresSchemaFetcher(fetcherConfig);
+    const fetcher = new SchemaFetcherDbml(fetcherConfig);
     const transformer = this.sharedTransformer; // Reuse for better performance
 
     const modelName =
@@ -45,8 +45,8 @@ export class PostgresIntrospectionFactory {
    * Create with individual components for advanced usage (testing, customization)
    */
   static createAdvanced(
-    fetcher: PostgresSchemaFetcher,
-    transformer: DbmlToDataModelTransformer,
+    fetcher: SchemaFetcherDbml,
+    transformer: SchemaTransformerDbml,
     modelName: string,
   ): IntrospectionStrategy<DbmlSchema> {
     return new GenericIntrospectionStrategy(fetcher, transformer, modelName);
@@ -55,8 +55,8 @@ export class PostgresIntrospectionFactory {
   /**
    * Create a new transformer instance (if sharing is not desired)
    */
-  static createTransformer(): DbmlToDataModelTransformer {
-    return new DbmlToDataModelTransformer();
+  static createTransformer(): SchemaTransformerDbml {
+    return new SchemaTransformerDbml();
   }
 
   private static extractDatabaseName(connectionString: string): string {

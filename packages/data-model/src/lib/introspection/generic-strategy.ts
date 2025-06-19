@@ -5,6 +5,7 @@ import {
   type IntrospectionStrategy,
   type SchemaFetcher,
   type SchemaTransformer,
+  UnknownError,
 } from './types.js';
 
 /**
@@ -28,12 +29,10 @@ export class GenericIntrospectionStrategy<TSchema>
       return this.transformer.transform(schema, this.modelName);
     } catch (error) {
       // Re-throw our custom errors as-is to preserve error context
-      if (error instanceof IntrospectionError) {
-        throw error;
-      }
+      if (error instanceof IntrospectionError) throw error;
 
       // Wrap unknown errors in a generic introspection error
-      throw new IntrospectionError('Failed to introspect schema', {
+      throw new UnknownError('Failed to introspect schema', {
         cause: error,
       });
     }

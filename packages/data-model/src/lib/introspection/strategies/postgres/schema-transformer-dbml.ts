@@ -9,18 +9,21 @@ import {
   type RelationDef,
   UUID_ALGORITHM,
   type ValueDef,
-} from '../data-model.js';
+} from '../../../data-model.js';
+import { type SchemaTransformer, TransformationError } from '../../types.js';
 
-import type { DbmlEnum, DbmlField, DbmlRef, DbmlSchema } from './dbml-types.js';
-import { type SchemaTransformer, TransformationError } from './types.js';
+import type {
+  DbmlEnum,
+  DbmlField,
+  DbmlRef,
+  DbmlSchema,
+} from './dbml-schema.js';
 
 // Constants to avoid magic strings
 const DRIZZLE_SCHEMA = 'drizzle';
 const PUBLIC_SCHEMA = 'public';
 
-export class DbmlToDataModelTransformer
-  implements SchemaTransformer<DbmlSchema>
-{
+export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
   transform(dbmlSchema: DbmlSchema, modelName: string): DataModelDef {
     try {
       const namespaces = this.extractNamespaces(dbmlSchema);

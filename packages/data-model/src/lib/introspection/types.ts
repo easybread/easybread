@@ -34,6 +34,8 @@ export interface IntrospectionStrategy<TSchema = unknown> {
 // ========================================
 
 export abstract class IntrospectionError extends Error {
+  readonly name: string;
+
   constructor(
     message: string,
     public readonly options?: { cause?: unknown },
@@ -50,3 +52,4 @@ export class InvalidConfigError extends IntrospectionError {}
 export class SchemaFetchError extends IntrospectionError {}
 export class TransformationError extends IntrospectionError {}
 export class ConnectionError extends IntrospectionError {}
+export class UnknownError extends IntrospectionError {}
