@@ -1,20 +1,14 @@
 import type { DataModelDef } from '../data-model.js';
 
-import {
-  IntrospectionError,
-  type IntrospectionStrategy,
-  type SchemaFetcher,
-  type SchemaTransformer,
-  UnknownError,
-} from './types.js';
+import { IntrospectionError, UnknownError } from './IntrospectionError.js';
+import { type SchemaFetcher } from './SchemaFetcher.js';
+import { type SchemaTransformer } from './SchemaTransformer.js';
 
 /**
  * Generic introspection strategy that ensures fetcher/transformer compatibility
  * The type parameter TSchema enforces that both components work with the same schema format
  */
-export class GenericIntrospectionStrategy<TSchema>
-  implements IntrospectionStrategy<TSchema>
-{
+export class IntrospectionStrategy<TSchema> {
   constructor(
     private readonly fetcher: SchemaFetcher<TSchema>,
     private readonly transformer: SchemaTransformer<TSchema>,

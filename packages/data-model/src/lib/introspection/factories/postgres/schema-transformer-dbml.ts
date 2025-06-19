@@ -10,7 +10,8 @@ import {
   UUID_ALGORITHM,
   type ValueDef,
 } from '../../../data-model.js';
-import { type SchemaTransformer, TransformationError } from '../../types.js';
+import { TransformationError } from '../../IntrospectionError.js';
+import { type SchemaTransformer } from '../../SchemaTransformer.js';
 
 import type {
   DbmlEnum,
@@ -18,10 +19,6 @@ import type {
   DbmlRef,
   DbmlSchema,
 } from './dbml-schema.js';
-
-// Constants to avoid magic strings
-const DRIZZLE_SCHEMA = 'drizzle';
-const PUBLIC_SCHEMA = 'public';
 
 export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
   transform(dbmlSchema: DbmlSchema, modelName: string): DataModelDef {
@@ -48,15 +45,8 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
   private extractNamespaces(dbmlSchema: DbmlSchema): string[] {
     const namespaces = new Set<string>();
 
-    // Single iteration combining table and enum processing for better performance
-    const processNamespace = (schemaName: string) => {
-      if (schemaName && schemaName !== PUBLIC_SCHEMA) {
-        namespaces.add(schemaName);
-      }
-    };
-
-    dbmlSchema.tables.forEach(table => processNamespace(table.schemaName));
-    dbmlSchema.enums.forEach(enumDef => processNamespace(enumDef.schemaName));
+    dbmlSchema.tables.forEach(table => namespaces.add(table.schemaName));
+    dbmlSchema.enums.forEach(enumDef => namespaces.add(enumDef.schemaName));
 
     return Array.from(namespaces).sort();
   }
@@ -64,8 +54,7 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
   private transformEnums(dbmlEnums: DbmlEnum[]): EnumDef[] {
     return dbmlEnums.map(enumDef => ({
       name: enumDef.name,
-      namespace:
-        enumDef.schemaName === PUBLIC_SCHEMA ? undefined : enumDef.schemaName,
+      namespace: enumDef.schemaName,
       values: enumDef.values.map(v => v.name) as readonly string[],
     }));
   }
@@ -77,9 +66,6 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
     const entities: EntityDef[] = [];
 
     for (const table of dbmlSchema.tables) {
-      // Skip migration tables
-      if (table.schemaName === DRIZZLE_SCHEMA) continue;
-
       const tableKey = `${table.schemaName}.${table.name}`;
       const fields = dbmlSchema.fields[tableKey] || [];
       const constraints = dbmlSchema.tableConstraints[tableKey] || {};
@@ -94,8 +80,7 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
 
       entities.push({
         name: table.name,
-        namespace:
-          table.schemaName === PUBLIC_SCHEMA ? undefined : table.schemaName,
+        namespace: table.schemaName,
         fields: entityFields,
       });
     }
@@ -112,14 +97,16 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
       nullable: !field.not_null,
       unique: constraint?.unique === true,
       pk: constraint?.pk === true,
-      defaultValue: this.extractDefaultValue(field),
+      // TODO: fix this
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      defaultValue: this.extractDefaultValue(field) as any,
     };
 
     // Handle enum types
     const enumDef = enums.find(
       e =>
         e.name === field.type.type_name ||
-        `${e.namespace || PUBLIC_SCHEMA}.${e.name}` === field.type.type_name,
+        `${e.namespace}.${e.name}` === field.type.type_name,
     );
 
     if (enumDef) {
@@ -201,7 +188,7 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
     );
   }
 
-  private extractDefaultValue(field: DbmlField): unknown {
+  private extractDefaultValue(field: DbmlField) {
     if (!field.dbdefault) return undefined;
 
     switch (field.dbdefault.type) {
@@ -229,13 +216,13 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
       const fromEntity = entities.find(
         e =>
           e.name === fromEndpoint.tableName &&
-          (e.namespace || PUBLIC_SCHEMA) === fromEndpoint.schemaName,
+          e.namespace === fromEndpoint.schemaName,
       );
 
       const toEntity = entities.find(
         e =>
           e.name === toEndpoint.tableName &&
-          (e.namespace || PUBLIC_SCHEMA) === toEndpoint.schemaName,
+          e.namespace === toEndpoint.schemaName,
       );
 
       if (!fromEntity || !toEntity) continue;
@@ -274,10 +261,10 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
     if (!action) return null;
 
     const actionMap: Record<string, typeof RELATION_ACTION.$type> = {
-      'SET NULL': RELATION_ACTION.enum['SET NULL'],
+      SET_NULL: RELATION_ACTION.enum.SET_NULL,
       SET_DEFAULT: RELATION_ACTION.enum.SET_DEFAULT,
       CASCADE: RELATION_ACTION.enum.CASCADE,
-      'NO ACTION': RELATION_ACTION.enum['NO ACTION'],
+      NO_ACTION: RELATION_ACTION.enum.NO_ACTION,
       RESTRICT: RELATION_ACTION.enum.RESTRICT,
     };
 

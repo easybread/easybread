@@ -2,12 +2,12 @@ import {
   ConnectionError,
   InvalidConfigError,
   SchemaFetchError,
-  type SchemaFetcher,
-} from '../../types.js';
+} from '../../IntrospectionError.js';
+import { type SchemaFetcher } from '../../SchemaFetcher.js';
 
 import type { DbmlSchema } from './dbml-schema.js';
 
-export interface PostgresSchemaFetcherConfig {
+export interface SchemaFetcherPostgresConfig {
   connectionString: string;
   timeout?: number;
   retries?: number;
@@ -16,7 +16,10 @@ export interface PostgresSchemaFetcherConfig {
 }
 
 export class SchemaFetcherDbml implements SchemaFetcher<DbmlSchema> {
-  constructor(private readonly config: PostgresSchemaFetcherConfig) {
+  private readonly config: SchemaFetcherPostgresConfig;
+
+  constructor(config: SchemaFetcherPostgresConfig) {
+    this.config = config;
     this.validateConfig();
   }
 

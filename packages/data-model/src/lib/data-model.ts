@@ -14,7 +14,7 @@ export const FIELD_TYPE = enumSuiteObject(
 );
 
 export const RELATION_ACTION = enumSuiteObject(
-  enumObject(['SET NULL', 'SET_DEFAULT', 'CASCADE', 'NO ACTION', 'RESTRICT']),
+  enumObject(['SET_NULL', 'SET_DEFAULT', 'CASCADE', 'NO_ACTION', 'RESTRICT']),
 );
 
 export const UUID_ALGORITHM = enumSuiteObject(
@@ -45,31 +45,33 @@ export type EnumDef = {
   values: Enum;
 };
 
-export type FieldDefBase<
-  TTypeName extends typeof FIELD_TYPE.$type,
-  TExtensions extends Record<string, unknown> = Record<string, never>,
-> = {
+export interface FieldDefBase<TTypeName extends typeof FIELD_TYPE.$type> {
   type: TTypeName;
   defaultValue?: FieldValueMap[TTypeName];
   nullable?: boolean;
   unique?: boolean;
   pk?: boolean;
-} & TExtensions;
+}
+
+export type FieldDefExtended<
+  TTypeName extends typeof FIELD_TYPE.$type,
+  T extends Record<string, unknown>,
+> = FieldDefBase<TTypeName> & T;
 
 export type FieldDefMap = {
   [FIELD_TYPE.enum.STRING]: FieldDefBase<typeof FIELD_TYPE.enum.STRING>;
   [FIELD_TYPE.enum.NUMBER]: FieldDefBase<typeof FIELD_TYPE.enum.NUMBER>;
   [FIELD_TYPE.enum.BOOLEAN]: FieldDefBase<typeof FIELD_TYPE.enum.BOOLEAN>;
   [FIELD_TYPE.enum.DATE]: FieldDefBase<typeof FIELD_TYPE.enum.DATE>;
-  [FIELD_TYPE.enum.ENUM]: FieldDefBase<
+  [FIELD_TYPE.enum.ENUM]: FieldDefExtended<
     typeof FIELD_TYPE.enum.ENUM,
     { enumName: string; namespace?: string }
   >;
-  [FIELD_TYPE.enum.NUMBER_ID]: FieldDefBase<
+  [FIELD_TYPE.enum.NUMBER_ID]: FieldDefExtended<
     typeof FIELD_TYPE.enum.NUMBER_ID,
     { algorithm: typeof NUMBER_ID_ALGORITHM.$type }
   >;
-  [FIELD_TYPE.enum.UUID]: FieldDefBase<
+  [FIELD_TYPE.enum.UUID]: FieldDefExtended<
     typeof FIELD_TYPE.enum.UUID,
     { algorithm: typeof UUID_ALGORITHM.$type; increment?: number }
   >;
