@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { DataModelDef } from '../../../../DataModel.js';
-import { FIELD_TYPE } from '../../../../DataModel.js';
-import type { DbmlSchema } from '../DbmlSchema.js';
+import type { DataModelDef } from '../../../../DataModel';
+import { FIELD_TYPE } from '../../../../DataModel';
+import type { DbmlSchema } from '../DbmlSchema';
 import {
   IntrospectionFactoryPostgres,
   type IntrospectionFactoryPostgresConfig,
   introspectPostgres,
-} from '../PostgresFactory.js';
-import { SchemaFetcherDbml } from '../SchemaFetcherDbml.js';
+} from '../PostgresFactory';
+import { SchemaFetcherDbml } from '../SchemaFetcherDbml';
 
 // Mock only the SchemaFetcherDbml to control database responses
 jest.mock('../SchemaFetcherDbml.js');

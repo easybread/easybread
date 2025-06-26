@@ -7,7 +7,7 @@ import {
   SchemaOrgExtractor,
   lookupClass,
   writeResults,
-} from './schema-org-extractor.js';
+} from './schema-org-extractor';
 
 const schemaPath = join(
   workspaceRoot,

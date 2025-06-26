@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../../shadcn/alert-dialog';
+} from '../../../shadcn/alert-dialog';
 
 import { useConnectionDeleteContext } from './ConnectionDelete';
 

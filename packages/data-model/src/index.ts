@@ -1,2 +1,3 @@
-export * from './lib/DataModel.js';
-export * from './lib/introspection/factories/postgres/PostgresFactory.js';
+export * from './lib/DataModel';
+export * from './lib/introspection/factories/postgres/PostgresFactory';
+export * from './lib/introspection/IntrospectionError';

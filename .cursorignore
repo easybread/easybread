@@ -1,0 +1,30 @@
+# Dependencies and build outputs
+node_modules/
+.pnpm/
+dist/
+build/
+.next/
+out/
+
+# Cache and temporary files  
+.nx/
+.cache/
+tmp/
+coverage/
+.docusaurus/
+
+# IDE and OS files
+# .vscode/
+.idea/
+.DS_Store
+# .cursor/
+
+# Local development
+/local/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*

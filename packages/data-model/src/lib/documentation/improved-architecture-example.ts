@@ -1,6 +1,6 @@
-import type { DataModelDef } from '../data-model.js';
+import type { DataModelDef } from '../data-model';
 
-import type { DbmlSchema } from './types.js';
+import type { DbmlSchema } from './types';
 
 // ========================================
 // 1. SEPARATE DATA FETCHING FROM TRANSFORMATION

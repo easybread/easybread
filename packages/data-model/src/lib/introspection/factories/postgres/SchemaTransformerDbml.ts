@@ -9,11 +9,11 @@ import {
   type RelationDef,
   UUID_ALGORITHM,
   type ValueDef,
-} from '../../../DataModel.js';
-import { TransformationError } from '../../IntrospectionError.js';
-import { type SchemaTransformer } from '../../SchemaTransformer.js';
+} from '../../../DataModel';
+import { TransformationError } from '../../IntrospectionError';
+import { type SchemaTransformer } from '../../SchemaTransformer';
 
-import type { DbmlEnum, DbmlField, DbmlRef, DbmlSchema } from './DbmlSchema.js';
+import type { DbmlEnum, DbmlField, DbmlRef, DbmlSchema } from './DbmlSchema';
 
 export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
   transform(dbmlSchema: DbmlSchema, modelName: string): DataModelDef {
@@ -223,7 +223,7 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
       if (!fromEntity || !toEntity) continue;
 
       relations.push({
-        id: ref.name,
+        id: this.makeRelationId(fromEntity, toEntity),
         from: {
           entity: fromEntity.name,
           namespace: fromEntity.namespace,
@@ -248,6 +248,10 @@ export class SchemaTransformerDbml implements SchemaTransformer<DbmlSchema> {
     }
 
     return relations;
+  }
+
+  private makeRelationId(fromEntity: EntityDef, toEntity: EntityDef): string {
+    return `${fromEntity.namespace}_${fromEntity.name}_to_${toEntity.namespace}_${toEntity.name}`;
   }
 
   private mapRelationAction(

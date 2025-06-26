@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import { Button } from '../../shadcn/button';
+import { Button } from '../../../shadcn/button';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../shadcn/dialog';
+} from '../../../shadcn/dialog';
 
 import { ConnectionsListAddForm } from './ConnectionsListAddForm';
 

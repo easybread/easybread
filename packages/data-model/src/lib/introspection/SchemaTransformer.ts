@@ -1,4 +1,4 @@
-import type { DataModelDef } from '../DataModel.js';
+import type { DataModelDef } from '../DataModel';
 
 /**
  * Generic schema transformer interface

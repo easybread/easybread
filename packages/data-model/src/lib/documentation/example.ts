@@ -1,4 +1,4 @@
-import type { DbmlSchema } from './dbml-types.js';
+import type { DbmlSchema } from './dbml-types';
 import {
   GenericIntrospectionStrategy,
   PostgresIntrospectionFactory,
@@ -6,8 +6,8 @@ import {
   PostgresSchemaFetcher,
   type PostgresSchemaFetcherConfig,
   introspectPostgres,
-} from './index.js';
-import { DbmlToDataModelTransformer } from './transformer.js';
+} from './index';
+import { DbmlToDataModelTransformer } from './transformer';
 
 /**
  * Simple usage with the new factory (recommended approach)

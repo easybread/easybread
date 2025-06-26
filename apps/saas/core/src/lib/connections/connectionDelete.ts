@@ -2,8 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { fromPromise } from 'neverthrow';
 
 import { connections, saasdb } from 'saas-db';
-
-import { DB_ERROR, errDbQueryFailed, errObject } from 'saas-errors';
+import { ERR_CODE, errDbQueryFailed, errObject } from 'saas-errors';
 import { takeFirstOrErr } from 'saas-neverthrow-util';
 
 export function connectionDelete(id: string, orgId: string) {
@@ -13,5 +12,5 @@ export function connectionDelete(id: string, orgId: string) {
       .where(and(eq(connections.id, id), eq(connections.organizationId, orgId)))
       .returning(),
     errDbQueryFailed,
-  ).andThen(takeFirstOrErr(errObject(DB_ERROR.NOT_FOUND)));
+  ).andThen(takeFirstOrErr(errObject(ERR_CODE.enum.DB_NOT_FOUND)));
 }

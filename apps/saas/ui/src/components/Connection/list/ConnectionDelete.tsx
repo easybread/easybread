@@ -9,10 +9,9 @@ import {
 } from 'react';
 
 import type { PgConnectionSelect } from 'saas-db/types';
-
 import { useTRPC } from 'saas-trpc';
 
-import { useToastPromiseControl } from '../../hooks/use-toast-promise-control';
+import { useToastPromiseControl } from '../../../hooks/use-toast-promise-control';
 
 import { ConnectionDeleteDialog } from './ConnectionDeleteDialog';
 import type { ConnectionListQueryOutputData } from './ConnectionListQueryOutputData';

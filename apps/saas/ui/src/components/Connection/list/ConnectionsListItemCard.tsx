@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 
 import type { PgConnectionSelect } from 'saas-db/types';
 
-import { Card, CardFooter, CardHeader, CardTitle } from '../../shadcn/card';
+import { Card, CardFooter, CardHeader, CardTitle } from '../../../shadcn/card';
+import { ConnectionTypeBadge } from '../common/ConnectionTypeBadge';
 
 import { useConnectionDeleteContext } from './ConnectionDelete';
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
-import { ConnectionTypeBadge } from './ConnectionTypeBadge';
 
 export function ConnectionsListItemCard(props: { data: PgConnectionSelect }) {
   const { name, type, id, isConnected } = props.data;

@@ -18,7 +18,7 @@ const nextConfig = {
   serverExternalPackages: [
     'pg',
     'pg-native',
-    '@vercel/otel',
+    '@vercel/*',
     '@opentelemetry/*',
     '@aws-sdk/*',
   ],

@@ -2,10 +2,10 @@ import {
   ConnectionError,
   InvalidConfigError,
   SchemaFetchError,
-} from '../../IntrospectionError.js';
-import { type SchemaFetcher } from '../../SchemaFetcher.js';
+} from '../../IntrospectionError';
+import { type SchemaFetcher } from '../../SchemaFetcher';
 
-import type { DbmlSchema } from './DbmlSchema.js';
+import type { DbmlSchema } from './DbmlSchema';
 
 export interface SchemaFetcherPostgresConfig {
   connectionString: string;

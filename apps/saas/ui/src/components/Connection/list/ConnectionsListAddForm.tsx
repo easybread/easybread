@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import { PG_CONNECTION_TYPE, type PgConnectionType } from 'saas-db/enums';
 import { useTRPC } from 'saas-trpc';
 
-import { Button } from '../../shadcn/button';
-import { Input } from '../../shadcn/input';
-import { SelectBox, type SelectBoxData } from '../Select/SelectBox';
+import { Button } from '../../../shadcn/button';
+import { Input } from '../../../shadcn/input';
+import { SelectBox, type SelectBoxData } from '../../Select/SelectBox';
 
 type ConnectionTypeItem = {
   label: string;

@@ -1,14 +1,15 @@
 export abstract class IntrospectionError extends Error {
+  public readonly timestamp = new Date().toISOString();
+
   readonly name: string;
 
-  constructor(
-    message: string,
-    public readonly options?: { cause?: unknown },
-  ) {
-    super(message);
-    this.name = this.constructor.name;
-    if (options?.cause) {
-      this.cause = options.cause;
+  constructor(message: string, options?: { cause?: unknown }) {
+    super(message, options);
+
+    this.name = new.target.name;
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
     }
   }
 }

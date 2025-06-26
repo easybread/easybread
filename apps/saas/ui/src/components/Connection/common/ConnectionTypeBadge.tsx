@@ -1,6 +1,6 @@
 import type { PgConnectionType } from 'saas-db/enums';
 
-import { Badge } from '../../shadcn/badge';
+import { Badge } from '../../../shadcn/badge';
 
 const typeMap: Record<PgConnectionType, string> = {
   DB_MONGO: 'Mongo',

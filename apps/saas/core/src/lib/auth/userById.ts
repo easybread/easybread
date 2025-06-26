@@ -2,8 +2,7 @@ import { eq } from 'drizzle-orm';
 import { fromPromise } from 'neverthrow';
 
 import { saasdb, users } from 'saas-db';
-
-import { DB_ERROR, errDbQueryFailed, errLog, errObject } from 'saas-errors';
+import { ERR_CODE, errDbQueryFailed, errLog, errObject } from 'saas-errors';
 import { takeFirstOrErr } from 'saas-neverthrow-util';
 
 export async function userById(userId: string) {
@@ -12,5 +11,5 @@ export async function userById(userId: string) {
     errDbQueryFailed,
   )
     .orTee(errLog)
-    .andThen(takeFirstOrErr(errObject(DB_ERROR.NOT_FOUND)));
+    .andThen(takeFirstOrErr(errObject(ERR_CODE.enum.DB_NOT_FOUND)));
 }

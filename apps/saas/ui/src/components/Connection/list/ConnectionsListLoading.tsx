@@ -1,4 +1,4 @@
-import { Muted } from '../../typography/Muted';
+import { Muted } from '../../../typography/Muted';
 
 export function ConnectionsListLoading() {
   return (

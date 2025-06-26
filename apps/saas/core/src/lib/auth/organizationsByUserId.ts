@@ -2,7 +2,6 @@ import { eq } from 'drizzle-orm';
 import { fromPromise, ok } from 'neverthrow';
 
 import { saasdb, usersToOrganizations } from 'saas-db';
-
 import { errDbQueryFailed, errLog, errLogAndReturn } from 'saas-errors';
 
 export const organizationsByUserId = (userId: string) => {

@@ -1167,7 +1167,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "candidateProfiles_addressesId_addresses_id_fk",
+      "id": "public_candidateProfiles_to_public_addresses",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1188,7 +1188,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "candidateProfiles_orgId_organization_id_fk",
+      "id": "public_candidateProfiles_to_public_organization",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1209,7 +1209,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "candidateProfiles_personalDetailsId_personalDetails_id_fk",
+      "id": "public_candidateProfiles_to_public_personalDetails",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1230,7 +1230,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "candidateProfiles_skillsetId_skillsets_id_fk",
+      "id": "public_candidateProfiles_to_public_skillsets",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1251,7 +1251,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "candidateProfiles_userId_users_id_fk",
+      "id": "public_candidateProfiles_to_public_users",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1272,7 +1272,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "departments_orgId_organization_id_fk",
+      "id": "public_departments_to_public_organization",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1293,7 +1293,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "employeeProfile_addressId_addresses_id_fk",
+      "id": "public_employeeProfile_to_public_addresses",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1314,7 +1314,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "employeeProfile_departmentId_departments_id_fk",
+      "id": "public_employeeProfile_to_public_departments",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1335,7 +1335,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "employeeProfile_orgId_organization_id_fk",
+      "id": "public_employeeProfile_to_public_organization",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1356,7 +1356,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "employeeProfile_personalDetailsId_personalDetails_id_fk",
+      "id": "public_employeeProfile_to_public_personalDetails",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1377,7 +1377,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "employeeProfile_skillsetId_skillsets_id_fk",
+      "id": "public_employeeProfile_to_public_skillsets",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1398,7 +1398,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "employeeProfile_userId_users_id_fk",
+      "id": "public_employeeProfile_to_public_users",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1419,7 +1419,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "jobApplications_candidateProfileId_candidateProfiles_id_fk",
+      "id": "public_jobApplications_to_public_candidateProfiles",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1440,7 +1440,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "jobApplications_jobPostId_jobPosts_id_fk",
+      "id": "public_jobApplications_to_public_jobPosts",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1461,7 +1461,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "jobApplications_orgId_organization_id_fk",
+      "id": "public_jobApplications_to_public_organization",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1482,7 +1482,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "jobPosts_addressesId_addresses_id_fk",
+      "id": "public_jobPosts_to_public_addresses",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1503,7 +1503,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "jobPosts_orgId_organization_id_fk",
+      "id": "public_jobPosts_to_public_organization",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1524,7 +1524,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "jobPosts_skillsetId_skillsets_id_fk",
+      "id": "public_jobPosts_to_public_skillsets",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1545,7 +1545,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "orgMembers_orgId_organization_id_fk",
+      "id": "public_orgMembers_to_public_organization",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1566,7 +1566,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "orgMembers_userId_users_id_fk",
+      "id": "public_orgMembers_to_public_users",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1587,7 +1587,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "skillsetSkills_skillId_skills_id_fk",
+      "id": "public_skillsetSkills_to_public_skills",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1608,7 +1608,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "skillsetSkills_skillsetId_skillsets_id_fk",
+      "id": "public_skillsetSkills_to_public_skillsets",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {
@@ -1629,7 +1629,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "workHistoryItems_addressesId_addresses_id_fk",
+      "id": "public_workHistoryItems_to_public_addresses",
       "onDelete": null,
       "onUpdate": null,
       "to": {
@@ -1650,7 +1650,7 @@ exports[`PostgresFactory Integration Tests Real-life schema should transform the
         "mul": "MANY",
         "namespace": "public",
       },
-      "id": "workHistoryItems_candidateProfileId_candidateProfiles_id_fk",
+      "id": "public_workHistoryItems_to_public_candidateProfiles",
       "onDelete": "CASCADE",
       "onUpdate": null,
       "to": {

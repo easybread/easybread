@@ -41,7 +41,7 @@ export type Enum = readonly string[];
 
 export type EnumDef = {
   name: string;
-  namespace?: string;
+  namespace: string;
   values: Enum;
 };
 
@@ -65,7 +65,7 @@ export type FieldDefMap = {
   [FIELD_TYPE.enum.DATE]: FieldDefBase<typeof FIELD_TYPE.enum.DATE>;
   [FIELD_TYPE.enum.ENUM]: FieldDefExtended<
     typeof FIELD_TYPE.enum.ENUM,
-    { enumName: string; namespace?: string }
+    { enumName: string; namespace: string }
   >;
   [FIELD_TYPE.enum.NUMBER_ID]: FieldDefExtended<
     typeof FIELD_TYPE.enum.NUMBER_ID,
@@ -81,7 +81,7 @@ export type ValueDef = PropValues<FieldDefMap>;
 
 export interface EntityDef {
   name: string;
-  namespace?: string;
+  namespace: string;
   fields: Record<string, ValueDef>;
 }
 

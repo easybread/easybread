@@ -1,11 +1,6 @@
 import { fromPromise } from 'neverthrow';
 
-import {
-  organizations,
-  saasdb,
-  usersToOrganizations,
-} from 'saas-db';
-
+import { organizations, saasdb, usersToOrganizations } from 'saas-db';
 import { errDbQueryFailed, errLog } from 'saas-errors';
 
 export const organizationCreateDefault = async (userId: string) => {

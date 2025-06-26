@@ -1,8 +1,8 @@
-import type { DataModelDef } from '../DataModel.js';
+import type { DataModelDef } from '../DataModel';
 
-import { IntrospectionError, UnknownError } from './IntrospectionError.js';
-import { type SchemaFetcher } from './SchemaFetcher.js';
-import { type SchemaTransformer } from './SchemaTransformer.js';
+import { IntrospectionError, UnknownError } from './IntrospectionError';
+import { type SchemaFetcher } from './SchemaFetcher';
+import { type SchemaTransformer } from './SchemaTransformer';
 
 /**
  * Generic introspection strategy that ensures fetcher/transformer compatibility

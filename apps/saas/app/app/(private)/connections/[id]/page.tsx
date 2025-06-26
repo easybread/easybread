@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
+
 import { TrpcHydrateClient, trpcPrefetch, trpcServer } from 'saas-trpc/server';
-import { ConnectionDetails } from 'saas-ui/components/ConnectionDetails';
+import { ConnectionDetails, LoadingState } from 'saas-ui';
 
 export default async function ConnectionPage({
   params,
@@ -12,7 +14,9 @@ export default async function ConnectionPage({
 
   return (
     <TrpcHydrateClient>
-      <ConnectionDetails connectionId={id} />
+      <Suspense fallback={<LoadingState />}>
+        <ConnectionDetails connectionId={id} />
+      </Suspense>
     </TrpcHydrateClient>
   );
 }
