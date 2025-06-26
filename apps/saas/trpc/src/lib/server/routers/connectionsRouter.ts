@@ -80,11 +80,12 @@ export const connectionsRouter = {
   updateSettings: authedProcedure
     .input(DtoConnectionSettingsUpdateSchema)
     .mutation(async ({ input, ctx }) => {
-      const result = await connectionSettingsUpdate(
-        input.id,
-        ctx.userOrgs.activeOrg,
-        input.settings,
-      )
+      const result = await connectionSettingsUpdate({
+        id: input.id,
+        orgId: ctx.userOrgs.activeOrg,
+        settings: input.settings,
+        name: input.name,
+      })
         .map(redactConnection)
         .mapErr(intoTrpcError);
 
@@ -137,7 +138,6 @@ export const connectionsRouter = {
 };
 
 export function redactConnection(connection: DtoConnection) {
-  console.log('redactConnection', connection);
   return {
     ...connection,
     settings: redactSettings(connection.settings),

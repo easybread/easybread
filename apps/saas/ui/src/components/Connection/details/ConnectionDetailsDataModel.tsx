@@ -1,6 +1,7 @@
 import type { DtoConnection } from 'saas-dto';
 
 import { Separator } from '../../../shadcn/separator';
+import { DataModel } from '../../DataModel/DataModel';
 
 export function ConnectionDetailsDataModel({
   connection,
@@ -10,7 +11,11 @@ export function ConnectionDetailsDataModel({
   return (
     <div className="flex flex-col gap-4">
       <DataModelHeading />
-      {connection.isConnected ? <ConnectedView /> : <NotConnectedView />}
+      {connection.isConnected ? (
+        <ConnectedView connection={connection} />
+      ) : (
+        <NotConnectedView />
+      )}
     </div>
   );
 }
@@ -19,9 +24,10 @@ export function NotConnectedView() {
   return <div>NotConnectedView</div>;
 }
 
-export function ConnectedView() {
-  return <div>ConnectedView</div>;
+export function ConnectedView({ connection }: { connection: DtoConnection }) {
+  return <DataModel connectionId={connection.id} />;
 }
+
 export function DataModelHeading() {
   return (
     <div className="flex w-full items-center gap-2 text-muted-foreground">

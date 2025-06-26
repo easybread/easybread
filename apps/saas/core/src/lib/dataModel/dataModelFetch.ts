@@ -1,7 +1,12 @@
 import { and, eq } from 'drizzle-orm';
 import { err, fromPromise, ok } from 'neverthrow';
 
-import type { DataModelDef } from '@easybread/data-model';
+import type {
+  DataModelDef,
+  EntityDef,
+  EnumDef,
+  RelationDef,
+} from '@easybread/data-model';
 
 import {
   dataModelEntities,
@@ -52,36 +57,47 @@ export function buildDataModelDef(
     dataModelRelations: DataModelRelationSelect | null;
   }[],
 ) {
-  console.log('-------------------- buildDataModelDef --------------------');
-  console.log(JSON.stringify(results, null, 2));
-  console.log('-------------------- buildDataModelDef --------------------');
+  console.log(`${results.length} results`);
 
-  const dataModel = results[0].dataModels;
+  const dataModel = results[0]?.dataModels;
 
   if (!dataModel) {
     return err(errObject(ERR_CODE.enum.DB_NOT_FOUND, 'Data model not found'));
   }
 
-  const enums = results
-    .map(result => result.dataModelEnums?.def)
-    .filter(d => !!d);
+  const enums = new Map<string, EnumDef>();
+  const entities = new Map<string, EntityDef>();
+  const relations = new Map<string, RelationDef<EntityDef, EntityDef>>();
 
-  const entities = results
-    .map(result => result.dataModelEntities?.def)
-    .filter(d => !!d);
-
-  const relations = results
-    .map(result => result.dataModelRelations?.def)
-    .filter(d => !!d);
+  for (const result of results) {
+    if (result.dataModelEnums?.def) {
+      enums.set(
+        `${result.dataModelEnums.namespace}:${result.dataModelEnums.name}`,
+        result.dataModelEnums.def,
+      );
+    }
+    if (result.dataModelEntities?.def) {
+      entities.set(
+        `${result.dataModelEntities.namespace}:${result.dataModelEntities.name}`,
+        result.dataModelEntities.def,
+      );
+    }
+    if (result.dataModelRelations?.def) {
+      relations.set(
+        `${result.dataModelRelations.def.from.namespace}:${result.dataModelRelations.def.from.entity}->${result.dataModelRelations.def.to.namespace}:${result.dataModelRelations.def.to.entity}`,
+        result.dataModelRelations.def,
+      );
+    }
+  }
 
   return ok({
     ...dataModel,
     def: {
       name: dataModel.name,
       namespaces: dataModel.namespaces,
-      entities,
-      relations,
-      enums,
+      entities: Array.from(entities.values()),
+      relations: Array.from(relations.values()),
+      enums: Array.from(enums.values()),
     },
   } satisfies DataModelSelect & { def: DataModelDef });
 }

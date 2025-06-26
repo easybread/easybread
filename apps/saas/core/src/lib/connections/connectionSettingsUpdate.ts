@@ -6,15 +6,23 @@ import type { ConnectionSettingsJsonb } from 'saas-db/types';
 import { ERR_CODE, errDbQueryFailed, errObject } from 'saas-errors';
 import { takeFirstOrErr } from 'saas-neverthrow-util';
 
-export function connectionSettingsUpdate(
-  id: string,
-  orgId: string,
-  settings: ConnectionSettingsJsonb,
-) {
+interface ConnectionSettingsUpdateProps {
+  id: string;
+  orgId: string;
+  settings: ConnectionSettingsJsonb;
+  name?: string;
+}
+
+export function connectionSettingsUpdate({
+  id,
+  orgId,
+  settings,
+  name,
+}: ConnectionSettingsUpdateProps) {
   return fromPromise(
     saasdb
       .update(connections)
-      .set({ settings, isConnected: !!settings })
+      .set({ settings, isConnected: !!settings, name })
       .where(and(eq(connections.id, id), eq(connections.organizationId, orgId)))
       .returning(),
     errDbQueryFailed,

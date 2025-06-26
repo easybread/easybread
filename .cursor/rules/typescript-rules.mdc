@@ -71,3 +71,15 @@ These rules relevant to any typescript-related work and should be applied on top
 - If requirements are ambiguous, ask a concise clarification question.
 - After fulfilling the user's request, you may offer up to **two** brief, optional improvement suggestions—clearly label them as “Optional: …”.
 
+## Specific libraries guidelines
+
+### TRPC & React query
+
+- Use trpc v11+
+- Use Tanstack Query v5+
+- dont use legacy trpc `trpc.some.namespace.useQuery()` and `trpc.some.namespace.useMutation()`
+- use `useQuery(trpc.some.namespace.queryOptions())` and `useQuery(trpc.some.namespace.mutationOptions())`
+
+### drizzle
+
+- use nx to run drizzle-kit commands (inspect available nx targets in the related nx project)

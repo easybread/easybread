@@ -8,6 +8,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
 
@@ -45,6 +46,11 @@ export const dataModels = pgTable(
     index('data_models_org_id_connection_id_name_idx').on(
       table.orgId,
       table.connectionId,
+    ),
+    // Unique constraint for business logic: one data model per connection per org
+    uniqueIndex('data_models_connection_id_org_id_unique').on(
+      table.connectionId,
+      table.orgId,
     ),
   ],
 );

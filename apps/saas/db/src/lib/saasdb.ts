@@ -1,5 +1,5 @@
 import { lazyDrizzle } from '@space-architects/util-drizzle';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { drizzle } from 'drizzle-orm/neon-serverless';
 import { load } from 'ts-dotenv';
 
 export const saasdb = lazyDrizzle(
