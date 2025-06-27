@@ -206,10 +206,7 @@ export function DataModelVisualizer({
   );
 
   return (
-    <div
-      style={{ height: '90vh', width: '100%', background: '#1a202c' }}
-      className="relative"
-    >
+    <div className="relative flex flex-1 flex-col rounded-xl bg-background">
       <EntityListPanel
         entities={dataModel.entities}
         entityVisibility={entityVisibility}
@@ -231,7 +228,7 @@ export function DataModelVisualizer({
         >
           <Controls />
           <Background
-            color="#4a5568"
+            color="var(--muted-foreground)"
             gap={24}
             variant={BackgroundVariant.Dots}
           />

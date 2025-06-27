@@ -17,7 +17,7 @@ export function ConnectionDetails({ connectionId }: { connectionId: string }) {
 
   return (
     <ConnectionSettingsEdit>
-      <div className="flex flex-col gap-4 py-6">
+      <div className="flex flex-1 flex-col gap-4 pt-2">
         <ConnectionDetailsHeader connection={connection} />
         <ConnectionDetailsDataModel connection={connection} />
       </div>

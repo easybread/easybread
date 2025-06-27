@@ -15,7 +15,7 @@ export function ConnectionDetailsHeader({
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex grow flex-col gap-2">
+      <div className="flex grow flex-col">
         <span>{name}</span>
         <ConnectionSettingsView settings={settings} />
       </div>
@@ -40,7 +40,7 @@ export function ConnectionSettingsView({
   }
 
   return (
-    <div className="flex flex-col gap-1 overflow-hidden font-mono text-sm text-muted-foreground">
+    <div className="flex flex-col gap-1 overflow-hidden font-mono text-xs text-muted-foreground">
       {/* <ConnectionTypeBadge type={settings.type} /> */}
       <span className="truncate">{settings.connectionString}</span>
     </div>

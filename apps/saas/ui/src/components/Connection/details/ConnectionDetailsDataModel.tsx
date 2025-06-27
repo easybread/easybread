@@ -9,7 +9,7 @@ export function ConnectionDetailsDataModel({
   connection: DtoConnection;
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4">
       <DataModelHeading />
       {connection.isConnected ? (
         <ConnectedView connection={connection} />
