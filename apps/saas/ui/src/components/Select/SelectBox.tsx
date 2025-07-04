@@ -25,7 +25,7 @@ export function SelectBox<
   const { onChange, data, toItemLabel, toValue, value, placeholder } = props;
 
   return (
-    <Select onValueChange={v => onChange(v as V)} defaultValue={value}>
+    <Select onValueChange={v => onChange(v as V)} value={value}>
       <SelectTrigger className={props.className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

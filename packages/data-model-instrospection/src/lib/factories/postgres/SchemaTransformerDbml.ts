@@ -9,7 +9,8 @@ import {
   type RelationDef,
   UUID_ALGORITHM,
   type ValueDef,
-} from '../../../DataModel';
+} from '@easybread/data-model';
+
 import { TransformationError } from '../../IntrospectionError';
 import { type SchemaTransformer } from '../../SchemaTransformer';
 

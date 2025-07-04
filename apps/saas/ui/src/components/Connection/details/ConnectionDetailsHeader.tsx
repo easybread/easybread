@@ -15,15 +15,13 @@ export function ConnectionDetailsHeader({
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex grow flex-col">
+      <div className="flex grow flex-col overflow-hidden">
         <span>{name}</span>
         <ConnectionSettingsView settings={settings} />
       </div>
-      <div className="shrink-0">
-        <Button onClick={() => connectionEdit(connection.id)}>
-          {connection.isConnected ? 'Edit' : 'Connect'}
-        </Button>
-      </div>
+      <Button onClick={() => connectionEdit(connection.id)}>
+        {connection.isConnected ? 'Edit' : 'Connect'}
+      </Button>
     </div>
   );
 }

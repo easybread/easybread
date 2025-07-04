@@ -79,11 +79,11 @@ export type FieldDefMap = {
 
 export type ValueDef = PropValues<FieldDefMap>;
 
-export interface EntityDef {
+export type EntityDef = {
   name: string;
   namespace: string;
   fields: Record<string, ValueDef>;
-}
+};
 
 export interface RelationEndpoint<T extends EntityDef> {
   entity: T['name'];

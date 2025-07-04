@@ -16,7 +16,7 @@ export default async function WithSidebarLayout(props: PropsWithChildren) {
 
   return (
     <TrpcHydrateClient>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <NavSidebar />
         <SidebarInset>
           <PageHeader />

@@ -1,6 +1,9 @@
 import { fromPromise } from 'neverthrow';
 
-import { IntrospectionError, introspectPostgres } from '@easybread/data-model';
+import {
+  IntrospectionError,
+  introspectPostgres,
+} from '@easybread/data-model-instrospection';
 
 import { PG_CONNECTION_TYPE } from 'saas-db/enums';
 import type { ConnectionSettingsJsonb } from 'saas-db/types';

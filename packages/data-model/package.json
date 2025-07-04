@@ -5,7 +5,6 @@
   "module": "./index.js",
   "dependencies": {
     "@space-architects/util-enum": "^1.2.0",
-    "@space-architects/util-ts": "^1.2.0",
-    "@dbml/connector": "^3.13.5"
+    "@space-architects/util-ts": "^1.2.0"
   }
 }

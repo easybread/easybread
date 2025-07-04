@@ -16,9 +16,11 @@ const nextConfig = {
     nodeMiddleware: true,
   },
   serverExternalPackages: [
+    '@dbml/*',
     'pg',
     'pg-native',
     '@vercel/*',
+    '@google-cloud/*',
     '@opentelemetry/*',
     '@aws-sdk/*',
   ],

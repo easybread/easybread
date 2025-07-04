@@ -23,9 +23,20 @@ import {
   DtoDataModelSchema,
 } from 'saas-dto';
 import { ERR_CODE, errObject } from 'saas-errors';
+import { redis } from 'saas-redis';
 
 import { intoTrpcError } from '../errors/intoTrpcError';
 import { authedProcedure } from '../trpcInit';
+
+import { Cache } from './cache';
+
+const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+
+export function makeDataModelCacheKey(orgId: string, connectionId: string) {
+  return `data-model:${orgId}:${connectionId}`;
+}
+
+const cache = new Cache(redis, ONE_DAY_IN_SECONDS, true);
 
 export const connectionsRouter = {
   list: authedProcedure
@@ -97,6 +108,13 @@ export const connectionsRouter = {
   dataModelIntrospectionStart: authedProcedure
     .input(DtoDataModelInstrospectionStartSchema)
     .mutation(async ({ input, ctx }) => {
+      const cacheKey = makeDataModelCacheKey(
+        ctx.userOrgs.activeOrg,
+        input.connectionId,
+      );
+
+      await cache.invalidateKey(cacheKey);
+
       const connection = await connectionById(input.connectionId)
         .andThrough(c =>
           ownershipCheck(c, 'organizationId', ctx.userOrgs.activeOrg),
@@ -126,12 +144,22 @@ export const connectionsRouter = {
     .input(DtoByIdSchema)
     .output(DtoDataModelSchema)
     .query(async ({ input, ctx }) => {
+      console.time('cache.get');
+      const cacheKey = makeDataModelCacheKey(ctx.userOrgs.activeOrg, input.id);
+      const cached = await cache.get(cacheKey, DtoDataModelSchema);
+      console.timeEnd('cache.get');
+      console.log('cache hit', !!cached);
+
+      if (cached) return cached;
+
       const dataModel = await dataModelFetch(
         input.id,
         ctx.userOrgs.activeOrg,
       ).mapErr(intoTrpcError);
 
       if (dataModel.isErr()) throw dataModel.error;
+
+      await cache.set(cacheKey, dataModel.value);
 
       return dataModel.value;
     }),

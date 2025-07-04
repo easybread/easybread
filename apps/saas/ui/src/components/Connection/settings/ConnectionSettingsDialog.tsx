@@ -10,7 +10,7 @@ export function ConnectionSettingsDialog() {
 
   return (
     <Dialog open={_dialogOpen} onOpenChange={open => !open && _closeDialog()}>
-      <DialogContent>
+      <DialogContent className="top-[33%]">
         {_isLoading && <LoadingState showTitle={true} showDescription={true} />}
         {!_isLoading && _connection && (
           <ConnectionSettingsForm connection={_connection} />

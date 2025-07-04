@@ -60,7 +60,7 @@ export function DbPostgresStrategy({
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input {...p.field} />
+                  <Input {...p.field} autoComplete="off" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -74,7 +74,7 @@ export function DbPostgresStrategy({
               <FormItem>
                 <FormLabel>Connection String</FormLabel>
                 <FormControl>
-                  <Input {...p.field} />
+                  <Input {...p.field} autoComplete="off" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

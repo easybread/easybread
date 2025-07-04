@@ -44,6 +44,9 @@
       "@easybread/data-adapter": ["packages/data-adapter/src/index.ts"],
       "@easybread/data-mapper": ["packages/data-mapper/src/index.ts"],
       "@easybread/data-model": ["packages/data-model/src/index.ts"],
+      "@easybread/data-model-instrospection": [
+        "packages/data-model-instrospection/src/index.ts"
+      ],
       "@easybread/pagination-adapter": [
         "packages/pagination-adapter/src/index.ts"
       ],

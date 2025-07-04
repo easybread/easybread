@@ -63,8 +63,8 @@ function SingleItem({
   return (
     <SidebarMenuItem key={item.title}>
       <SidebarMenuButton isActive={isActive}>
-        {item.icon && <item.icon />}
-        <Link prefetch={true} href={item.url}>
+        <Link prefetch={true} href={item.url} className="flex gap-2 items-center">
+          {item.icon && <item.icon size={16} />}
           {item.title}
         </Link>
       </SidebarMenuButton>
