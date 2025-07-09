@@ -1,3 +1,5 @@
+import { useEffect, useMemo } from 'react';
+
 import {
   Select,
   SelectContent,
@@ -24,6 +26,12 @@ const transformOptions = [
 
 export type TransformType = (typeof transformOptions)[number]['value'];
 
+const defaultTransform = (parentNodeType: DataModelNode['type']) => {
+  if (parentNodeType === 'entity') return 'transform-populate';
+  if (parentNodeType === 'populate') return 'transform-map';
+  return 'none';
+};
+
 export function AddTransformNodeDropdown({
   parentNodeType,
   onSelect,
@@ -31,28 +39,39 @@ export function AddTransformNodeDropdown({
   parentNodeType: DataModelNode['type'];
   onSelect: (transform: TransformType) => void;
 }) {
+  const options = useMemo(() => {
+    if (parentNodeType === 'populate') {
+      return transformOptions.filter(o => o.value !== 'transform-populate');
+    }
+    if (parentNodeType === 'map') {
+      return transformOptions.filter(
+        o => o.value !== 'transform-map' && o.value !== 'transform-populate',
+      );
+    }
+    return transformOptions;
+  }, [parentNodeType]);
+
+  const defaultValue = useMemo(
+    () => defaultTransform(parentNodeType),
+    [parentNodeType],
+  );
+
+  useEffect(() => {
+    onSelect(defaultValue);
+  }, [defaultValue, onSelect]);
+
   return (
-    <Select onValueChange={onSelect}>
+    <Select onValueChange={onSelect} defaultValue={defaultValue}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select Type" />
       </SelectTrigger>
 
       <SelectContent>
-        {transformOptions
-          .filter(o => {
-            if (parentNodeType === 'populate') {
-              return o.value !== 'transform-populate';
-            }
-            if (parentNodeType === 'map') {
-              return false;
-            }
-            return true;
-          })
-          .map(({ label, value }) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
-          ))}
+        {options.map(({ label, value }) => (
+          <SelectItem key={value} value={value}>
+            {label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

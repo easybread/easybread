@@ -40,7 +40,7 @@ export function nodeFactory(props: {
             100,
           x: sourceNode.position.x + 600,
         },
-        data: { base: sourceNode.data.def },
+        data: { base: sourceNode.data.def, relationIds: [] },
       };
 
     case 'transform-map':
