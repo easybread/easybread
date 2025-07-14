@@ -57,6 +57,7 @@
         "packages/state-adapter-mongo/src/index.ts"
       ],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
+      "@easybread/workflow": ["packages/workflow/src/index.ts"],
       "playground-common": ["playground/common/src/index.ts"],
       "playground-db": ["playground/db/src/index.ts"],
       "playground-easybread-clients": [

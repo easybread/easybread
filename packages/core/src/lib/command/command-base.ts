@@ -14,7 +14,7 @@ export type CommandBaseOutputSuccessful = CommandBaseOutput & {
 
 export type CommandBaseOutputFailed = CommandBaseOutput & {
   readonly success: false;
-  error: ServiceException;
+  readonly error: ServiceException;
 };
 
 export type CommandBaseOutputAny =

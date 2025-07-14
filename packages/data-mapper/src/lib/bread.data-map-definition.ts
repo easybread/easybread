@@ -27,7 +27,7 @@ export type BreadLiteralFactory<I, O> = (input: I) => O;
  */
 export type BreadDataMapIOConstraint = Record<string | symbol, unknown>;
 
-export type BreadDataMapperClass<
+export type BreadDataMapperInstance<
   TInput extends BreadDataMapIOConstraint,
   TOutput extends BreadDataMapIOConstraint,
 > = {
@@ -53,7 +53,7 @@ export type BreadDataMapValueResolverDefinition<
   | (O extends Record<string | symbol, unknown>
       ?
           | BreadDataMapDefinition<I, O> // object to map input to output[key]
-          | BreadDataMapperClass<I, O> // class to map input to output[key]
+          | BreadDataMapperInstance<I, O> // class to map input to output[key]
           | BreadDataMapNoMapLiteral // no map
       : never)
 
