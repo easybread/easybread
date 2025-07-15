@@ -9,47 +9,39 @@ import { type IO, type IOIn, type IOOut } from './IO';
 import { Step } from './Step';
 import type { WorkflowEventAny } from './WorkflowEvent';
 
-type WorkflowAny = Workflow<any, any>;
+export type WorkflowAny = Workflow<any, any>;
 
 export class Workflow<
-    TFirst extends ExecutableAny | never = never,
-    TLast extends ExecutableAny | never = TFirst,
+    TIn extends BreadDataMapIOConstraint | never,
+    TOut extends BreadDataMapIOConstraint | never,
   >
   extends BreadEventBus<WorkflowEventAny>
-  implements Executable<IO<TFirst, TLast>>
+  implements Executable<IO<TIn, TOut>>
 {
-  readonly _io = {} as IO<
-    TFirst extends ExecutableAny ? IOIn<TFirst> : never,
-    TLast extends ExecutableAny ? IOOut<TLast> : never
-  >;
-
+  readonly _io = {} as IO<TIn, TOut>;
   readonly _id: string;
-  readonly _steps: Map<string, ExecutableAny> = new Map();
+  readonly _map: Map<string, ExecutableAny> = new Map();
   readonly _seq: string[] = [];
 
   static startAt<TStart extends ExecutableAny>(
     start: TStart,
-  ): Workflow<TStart, TStart> {
+  ): Workflow<IOIn<TStart>, IOOut<TStart>> {
     return new Workflow([start]);
   }
 
-  static Generator<TGen extends ExecutableAny>(): Workflow<TGen, TGen> {
-    return {} as any;
-  }
+  // static Parallel<T extends ExecutableAny[]>(
+  //   ...items: T
+  // ): Workflow<IOIn<T[number]>, [...T]> {
+  //   return new Workflow(items);
+  // }
 
-  static Parallel<
-    T extends ExecutableAny[],
-  >(items: T): Workflow<T[], T[number]> {
-    return new Workflow(items);
-  }
-
-  protected constructor(sequence: ExecutableAny[] = []) {
+  protected constructor(sequence = [ExecutableAny, ...ExecutableAny[]]) {
     super();
     this._id = crypto.randomUUID();
 
     for (const item of sequence) {
       this._seq.push(item._id);
-      this._steps.set(item._id, item);
+      this._map.set(item._id, item);
     }
   }
 
@@ -67,24 +59,29 @@ export class Workflow<
     return nextId ? this.getById(nextId) : null;
   }
 
-  andThen<TNext extends Executable<IO<IOOut<this>, any>>>(
+  pipe<TNext extends Executable<IO<IOOut<this>, any>>>(
     next: TNext,
-  ): Workflow<TFirst, TNext>;
+  ): Workflow<IOOut<this>, IOOut<TNext>>;
 
-  andThen<TNext extends ExecutableAny>(
+  pipe<TNext extends ExecutableAny>(
     next: TNext,
     mapperDefinition: BreadDataMapDefinition<IOOut<this>, IOIn<TNext>>,
-  ): Workflow<TFirst, TNext>;
+  ): Workflow<IOOut<this>, IOOut<TNext>>;
 
-  andThen<TNext extends ExecutableAny>(
+  pipe<TNext extends ExecutableAny>(
     next: TNext,
     mapDefinition?: BreadDataMapDefinition<IOOut<this>, IOIn<TNext>>,
-  ): Workflow<TFirst, TNext> {
+  ): Workflow<IOOut<this>, IOIn<TNext>> {
     const sequence = this.getItemsSequence();
-    const mappingWorkflow = new Workflow([this, next]);
+
+    const last = sequence[sequence.length - 1]!;
 
     if (mapDefinition) {
-      sequence.push(Step.DataMapper(next._id, mapDefinition));
+      const mappingWorkflow = new Workflow([
+        Step.DataMapper(next._id, mapDefinition),
+        next,
+      ]);
+      sequence.push(mappingWorkflow);
     }
 
     sequence.push(next);
@@ -93,7 +90,7 @@ export class Workflow<
   }
 
   private getItemsSequence() {
-    return this._seq.map(id => this._steps.get(id) as ExecutableAny);
+    return this._seq.map(id => this._map.get(id) as ExecutableAny);
   }
 
   private getNextId(previousId: string | null): string | null {
@@ -102,33 +99,6 @@ export class Workflow<
   }
 
   private getById(id: string): ExecutableAny | null {
-    return this._steps.get(id) ?? null;
-  }
-}
-
-type WorkflowState = any;
-interface WorflowRunner<T extends WorkflowAny> {
-  _workflow: T;
-  _state: WorkflowState;
-  run(input: IOIn<T>): IOOut<T>;
-}
-
-export class WorkflowRunnerLocal<T extends WorkflowAny>
-  implements WorflowRunner<T>
-{
-  _workflow: T;
-  _state: WorkflowState;
-
-  static make = <T extends WorkflowAny>(w: T) => new this(w);
-  static load = <T extends WorkflowAny>(w: T, state: WorkflowState) =>
-    new this(w, state);
-
-  protected constructor(workflow: T, state?: WorkflowState) {
-    this._workflow = workflow;
-    this._state = state ?? {};
-  }
-
-  async run(input: IOIn<T>): Promise<Awaited<IOOut<T>>> {
-    return await this._workflow.execute(input);
+    return this._map.get(id) ?? null;
   }
 }

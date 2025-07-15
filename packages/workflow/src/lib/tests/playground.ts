@@ -17,7 +17,11 @@ const client = new EasyBreadClient(stateAdapter, serviceAdapter);
 export async function main() {
   const TENNANT_ID = 'tennant-1';
 
-  const getEmployees = Step.Command( 'getEmployees', client, 'BREAD/HR_EMPLOYEE_SEARCH' );
+  const getEmployees = Step.Command(
+    'getEmployees',
+    client,
+    'BREAD/HR_EMPLOYEE_SEARCH',
+  );
   const employees = await getEmployees.execute({
     breadId: 'breadId',
     pagination: { type: 'DISABLED' },
@@ -33,18 +37,15 @@ export async function main() {
       tenantId: TENNANT_ID,
     })),
   )
-    .andThen(
-      Step.Command('GetEmployeeById', client, 'BREAD/HR_EMPLOYEE_BY_ID'),
-      {
-        breadId: 'tenantId',
-        params: {
-          '@type': _ => 'Person' as const,
-          identifier: 'userId',
-        },
-        payload: 'NO_MAP',
+    .pipe(Step.Command('GetEmployeeById', client, 'BREAD/HR_EMPLOYEE_BY_ID'), {
+      breadId: 'tenantId',
+      params: {
+        '@type': _ => 'Person' as const,
+        identifier: 'userId',
       },
-    )
-    .andThen(Step.Function('UpsertUserInDB', upsertUserInDB), {
+      payload: 'NO_MAP',
+    })
+    .pipe(Step.Function('UpsertUserInDB', upsertUserInDB), {
       email: f => f.payload.email ?? '',
       name: f => f.payload.name ?? '',
       orgId: 'breadId',
