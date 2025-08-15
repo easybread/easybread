@@ -110,11 +110,14 @@ class ConcurrentNode<
   }
 }
 
-type I = { q: string };
+type I1 = { q: string };
+type I2 = { p: string };
 
-const fn1 = new FnNode('f1', (input: I) => ({ a: input.q }));
-const fn2 = new FnNode('f2', (input: I) => ({ b: input.q }));
+const fn1 = new FnNode('f1', (input: I1) => ({ a: input.q }));
+const fn2 = new FnNode('f2', (input: I2) => ({ b: input.p }));
 
 const w = new ConcurrentNode('w', [fn1, fn2]);
 
-w.run({ anything: 'is allowed, but should not be.' });
+type WIO = GetIO<typeof w>;
+
+const wresult = w.run({ anything: 'is allowed, but should not be.' });
