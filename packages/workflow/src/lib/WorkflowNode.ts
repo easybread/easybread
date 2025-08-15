@@ -25,7 +25,7 @@ export abstract class WorkflowNode<
   TId extends string,
   Tio extends IOAny,
   FP extends FiberPolicy,
-  TState extends IOConstraint | never,
+  _TState extends IOConstraint | never,
 > extends WithIO<Tio> {
   readonly id: TId;
   readonly children: Record<string, WorkflowNodeAny> = {};
@@ -37,7 +37,7 @@ export abstract class WorkflowNode<
 
   abstract get fiberPolicy(): FP;
 
-  run(input: IOIn<Tio>): IOOut<Tio> | Promise<IOOut<Tio>> {
+  run(_input: IOIn<Tio>): IOOut<Tio> | Promise<IOOut<Tio>> {
     throw new Error('Method not implemented.');
   }
 
@@ -69,6 +69,19 @@ class FnNode<
   }
 }
 
+// Helper type to ensure all children have the same input type
+type AllChildrenHaveSameInput<
+  TInput extends IOConstraint,
+  TChildren extends ReadonlyArray<
+    WorkflowNode<string, IO<any, any>, FiberPolicy, any>
+  >,
+> =
+  TChildren extends ReadonlyArray<
+    WorkflowNode<string, IO<TInput, any>, FiberPolicy, any>
+  >
+    ? TChildren
+    : never;
+
 class ConcurrentNode<
   TId extends string,
   TInput extends IOConstraint,
@@ -87,7 +100,10 @@ class ConcurrentNode<
     };
   };
 
-  constructor(id: TId, children: [...TChildren]) {
+  constructor(
+    id: TId,
+    children: AllChildrenHaveSameInput<TInput, [...TChildren]>,
+  ) {
     super(id);
     this.children = children.reduce(
       (acc, child) => {
@@ -122,16 +138,16 @@ const fn2 = new FnNode('f2', (input: IWrong) => ({ b: input.p }));
 const fn3 = new FnNode('f3', (input: I1) => ({ c: input.q }));
 
 // this should raise TS error because of the different input types of fn1 and fn2
-const cWrong = new ConcurrentNode('c', [fn1, fn2]);
+const _cWrong = new ConcurrentNode('c', [fn1, fn2]);
 
 // this should be fine, because the input type of fn1 and fn3 are the same
 const cCorrect = new ConcurrentNode('c', [fn1, fn3]);
 
 // this should be I1, not IOConstraint
-type WInput = GetIO<typeof cCorrect>['input'];
+type _WInput = GetIO<typeof cCorrect>;
 
 // this is ok
-const r1 = cCorrect.run({ q: 'smth' });
+const _r1 = cCorrect.run({ q: 'smth' });
 
 // this should raise TS error because input is not assignable to I1
-const r2 = cCorrect.run({ wrongInput: 'smth' });
+const _r2 = cCorrect.run({ wrongInput: 'smth' });
