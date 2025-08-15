@@ -9,7 +9,8 @@ import {
   type PipePolicy,
   type WorkflowForkPolicy,
 } from './FiberPolicy';
-import { FiberScopePrefixStore, FiberScopeStore } from './FiberScopeStore';
+import { FiberScopePrefixStore } from './FiberScopePrefixStore';
+import { FiberScopeStore } from './FiberScopeStore';
 import { WorkflowStore } from './WorkflowStore';
 import type { WorkflowStoreAdapter } from './WorkflowStoreAdapter';
 
@@ -46,7 +47,7 @@ export class FiberStore extends WorkflowStore {
   async openFibers(baseFiber: FiberAny, node: WorkflowNodeAny) {
     switch (node.fiberPolicy.type) {
       case FIBER_POLICY_TYPE.enum.WORKFLOW_FORK:
-        return this.openWorkflowForkFiber(baseFiber, node);
+        return this.openWorkflowForkFibers(baseFiber, node);
 
       case FIBER_POLICY_TYPE.enum.FIBER_FORK:
         return this.openFiberForkFiber(baseFiber, node);
@@ -62,16 +63,36 @@ export class FiberStore extends WorkflowStore {
     }
   }
 
-  openWorkflowForkFiber(
-    _baseFiber: FiberAny,
-    _node: WorkflowNode<any, WorkflowForkPolicy, any>,
+  async openWorkflowForkFibers(
+    baseFiber: FiberAny,
+    node: WorkflowNode<any, any, any, WorkflowForkPolicy, any>,
   ) {
-    throw new Error('Method not implemented.');
+    const prefixes = await this.fiberScopePrefixStore.acquireMemberSlots({
+      execId: baseFiber.execId,
+      nodeId: node.id,
+      key: baseFiber.scopePrefixKey(node.id, node.fiberPolicy.type),
+      fiberPolicy: node.fiberPolicy,
+      memberCount: node.fiberPolicy.forkCount,
+    });
+
+    const fibers = prefixes.map(p => baseFiber.fork(node.id, p.ordinality));
+
+    await this.fiberScopeStore.appendMembers({
+      execId: baseFiber.execId,
+      nodeId: node.id,
+      key: baseFiber.scopeKey(node.id, node.fiberPolicy.type),
+      members: fibers.map(f => f.key.toString()),
+      fiberPolicy: node.fiberPolicy,
+    });
+
+    await Promise.all(fibers.map(f => this.saveFiber(f)));
+
+    return fibers;
   }
 
   async openFiberForkFiber(
     baseFiber: FiberAny,
-    node: WorkflowNode<any, FiberForkPolicy, any>,
+    node: WorkflowNode<any, any, any, FiberForkPolicy, any>,
   ) {
     const [scopePrefix] = await this.fiberScopePrefixStore.acquireMemberSlots({
       execId: baseFiber.execId,
@@ -98,14 +119,14 @@ export class FiberStore extends WorkflowStore {
 
   openFiberJoinFiber(
     _baseFiber: FiberAny,
-    _node: WorkflowNode<any, FiberJoinPolicy, any>,
+    _node: WorkflowNode<any, any, any, FiberJoinPolicy, any>,
   ) {
     throw new Error('Method not implemented.');
   }
 
   async openPipeFiber(
     baseFiber: FiberAny,
-    node: WorkflowNode<any, PipePolicy, any>,
+    node: WorkflowNode<any, any, any, PipePolicy, any>,
   ) {
     // TODO: should we check if the fiber already exists?
     const fiber = baseFiber.pipe(node.id);

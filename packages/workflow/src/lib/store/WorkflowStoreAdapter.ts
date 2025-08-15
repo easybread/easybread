@@ -1,26 +1,66 @@
-import { VersionMismatchError } from '../Error';
+import { CASMaxRetriesReachedError, CASVersionMismatchError } from '../Error';
+
+const MAX_RETRIES = 10;
+const EMPTY_VALUE = '__EMPTY__' as const;
 
 export abstract class WorkflowStoreAdapter {
   /**
    * Compare and set value, if the version is correct.
    *
    * @param key - The key to set
-   * @param value - The value to set
+   * @param valueFactory - The value to set
    * @param expectedVersion - The expected version
    *
    * @throws VersionMismatchError if the version is incorrect
    */
-  async cas<T extends { version: number }>(key: string, value: T): Promise<T> {
-    return await this.transaction(async tx => {
-      const expectedVersion = value.version;
-      const currentVersion = await tx.getVersion(key);
+  async cas<T extends { version: number }>(
+    key: string,
+    valueFactory: (data: T | null) => Promise<T> | T,
+  ): Promise<T> {
+    // __EMPTY__ instead of null to guard against the case where null is an expected value
+    let result: T | typeof EMPTY_VALUE = EMPTY_VALUE;
 
-      if (currentVersion !== expectedVersion) {
-        throw new VersionMismatchError(key, expectedVersion, currentVersion);
-      }
+    // loop instead of recursion to avoid stack overflow and optimize memory usage
 
-      return await tx.set(key, { ...value, version: expectedVersion + 1 });
-    });
+    let value: T;
+    let currentVersion: number;
+    let expectedVersion: number;
+    let retries = 0;
+
+    while (result === EMPTY_VALUE && retries < MAX_RETRIES) {
+      value = await valueFactory(await this.get<T>(key));
+
+      result = await this.transaction(async tx => {
+        expectedVersion = value.version;
+        currentVersion = await tx.getVersion(key);
+
+        if (currentVersion !== expectedVersion) {
+          throw new CASVersionMismatchError(
+            key,
+            expectedVersion,
+            currentVersion,
+          );
+        }
+
+        return await tx.set(key, { ...value, version: expectedVersion + 1 });
+      }).catch((e): typeof EMPTY_VALUE => {
+        if (!(e instanceof CASVersionMismatchError)) throw e;
+        return EMPTY_VALUE;
+      });
+
+      if (result !== EMPTY_VALUE) return result;
+
+      retries++;
+    }
+
+    throw new CASMaxRetriesReachedError(
+      key,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      value!.version,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      currentVersion!,
+      retries,
+    );
   }
 
   /**

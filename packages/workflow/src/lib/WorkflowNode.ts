@@ -1,13 +1,11 @@
 import {
   type GetIO,
   type IO,
-  type IOAny,
   type IOConstraint,
   type IOIn,
   type IOOut,
   WithIO,
 } from './helpers/IO';
-import { Option } from './helpers/Option';
 import type { Fiber } from './store/Fiber';
 import {
   FIBER_POLICY_TYPE,
@@ -16,17 +14,18 @@ import {
 } from './store/FiberPolicy';
 
 export interface NodeRunContext<N extends WorkflowNodeAny> {
-  state: N extends WorkflowNode<any, any, any, infer S> ? S : never;
-  runFiber: Fiber<Option<IOOut<GetIO<N>>>>;
-  inputFiber?: Fiber<Option<IOIn<GetIO<N>>>>;
+  state: N extends WorkflowNode<any, any, any, any, infer S> ? S : never;
+  runFiber: Fiber<IOOut<GetIO<N>>>;
+  inputFiber?: Fiber<IOIn<GetIO<N>>>;
 }
 
 export abstract class WorkflowNode<
   TId extends string,
-  Tio extends IOAny,
-  FP extends FiberPolicy,
+  TIn extends IOConstraint,
+  TOut extends IOConstraint,
+  TFp extends FiberPolicy,
   _TState extends IOConstraint | never,
-> extends WithIO<Tio> {
+> extends WithIO<IO<TIn, TOut>> {
   readonly id: TId;
   readonly children: Record<string, WorkflowNodeAny> = {};
 
@@ -35,35 +34,38 @@ export abstract class WorkflowNode<
     this.id = id;
   }
 
-  abstract get fiberPolicy(): FP;
+  abstract get fiberPolicy(): TFp;
 
-  run(_input: IOIn<Tio>): IOOut<Tio> | Promise<IOOut<Tio>> {
+  runForTS(_input: TIn): TOut | Promise<TOut> {
     throw new Error('Method not implemented.');
   }
 
-  // abstract onFiberClosed(
-  //   fiber: FiberAny,
-  // ): (StopPropagationIntent | RunNodeIntent)[];
-
-  // abstract onNodeExited(node: WorkflowNodeAny): void;
+  abstract run(context: NodeRunContext<this>): void;
 }
 
-// type StreamNode<T extends IOAny> = WorkflowNode<T, None>;
+export type WorkflowNodeAny = WorkflowNode<
+  string,
+  IOConstraint,
+  IOConstraint,
+  FiberPolicy,
+  any
+>;
 
-export type WorkflowNodeAny = WorkflowNode<string, IOAny, FiberPolicy, any>;
-
-class FnNode<
-  TId extends string,
+export class FunctionNode<
+  TID extends string,
   TIn extends IOConstraint,
   TOut extends IOConstraint,
-> extends WorkflowNode<TId, IO<TIn, TOut>, FiberPolicy, never> {
+> extends WorkflowNode<TID, TIn, TOut, FiberPolicy, never> {
+  run(context: NodeRunContext<this>): void {
+    throw new Error('Method not implemented.');
+  }
   fn: (input: TIn) => TOut | Promise<TOut>;
 
   get fiberPolicy(): FiberPolicy {
     return { type: FIBER_POLICY_TYPE.enum.PIPE };
   }
 
-  constructor(id: TId, fn: (input: TIn) => TOut | Promise<TOut>) {
+  constructor(id: TID, fn: (input: TIn) => TOut | Promise<TOut>) {
     super(id);
     this.fn = fn;
   }
@@ -82,7 +84,7 @@ type AllChildrenHaveSameInput<
     ? TChildren
     : never;
 
-class ConcurrentNode<
+export class ConcurrentNode<
   TId extends string,
   TInput extends IOConstraint,
   TChildren extends ReadonlyArray<
@@ -105,6 +107,7 @@ class ConcurrentNode<
     children: AllChildrenHaveSameInput<TInput, [...TChildren]>,
   ) {
     super(id);
+
     this.children = children.reduce(
       (acc, child) => {
         acc[child.id as TChildren[number]['id']] = child;
@@ -124,30 +127,8 @@ class ConcurrentNode<
       forkCount: Object.keys(this.children).length,
     };
   }
+
+  run(context: NodeRunContext<this>): void {
+    throw new Error('Method not implemented.');
+  }
 }
-
-// PROBLEMS SECTION
-
-type I1 = { q: string };
-type IWrong = { p: string };
-
-// types of fn1 and fn2 seem to be correct.
-const fn1 = new FnNode('f1', (input: I1) => ({ a: input.q }));
-const fn2 = new FnNode('f2', (input: IWrong) => ({ b: input.p }));
-
-const fn3 = new FnNode('f3', (input: I1) => ({ c: input.q }));
-
-// this should raise TS error because of the different input types of fn1 and fn2
-const _cWrong = new ConcurrentNode('c', [fn1, fn2]);
-
-// this should be fine, because the input type of fn1 and fn3 are the same
-const cCorrect = new ConcurrentNode('c', [fn1, fn3]);
-
-// this should be I1, not IOConstraint
-type _WInput = GetIO<typeof cCorrect>;
-
-// this is ok
-const _r1 = cCorrect.run({ q: 'smth' });
-
-// this should raise TS error because input is not assignable to I1
-const _r2 = cCorrect.run({ wrongInput: 'smth' });

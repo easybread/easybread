@@ -39,14 +39,36 @@ export class InvalidFiberKeyError extends WorkflowError<
   }
 }
 
-export class VersionMismatchError extends WorkflowError<
-  'VersionMismatchError',
+export class CASVersionMismatchError extends WorkflowError<
+  'CASVersionMismatchError',
   { key: string; expectedVersion: number; actualVersion: number }
 > {
   constructor(key: string, expectedVersion: number, actualVersion: number) {
     super(
       `Version mismatch for key ${key}: expected ${expectedVersion}, got ${actualVersion}`,
       { key, expectedVersion, actualVersion },
+    );
+  }
+}
+
+export class CASMaxRetriesReachedError extends WorkflowError<
+  'CASMaxRetriesReachedError',
+  {
+    key: string;
+    expectedVersion: number;
+    actualVersion: number;
+    retries: number;
+  }
+> {
+  constructor(
+    key: string,
+    expectedVersion: number,
+    actualVersion: number,
+    retries: number,
+  ) {
+    super(
+      `CAS max retries reached for key ${key}: expected ${expectedVersion}, got ${actualVersion}`,
+      { key, expectedVersion, actualVersion, retries },
     );
   }
 }
