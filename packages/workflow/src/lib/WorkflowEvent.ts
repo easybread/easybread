@@ -2,32 +2,61 @@ import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
 
 import { BreadEvent } from '@easybread/core';
 
-import type { ExecutableAny } from './Executable';
-import type { IOOut } from './IO';
+import type { Exit } from './Exit';
+import { type None, Option, type Some } from './helpers/Option';
 
 export const WORKFLOW_EVENT_NAME = enumSuiteObject(
-  enumObject(['DATA', 'STARTED']),
+  enumObject(['FIBER_CLOSED', 'NODE_EXITED', 'NODE_SCHEDULED']),
 );
 
-export abstract class WorkflowEvent<T> extends BreadEvent<T> {
-  abstract readonly name: typeof WORKFLOW_EVENT_NAME.$type;
-  readonly executablePath: string[] = [];
+export interface WorkflowEventProps {
+  execId: string;
+  nodeId: string;
+  fiberKey: string;
+}
 
-  recordPath(executable: ExecutableAny) {
-    this.executablePath.unshift(executable._id);
+export abstract class WorkflowEvent<T = Option<any>> extends BreadEvent<T> {
+  abstract readonly name: typeof WORKFLOW_EVENT_NAME.$type;
+
+  readonly execId: string;
+  readonly nodeId: string;
+  readonly fiberKey: string;
+
+  constructor(props: WorkflowEventProps, payload: T) {
+    super(payload);
+    this.execId = props.execId;
+    this.nodeId = props.nodeId;
+    this.fiberKey = props.fiberKey;
   }
 }
 
-export class ExecutableDataEvent<T extends ExecutableAny> extends WorkflowEvent<
-  IOOut<T>
-> {
-  readonly name = WORKFLOW_EVENT_NAME.enum.DATA;
+export class FiberClosedEvent extends WorkflowEvent<None> {
+  readonly name = WORKFLOW_EVENT_NAME.enum.FIBER_CLOSED;
+
+  constructor(props: WorkflowEventProps) {
+    super(props, Option.none());
+  }
 }
 
-export class ExecutableStartedEvent extends WorkflowEvent<never> {
-  readonly name = WORKFLOW_EVENT_NAME.enum.STARTED;
+export class NodeExitedEvent extends WorkflowEvent<Some<Exit>> {
+  readonly name = WORKFLOW_EVENT_NAME.enum.NODE_EXITED;
+
+  constructor(props: WorkflowEventProps, exit: Exit) {
+    super(props, Option.some(exit));
+  }
+}
+
+export class NodeScheduledEvent extends WorkflowEvent<
+  Some<{ targetNodeId: string }>
+> {
+  readonly name = WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED;
+
+  constructor(props: WorkflowEventProps, payload: { targetNodeId: string }) {
+    super(props, Option.some(payload));
+  }
 }
 
 export type WorkflowEventAny =
-  | ExecutableStartedEvent
-  | ExecutableDataEvent<any>;
+  | FiberClosedEvent
+  | NodeExitedEvent
+  | NodeScheduledEvent;

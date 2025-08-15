@@ -1,1 +1,1 @@
-export * from './lib/workflow';
+export * from './lib/legacy/workflow';

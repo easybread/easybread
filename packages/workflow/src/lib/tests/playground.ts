@@ -4,8 +4,8 @@ import {
 } from '@easybread/adapter-bamboo-hr';
 import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
 
-import { Step } from '../Step';
-import { Workflow, WorkflowRunnerLocal } from '../workflow';
+import { Step } from '../legacy/Step';
+import { Workflow, WorkflowRunnerLocal } from '../legacy/workflow';
 
 import { upsertUserInDB } from './mock';
 

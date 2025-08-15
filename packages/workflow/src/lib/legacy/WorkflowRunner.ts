@@ -1,4 +1,5 @@
-import type { IOIn, IOOut } from './IO';
+import type { IOIn, IOOut } from '../helpers/IO';
+
 import type { WorkflowAny } from './workflow';
 
 type WorkflowState = any;

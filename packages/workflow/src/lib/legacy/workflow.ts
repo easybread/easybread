@@ -1,15 +1,24 @@
+import type { NonEmptyArray } from '@space-architects/util-ts';
+
 import { BreadEventBus } from '@easybread/core';
 import type {
   BreadDataMapDefinition,
   BreadDataMapIOConstraint,
 } from '@easybread/data-mapper';
 
+import type { WorkflowEventAny } from '../WorkflowEvent';
+import { type IO, type IOIn, type IOOut } from '../helpers/IO';
+
 import type { Executable, ExecutableAny } from './Executable';
-import { type IO, type IOIn, type IOOut } from './IO';
 import { Step } from './Step';
-import type { WorkflowEventAny } from './WorkflowEvent';
 
 export type WorkflowAny = Workflow<any, any>;
+
+// executes executables in sequence, passing output of one to the input of the next
+type PipeWorkflow<
+  TIn extends BreadDataMapIOConstraint | never,
+  TOut extends BreadDataMapIOConstraint | never,
+> = Workflow<TIn, TOut>;
 
 export class Workflow<
     TIn extends BreadDataMapIOConstraint | never,
@@ -35,9 +44,9 @@ export class Workflow<
   //   return new Workflow(items);
   // }
 
-  protected constructor(sequence = [ExecutableAny, ...ExecutableAny[]]) {
+  protected constructor(sequence: ExecutableAny[]) {
     super();
-    this._id = crypto.randomUUID();
+    this._id = ``;
 
     for (const item of sequence) {
       this._seq.push(item._id);
@@ -45,13 +54,16 @@ export class Workflow<
     }
   }
 
-  async execute(input: IOIn<TFirst>): Promise<IOOut<TLast>> {
+  async execute(input: IOIn<this>): Promise<IOOut<this>> {
     const items = this.getItemsSequence();
-    let result = input;
+
+    let result: IOOut<this> | null = null;
+
     for (const item of items) {
-      result = await item.execute(result);
+      result = await item.execute(result ?? input);
     }
-    return result;
+
+    return result as IOOut<this>;
   }
 
   getNext(previousId: string | null): ExecutableAny | null {
@@ -74,11 +86,11 @@ export class Workflow<
   ): Workflow<IOOut<this>, IOIn<TNext>> {
     const sequence = this.getItemsSequence();
 
-    const last = sequence[sequence.length - 1]!;
+    const last = this.getLastItem();
 
     if (mapDefinition) {
       const mappingWorkflow = new Workflow([
-        Step.DataMapper(next._id, mapDefinition),
+        Step.DataMapper(`${last._id}->${next._id}`, mapDefinition),
         next,
       ]);
       sequence.push(mappingWorkflow);
@@ -90,7 +102,9 @@ export class Workflow<
   }
 
   private getItemsSequence() {
-    return this._seq.map(id => this._map.get(id) as ExecutableAny);
+    return this._seq.map(id =>
+      this._map.get(id),
+    ) as NonEmptyArray<ExecutableAny>;
   }
 
   private getNextId(previousId: string | null): string | null {
@@ -100,5 +114,15 @@ export class Workflow<
 
   private getById(id: string): ExecutableAny | null {
     return this._map.get(id) ?? null;
+  }
+
+  private getLastItem(): ExecutableAny {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.getById(this.getLastItemId())!;
+  }
+
+  private getLastItemId(): string {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this._seq[this._seq.length - 1]!;
   }
 }

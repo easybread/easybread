@@ -30,12 +30,43 @@ export class WorkflowExecutionError<
   }
 }
 
-export class WorkflowStepExecutionError<
-  T extends string,
-  D = unknown,
-  C = unknown,
-> extends WorkflowError<T, D, C> {
-  constructor(stepId: string, message: string, details: D, cause?: C) {
-    super(`Step exception ${stepId} failed: ${message}`, details, cause);
+export class InvalidFiberKeyError extends WorkflowError<
+  'InvalidFiberKeyError',
+  { execId: string; key: string }
+> {
+  constructor(execId: string, key: string) {
+    super(`Invalid fiber key: ${execId}:${key}`, { execId, key });
   }
 }
+
+export class VersionMismatchError extends WorkflowError<
+  'VersionMismatchError',
+  { key: string; expectedVersion: number; actualVersion: number }
+> {
+  constructor(key: string, expectedVersion: number, actualVersion: number) {
+    super(
+      `Version mismatch for key ${key}: expected ${expectedVersion}, got ${actualVersion}`,
+      { key, expectedVersion, actualVersion },
+    );
+  }
+}
+
+export class UnknownFiberPolicyError extends WorkflowError<
+  'UnknownFiberPolicyError',
+  { policy: unknown }
+> {
+  constructor(policy: unknown) {
+    super(`Unknown fiber policy`, { policy });
+  }
+}
+
+export class FiberNotClosedError extends WorkflowError<
+  'FiberNotClosedError',
+  { fiberKey: string; execId: string }
+> {
+  constructor(execId: string, fiberKey: string) {
+    super(`Fiber ${execId}:${fiberKey} is not closed`, { execId, fiberKey });
+  }
+}
+
+export type WorkflowErrorAny = WorkflowError<any, any, any>;

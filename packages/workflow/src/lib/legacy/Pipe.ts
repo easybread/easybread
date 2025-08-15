@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { IO_Out } from './IO';
-import type { IO_In } from './IO';
+import type { IO_Out } from '../helpers/IO';
+import type { IO_In } from '../helpers/IO';
+
 import type { Step, StepAny } from './Step';
 
 interface PipeFn {

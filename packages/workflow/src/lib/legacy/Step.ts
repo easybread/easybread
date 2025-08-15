@@ -15,10 +15,11 @@ import {
   BreadDataMapper,
 } from '@easybread/data-mapper';
 
-import { WorkflowStepExecutionError } from './Error';
+import { WorkflowStepExecutionError } from '../Error';
+import type { WorkflowEventAny } from '../WorkflowEvent';
+import type { IO, IOIn, IOOut } from '../helpers/IO';
+
 import type { Executable } from './Executable';
-import type { IO, IOIn, IOOut } from './IO';
-import type { WorkflowEventAny } from './WorkflowEvent';
 
 export const STEP_TYPE = enumSuiteObject(
   enumObject([
