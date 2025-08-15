@@ -110,14 +110,28 @@ class ConcurrentNode<
   }
 }
 
+// PROBLEMS SECTION
+
 type I1 = { q: string };
-type I2 = { p: string };
+type IWrong = { p: string };
 
+// types of fn1 and fn2 seem to be correct.
 const fn1 = new FnNode('f1', (input: I1) => ({ a: input.q }));
-const fn2 = new FnNode('f2', (input: I2) => ({ b: input.p }));
+const fn2 = new FnNode('f2', (input: IWrong) => ({ b: input.p }));
 
-const w = new ConcurrentNode('w', [fn1, fn2]);
+const fn3 = new FnNode('f3', (input: I1) => ({ c: input.q }));
 
-type WIO = GetIO<typeof w>;
+// this should raise TS error because of the different input types of fn1 and fn2
+const cWrong = new ConcurrentNode('c', [fn1, fn2]);
 
-const wresult = w.run({ anything: 'is allowed, but should not be.' });
+// this should be fine, because the input type of fn1 and fn3 are the same
+const cCorrect = new ConcurrentNode('c', [fn1, fn3]);
+
+// this should be I1, not IOConstraint
+type WInput = GetIO<typeof cCorrect>['input'];
+
+// this is ok
+const r1 = cCorrect.run({ q: 'smth' });
+
+// this should raise TS error because input is not assignable to I1
+const r2 = cCorrect.run({ wrongInput: 'smth' });
