@@ -91,4 +91,15 @@ export class FiberNotClosedError extends WorkflowError<
   }
 }
 
+export class FiberAlreadyClosedError extends WorkflowError<
+  'FiberAlreadyClosedError',
+  { fiberKey: string; execId: string }
+> {
+  constructor(execId: string, fiberKey: string) {
+    super(`Fiber ${execId}:${fiberKey} is already closed`, {
+      execId,
+      fiberKey,
+    });
+  }
+}
 export type WorkflowErrorAny = WorkflowError<any, any, any>;

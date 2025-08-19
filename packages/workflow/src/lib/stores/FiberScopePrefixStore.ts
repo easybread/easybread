@@ -1,10 +1,10 @@
-import type { FiberPolicy } from './FiberPolicy';
+import { WorkflowStore } from '../WorkflowStore';
+import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
+import type { FiberPolicy } from '../domain/FiberPolicy';
 import {
   FiberScopePrefix,
   type FiberScopePrefixJSON,
-} from './FiberScopePrefix';
-import { WorkflowStore } from './WorkflowStore';
-import type { WorkflowStoreAdapter } from './WorkflowStoreAdapter';
+} from '../domain/FiberScopePrefix';
 
 export interface BookMemberSlotsOptions {
   execId: string;
@@ -28,6 +28,7 @@ export class FiberScopePrefixStore extends WorkflowStore {
 
   async acquireMemberSlots(options: BookMemberSlotsOptions) {
     const { execId, nodeId, key, memberCount } = options;
+
     const storeKey = this.encodeStoreKey(
       FiberScopePrefix.pkEncode({ execId, nodeId, key }),
     );

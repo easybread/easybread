@@ -1,9 +1,8 @@
 import {
   FIBER_POLICY_TYPE,
-  type FiberForkPolicy,
-  type FiberJoinPolicy,
   type FiberPolicy,
-  type WorkflowForkPolicy,
+  type ForkFiberPolicy,
+  type JoinFiberPolicy,
 } from './FiberPolicy';
 import { FIBER_SCOPE_TYPE, type FiberScopeType } from './FiberScope';
 
@@ -29,11 +28,10 @@ export interface CreateEmptyFiberScopePrefixOptions {
  *
  * @example
  * ```text
- * nodeId   key                maxSize  ordinality size type   version
- * r/batch  -/0/*              3        1          2    join   2
- * r/batch  -/1/*              3        5          3    join   6
- * r/batch  -/2/*              3        0          0    join   1
- * r/c      -/*                null     1          0    fork   2
+ * nodeId   key      ordinality size type   version
+ * r/batch  -/0/*    1          2    join   2
+ * r/batch  -/1/*    5          3    join   6
+ * r/c      -/*      1          0    fork   2
  * ```
  */
 export class FiberScopePrefix {
@@ -59,10 +57,9 @@ export class FiberScopePrefix {
     policy: FiberPolicy,
   ): FiberScopePrefix {
     switch (policy.type) {
-      case FIBER_POLICY_TYPE.enum.FIBER_JOIN:
+      case FIBER_POLICY_TYPE.enum.JOIN:
         return this.toIncrementedSizeJoinScopePrefix(scopePrefix, policy);
-      case FIBER_POLICY_TYPE.enum.WORKFLOW_FORK:
-      case FIBER_POLICY_TYPE.enum.FIBER_FORK:
+      case FIBER_POLICY_TYPE.enum.FORK:
         return this.toIncrementedSizeForkScopePrefix(scopePrefix, policy);
 
       default:
@@ -72,7 +69,7 @@ export class FiberScopePrefix {
 
   private static toIncrementedSizeForkScopePrefix(
     scopePrefix: FiberScopePrefix,
-    _policy: WorkflowForkPolicy | FiberForkPolicy,
+    _policy: ForkFiberPolicy,
   ): FiberScopePrefix {
     return new FiberScopePrefix({
       ...scopePrefix,
@@ -83,7 +80,7 @@ export class FiberScopePrefix {
 
   private static toIncrementedSizeJoinScopePrefix(
     scopePrefix: FiberScopePrefix,
-    policy: FiberJoinPolicy,
+    policy: JoinFiberPolicy,
   ): FiberScopePrefix {
     if (scopePrefix.size === policy.limit) {
       return new FiberScopePrefix({
@@ -106,11 +103,10 @@ export class FiberScopePrefix {
     fiberPolicy,
   }: CreateEmptyFiberScopePrefixOptions) {
     switch (fiberPolicy.type) {
-      case FIBER_POLICY_TYPE.enum.FIBER_FORK:
-      case FIBER_POLICY_TYPE.enum.WORKFLOW_FORK:
+      case FIBER_POLICY_TYPE.enum.FORK:
         return this.createEmptyForkScopePrefix(execId, nodeId, key);
 
-      case FIBER_POLICY_TYPE.enum.FIBER_JOIN:
+      case FIBER_POLICY_TYPE.enum.JOIN:
         return this.createEmptyJoinScopePrefix(execId, nodeId, key);
 
       default:
@@ -169,6 +165,13 @@ export class FiberScopePrefix {
     this.version = props.version;
   }
 
+  /**
+   * Creates a new FiberScopePrefix with the size incremented by 1.
+   * Policy might instruct it to reset the size and increment the ordinality.
+   *
+   * @param policy - The policy to use to increment the size of the scope prefix.
+   * @returns The new FiberScopePrefix.
+   */
   toIncrementedSize(policy: FiberPolicy): FiberScopePrefix {
     return FiberScopePrefix.toIncrementedSize(this, policy);
   }

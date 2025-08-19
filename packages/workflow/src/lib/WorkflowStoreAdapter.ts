@@ -1,4 +1,4 @@
-import { CASMaxRetriesReachedError, CASVersionMismatchError } from '../Error';
+import { CASMaxRetriesReachedError, CASVersionMismatchError } from './Error';
 
 const MAX_RETRIES = 10;
 const EMPTY_VALUE = '__EMPTY__' as const;

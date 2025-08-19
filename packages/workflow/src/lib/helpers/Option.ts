@@ -15,6 +15,17 @@ export type OptionFromOptionJSON<J extends OptionJSON<any>> =
   J extends SomeJSON<infer T> ? Some<T> : None;
 
 export const Option = {
+  match<T, RSome, RNone>(
+    option: Option<T>,
+    match: {
+      onSome: (value: T) => RSome;
+      onNone: () => RNone;
+    },
+  ): RSome | RNone {
+    if (Option.isNone(option)) return match.onNone();
+    return match.onSome(option.value);
+  },
+
   none(): None {
     return tagged('None');
   },

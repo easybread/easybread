@@ -11,7 +11,10 @@ export interface IntentBase<T extends IntentType, P = undefined> {
   payload: P;
 }
 
-export type CloseFiberIntent = IntentBase<typeof INTENT_TYPE.enum.CLOSE_FIBER>;
+export type CloseFiberIntent<T> = IntentBase<
+  typeof INTENT_TYPE.enum.CLOSE_FIBER,
+  T
+>;
 
 export type StateOp = 'SET' | 'APPEND_ITEM' | 'REMOVE_ITEM';
 export type StateUpdateIntent = IntentBase<

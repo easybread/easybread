@@ -1,15 +1,25 @@
 export class FiberKey {
+  static CHARS = {
+    SEPARATOR: '/',
+    PIPE: '-',
+    ANY: '~',
+  } as const;
+
   path: string[];
 
   static fromKeyString(fiberKey: string) {
     return new FiberKey(fiberKey.split('/'));
   }
 
+  static fromSegments(segments: string[]) {
+    return new FiberKey(segments);
+  }
+
   get lastSegment() {
     return this.path.at(-1);
   }
 
-  constructor(path: string[]) {
+  protected constructor(path: string[]) {
     this.path = path;
   }
 

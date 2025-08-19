@@ -1,5 +1,6 @@
 import { FIBER_STATUS, Fiber } from './Fiber';
 import { FIBER_POLICY_TYPE } from './FiberPolicy';
+import { FIBER_SCOPE_TYPE } from './FiberScope';
 
 const EXEC_ID = 'ex1';
 
@@ -7,18 +8,20 @@ describe('static fromJSON()', () => {
   it('create a fiber from a valid JSON', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     expect(fiber.execId).toEqual(EXEC_ID);
     expect(fiber.key.toString()).toBe('-/0');
     expect(fiber.segments).toEqual(['r', 'r/enum']);
-    expect(fiber.data).toEqual({ query: 'T1' });
+    expect(fiber.dataRef).toEqual('data-ref-1');
     expect(fiber.status).toEqual(FIBER_STATUS.enum.CLOSED);
     expect(fiber.length).toEqual(2);
+    expect(fiber.policyType).toEqual(FIBER_POLICY_TYPE.enum.FORK);
   });
 });
 
@@ -43,18 +46,20 @@ describe('toJSON()', () => {
   it('should return the JSON representation of the fiber', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     expect(fiber.toJSON()).toEqual({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: 'CLOSED',
+      policyType: 'FORK',
     });
   });
 });
@@ -63,10 +68,11 @@ describe('pipe()', () => {
   it('should create a new open fiber with the given nodeId', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     const newFiber = fiber.pipe('r/p');
@@ -74,17 +80,19 @@ describe('pipe()', () => {
     expect(newFiber.execId).toEqual(EXEC_ID);
     expect(newFiber.key.toString()).toBe('-/0/-');
     expect(newFiber.segments).toEqual(['r', 'r/enum', 'r/p']);
-    expect(newFiber.data).toBe(null);
+    expect(newFiber.dataRef).toBe(null);
     expect(newFiber.status).toEqual(FIBER_STATUS.enum.OPEN);
+    expect(newFiber.policyType).toEqual(FIBER_POLICY_TYPE.enum.PIPE);
   });
 
   it('should throw an error if the fiber is not closed', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.PIPE,
     });
 
     expect(() => fiber.pipe('r/p')).toThrow(
@@ -97,10 +105,11 @@ describe('fork()', () => {
   it('should create a new open fiber with the given nodeId and ordinality', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     const newFiber = fiber.fork('r/p', 0);
@@ -108,17 +117,19 @@ describe('fork()', () => {
     expect(newFiber.execId).toEqual(EXEC_ID);
     expect(newFiber.key.toString()).toBe('-/0/0');
     expect(newFiber.segments).toEqual(['r', 'r/enum', 'r/p']);
-    expect(newFiber.data).toBe(null);
+    expect(newFiber.dataRef).toBe(null);
     expect(newFiber.status).toEqual(FIBER_STATUS.enum.OPEN);
+    expect(newFiber.policyType).toEqual(FIBER_POLICY_TYPE.enum.FORK);
   });
 
   it('should create a new open fiber with the given nodeId and ordinality when the last segment is the same as the nodeId', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum', 'r/p'],
       key: '-/0/0',
       status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     const newFiber = fiber.fork('r/p', 1);
@@ -126,17 +137,18 @@ describe('fork()', () => {
     expect(newFiber.execId).toEqual(EXEC_ID);
     expect(newFiber.key.toString()).toBe('-/0/1');
     expect(newFiber.segments).toEqual(['r', 'r/enum', 'r/p', 'r/p']);
-    expect(newFiber.data).toBe(null);
     expect(newFiber.status).toEqual(FIBER_STATUS.enum.OPEN);
+    expect(newFiber.policyType).toEqual(FIBER_POLICY_TYPE.enum.FORK);
   });
 
   it('should throw if the given ordinality is equal to the last key segment', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum', 'r/p'],
       key: '-/0/0',
       status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     expect(() => fiber.fork('r/p', 0)).toThrow(
@@ -147,13 +159,51 @@ describe('fork()', () => {
   it('should throw an error if the fiber is not closed', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
     expect(() => fiber.fork('r/p', 0)).toThrow(
+      `Fiber ${EXEC_ID}:-/0 is not closed`,
+    );
+  });
+});
+
+describe('join()', () => {
+  it('should create a new open fiber with the given nodeId and ordinality', () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum'],
+      key: '-/0',
+      status: FIBER_STATUS.enum.CLOSED,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
+    });
+
+    const newFiber = fiber.join('r/batch', 0);
+
+    expect(newFiber.execId).toEqual(EXEC_ID);
+    expect(newFiber.key.toString()).toBe('-/0/0');
+    expect(newFiber.segments).toEqual(['r', 'r/enum', 'r/batch']);
+    expect(newFiber.dataRef).toBe(null);
+    expect(newFiber.status).toEqual(FIBER_STATUS.enum.OPEN);
+    expect(newFiber.policyType).toEqual(FIBER_POLICY_TYPE.enum.JOIN);
+  });
+
+  it('should throw an error if the fiber is not closed', () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum'],
+      key: '-/0',
+      status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
+    });
+
+    expect(() => fiber.join('r/batch', 0)).toThrow(
       `Fiber ${EXEC_ID}:-/0 is not closed`,
     );
   });
@@ -163,65 +213,101 @@ describe('scopePrefixKey()', () => {
   it('should create expected scope key for a fork fiber when the anchor is not in segments', async () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { query: 'T1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum'],
       key: '-/0',
       status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
-    expect(fiber.scopePrefixKey('r/p', FIBER_POLICY_TYPE.enum.FIBER_FORK)).toBe(
-      '-/0',
-    );
-    expect(
-      fiber.scopePrefixKey('r/p', FIBER_POLICY_TYPE.enum.WORKFLOW_FORK),
-    ).toBe('-/0');
+    expect(fiber.scopePrefixKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0');
   });
 
   it('should create expected scope key for a fork fiber when the anchor is in segments', async () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { page: 1, query: 'T1' }, // from prev execution
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum', 'r/p'],
       key: '-/0/0',
       status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
-    expect(fiber.scopePrefixKey('r/p', FIBER_POLICY_TYPE.enum.FIBER_FORK)).toBe(
-      '-/0',
-    );
-
-    expect(
-      fiber.scopePrefixKey('r/p', FIBER_POLICY_TYPE.enum.WORKFLOW_FORK),
-    ).toBe('-/0');
+    expect(fiber.scopePrefixKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0');
   });
 
   it('should create expected scope key for a join fiber when the anchor is in segments', async () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { b: 'T1-P1-I1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum', 'r/p', 'r/c/fn'],
       key: '-/0/0/-',
       status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.PIPE,
     });
 
-    expect(
-      fiber.scopePrefixKey('r/enum', FIBER_POLICY_TYPE.enum.FIBER_JOIN),
-    ).toEqual('-/0');
+    expect(fiber.scopePrefixKey('r/enum', FIBER_SCOPE_TYPE.enum.JOIN)).toEqual(
+      '-/0',
+    );
   });
 
   it('should throw an error for a join fiber when the anchor is NOT in segements', () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
-      data: { b: 'T1-P1-I1' },
+      dataRef: 'data-ref-1',
       segments: ['r', 'r/enum', 'r/p', 'r/c/fn'],
       key: '-/0/0/-',
       status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.PIPE,
     });
 
     expect(() =>
-      fiber.scopePrefixKey('r/c', FIBER_POLICY_TYPE.enum.FIBER_JOIN),
+      fiber.scopePrefixKey('r/c', FIBER_SCOPE_TYPE.enum.JOIN),
     ).toThrow(
       'Anchor node not found in fiber, but required to create the join scope prefix key',
+    );
+  });
+});
+
+describe('scopeKey()', () => {
+  it('should create expected scope key for a fork fiber when the anchor is not in segments', async () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum'],
+      key: '-/0',
+      status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
+    });
+
+    expect(fiber.scopeKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0/~');
+  });
+
+  it('should create expected scope key for a fork fiber when the anchor is in segments', async () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum', 'r/p'],
+      key: '-/0/0',
+      status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.FORK,
+    });
+
+    expect(fiber.scopeKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0/~');
+  });
+
+  it('should create expected scope key for a join fiber when the anchor is in segments', async () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum', 'r/batch'],
+      key: '-/0/0',
+      status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.JOIN,
+    });
+
+    expect(fiber.scopeKey('r/enum', FIBER_SCOPE_TYPE.enum.JOIN, 0)).toBe(
+      '-/0/~/0',
     );
   });
 });

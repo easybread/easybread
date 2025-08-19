@@ -1,8 +1,13 @@
-import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
+import { enumSuiteObject } from '@space-architects/util-enum';
+
+import { enumPickKeys } from '@easybread/common';
 
 import { FIBER_POLICY_TYPE, type FiberPolicy } from './FiberPolicy';
 
-export const FIBER_SCOPE_TYPE = enumSuiteObject(enumObject(['JOIN', 'FORK']));
+export const FIBER_SCOPE_TYPE = enumSuiteObject(
+  enumPickKeys(FIBER_POLICY_TYPE.enum, ['FORK', 'JOIN']),
+);
+
 export type FiberScopeType = typeof FIBER_SCOPE_TYPE.$type;
 
 export type FiberScopeJSON = {
@@ -62,46 +67,17 @@ export class FiberScope {
     key,
     fiberPolicy,
   }: CreateEmptyFiberScopeOptions) {
-    switch (fiberPolicy.type) {
-      case FIBER_POLICY_TYPE.enum.FIBER_FORK:
-      case FIBER_POLICY_TYPE.enum.WORKFLOW_FORK:
-        return this.createEmptyForkScope(execId, nodeId, key);
-
-      case FIBER_POLICY_TYPE.enum.FIBER_JOIN:
-        return this.createEmptyJoinScope(execId, nodeId, key);
-
-      default:
-        // TODO: custom error for this!
-        throw new Error('Invalid fiber policy for creating the ScopePrefix');
+    // TODO: revisit this approach.
+    if (!FIBER_SCOPE_TYPE.hasValue(fiberPolicy.type)) {
+      throw new Error('Invalid fiber policy for creating the ScopePrefix');
     }
-  }
 
-  private static createEmptyForkScope(
-    execId: string,
-    nodeId: string,
-    key: string,
-  ) {
     return new FiberScope({
       execId,
       nodeId,
       key,
       members: [],
-      type: FIBER_SCOPE_TYPE.enum.FORK,
-      version: 0,
-    });
-  }
-
-  private static createEmptyJoinScope(
-    execId: string,
-    nodeId: string,
-    key: string,
-  ) {
-    return new FiberScope({
-      execId,
-      nodeId,
-      key,
-      members: [],
-      type: FIBER_SCOPE_TYPE.enum.JOIN,
+      type: fiberPolicy.type,
       version: 0,
     });
   }
