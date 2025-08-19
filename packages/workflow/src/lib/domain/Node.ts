@@ -1,98 +1,186 @@
 import type { CloseFiberIntent } from '../Intent';
-import { type IO, type IOConstraint, WithIO } from '../helpers/IO';
+import {
+  type GetIO,
+  type IO,
+  type IOConstraint,
+  type IOIn,
+  WithIO,
+} from '../helpers/IO';
 
-import type {
-  FiberPolicy,
-  ForkFiberPolicy,
-  JoinFiberPolicy,
-  PipeFiberPolicy,
+import {
+  type FiberPolicy,
+  type ForkFiberPolicy,
+  type JoinFiberPolicy,
+  type PipeFiberPolicy,
 } from './FiberPolicy';
-import type { ContextMap, NodeRunContext } from './NodeRunContext';
+import type { NodeRunContext } from './NodeRunContext';
 import type { NodeStatePolicy } from './NodeStatePolicy';
 
-export abstract class Node<
-  Tid extends string,
-  Tfp extends FiberPolicy,
-  Tsp extends NodeStatePolicy,
-  Tin extends IOConstraint,
-  Tout extends IOConstraint,
-  Tclose extends IOConstraint = Tout,
-> extends WithIO<IO<Tin, Tout>> {
-  readonly id: Tid;
-  readonly children: Record<string, NodeAny> = {};
+export const _FP = Symbol('FP');
 
-  constructor(id: Tid) {
-    super();
-    this.id = id;
+export const _SP = Symbol('SP');
+
+export const _CLOSE = Symbol('CLOSE');
+
+export type NodeChildrenMap<TChildren extends ReadonlyArray<NodeAny>> = {
+  [ChildrenID in TChildren[number]['id']]: TChildren[number] & {
+    id: ChildrenID;
+  };
+};
+
+export abstract class Node<
+  TId extends string,
+  TFP extends FiberPolicy,
+  TSP extends NodeStatePolicy,
+  TIn extends IOConstraint,
+  TOut extends IOConstraint,
+  TClose extends IOConstraint,
+  TChildren extends ReadonlyArray<NodeAny> = [],
+> extends WithIO<IO<TIn, TOut>> {
+  private static makeChildrenMap<TChildren extends ReadonlyArray<NodeAny>>(
+    children: TChildren,
+  ): NodeChildrenMap<TChildren> {
+    return children.reduce((acc, child) => {
+      acc[child.id as TChildren[number]['id']] = child;
+      return acc;
+    }, {} as NodeChildrenMap<TChildren>);
   }
 
-  abstract fiberPolicy: Tfp;
-  abstract statePolicy: Tsp;
+  readonly [_FP] = {} as TFP;
+  readonly [_SP] = {} as TSP;
+  readonly [_CLOSE] = {} as TClose;
 
-  getDirectChild(id: string): NodeAny | undefined {
+  readonly id: TId;
+
+  private readonly children: NodeChildrenMap<TChildren>;
+
+  constructor(id: TId, children: TChildren) {
+    super();
+    this.id = id;
+    this.children = Node.makeChildrenMap(children);
+  }
+
+  abstract fiberPolicy: TFP;
+  abstract statePolicy: TSP;
+
+  getChild(id: inferNodeId<TChildren[number]>): NodeAny | undefined {
     return this.children[id];
   }
 
-  runForTS(_input: Tin): Tout | Promise<Tout> {
+  runForTS(_input: TIn): TOut | Promise<TOut> {
     throw new Error('Method not implemented.');
   }
 
-  abstract run(
-    context: NodeRunContext<this>,
-  ): Promise<CloseFiberIntent<Tclose>[]>;
+  abstract run(context: inferNodeRunContext<this>): inferNodeRunReturn<this>;
 }
 
-export type NodeAnyWithForkPolicy = Node<
+export abstract class PipeNode<
+  TId extends string,
+  TSP extends NodeStatePolicy,
+  TIn extends IOConstraint,
+  TOut extends IOConstraint,
+  TClose extends IOConstraint,
+  TChildren extends ReadonlyArray<NodeAny> = [],
+> extends Node<TId, PipeFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+
+export abstract class ForkNode<
+  TId extends string,
+  TSP extends NodeStatePolicy,
+  TIn extends IOConstraint,
+  TOut extends IOConstraint,
+  TClose extends IOConstraint,
+  TChildren extends ReadonlyArray<NodeAny> = [],
+> extends Node<TId, ForkFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+
+export abstract class JoinNode<
+  TId extends string,
+  TSP extends NodeStatePolicy,
+  TIn extends IOConstraint,
+  TOut extends IOConstraint,
+  TClose extends IOConstraint,
+  TChildren extends ReadonlyArray<NodeAny> = [],
+> extends Node<TId, JoinFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+
+export type ForkNodeAny = ForkNode<
   string,
-  ForkFiberPolicy,
   NodeStatePolicy,
   IOConstraint,
   IOConstraint,
+  any,
   any
 >;
 
-export type NodeAnyWithJoinPolicy = Node<
+export type JoinNodeAny = JoinNode<
   string,
-  JoinFiberPolicy,
   NodeStatePolicy,
   IOConstraint,
   IOConstraint,
+  any,
   any
 >;
 
-export type NodeAnyWithPipePolicy = Node<
+export type PipeNodeAny = PipeNode<
   string,
-  PipeFiberPolicy,
   NodeStatePolicy,
   IOConstraint,
   IOConstraint,
+  any,
   any
 >;
 
-// // export type NodeAny = Node<
-// //   string,
-// //   FiberPolicy,
-// //   NodeStatePolicy,
-// //   IOConstraint,
-// //   IOConstraint,
-// //   IOConstraint
-// // >;
+// export type NodeAny = ForkNodeAny | JoinNodeAny | PipeNodeAny;
+export type NodeAny = Node<
+  string,
+  FiberPolicy,
+  NodeStatePolicy,
+  IOConstraint,
+  IOConstraint,
+  any,
+  any
+>;
 
-export type NodeAny =
-  | NodeAnyWithForkPolicy
-  | NodeAnyWithJoinPolicy
-  | NodeAnyWithPipePolicy;
+export type NodeAnyWithSpecificInput<TIn extends IOConstraint> = Node<
+  string,
+  FiberPolicy,
+  NodeStatePolicy,
+  TIn,
+  IOConstraint,
+  any,
+  any
+>;
 
-export type inferNodeFP<N extends NodeAny> =
-  N extends Node<any, infer FP, any, any, any, any> ? FP : never;
+export type inferNodeId<N extends NodeAny> = N['id'];
+export type inferNodeFP<N extends NodeAny> = N[typeof _FP];
+export type inferNodeSP<N extends NodeAny> = N[typeof _SP];
+export type inferNodeClose<N extends NodeAny> = N[typeof _CLOSE];
 
-export type inferNodeSP<N extends NodeAny> =
-  N extends Node<any, any, infer SP, any, any, any> ? SP : never;
+export type inferNodeRunContext<N extends NodeAny> = NodeRunContext<
+  inferNodeFP<N>,
+  inferNodeSP<N>,
+  IOIn<GetIO<N>>
+>;
 
-export type inferNodeClose<N extends NodeAny> =
-  N extends Node<any, any, any, any, any, infer Close> ? Close : never;
+export type inferNodeRunReturn<N extends NodeAny> = Promise<
+  CloseFiberIntent<inferNodeClose<N>>[]
+>;
 
-declare const node: NodeAny;
+// declare const node: NodeAny;
+// declare const nodeA: PipeNode<
+//   'testA',
+//   NodeStatePolicyNone,
+//   { foo: 'a' },
+//   { bar: 'a' },
+//   { close: 'a' }
+// >;
 
-type T = ContextMap<NodeAny>;
-type T2 = NodeRunContext<NodeAny>;
+// declare const nodeB: PipeNode<
+//   'testB',
+//   NodeStatePolicyNone,
+//   { foo: 'b' },
+//   { bar: 'b' },
+//   { close: 'b' },
+//   [typeof nodeA]
+// >;
+
+// node.run();
+// nodeConcrete.run();

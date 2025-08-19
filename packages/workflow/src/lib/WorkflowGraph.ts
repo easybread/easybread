@@ -9,7 +9,7 @@ export class WorkflowGraph<TRoot extends NodeAny> {
 
   getNode(id: string): NodeAny {
     const node = id.split('/').reduce<NodeAny | undefined>((node, segment) => {
-      if (node) return node.getDirectChild(segment);
+      if (node) return node.getChild(segment);
     }, this.root);
 
     if (!node) {

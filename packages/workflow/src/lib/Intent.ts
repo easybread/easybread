@@ -1,5 +1,9 @@
 import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
 
+import type { Fiber } from './domain/Fiber';
+import type { IOConstraint } from './helpers/IO';
+import type { Option } from './helpers/Option';
+
 export const INTENT_TYPE = enumSuiteObject(
   enumObject(['CLOSE_FIBER', 'RUN_NODE', 'UPDATE_STATE', 'STOP_PROPAGATION']),
 );
@@ -11,9 +15,9 @@ export interface IntentBase<T extends IntentType, P = undefined> {
   payload: P;
 }
 
-export type CloseFiberIntent<T> = IntentBase<
+export type CloseFiberIntent<TClose extends IOConstraint> = IntentBase<
   typeof INTENT_TYPE.enum.CLOSE_FIBER,
-  T
+  { fiber: Fiber; close: Option<TClose> }
 >;
 
 export type StateOp = 'SET' | 'APPEND_ITEM' | 'REMOVE_ITEM';

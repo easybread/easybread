@@ -1,38 +1,55 @@
+import { INTENT_TYPE } from '../../Intent';
 import type { GetIO, IOConstraint, IOOut } from '../../helpers/IO';
+import { Option } from '../../helpers/Option';
 import {
   FIBER_POLICY_TYPE,
   type FiberPolicy,
   type ForkFiberPolicy,
 } from '../FiberPolicy';
-import { Node } from '../Node';
-import { NodeRunContextBase } from '../NodeRunContext';
+import {
+  ForkNode,
+  Node,
+  type inferNodeRunContext,
+  type inferNodeRunReturn,
+} from '../Node';
+import type { NodeStatePolicy, NodeStatePolicyNone } from '../NodeStatePolicy';
 
 // Helper type to ensure all children have the same input type
 type AllChildrenHaveSameInput<
-  TInput extends IOConstraint,
+  TIn extends IOConstraint,
   TChildren extends ReadonlyArray<
-    Node<string, TInput, IOConstraint, FiberPolicy, any>
+    Node<string, FiberPolicy, NodeStatePolicy, TIn, IOConstraint, any>
   >,
 > =
   TChildren extends ReadonlyArray<
-    Node<string, TInput, IOConstraint, FiberPolicy, any>
+    Node<string, ForkFiberPolicy, NodeStatePolicy, TIn, IOConstraint, any>
   >
     ? TChildren
     : never;
 
 export class ConcurrentNode<
   TId extends string,
-  TInput extends IOConstraint,
+  TIn extends IOConstraint,
   TChildren extends ReadonlyArray<
-    Node<string, TInput, IOConstraint, FiberPolicy, any>
+    Node<string, ForkFiberPolicy, NodeStatePolicy, TIn, IOConstraint, any>
   >,
-> extends Node<
+> extends ForkNode<
   TId,
-  TInput,
+  NodeStatePolicyNone,
+  TIn,
   IOOut<GetIO<TChildren[number]>>,
-  ForkFiberPolicy,
-  never
+  TIn,
+  TChildren
 > {
+  statePolicy: NodeStatePolicyNone = { type: 'NONE' };
+
+  get fiberPolicy(): ForkFiberPolicy {
+    return {
+      type: FIBER_POLICY_TYPE.enum.FORK,
+      forkCount: Object.keys(this.children).length,
+    };
+  }
+
   children: {
     [ChildrenID in TChildren[number]['id']]: TChildren[number] & {
       id: ChildrenID;
@@ -41,9 +58,9 @@ export class ConcurrentNode<
 
   constructor(
     id: TId,
-    children: AllChildrenHaveSameInput<TInput, [...TChildren]>,
+    children: AllChildrenHaveSameInput<TIn, [...TChildren]>,
   ) {
-    super(id);
+    super(id, children);
 
     this.children = children.reduce(
       (acc, child) => {
@@ -58,14 +75,13 @@ export class ConcurrentNode<
     );
   }
 
-  get fiberPolicy(): ForkFiberPolicy {
-    return {
-      type: FIBER_POLICY_TYPE.enum.WORKFLOW_FORK,
-      forkCount: Object.keys(this.children).length,
-    };
-  }
-
-  run(context: NodeRunContextBase<this>): void {
-    throw new Error('Method not implemented.');
+  async run(context: inferNodeRunContext<this>): inferNodeRunReturn<this> {
+    const inputFiberClose = await context.loadInputFiberData(
+      context.inputFiber,
+    );
+    return context.runFibers.map(fiber => ({
+      type: INTENT_TYPE.enum.CLOSE_FIBER,
+      payload: { fiber, close: Option.some(inputFiberClose) },
+    }));
   }
 }

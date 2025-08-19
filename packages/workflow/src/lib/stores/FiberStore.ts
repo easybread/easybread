@@ -1,12 +1,8 @@
 import { WorkflowStore } from '../WorkflowStore';
 import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
-import { Fiber, FiberAny, FiberJSONAny } from '../domain/Fiber';
+import { Fiber, FiberJSONAny } from '../domain/Fiber';
 import { FIBER_POLICY_TYPE } from '../domain/FiberPolicy';
-import type {
-  NodeAnyWithForkPolicy,
-  NodeAnyWithJoinPolicy,
-  NodeAnyWithPipePolicy,
-} from '../domain/Node';
+import type { ForkNodeAny, JoinNodeAny, PipeNodeAny } from '../domain/Node';
 
 import { FiberScopePrefixStore } from './FiberScopePrefixStore';
 import { FiberScopeStore } from './FiberScopeStore';
@@ -35,10 +31,7 @@ export class FiberStore extends WorkflowStore {
     return Fiber.fromJSON(fiberJSON);
   }
 
-  async getFiberScope(
-    fiber: FiberAny,
-    node: NodeAnyWithJoinPolicy | NodeAnyWithForkPolicy,
-  ) {
+  async getFiberScope(fiber: Fiber, node: JoinNodeAny | ForkNodeAny) {
     const fiberPolicy = node.fiberPolicy;
     const scopeKey =
       fiberPolicy.type === FIBER_POLICY_TYPE.enum.FORK
@@ -52,10 +45,7 @@ export class FiberStore extends WorkflowStore {
     });
   }
 
-  async getFiberScopeMembers(
-    fiber: FiberAny,
-    node: NodeAnyWithJoinPolicy | NodeAnyWithForkPolicy,
-  ) {
+  async getFiberScopeMembers(fiber: Fiber, node: JoinNodeAny | ForkNodeAny) {
     const scope = await this.getFiberScope(fiber, node);
 
     return await Promise.all(
@@ -64,8 +54,8 @@ export class FiberStore extends WorkflowStore {
   }
 
   async *iterateFiberScopeMembers(
-    fiber: FiberAny,
-    node: NodeAnyWithJoinPolicy | NodeAnyWithForkPolicy,
+    fiber: Fiber,
+    node: JoinNodeAny | ForkNodeAny,
   ) {
     const scope = await this.getFiberScope(fiber, node);
     for (const member of scope.members) {
@@ -73,7 +63,7 @@ export class FiberStore extends WorkflowStore {
     }
   }
 
-  async openForkFibers(inputFiber: FiberAny, node: NodeAnyWithForkPolicy) {
+  async openForkFibers(inputFiber: Fiber, node: ForkNodeAny) {
     // create prefix snapshots for each fork to preserve ordinality.
     const prefixes = await this.fiberScopePrefixStore.acquireMemberSlots({
       execId: inputFiber.execId,
@@ -99,7 +89,7 @@ export class FiberStore extends WorkflowStore {
     return fibers;
   }
 
-  async openJoinFiber(inputFiber: FiberAny, node: NodeAnyWithJoinPolicy) {
+  async openJoinFiber(inputFiber: Fiber, node: JoinNodeAny) {
     // create one scope prefix snapshot to calculate and preserve ordinality upfront.
     const [prefix] = await this.fiberScopePrefixStore.acquireMemberSlots({
       execId: inputFiber.execId,
@@ -130,7 +120,7 @@ export class FiberStore extends WorkflowStore {
     return fiber;
   }
 
-  async openPipeFiber(inputFiber: FiberAny, node: NodeAnyWithPipePolicy) {
+  async openPipeFiber(inputFiber: Fiber, node: PipeNodeAny) {
     const fiber = inputFiber.pipe(node.id);
     await this.saveFiber(fiber);
 

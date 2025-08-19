@@ -48,10 +48,11 @@ export class Fiber {
   public readonly policyType: typeof FIBER_POLICY_TYPE.$type;
   public readonly execId: string;
   public readonly key: FiberKey;
-  public readonly segments: string[];
 
   public status: typeof FIBER_STATUS.$type;
   public dataRef: string | null;
+
+  private readonly segments: string[];
 
   public get length() {
     return this.segments.length;
@@ -71,6 +72,7 @@ export class Fiber {
     return Number.parseInt(this.key.lastSegment);
   }
 
+  // TODO: maybe move it to a dedicated utility
   public get scopeType() {
     if (this.policyType === FIBER_POLICY_TYPE.enum.FORK) {
       return FIBER_SCOPE_TYPE.enum.FORK;

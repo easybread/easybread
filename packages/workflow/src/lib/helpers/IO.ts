@@ -1,6 +1,7 @@
 export const _IO = Symbol('io');
 
-export type IOConstraint = Record<string, unknown>;
+type _IOConstraintItem = Record<string, unknown> | null;
+export type IOConstraint = _IOConstraintItem | _IOConstraintItem[];
 
 export type IO<I extends IOConstraint, O extends IOConstraint> = {
   readonly input: I;

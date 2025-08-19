@@ -1,17 +1,18 @@
 import type { FiberClosedEvent, NodeScheduledEvent } from './WorkflowEvent';
 import { WorkflowGraph } from './WorkflowGraph';
 import type { WorkflowStoreAdapter } from './WorkflowStoreAdapter';
-import type { FiberAny } from './domain/Fiber';
+import type { Fiber } from './domain/Fiber';
 import { FIBER_POLICY_TYPE } from './domain/FiberPolicy';
 import type {
+  ForkNodeAny,
+  JoinNodeAny,
   NodeAny,
-  NodeAnyWithForkPolicy,
-  NodeAnyWithJoinPolicy,
-  NodeAnyWithPipePolicy,
+  PipeNodeAny,
 } from './domain/Node';
 import {
   ForkNodeRunContext,
   JoinNodeRunContext,
+  type NodeRunContext,
   PipeNodeRunContext,
 } from './domain/NodeRunContext';
 import { Option } from './helpers/Option';
@@ -43,22 +44,37 @@ class WorkflowRuntime<TRoot extends NodeAny> {
   async executeNode(execId: string, nodeId: string, fiberKey: string) {
     const node = this.graph.getNode(nodeId);
     const inputFiber = await this.fiberStore.getFiber(execId, fiberKey);
+
+    //--------------------------------------------
+    // TODO: check concurrency and backpressure (maybe here)
+    //--------------------------------------------
+
     const runContext = await this.createNodeRunContext(node, inputFiber);
 
+    // TODO: fix this
+    // as any is because the NodeAny run type is inferred as intersection of all possible
+    // context types. We can fix it by narrowing the node and context types - if we handle each fiber policy
+    // separately right here in this method. Which might be a good idea anyway, but for now we'll just use any.
     const intents = await node.run(runContext);
 
     // const intents = await node.run(inputFiber.data, runFiber);
   }
 
+  async runNode(
+    node: NodeAny,
+    inputFiber: Fiber,
+    context: NodeRunContext<NodeAny>,
+  ) {}
+
   async processIntents(intents: Intent[]) {
     throw new Error('Not implemented');
   }
 
-  async createNodeRunContext(node: NodeAny, inputFiber: FiberAny) {
+  async createNodeRunContext(node: NodeAny, inputFiber: Fiber) {
     if (node.fiberPolicy.type === FIBER_POLICY_TYPE.enum.PIPE) {
       const runFiber = await this.fiberStore.openPipeFiber(
         inputFiber,
-        node as NodeAnyWithPipePolicy,
+        node as PipeNodeAny,
       );
       return new PipeNodeRunContext(
         this.makeNodeRunContextStores(),
@@ -71,7 +87,7 @@ class WorkflowRuntime<TRoot extends NodeAny> {
     if (node.fiberPolicy.type === FIBER_POLICY_TYPE.enum.FORK) {
       const runFibers = await this.fiberStore.openForkFibers(
         inputFiber,
-        node as NodeAnyWithForkPolicy,
+        node as ForkNodeAny,
       );
 
       return new ForkNodeRunContext(
@@ -85,7 +101,7 @@ class WorkflowRuntime<TRoot extends NodeAny> {
     if (node.fiberPolicy.type === FIBER_POLICY_TYPE.enum.JOIN) {
       const runFiber = await this.fiberStore.openJoinFiber(
         inputFiber,
-        node as NodeAnyWithJoinPolicy,
+        node as JoinNodeAny,
       );
 
       return new JoinNodeRunContext(
