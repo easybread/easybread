@@ -1,24 +1,18 @@
+import type { WorkflowRuntimeStores } from '../WorkflowRuntimeStores';
 import type { IOConstraint } from '../helpers/IO';
-import type { DataStore } from '../stores/DataStore';
-import type { FiberStore } from '../stores/FiberStore';
 
 import type { Fiber } from './Fiber';
 import type { FIBER_POLICY_TYPE, FiberPolicy } from './FiberPolicy';
 import type { NodeStatePolicy } from './NodeStatePolicy';
-
-export type NodeRunContextStores = {
-  data: DataStore;
-  fiber: FiberStore;
-};
 
 export abstract class NodeRunContextBase<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
 > {
   statePolicy: SP;
-  stores: NodeRunContextStores;
+  stores: WorkflowRuntimeStores;
 
-  constructor(stores: NodeRunContextStores, statePolicy: SP) {
+  constructor(stores: WorkflowRuntimeStores, statePolicy: SP) {
     this.statePolicy = statePolicy;
     this.stores = stores;
   }
@@ -36,7 +30,7 @@ export abstract class NodeRunContextBase<
     // node: JoinNodeAny | ForkNodeAny,
     node: any,
   ) {
-    return yield* this.stores.fiber.iterateFiberScopeMembers(fiber, node);
+    return yield* this.stores.fiber.fiberScopeMembersGenerator(fiber, node);
   }
 }
 
@@ -50,7 +44,7 @@ export class PipeNodeRunContext<
   runFiber: Fiber;
 
   constructor(
-    stores: NodeRunContextStores,
+    stores: WorkflowRuntimeStores,
     statePolicy: SP,
     inputFiber: Fiber,
     runFiber: Fiber,
@@ -71,7 +65,7 @@ export class ForkNodeRunContext<
   runFibers: Fiber[];
 
   constructor(
-    stores: NodeRunContextStores,
+    stores: WorkflowRuntimeStores,
     statePolicy: SP,
     inputFiber: Fiber,
     runFibers: Fiber[],
@@ -90,7 +84,7 @@ export class JoinNodeRunContext<
 
   runFiber: Fiber;
 
-  constructor(stores: NodeRunContextStores, statePolicy: SP, runFiber: Fiber) {
+  constructor(stores: WorkflowRuntimeStores, statePolicy: SP, runFiber: Fiber) {
     super(stores, statePolicy);
     this.runFiber = runFiber;
   }

@@ -1,6 +1,5 @@
 import { FIBER_STATUS, Fiber } from './Fiber';
 import { FIBER_POLICY_TYPE } from './FiberPolicy';
-import { FIBER_SCOPE_TYPE } from './FiberScope';
 
 const EXEC_ID = 'ex1';
 
@@ -220,7 +219,12 @@ describe('scopePrefixKey()', () => {
       policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
-    expect(fiber.scopePrefixKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0');
+    expect(
+      fiber.scopePrefixKey('r/p', {
+        type: FIBER_POLICY_TYPE.enum.FORK,
+        forkCount: 1,
+      }),
+    ).toBe('-/0');
   });
 
   it('should create expected scope key for a fork fiber when the anchor is in segments', async () => {
@@ -233,7 +237,12 @@ describe('scopePrefixKey()', () => {
       policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
-    expect(fiber.scopePrefixKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0');
+    expect(
+      fiber.scopePrefixKey('r/p', {
+        type: FIBER_POLICY_TYPE.enum.FORK,
+        forkCount: 1,
+      }),
+    ).toBe('-/0');
   });
 
   it('should create expected scope key for a join fiber when the anchor is in segments', async () => {
@@ -246,9 +255,13 @@ describe('scopePrefixKey()', () => {
       policyType: FIBER_POLICY_TYPE.enum.PIPE,
     });
 
-    expect(fiber.scopePrefixKey('r/enum', FIBER_SCOPE_TYPE.enum.JOIN)).toEqual(
-      '-/0',
-    );
+    expect(
+      fiber.scopePrefixKey('r/enum', {
+        type: FIBER_POLICY_TYPE.enum.JOIN,
+        anchor: 'r/enum',
+        limit: 10,
+      }),
+    ).toEqual('-/0');
   });
 
   it('should throw an error for a join fiber when the anchor is NOT in segements', () => {
@@ -262,7 +275,11 @@ describe('scopePrefixKey()', () => {
     });
 
     expect(() =>
-      fiber.scopePrefixKey('r/c', FIBER_SCOPE_TYPE.enum.JOIN),
+      fiber.scopePrefixKey('r/c', {
+        type: FIBER_POLICY_TYPE.enum.JOIN,
+        anchor: 'r/c',
+        limit: 10,
+      }),
     ).toThrow(
       'Anchor node not found in fiber, but required to create the join scope prefix key',
     );
@@ -280,7 +297,12 @@ describe('scopeKey()', () => {
       policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
-    expect(fiber.scopeKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0/~');
+    expect(
+      fiber.scopeKey('r/p', {
+        type: FIBER_POLICY_TYPE.enum.FORK,
+        forkCount: 1,
+      }),
+    ).toBe('-/0/~');
   });
 
   it('should create expected scope key for a fork fiber when the anchor is in segments', async () => {
@@ -293,21 +315,80 @@ describe('scopeKey()', () => {
       policyType: FIBER_POLICY_TYPE.enum.FORK,
     });
 
-    expect(fiber.scopeKey('r/p', FIBER_SCOPE_TYPE.enum.FORK)).toBe('-/0/~');
+    expect(
+      fiber.scopeKey('r/p', {
+        type: FIBER_POLICY_TYPE.enum.FORK,
+        forkCount: 1,
+      }),
+    ).toBe('-/0/~');
   });
 
   it('should create expected scope key for a join fiber when the anchor is in segments', async () => {
     const fiber = Fiber.fromJSON({
       execId: EXEC_ID,
       dataRef: 'data-ref-1',
-      segments: ['r', 'r/enum', 'r/batch'],
-      key: '-/0/0',
+      segments: ['r', 'r/enum', 'r/pipe', 'r/batch'],
+      key: '-/0/-/1',
       status: FIBER_STATUS.enum.OPEN,
       policyType: FIBER_POLICY_TYPE.enum.JOIN,
     });
 
-    expect(fiber.scopeKey('r/enum', FIBER_SCOPE_TYPE.enum.JOIN, 0)).toBe(
-      '-/0/~/0',
-    );
+    expect(
+      fiber.scopeKey(
+        'r/enum',
+        {
+          type: FIBER_POLICY_TYPE.enum.JOIN,
+          anchor: 'r/enum',
+          limit: 10,
+        },
+        1,
+      ),
+    ).toBe('-/0/~/1');
+  });
+
+  it('should create expected scope key for a pipe fiber and join policy when the anchor is in segments', async () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum', 'r/pipe'],
+      key: '-/0/-',
+      status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.PIPE,
+    });
+
+    expect(
+      fiber.scopeKey(
+        'r/enum',
+        {
+          type: FIBER_POLICY_TYPE.enum.JOIN,
+          anchor: 'r/enum',
+          limit: 10,
+        },
+        1,
+      ),
+    ).toBe('-/0/~/1');
+  });
+});
+
+describe('keyPrefixUsingSegmentPredicate()', () => {
+  it('should create expected key prefix', async () => {
+    const fiber = Fiber.fromJSON({
+      execId: EXEC_ID,
+      dataRef: 'data-ref-1',
+      segments: ['r', 'r/enum', 'r/pipe', 'r/batch'],
+      key: '-/1/-/2',
+      status: FIBER_STATUS.enum.OPEN,
+      policyType: FIBER_POLICY_TYPE.enum.JOIN,
+    });
+
+    expect(
+      fiber.keyPrefixByLastMatchingNodeId(nodeId => nodeId === 'r/batch'),
+    ).toBe('-/1/-/2');
+
+    expect(
+      fiber.keyPrefixByLastMatchingNodeId(nodeId => nodeId === 'r/enum'),
+    ).toBe('-/1');
+
+    expect(fiber.keyPrefixByLastMatchingNodeId(_ => false)).toBe('');
   });
 });

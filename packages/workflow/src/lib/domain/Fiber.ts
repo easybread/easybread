@@ -48,11 +48,10 @@ export class Fiber {
   public readonly policyType: typeof FIBER_POLICY_TYPE.$type;
   public readonly execId: string;
   public readonly key: FiberKey;
+  public readonly segments: string[];
 
   public status: typeof FIBER_STATUS.$type;
   public dataRef: string | null;
-
-  private readonly segments: string[];
 
   public get length() {
     return this.segments.length;
@@ -101,6 +100,32 @@ export class Fiber {
       status: this.status,
       policyType: this.policyType,
     };
+  }
+
+  /**
+   * Iterates over the fiber path segments (node ids) in reverse order
+   * and returns the key prefix, corresponding to the first (in reverse order) segment that matches the predicate.
+   *
+   * @example
+   * ```
+   * const fiber = Fiber.fromJSON({
+   *   execId: 'exec-1',
+   *   key: '-/1/-/2',
+   *   segments: ['r', 'r/enum', 'r/pipe', 'r/batch'],
+   *   dataRef: null,
+   *   status: FIBER_STATUS.enum.OPEN,
+   *   policyType: FIBER_POLICY_TYPE.enum.JOIN,
+   * });
+   *
+   * fiber.keyPrefixByLastMatchingNodeId(id => id === 'r/batch'); // '-/1/-/2'
+   * fiber.keyPrefixByLastMatchingNodeId(id => id === 'r/enum'); // '-/1'
+   * fiber.keyPrefixByLastMatchingNodeId(id => false); // ''
+   * ```
+   */
+  keyPrefixByLastMatchingNodeId(predicate: (nodeId: string) => boolean) {
+    const segmentIndex = this.segments.findLastIndex(predicate);
+    if (segmentIndex === -1) return '';
+    return this.key.prefixFrom(segmentIndex).toString();
   }
 
   scopeKey(anchorNodeId: string, fiberPolicy: ForkFiberPolicy): string;

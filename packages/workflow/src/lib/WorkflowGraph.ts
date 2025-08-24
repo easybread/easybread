@@ -18,4 +18,9 @@ export class WorkflowGraph<TRoot extends NodeAny> {
 
     return node;
   }
+
+  getParentNode(id: string): NodeAny | null {
+    const parentId = id.split('/').slice(0, -1).join('/');
+    return parentId ? this.getNode(parentId) : null;
+  }
 }

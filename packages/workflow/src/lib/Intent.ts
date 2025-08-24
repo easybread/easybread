@@ -10,27 +10,79 @@ export const INTENT_TYPE = enumSuiteObject(
 
 export type IntentType = typeof INTENT_TYPE.$type;
 
-export interface IntentBase<T extends IntentType, P = undefined> {
+export abstract class Intent<T extends IntentType, P = undefined> {
+  static hasStopPropagation(intents: IntentAny[]) {
+    return intents.some(
+      intent => intent.type === INTENT_TYPE.enum.STOP_PROPAGATION,
+    );
+  }
+
+  static closeFiber<TClose extends IOConstraint>(
+    options: CloseFiberIntentOptions<TClose>,
+  ) {
+    return new CloseFiberIntent(options);
+  }
+
+  static runNode(options: RunNodeIntentOptions) {
+    return new RunNodeIntent(options);
+  }
+
+  static stopPropagation(options: StopPropagationIntentOptions) {
+    return new StopPropagationIntent(options);
+  }
+
   type: T;
   payload: P;
+
+  protected constructor(type: T, payload: P) {
+    this.type = type;
+    this.payload = payload;
+  }
 }
 
-export type CloseFiberIntent<TClose extends IOConstraint> = IntentBase<
+interface CloseFiberIntentOptions<TClose extends IOConstraint> {
+  fiber: Fiber;
+  data: Option<TClose>;
+}
+
+export class CloseFiberIntent<TClose extends IOConstraint> extends Intent<
   typeof INTENT_TYPE.enum.CLOSE_FIBER,
-  { fiber: Fiber; close: Option<TClose> }
->;
+  { fiber: Fiber; data: Option<TClose> }
+> {
+  constructor({ fiber, data }: CloseFiberIntentOptions<TClose>) {
+    super(INTENT_TYPE.enum.CLOSE_FIBER, { fiber, data });
+  }
+}
 
-export type StateOp = 'SET' | 'APPEND_ITEM' | 'REMOVE_ITEM';
-export type StateUpdateIntent = IntentBase<
-  typeof INTENT_TYPE.enum.UPDATE_STATE,
-  StateOp[]
->;
+interface RunNodeIntentOptions {
+  nodeId: string;
+  fiber: Fiber;
+}
 
-export type RunNodeIntent = IntentBase<
+export class RunNodeIntent extends Intent<
   typeof INTENT_TYPE.enum.RUN_NODE,
-  { nodeId: string }
->;
+  { nodeId: string; fiber: Fiber }
+> {
+  constructor({ nodeId, fiber }: RunNodeIntentOptions) {
+    super(INTENT_TYPE.enum.RUN_NODE, { nodeId, fiber });
+  }
+}
 
-export type StopPropagationIntent = IntentBase<
-  typeof INTENT_TYPE.enum.STOP_PROPAGATION
->;
+interface StopPropagationIntentOptions {
+  reason: string;
+}
+
+export class StopPropagationIntent extends Intent<
+  typeof INTENT_TYPE.enum.STOP_PROPAGATION,
+  { reason: string }
+> {
+  constructor({ reason }: StopPropagationIntentOptions) {
+    super(INTENT_TYPE.enum.STOP_PROPAGATION, { reason });
+  }
+}
+
+export type CloseFiberIntentAny = CloseFiberIntent<IOConstraint>;
+export type IntentAny =
+  | CloseFiberIntentAny
+  | RunNodeIntent
+  | StopPropagationIntent;

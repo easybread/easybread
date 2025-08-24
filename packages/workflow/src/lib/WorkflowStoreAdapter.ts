@@ -3,7 +3,70 @@ import { CASMaxRetriesReachedError, CASVersionMismatchError } from './Error';
 const MAX_RETRIES = 10;
 const EMPTY_VALUE = '__EMPTY__' as const;
 
+export interface ScoreRange {
+  min?: number;
+  max?: number;
+}
+
+export type WorkflowStoreAdapterEventType =
+  | 'ALL_CHANGES'
+  | 'CREATE'
+  | 'UPDATE'
+  | 'REMOVE';
+
+export interface WorkflowStoreAdapterEvent {
+  type: WorkflowStoreAdapterEventType;
+  key: string;
+  value: any;
+}
+
+export type UnsubscribeFn = () => void;
+
+export interface WorkflowStoreAdapterEventSubscriberFn<
+  T extends WorkflowStoreAdapterEventType,
+> {
+  (event: T extends 'ALL_CHANGES' ? WorkflowStoreAdapterEvent : T): void;
+}
+
 export abstract class WorkflowStoreAdapter {
+  abstract subscribe<U extends WorkflowStoreAdapterEventType, T extends U[]>(
+    eventType: T,
+    callback: WorkflowStoreAdapterEventSubscriberFn<T[number]>,
+  ): UnsubscribeFn;
+
+  /**
+   * Returns the current time on the store server in milliseconds
+   */
+  abstract timeMS(): Promise<number>;
+
+  /**
+   * Adds an item to a scored list of items.
+   * @param key - The key of the scored list
+   * @param value - The value to add
+   * @param score - The score to add the item at
+   */
+  abstract addScored(key: string, value: string, score: number): Promise<void>;
+
+  /**
+   * Removes an item from a scored list of items.
+   * @param key - The key of the ordered list
+   * @param value - The value to remove
+   */
+  abstract removeScored(key: string, value: string): Promise<void>;
+
+  /**
+   * Removes all items from a scored list of items up to a given score value.
+   * @param key - The key of the scored list
+   */
+  abstract removeScoredUpTo(key: string, range: ScoreRange): Promise<void>;
+
+  /**
+   * Gets items from a scored list of items.
+   * @param key - The key of the scored list
+   * @param range - The range of scores to get items from
+   */
+  abstract getScored(key: string, range: ScoreRange): Promise<string[]>;
+
   /**
    * Compare and set value, if the version is correct.
    *
@@ -63,6 +126,21 @@ export abstract class WorkflowStoreAdapter {
     );
   }
 
+  abstract remove(key: string): Promise<void>;
+
+  abstract keysGenerator(pattern: string): AsyncGenerator<string, void, any>;
+
+  /**
+   * Run a function with a lock.
+   *
+   * @param key - The key to lock
+   * @param fn - The function to run with the lock
+   */
+  abstract withLock<T extends (store: this) => Promise<any>>(
+    pattern: string,
+    fn: T,
+  ): Promise<ReturnType<T>>;
+
   /**
    * Run a transaction.
    *
@@ -74,6 +152,7 @@ export abstract class WorkflowStoreAdapter {
 
   /**
    * Set a value, unsafe.
+   *
    * @param key - The key to set
    * @param value - The value to set
    */

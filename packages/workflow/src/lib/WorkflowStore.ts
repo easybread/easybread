@@ -1,4 +1,8 @@
-import type { WorkflowStoreAdapter } from './WorkflowStoreAdapter';
+import type {
+  WorkflowStoreAdapter,
+  WorkflowStoreAdapterEventSubscriberFn,
+  WorkflowStoreAdapterEventType,
+} from './WorkflowStoreAdapter';
 
 export class WorkflowStore {
   protected readonly adapter: WorkflowStoreAdapter;
@@ -7,6 +11,13 @@ export class WorkflowStore {
   constructor(storePrefix: string, adapter: WorkflowStoreAdapter) {
     this.storePrefix = storePrefix;
     this.adapter = adapter;
+  }
+
+  subscribe<U extends WorkflowStoreAdapterEventType, T extends U[]>(
+    eventType: T,
+    callback: WorkflowStoreAdapterEventSubscriberFn<T[number]>,
+  ) {
+    return this.adapter.subscribe(eventType, callback);
   }
 
   protected encodeStoreKey(pk: string) {

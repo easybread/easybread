@@ -102,4 +102,17 @@ export class FiberAlreadyClosedError extends WorkflowError<
     });
   }
 }
+
+export class WorkflowBackpressureError extends WorkflowError<
+  'WorkflowBackpressureError',
+  { pressure: number; throughputScore: number }
+> {
+  constructor(pressure: number, throughputScore: number) {
+    super(`Workflow backpressure: ${pressure}`, {
+      pressure,
+      throughputScore,
+    });
+  }
+}
+
 export type WorkflowErrorAny = WorkflowError<any, any, any>;

@@ -11,10 +11,20 @@ export type NodeStatePolicyNone = {
   type: typeof NODE_STATE_POLICY_TYPE.enum.NONE;
 };
 
+export function noneStatePolicy(): NodeStatePolicyNone {
+  return { type: NODE_STATE_POLICY_TYPE.enum.NONE };
+}
+
 export type NodeStatePolicyScoped<D extends IOConstraint> = {
   type: typeof NODE_STATE_POLICY_TYPE.enum.SCOPED;
   init: (previousState: Option<D>) => Some<D>;
 };
+
+export function scopedStatePolicy<D extends IOConstraint>(
+  init: (previousState: Option<D>) => Some<D>,
+): NodeStatePolicyScoped<D> {
+  return { type: NODE_STATE_POLICY_TYPE.enum.SCOPED, init };
+}
 
 export type NodeStatePolicy =
   | NodeStatePolicyNone

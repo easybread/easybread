@@ -9,13 +9,22 @@ export type IO<I extends IOConstraint, O extends IOConstraint> = {
 };
 
 export type IOAny = IO<IOConstraint, IOConstraint>;
+export type IOOut<T extends IOAny> = T['output'];
+export type IOIn<T extends IOAny> = T['input'];
 
 export abstract class WithIO<IO extends IOAny = IOAny> {
   readonly [_IO] = {} as IO;
+
+  /**
+   * Type system testing helper method
+   */
+  __checkIO(_input: IOIn<IO>): IOOut<IO> {
+    console.log('__checkIO', { _input });
+    return {} as IOOut<IO>;
+  }
 }
 
 export type WithIOAny = WithIO<IOAny>;
 export type GetIO<T extends WithIOAny> = T[typeof _IO];
-
-export type IOOut<T extends IOAny> = T['output'];
-export type IOIn<T extends IOAny> = T['input'];
+export type GetIOOutput<T extends WithIOAny> = GetIO<T>['output'];
+export type GetIOInput<T extends WithIOAny> = GetIO<T>['input'];

@@ -1,20 +1,24 @@
 import { WorkflowStore } from '../WorkflowStore';
 import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
-import { Fiber, FiberJSONAny } from '../domain/Fiber';
-import { FIBER_POLICY_TYPE } from '../domain/FiberPolicy';
+import { Fiber, type FiberAny, FiberJSONAny } from '../domain/Fiber';
 import type { ForkNodeAny, JoinNodeAny, PipeNodeAny } from '../domain/Node';
+import type { IOConstraint } from '../helpers/IO';
+import { Option } from '../helpers/Option';
 
+import { DataStore } from './DataStore';
 import { FiberScopePrefixStore } from './FiberScopePrefixStore';
 import { FiberScopeStore } from './FiberScopeStore';
 
 export class FiberStore extends WorkflowStore {
   private readonly fiberScopeStore: FiberScopeStore;
   private readonly fiberScopePrefixStore: FiberScopePrefixStore;
+  private readonly dataStore: DataStore;
 
   constructor(adapter: WorkflowStoreAdapter) {
     super('FIBER', adapter);
     this.fiberScopeStore = new FiberScopeStore(adapter);
     this.fiberScopePrefixStore = new FiberScopePrefixStore(adapter);
+    this.dataStore = new DataStore(adapter);
   }
 
   async getFiber(execId: string, fiberKey: string) {
@@ -32,11 +36,7 @@ export class FiberStore extends WorkflowStore {
   }
 
   async getFiberScope(fiber: Fiber, node: JoinNodeAny | ForkNodeAny) {
-    const fiberPolicy = node.fiberPolicy;
-    const scopeKey =
-      fiberPolicy.type === FIBER_POLICY_TYPE.enum.FORK
-        ? fiber.scopeKey(fiber.nodeId, fiberPolicy)
-        : fiber.scopeKey(fiberPolicy.anchor, fiberPolicy, fiber.ordinality);
+    const scopeKey = node.fiberScopeKey(fiber);
 
     return await this.fiberScopeStore.getScope({
       execId: fiber.execId,
@@ -53,7 +53,7 @@ export class FiberStore extends WorkflowStore {
     );
   }
 
-  async *iterateFiberScopeMembers(
+  async *fiberScopeMembersGenerator(
     fiber: Fiber,
     node: JoinNodeAny | ForkNodeAny,
   ) {
@@ -125,6 +125,20 @@ export class FiberStore extends WorkflowStore {
     await this.saveFiber(fiber);
 
     return fiber;
+  }
+
+  async closeFiber(fiber: Fiber, data: Option<IOConstraint>) {
+    const dataRef = Option.match(data, {
+      onNone: () => null,
+      onSome: () => this.dataStore.randomKey(),
+    });
+
+    if (dataRef) {
+      await this.dataStore.setData(dataRef, data);
+    }
+
+    fiber.close(dataRef);
+    await this.saveFiber(fiber);
   }
 
   async saveFiber(fiber: FiberAny) {

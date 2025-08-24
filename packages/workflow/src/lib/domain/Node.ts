@@ -1,4 +1,8 @@
-import type { CloseFiberIntent } from '../Intent';
+import type {
+  CloseFiberIntent,
+  RunNodeIntent,
+  StopPropagationIntent,
+} from '../Intent';
 import {
   type GetIO,
   type IO,
@@ -8,6 +12,12 @@ import {
 } from '../helpers/IO';
 
 import {
+  type BackpressurePolicy,
+  nearestForkBackpressurePolicy,
+} from './BackpressurePolicy';
+import type { Fiber } from './Fiber';
+import {
+  FIBER_POLICY_TYPE,
   type FiberPolicy,
   type ForkFiberPolicy,
   type JoinFiberPolicy,
@@ -16,17 +26,17 @@ import {
 import type { NodeRunContext } from './NodeRunContext';
 import type { NodeStatePolicy } from './NodeStatePolicy';
 
-export const _FP = Symbol('FP');
-
-export const _SP = Symbol('SP');
-
-export const _CLOSE = Symbol('CLOSE');
+const _FP = Symbol('FP');
+const _SP = Symbol('SP');
+const _CLOSE = Symbol('CLOSE');
 
 export type NodeChildrenMap<TChildren extends ReadonlyArray<NodeAny>> = {
   [ChildrenID in TChildren[number]['id']]: TChildren[number] & {
     id: ChildrenID;
   };
 };
+
+export type OnCloseResultIntents = RunNodeIntent | StopPropagationIntent;
 
 export abstract class Node<
   TId extends string,
@@ -37,6 +47,12 @@ export abstract class Node<
   TClose extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAny> = [],
 > extends WithIO<IO<TIn, TOut>> {
+  /**
+   * Creates a map of children nodes by their id.
+   *
+   * @param children - The list of children nodes.
+   * @returns A map of children nodes by their id.
+   */
   private static makeChildrenMap<TChildren extends ReadonlyArray<NodeAny>>(
     children: TChildren,
   ): NodeChildrenMap<TChildren> {
@@ -52,7 +68,7 @@ export abstract class Node<
 
   readonly id: TId;
 
-  private readonly children: NodeChildrenMap<TChildren>;
+  protected readonly children: NodeChildrenMap<TChildren>;
 
   constructor(id: TId, children: TChildren) {
     super();
@@ -63,15 +79,50 @@ export abstract class Node<
   abstract fiberPolicy: TFP;
   abstract statePolicy: TSP;
 
+  readonly backpressurePolicy: BackpressurePolicy =
+    nearestForkBackpressurePolicy();
+
+  hasChildren(): this is NodeAny {
+    return Object.keys(this.children).length > 0;
+  }
+
+  isFork(): this is ForkNodeAny {
+    return this.fiberPolicy.type === FIBER_POLICY_TYPE.enum.FORK;
+  }
+
+  isJoin(): this is JoinNodeAny {
+    return this.fiberPolicy.type === FIBER_POLICY_TYPE.enum.JOIN;
+  }
+
+  isPipe(): this is PipeNodeAny {
+    return this.fiberPolicy.type === FIBER_POLICY_TYPE.enum.PIPE;
+  }
+
+  isStream(): this is StreamNodeAny {
+    return this instanceof StreamNode;
+  }
+
   getChild(id: inferNodeId<TChildren[number]>): NodeAny | undefined {
     return this.children[id];
   }
 
-  runForTS(_input: TIn): TOut | Promise<TOut> {
-    throw new Error('Method not implemented.');
+  fiberScopeKey(this: ForkNodeAny | JoinNodeAny, fiber: Fiber): string {
+    if (this.isFork()) {
+      return fiber.scopeKey(fiber.nodeId, this.fiberPolicy);
+    }
+    if (this.isJoin()) {
+      return fiber.scopeKey(
+        this.fiberPolicy.anchor,
+        this.fiberPolicy,
+        fiber.ordinality,
+      );
+    }
+    throw new Error('This should not be reachable');
   }
 
   abstract run(context: inferNodeRunContext<this>): inferNodeRunReturn<this>;
+
+  abstract onClose(fiber: Fiber): Promise<OnCloseResultIntents[]>;
 }
 
 export abstract class PipeNode<
@@ -82,6 +133,19 @@ export abstract class PipeNode<
   TClose extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAny> = [],
 > extends Node<TId, PipeFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+
+export abstract class StreamNode<
+  TId extends string,
+  TSP extends NodeStatePolicy,
+  TIn extends IOConstraint,
+  TOut extends IOConstraint,
+  TClose extends IOConstraint,
+  TChildren extends ReadonlyArray<NodeAny> = [],
+> extends PipeNode<TId, TSP, TIn, TOut, TClose, TChildren> {
+  abstract getFirst(): NodeAny | null;
+  abstract getPrevious(nodeId: string): NodeAny | null;
+  abstract getNext(nodeId: string): NodeAny | null;
+}
 
 export abstract class ForkNode<
   TId extends string,
@@ -132,6 +196,15 @@ export type PipeNodeAny = PipeNode<
 export type NodeAny = Node<
   string,
   FiberPolicy,
+  NodeStatePolicy,
+  IOConstraint,
+  IOConstraint,
+  any,
+  any
+>;
+
+export type StreamNodeAny = StreamNode<
+  string,
   NodeStatePolicy,
   IOConstraint,
   IOConstraint,
