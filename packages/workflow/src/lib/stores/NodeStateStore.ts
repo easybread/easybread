@@ -9,6 +9,6 @@ export class NodeStateStore extends WorkflowStore {
   }
 
   async getNodeState(inputFiber: FiberAny, node: NodeAny) {
-    // depdnding on the policy, resolve the 
+    // depdnding on the policy, resolve the
   }
 }

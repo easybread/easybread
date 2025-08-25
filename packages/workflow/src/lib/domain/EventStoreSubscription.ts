@@ -72,6 +72,5 @@ export class EventStoreSubscription {
 
   private async iteration() {
     const events = await this.eventStore.readQueued(this.pattern.execId);
-    
   }
 }

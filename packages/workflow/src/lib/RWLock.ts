@@ -21,7 +21,7 @@ export class HierarchicalRwLock implements PatternRwLock {
    * EVENT:*:* -> EVENT:*
    * EVENT:CLOSED:*:* -> EVENT:CLOSED:*
    */
-  private normalizePattern(pattern: string): string {
+  normalizePattern(pattern: string): string {
     const parts = pattern.split(':');
     const normalized: string[] = [];
     let hasWildcard = false;
@@ -48,7 +48,7 @@ export class HierarchicalRwLock implements PatternRwLock {
    * FOO:*:BAR:* overlaps FOO:MIDDLE:BAR:EXTRA
    * FOO:*:BAR doesn't overlap FOO:MIDDLE:BAR:EXTRA
    */
-  private patternsOverlap(pattern1: string, pattern2: string): boolean {
+  patternsOverlap(pattern1: string, pattern2: string): boolean {
     const parts1 = pattern1.split(':');
     const parts2 = pattern2.split(':');
 
