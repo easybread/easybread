@@ -13,7 +13,6 @@ export type FiberScopePrefixJSON = {
   key: string;
   ordinality: number;
   size: number;
-  version: number;
 };
 
 export interface CreateEmptyFiberScopePrefixOptions {
@@ -28,10 +27,10 @@ export interface CreateEmptyFiberScopePrefixOptions {
  *
  * @example
  * ```text
- * nodeId   key      ordinality size type   version
- * r/batch  -/0/*    1          2    join   2
- * r/batch  -/1/*    5          3    join   6
- * r/c      -/*      1          0    fork   2
+ * nodeId   key      ordinality size type
+ * r/batch  -/0/*    1          2    join
+ * r/batch  -/1/*    5          3    join
+ * r/c      -/*      1          0    fork
  * ```
  */
 export class FiberScopePrefix {
@@ -127,7 +126,6 @@ export class FiberScopePrefix {
       key,
       ordinality: -1,
       size: 0,
-      version: 0,
     });
   }
 
@@ -143,7 +141,6 @@ export class FiberScopePrefix {
       key,
       ordinality: -1,
       size: 0,
-      version: 0,
     });
   }
 
@@ -153,7 +150,6 @@ export class FiberScopePrefix {
   key: string;
   ordinality: number;
   size: number;
-  version: number;
 
   constructor(props: FiberScopePrefixJSON) {
     this.type = props.type;
@@ -162,7 +158,6 @@ export class FiberScopePrefix {
     this.key = props.key;
     this.ordinality = props.ordinality;
     this.size = props.size;
-    this.version = props.version;
   }
 
   /**
@@ -184,7 +179,6 @@ export class FiberScopePrefix {
       key: this.key,
       ordinality: this.ordinality,
       size: this.size,
-      version: this.version,
     };
   }
 }

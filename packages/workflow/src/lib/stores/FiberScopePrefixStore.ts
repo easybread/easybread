@@ -30,14 +30,13 @@ export class FiberScopePrefixStore extends WorkflowStore {
     const { execId, nodeId, key, memberCount } = options;
 
     const storeKey = this.encodeStoreKey(
+      // S(execId):P(nodeId):P(key)
       FiberScopePrefix.pkEncode({ execId, nodeId, key }),
     );
 
-    let resultPrefixes: FiberScopePrefix[] = [];
-
-    // write the last state
-    await this.adapter.cas<FiberScopePrefixJSON>(storeKey, async json => {
-      resultPrefixes = [];
+    return await this.rwLock.usingWriteLock(storeKey, async () => {
+      const json = await this.adapter.get<FiberScopePrefixJSON>(storeKey);
+      const resultPrefixes: FiberScopePrefix[] = [];
 
       let prefix = json
         ? FiberScopePrefix.fromJSON(json)
@@ -49,9 +48,9 @@ export class FiberScopePrefixStore extends WorkflowStore {
         resultPrefixes.push(prefix);
       }
 
-      return prefix.toJSON();
-    });
+      await this.adapter.set(storeKey, prefix.toJSON());
 
-    return resultPrefixes;
+      return resultPrefixes;
+    });
   }
 }

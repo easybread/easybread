@@ -7,6 +7,10 @@ export class WorkflowGraph<TRoot extends NodeAny> {
     this.root = root;
   }
 
+  getRootNode() {
+    return this.root;
+  }
+
   getNode(id: string): NodeAny {
     const node = id.split('/').reduce<NodeAny | undefined>((node, segment) => {
       if (node) return node.getChild(segment);

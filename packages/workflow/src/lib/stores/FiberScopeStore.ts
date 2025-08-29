@@ -38,18 +38,19 @@ export class FiberScopeStore extends WorkflowStore {
       FiberScope.pkEncode({ execId, nodeId, key }),
     );
 
-    return await this.adapter
-      .cas<FiberScopeJSON>(storeKey, async json => {
-        const scope = json
-          ? FiberScope.fromJSON(json)
-          : FiberScope.createEmpty(options);
+    return await this.rwLock.usingWriteLock(storeKey, async () => {
+      const json = await this.adapter.get<FiberScopeJSON>(storeKey);
+      const scope = json
+        ? FiberScope.fromJSON(json)
+        : FiberScope.createEmpty(options);
 
-        for (const member of members) {
-          scope.appendMember(member);
-        }
+      for (const member of members) {
+        scope.appendMember(member);
+      }
 
-        return scope.toJSON();
-      })
-      .then(json => FiberScope.fromJSON(json));
+      await this.adapter.set(storeKey, scope.toJSON());
+
+      return scope;
+    });
   }
 }

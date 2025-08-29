@@ -104,7 +104,8 @@ export class Fiber {
 
   /**
    * Iterates over the fiber path segments (node ids) in reverse order
-   * and returns the key prefix, corresponding to the first (in reverse order) segment that matches the predicate.
+   * and returns the key prefix, corresponding to the first (in reverse order) segment (nodeId)
+   * that matches the predicate.
    *
    * @example
    * ```
@@ -122,7 +123,9 @@ export class Fiber {
    * fiber.keyPrefixByLastMatchingNodeId(id => false); // ''
    * ```
    */
-  keyPrefixByLastMatchingNodeId(predicate: (nodeId: string) => boolean) {
+  keyPrefixByLastMatchingNodeId(
+    predicate: (nodeId: string, index: number) => boolean,
+  ) {
     const segmentIndex = this.segments.findLastIndex(predicate);
     if (segmentIndex === -1) return '';
     return this.key.prefixFrom(segmentIndex).toString();

@@ -16,7 +16,6 @@ export type FiberScopeJSON = {
   key: string;
   members: string[];
   type: FiberScopeType;
-  version: number;
 };
 
 interface CreateEmptyFiberScopeOptions {
@@ -78,7 +77,6 @@ export class FiberScope {
       key,
       members: [],
       type: fiberPolicy.type,
-      version: 0,
     });
   }
 
@@ -87,7 +85,6 @@ export class FiberScope {
   key: string;
   members: string[];
   type: FiberScopeType;
-  version: number;
 
   constructor(props: FiberScopeJSON) {
     this.execId = props.execId;
@@ -95,7 +92,6 @@ export class FiberScope {
     this.key = props.key;
     this.members = props.members;
     this.type = props.type;
-    this.version = props.version;
   }
 
   appendMember(member: string) {
@@ -109,7 +105,6 @@ export class FiberScope {
       key: this.key,
       members: this.members,
       type: this.type,
-      version: this.version,
     };
   }
 }

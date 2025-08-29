@@ -5,7 +5,7 @@ import type { IOConstraint } from './helpers/IO';
 import type { Option } from './helpers/Option';
 
 export const INTENT_TYPE = enumSuiteObject(
-  enumObject(['CLOSE_FIBER', 'RUN_NODE', 'UPDATE_STATE', 'STOP_PROPAGATION']),
+  enumObject(['CLOSE_FIBER', 'RUN_NODE', 'STOP_PROPAGATION']),
 );
 
 export type IntentType = typeof INTENT_TYPE.$type;

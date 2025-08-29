@@ -1,8 +1,3 @@
-import { CASMaxRetriesReachedError, CASVersionMismatchError } from './Error';
-
-const MAX_RETRIES = 10;
-const EMPTY_VALUE = '__EMPTY__' as const;
-
 export interface ScoreRange {
   min?: number;
   max?: number;
@@ -48,11 +43,30 @@ export abstract class WorkflowStoreAdapter {
   abstract addScored(key: string, value: string, score: number): Promise<void>;
 
   /**
+   * Adds an item to a scored list of items.
+   * @param key - The key of the scored list
+   * @param values - The values to add
+   * @param score - The score to add the item at
+   */
+  abstract addScoredMany(
+    key: string,
+    values: string[],
+    score: number,
+  ): Promise<void>;
+
+  /**
    * Removes an item from a scored list of items.
    * @param key - The key of the ordered list
    * @param value - The value to remove
    */
   abstract removeScored(key: string, value: string): Promise<void>;
+
+  /**
+   * Removes multiple items from a scored list of items.
+   * @param key - The key of the ordered list
+   * @param values - The values to remove
+   */
+  abstract removeScoredMany(key: string, values: string[]): Promise<void>;
 
   /**
    * Removes all items from a scored list of items up to a given score value.
@@ -68,65 +82,16 @@ export abstract class WorkflowStoreAdapter {
   abstract getScored(key: string, range: ScoreRange): Promise<string[]>;
 
   /**
-   * Compare and set value, if the version is correct.
-   *
-   * @param key - The key to set
-   * @param valueFactory - The value to set
-   * @param expectedVersion - The expected version
-   *
-   * @throws VersionMismatchError if the version is incorrect
+   * Removes a value.
+   * @param key - The key of the value
    */
-  async cas<T extends { version: number }>(
-    key: string,
-    valueFactory: (data: T | null) => Promise<T> | T,
-  ): Promise<T> {
-    // __EMPTY__ instead of null to guard against the case where null is an expected value
-    let result: T | typeof EMPTY_VALUE = EMPTY_VALUE;
-
-    // loop instead of recursion to avoid stack overflow and optimize memory usage
-
-    let value: T;
-    let currentVersion: number;
-    let expectedVersion: number;
-    let retries = 0;
-
-    while (result === EMPTY_VALUE && retries < MAX_RETRIES) {
-      value = await valueFactory(await this.get<T>(key));
-
-      result = await this.transaction(async tx => {
-        expectedVersion = value.version;
-        currentVersion = await tx.getVersion(key);
-
-        if (currentVersion !== expectedVersion) {
-          throw new CASVersionMismatchError(
-            key,
-            expectedVersion,
-            currentVersion,
-          );
-        }
-
-        return await tx.set(key, { ...value, version: expectedVersion + 1 });
-      }).catch((e): typeof EMPTY_VALUE => {
-        if (!(e instanceof CASVersionMismatchError)) throw e;
-        return EMPTY_VALUE;
-      });
-
-      if (result !== EMPTY_VALUE) return result;
-
-      retries++;
-    }
-
-    throw new CASMaxRetriesReachedError(
-      key,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      value!.version,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      currentVersion!,
-      retries,
-    );
-  }
-
   abstract remove(key: string): Promise<void>;
+
+  /**
+   * Removes multiple values.
+   * @param keys - The keys of the values
+   */
+  abstract removeMany(keys: string[]): Promise<void>;
 
   abstract keysGenerator(pattern: string): AsyncGenerator<string, void, any>;
 
@@ -142,21 +107,19 @@ export abstract class WorkflowStoreAdapter {
   ): Promise<ReturnType<T>>;
 
   /**
-   * Run a transaction.
-   *
-   * @param fn - The function to run in the transaction
-   */
-  abstract transaction<T extends (tx: this) => Promise<any>>(
-    fn: T,
-  ): Promise<ReturnType<T>>;
-
-  /**
    * Set a value, unsafe.
    *
    * @param key - The key to set
    * @param value - The value to set
    */
   abstract set<T>(key: string, value: T): Promise<T>;
+
+  /**
+   * Set multiple values, unsafe.
+   *
+   * @param kvPairs - The key-value pairs to set
+   */
+  abstract setMany<T>(kvPairs: [string, T][]): Promise<void>;
 
   /**
    * Get a value.
@@ -167,11 +130,14 @@ export abstract class WorkflowStoreAdapter {
   abstract get<T>(key: string): Promise<T | null>;
 
   /**
-   * Get the version by a key.
-   * If the key does not exist, create it and return 0.
+   * Get multiple values.
    *
-   * @param key - The key to get the version of
-   * @returns The version
+   * @param keys - The keys to get
+   * @returns The values
    */
-  abstract getVersion(key: string): Promise<number>;
+  abstract getMany<T>(keys: string[]): Promise<T[]>;
+
+  protected toHiResScore(score: number) {
+    return score * 1000;
+  }
 }

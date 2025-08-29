@@ -1,6 +1,3 @@
 export { HierarchicalKey, HierarchicalKeyBuilder } from '../HierarchicalKey';
-export {
-  HierarchicalPattern,
-  HierarchicalPatternBuilder,
-} from '../HierarchicalPattern';
-export { HierarchicalUtils, PatternIndex } from '../HierarchicalUtils';
+export { HierarchicalPattern } from './HierarchicalPattern';
+export { HierarchicalUtils, PatternIndex } from './HierarchicalUtils';

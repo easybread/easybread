@@ -8,11 +8,11 @@ export class FiberKey {
   path: string[];
 
   static fromKeyString(fiberKey: string) {
-    return new FiberKey(fiberKey.split('/'));
+    return new this(fiberKey.split(FiberKey.CHARS.SEPARATOR));
   }
 
   static fromSegments(segments: string[]) {
-    return new FiberKey(segments);
+    return new this(segments);
   }
 
   get lastSegment() {

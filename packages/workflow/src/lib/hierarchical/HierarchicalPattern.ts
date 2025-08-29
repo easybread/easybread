@@ -1,11 +1,30 @@
-import { HierarchicalKey } from './HierarchicalKey';
-
 /**
  * Represents a hierarchical pattern with wildcard support for matching keys.
  * Examples: "exec1:FIBER_CLOSED:*", "exec1:*:root/paginate/*"
  * Wildcards (*) can match one or more segments.
  */
 export class HierarchicalPattern {
+  /**
+   * Create pattern from string representation
+   */
+  static fromString(pattern: string): HierarchicalPattern {
+    return new HierarchicalPattern(pattern);
+  }
+
+  /**
+   * Create pattern from segments array
+   */
+  static fromSegments(segments: string[]): HierarchicalPattern {
+    return new HierarchicalPattern(segments);
+  }
+
+  /**
+   * Create from JSON representation
+   */
+  static fromJSON(json: string): HierarchicalPattern {
+    return new HierarchicalPattern(json);
+  }
+
   private readonly segments: readonly string[];
   private readonly stringValue: string;
   private readonly normalizedStringValue: string;
@@ -23,51 +42,24 @@ export class HierarchicalPattern {
   }
 
   /**
-   * Create pattern from string representation
-   */
-  static fromString(pattern: string): HierarchicalPattern {
-    return new HierarchicalPattern(pattern);
-  }
-
-  /**
-   * Create pattern from segments array
-   */
-  static fromSegments(segments: string[]): HierarchicalPattern {
-    return new HierarchicalPattern(segments);
-  }
-
-  /**
-   * Create pattern from a key (exact match pattern)
-   */
-  static fromKey(key: HierarchicalKey): HierarchicalPattern {
-    return new HierarchicalPattern(key.getSegments().slice());
-  }
-
-  /**
-   * Builder pattern for constructing patterns
-   */
-  static builder(): HierarchicalPatternBuilder {
-    return new HierarchicalPatternBuilder();
-  }
-
-  /**
    * Normalize pattern by removing redundant wildcards
    * Examples: "EVENT:*:*" -> "EVENT:*", "EVENT:CLOSED:*:*" -> "EVENT:CLOSED:*"
+   * Preserves intra-segment wildcards like "some/star/path"
    */
   private normalize(): string {
     const normalized: string[] = [];
-    let hasWildcard = false;
+    let hasTrailingWildcard = false;
 
     for (const segment of this.segments) {
       if (segment === '*') {
-        if (!hasWildcard) {
+        if (!hasTrailingWildcard) {
           normalized.push(segment);
-          hasWildcard = true;
+          hasTrailingWildcard = true;
         }
-        // Skip additional wildcards at the end
+        // Skip additional full-segment wildcards at the end
       } else {
         normalized.push(segment);
-        hasWildcard = false;
+        hasTrailingWildcard = false;
       }
     }
 
@@ -120,6 +112,65 @@ export class HierarchicalPattern {
     targetSegments: readonly string[],
   ): boolean {
     return this.matchParts(patternSegments, targetSegments, 0, 0);
+  }
+
+  /**
+   * Check if a segment pattern matches a target segment using glob-style matching
+   * Supports asterisk within segments, e.g., "some/star/wildcard" matches "some/path/wildcard"
+   */
+  private segmentMatches(pattern: string, target: string): boolean {
+    // If pattern is just "*", it matches anything
+    if (pattern === '*') return true;
+
+    // If no wildcards in pattern, must be exact match
+    if (!pattern.includes('*')) return pattern === target;
+
+    // Handle the special case where pattern starts with "*/" and has no other wildcards
+    // This should match anything ending with the text after the slash
+    if (pattern.startsWith('*/') && pattern.indexOf('*', 2) === -1) {
+      const suffix = pattern.substring(2); // Remove "*/"
+      return target.endsWith(suffix);
+    }
+
+    // Handle the special case where pattern ends with "/*" and has no other wildcards
+    // This should match anything starting with the text before the slash
+    if (pattern.endsWith('/*') && pattern.indexOf('*') === pattern.length - 1) {
+      const prefix = pattern.substring(0, pattern.length - 2); // Remove "/*"
+      return target.startsWith(prefix);
+    }
+
+    // For more complex patterns, use regex approach
+    // First, handle the special case of /*/: replace it with just * before processing
+    const processedPattern = pattern.replace(/\/\*\//g, '*');
+
+    const regexPattern = processedPattern
+      .split('*')
+      .map(part => this.escapeRegex(part))
+      .join('.*');
+
+    const regex = new RegExp(`^${regexPattern}$`);
+    return regex.test(target);
+  }
+
+  /**
+   * Recursive glob matching implementation (currently unused, kept for reference)
+   */
+  private globMatches(
+    _pattern: string,
+    _target: string,
+    _pIndex: number,
+    _tIndex: number,
+  ): boolean {
+    // This method is currently not used since we switched to regex-based matching
+    // Keeping it for potential future use or debugging
+    return false;
+  }
+
+  /**
+   * Escape special regex characters except our wildcards
+   */
+  private escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   /**
@@ -177,8 +228,8 @@ export class HierarchicalPattern {
       return false;
     }
 
-    // Both are concrete segments - must match exactly
-    if (patternSegment === targetSegment) {
+    // Both are concrete segments - use segment matching (supports intra-segment wildcards)
+    if (this.segmentMatches(patternSegment, targetSegment)) {
       return this.matchParts(
         pattern,
         target,
@@ -194,7 +245,7 @@ export class HierarchicalPattern {
    * Check if this is a wildcard pattern (contains '*')
    */
   isWildcard(): boolean {
-    return this.segments.includes('*');
+    return this.segments.some(segment => segment.includes('*'));
   }
 
   /**
@@ -206,9 +257,18 @@ export class HierarchicalPattern {
 
   /**
    * Get the number of wildcard segments (from normalized pattern)
+   * Counts both full-segment wildcards and intra-segment wildcards
    */
   getWildcardCount(): number {
-    return this.normalizedStringValue.split(':').filter(s => s === '*').length;
+    const normalizedSegments = this.normalizedStringValue.split(':');
+    return normalizedSegments.reduce((count, segment) => {
+      if (segment === '*') {
+        return count + 1; // Full segment wildcard
+      } else if (segment.includes('*')) {
+        return count + (segment.match(/\*/g) || []).length; // Count * within segment
+      }
+      return count;
+    }, 0);
   }
 
   /**
@@ -225,21 +285,6 @@ export class HierarchicalPattern {
    */
   isMoreSpecificThan(other: HierarchicalPattern): boolean {
     return this.getSpecificity() > other.getSpecificity();
-  }
-
-  /**
-   * Create a more specific pattern by replacing the first wildcard with a concrete segment
-   */
-  specialize(segment: string): HierarchicalPattern {
-    const newSegments = [...this.segments];
-    const wildcardIndex = newSegments.indexOf('*');
-
-    if (wildcardIndex === -1) {
-      throw new Error('Cannot specialize pattern without wildcards');
-    }
-
-    newSegments[wildcardIndex] = segment;
-    return new HierarchicalPattern(newSegments);
   }
 
   /**
@@ -330,79 +375,5 @@ export class HierarchicalPattern {
    */
   toJSON(): string {
     return this.normalizedStringValue;
-  }
-
-  /**
-   * Create from JSON representation
-   */
-  static fromJSON(json: string): HierarchicalPattern {
-    return new HierarchicalPattern(json);
-  }
-}
-
-/**
- * Builder for constructing HierarchicalPattern instances
- */
-export class HierarchicalPatternBuilder {
-  private segments: string[] = [];
-
-  /**
-   * Add a concrete segment
-   */
-  segment(segment: string): this {
-    this.segments.push(segment);
-    return this;
-  }
-
-  /**
-   * Add multiple segments
-   */
-  addSegments(...segments: string[]): this {
-    this.segments.push(...segments);
-    return this;
-  }
-
-  /**
-   * Add a wildcard segment
-   */
-  wildcard(): this {
-    this.segments.push('*');
-    return this;
-  }
-
-  /**
-   * Add segments from a path-like string (splitting by '/')
-   */
-  path(path: string): this {
-    const pathSegments = path.split('/').filter(s => s.length > 0);
-    this.segments.push(...pathSegments);
-    return this;
-  }
-
-  /**
-   * Add a wildcard if condition is true, otherwise add the segment
-   */
-  conditionalWildcard(condition: boolean, segment?: string): this {
-    if (condition) {
-      this.segments.push('*');
-    } else if (segment !== undefined) {
-      this.segments.push(segment);
-    }
-    return this;
-  }
-
-  /**
-   * Build the pattern
-   */
-  build(): HierarchicalPattern {
-    return new HierarchicalPattern([...this.segments]);
-  }
-
-  /**
-   * Reset the builder
-   */
-  reset(): this {
-    this.segments = [];
-    return this;
   }
 }

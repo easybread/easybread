@@ -22,17 +22,6 @@ describe('HierarchicalPattern', () => {
       expect(pattern.toString()).toBe('exec1:FIBER_CLOSED:root');
       expect(pattern.isExact()).toBe(true);
     });
-
-    it('should create using builder', () => {
-      const pattern = HierarchicalPattern.builder()
-        .segment('exec1')
-        .wildcard()
-        .segment('root')
-        .wildcard()
-        .build();
-
-      expect(pattern.toString()).toBe('exec1:*:root:*');
-    });
   });
 
   describe('normalization', () => {
@@ -139,6 +128,190 @@ describe('HierarchicalPattern', () => {
         ),
       ).toBe(false);
     });
+
+    it('should handle intra-segment wildcards', () => {
+      const pattern = HierarchicalPattern.fromString(
+        'FOO:some/*/wildcard:*:NOX',
+      );
+
+      // Should match - proper segment count matching
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/wildcard:ANYTHING:NOX'),
+        ),
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/wildcard:BAR:NOX'),
+        ),
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/with/wildcard:BAR:NOX'),
+        ),
+      ).toBe(true);
+
+      // Should not match
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('OTHER:some/path/wildcard:BAR:NOX'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/wildcard:BAR:OTHER'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:OTHER/path/wildcard:BAR:NOX'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/OTHER:BAR:NOX'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('some/path/wildcard:BAR:NOX'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/wildcard:BAR'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:path/wildcard:BAR:NOX'),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(HierarchicalKey.fromString('FOO:some/path:BAR:NOX')),
+      ).toBe(false);
+    });
+
+    it('should handle your original example correctly', () => {
+      const pattern = HierarchicalPattern.fromString(
+        'FOO:some/*/wildcard:*:NOX',
+      );
+
+      // Based on your original requirements, these should all match
+      expect(
+        pattern.matches(HierarchicalKey.fromString('FOO:some/wildcard:NOX')), // * segment matches nothing
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/wildcard:BAR:NOX'),
+        ), // * segment matches BAR
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/wildcard:BAR:NOX'),
+        ), // intra-segment * matches path
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/long/path/wildcard:BAR:NOX'),
+        ), // intra-segment * matches long/path
+      ).toBe(true);
+
+      // This should match too - * segment can match multiple segments (BAR:BAZ)
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('FOO:some/path/with/wildcard:BAR:BAZ:NOX'),
+        ),
+      ).toBe(true); // * segment matches BAR:BAZ
+    });
+
+    it('should handle simple intra-segment wildcards', () => {
+      const pattern = HierarchicalPattern.fromString('some/*/wildcard');
+
+      // Based on user requirements, * should be able to match zero characters
+      expect(
+        pattern.matches(HierarchicalKey.fromString('some/wildcard')), // * matches zero chars
+      ).toBe(true);
+      expect(
+        pattern.matches(HierarchicalKey.fromString('some/path/wildcard')), // * matches "path"
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('some/long/path/to/wildcard'),
+        ), // * matches "long/path/to"
+      ).toBe(true);
+      expect(
+        pattern.matches(HierarchicalKey.fromString('some/x/wildcard')), // * matches "x"
+      ).toBe(true);
+
+      // But should NOT match these
+      expect(
+        pattern.matches(HierarchicalKey.fromString('some/other')), // Wrong ending
+      ).toBe(false);
+      expect(
+        pattern.matches(HierarchicalKey.fromString('other/path/wildcard')), // Wrong beginning
+      ).toBe(false);
+    });
+
+    it('should handle multiple intra-segment wildcards', () => {
+      const pattern = HierarchicalPattern.fromString(
+        'prefix/*/middle/*/suffix',
+      );
+
+      expect(
+        pattern.matches(HierarchicalKey.fromString('prefix/a/middle/b/suffix')),
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString('prefix/path/to/middle/other/path/suffix'),
+        ),
+      ).toBe(true);
+
+      // With current implementation, both wildcards can match zero chars
+      expect(
+        pattern.matches(HierarchicalKey.fromString('prefix/middle/suffix')),
+      ).toBe(true); // Both * match zero chars
+
+      expect(
+        pattern.matches(HierarchicalKey.fromString('prefix/a/other/b/suffix')),
+      ).toBe(false); // Wrong middle part
+    });
+
+    it('should handle patterns with wildcards at beginning and end of segments', () => {
+      const pattern = HierarchicalPattern.fromString(
+        '*/suffix:prefix/*:*/both/*',
+      );
+
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString(
+            'anything/suffix:prefix/anything:x/both/y',
+          ),
+        ),
+      ).toBe(true);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString(
+            'path/to/file.suffix:prefix/config.json:data/both/end',
+          ),
+        ),
+      ).toBe(true);
+
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString(
+            'anything/other:prefix/anything:anything:both/anything',
+          ),
+        ),
+      ).toBe(false);
+      expect(
+        pattern.matches(
+          HierarchicalKey.fromString(
+            'anything/suffix:other/anything:anything:both/anything',
+          ),
+        ),
+      ).toBe(false);
+    });
   });
 
   describe('pattern overlap detection', () => {
@@ -194,6 +367,19 @@ describe('HierarchicalPattern', () => {
       expect(HierarchicalPattern.fromString('*:*:*').getWildcardCount()).toBe(
         1,
       ); // normalized
+
+      // Intra-segment wildcards
+      expect(
+        HierarchicalPattern.fromString('some/*/path').getWildcardCount(),
+      ).toBe(1);
+      expect(
+        HierarchicalPattern.fromString('*/prefix:suffix/*').getWildcardCount(),
+      ).toBe(2);
+      expect(
+        HierarchicalPattern.fromString(
+          'prefix/*/middle/*/suffix',
+        ).getWildcardCount(),
+      ).toBe(2);
     });
 
     it('should calculate specificity', () => {
@@ -218,21 +404,6 @@ describe('HierarchicalPattern', () => {
   });
 
   describe('pattern manipulation', () => {
-    it('should specialize patterns', () => {
-      const pattern = HierarchicalPattern.fromString('exec1:*:root');
-      const specialized = pattern.specialize('FIBER_CLOSED');
-
-      expect(specialized.toString()).toBe('exec1:FIBER_CLOSED:root');
-      expect(pattern.toString()).toBe('exec1:*:root'); // original unchanged
-    });
-
-    it('should throw when specializing exact patterns', () => {
-      const pattern = HierarchicalPattern.fromString('exec1:FIBER:root');
-      expect(() => pattern.specialize('NEW')).toThrow(
-        'Cannot specialize pattern without wildcards',
-      );
-    });
-
     it('should generalize patterns', () => {
       const pattern = HierarchicalPattern.fromString('exec1:FIBER_CLOSED:root');
       const generalized = pattern.generalize(1);
@@ -274,39 +445,6 @@ describe('HierarchicalPattern', () => {
     });
   });
 
-  describe('builder pattern', () => {
-    it('should support fluent interface', () => {
-      const pattern = HierarchicalPattern.builder()
-        .segment('exec1')
-        .wildcard()
-        .addSegments('root', 'paginate')
-        .conditionalWildcard(true)
-        .conditionalWildcard(false, 'concrete')
-        .build();
-
-      expect(pattern.toString()).toBe('exec1:*:root:paginate:*:concrete');
-    });
-
-    it('should support reset', () => {
-      const builder = HierarchicalPattern.builder();
-
-      builder.segment('first').wildcard();
-      builder.reset();
-      const pattern = builder.segment('new').build();
-
-      expect(pattern.toString()).toBe('new');
-    });
-
-    it('should handle path splitting', () => {
-      const pattern = HierarchicalPattern.builder()
-        .path('root/paginate/cmd')
-        .wildcard()
-        .build();
-
-      expect(pattern.getSegments()).toEqual(['root', 'paginate', 'cmd', '*']);
-    });
-  });
-
   describe('serialization', () => {
     const pattern = HierarchicalPattern.fromString('exec1:*:root');
 
@@ -337,12 +475,12 @@ describe('HierarchicalPattern', () => {
 
     it('should handle patterns with special characters', () => {
       const pattern = HierarchicalPattern.fromString(
-        'exec1:FIBER:root/path/-/0/-',
+        'exec1:FIBER:root/path/~/0/-',
       );
       expect(pattern.getSegments()).toEqual([
         'exec1',
         'FIBER',
-        'root/path/-/0/-',
+        'root/path/~/0/-',
       ]);
     });
 
@@ -360,7 +498,7 @@ describe('HierarchicalPattern', () => {
       const pattern1 = HierarchicalPattern.fromString('exec1:*:root');
       const pattern2 = HierarchicalPattern.fromString('exec1:*:root');
       const pattern3 = HierarchicalPattern.fromString('exec1:*:other');
-      const pattern4 = HierarchicalPattern.fromString('exec1:*:*'); // normalizes to different pattern
+      const pattern4 = HierarchicalPattern.fromString('exec1:*:*'); // normalizes to "exec1:*"
 
       expect(pattern1.equals(pattern2)).toBe(true);
       expect(pattern1.equals(pattern3)).toBe(false);

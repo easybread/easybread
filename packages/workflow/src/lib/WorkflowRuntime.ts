@@ -6,9 +6,10 @@ import { WorkflowGraph } from './WorkflowGraph';
 import type { WorkflowRuntimeStores } from './WorkflowRuntimeStores';
 import type { WorkflowStoreAdapter } from './WorkflowStoreAdapter';
 import { BACKPRESSURE_POLICY_TYPE } from './domain/BackpressurePolicy';
-import { EventMatchPattern } from './domain/EventMatchPattern';
-import { EventStoreSubscription } from './domain/EventStoreSubscription';
+import { DelayedQueuePoller } from './domain/EventsDelayedPoller';
+import { EventsReadyPoller } from './domain/EventsReadyPoller';
 import type { Fiber } from './domain/Fiber';
+import { EventMatchPattern } from './domain/KeyPattern';
 import type { NodeAny } from './domain/Node';
 import {
   type FiberClosedEvent,
@@ -26,7 +27,9 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
   private readonly stores: WorkflowRuntimeStores;
   private readonly contextFactory: ContextFactory;
   private readonly intentsProcessor: IntentsProcessor;
-  private subscription: EventStoreSubscription | null = null;
+
+  private eventsReadyPoller: EventsReadyPoller | null = null;
+  private eventsDelayedPoller: DelayedQueuePoller | null = null;
 
   static create<TRoot extends NodeAny>(
     root: TRoot,
@@ -51,16 +54,19 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
     // load all data
     // re-start in-progress nodes
     // resume subscription
-    this.subscription = EventStoreSubscription.make(
+    const pattern = EventMatchPattern.make({
+      execId,
+      eventName: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+      nodeId: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+      fiberKey: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+    });
+
+    this.eventsReadyPoller = new EventsReadyPoller(
       this.stores.event,
-      EventMatchPattern.make({
-        execId,
-        eventName: EventMatchPattern.WILDCARDS.SQEUENCE,
-        nodeId: EventMatchPattern.WILDCARDS.SQEUENCE,
-        fiberKey: EventMatchPattern.WILDCARDS.SQEUENCE,
-      }),
-      event => this.onEvent(event),
+      pattern,
+      this.onEventBatch.bind(this),
     );
+
     throw new Error('not implemented');
   }
 
@@ -68,26 +74,44 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
     // TODO: create execution
     const execId = '123';
 
-    this.subscription = EventStoreSubscription.make(
+    const pattern = EventMatchPattern.make({
+      execId,
+      eventName: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+      nodeId: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+      fiberKey: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+    });
+
+    this.eventsReadyPoller = new EventsReadyPoller(
       this.stores.event,
-      EventMatchPattern.make({
-        execId,
-        eventName: EventMatchPattern.WILDCARDS.SQEUENCE,
-        nodeId: EventMatchPattern.WILDCARDS.SQEUENCE,
-        fiberKey: EventMatchPattern.WILDCARDS.SQEUENCE,
-      }),
-      event => this.onEvent(event),
+      pattern,
+      this.onEventBatch.bind(this),
     );
+
+    this.eventsDelayedPoller = new DelayedQueuePoller(
+      this.stores.event,
+      pattern.execId,
+    );
+
+    this.eventsReadyPoller.start();
+    this.eventsDelayedPoller.start();
+
+    // - create a fiber eligible for root node execution (`{execId}`)
+    // - run the root node
+    // TODO: refine this execution parameters
+    this.executeNode(execId, this.graph.getRootNode().id, '-');
   }
 
   async complete() {
     // update execution store
-    this.subscription?.destroy();
+    this.eventsReadyPoller?.destroy();
   }
 
-  async onEvent(event: WorkflowEventAny) {
-    // TODO: catch ALL exceptions and unlock the event
+  async onEventBatch(events: WorkflowEventAny[]) {
+    for (const event of events) this.onEvent(event);
+  }
 
+  // TODO: catch ALL exceptions and unlock the event
+  async onEvent(event: WorkflowEventAny) {
     try {
       switch (event.name) {
         case WORKFLOW_EVENT_NAME.enum.FIBER_CLOSED:
@@ -106,37 +130,17 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
           error.details.pressure * 20,
         );
       }
-      throw error;
+
+      // TODO: handle other errors
+
+      await this.stores.event.rescheduleEvent(event, 300);
     }
   }
 
   async onNodeScheduled(event: NodeScheduledEvent) {
     const { targetNodeId } = Option.unwrap(event.payload);
     await this.executeNode(event.execId, targetNodeId, event.fiberKey);
-    await this.eventQueue.ack(event);
-  }
-
-  async onFiberClosed(event: FiberClosedEvent) {
-    const { execId, fiberKey, nodeId } = event;
-
-    // TODO: ack event
-
-    const closedFiber = await this.stores.fiber.getFiber(execId, fiberKey);
-
-    let node: NodeAny | null = this.graph.getNode(nodeId);
-
-    while (node) {
-      const intents = await node.onClose(closedFiber);
-      const events = await this.intentsProcessor.process(intents);
-
-      await this.eventQueue.publish(events);
-
-      if (Intent.hasStopPropagation(intents)) {
-        break;
-      }
-
-      node = this.graph.getParentNode(node.id);
-    }
+    await this.stores.event.ack(event);
   }
 
   async executeNode(execId: string, nodeId: string, fiberKey: string) {
@@ -149,9 +153,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
       return;
     }
 
-    //--------------------------------------------
     // TODO: check concurrency
-    //--------------------------------------------
 
     const runContext = await this.contextFactory.createNodeRunContext(
       node,
@@ -160,7 +162,28 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
 
     const intents = await node.run(runContext);
     const events = await this.intentsProcessor.process(intents);
-    await this.eventQueue.publish(events);
+    await this.stores.event.writeEvents(events);
+  }
+
+  async onFiberClosed(event: FiberClosedEvent) {
+    const { execId, fiberKey, nodeId } = event;
+
+    const closedFiber = await this.stores.fiber.getFiber(execId, fiberKey);
+
+    let node: NodeAny | null = this.graph.getNode(nodeId);
+
+    while (node) {
+      const intents = await node.onClose(closedFiber);
+      const events = await this.intentsProcessor.process(intents);
+
+      await this.stores.event.writeEvents(events);
+
+      if (Intent.hasStopPropagation(intents)) {
+        break;
+      }
+
+      node = this.graph.getParentNode(node.id);
+    }
   }
 
   async checkBackpressure(runFiber: Fiber, node: NodeAny) {
@@ -169,12 +192,12 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
         return 0;
 
       case BACKPRESSURE_POLICY_TYPE.enum.GLOBAL: {
-        const messagesCount = await this.eventQueue.estimateEventCount(
+        const messagesCount = await this.stores.event.estimateEventCount(
           EventMatchPattern.make({
             eventName: WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED,
             execId: runFiber.execId,
             nodeId: node.id,
-            fiberKey: EventMatchPattern.WILDCARDS.SQEUENCE,
+            fiberKey: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
           }),
         );
         return messagesCount < node.backpressurePolicy.threshold;
@@ -186,14 +209,14 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
           return node.isFork();
         });
 
-        const messagesCount = await this.eventQueue.estimateEventCount(
+        const messagesCount = await this.stores.event.estimateEventCount(
           EventMatchPattern.make({
             eventName: WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED,
             execId: runFiber.execId,
             nodeId: node.id,
             fiberKey: EventMatchPattern.makeFiberKeyOption({
               keyPartial: keyPrefix,
-              suffixWildcard: EventMatchPattern.WILDCARDS.SQEUENCE,
+              suffixWildcard: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
             }),
           }),
         );

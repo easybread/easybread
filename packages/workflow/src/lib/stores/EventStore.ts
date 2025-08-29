@@ -3,7 +3,7 @@ import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
 import {
   EventMatchPattern,
   type EventMatchPatternOptions,
-} from '../domain/EventMatchPattern';
+} from '../domain/KeyPattern';
 import {
   WorkflowEvent,
   type WorkflowEventAny,
@@ -11,35 +11,41 @@ import {
 } from '../domain/WorkflowEvent';
 
 /**
- * Store for events that are rescheduled for processing later.
+ * Store for events that are delayed for processing later.
  * @private
  */
-class _EventRescheduleStore extends WorkflowStore {
+class _EventsDelayedStore extends WorkflowStore {
   constructor(adapter: WorkflowStoreAdapter) {
-    super('EVENT_RESCHEDULE', adapter);
+    super('EVENTS_DELAYED', adapter);
   }
 
-  async add(execId: string, itemKey: string, delayMS: number) {
+  async addKeys(execId: string, itemKey: string, delayMS: number) {
     const currentTimeMS = await this.adapter.timeMS();
-    const key = this.encodeStoreKey(execId);
+    const scoredListKey = this.encodeStoreKey(execId);
 
-    await this.adapter.addScored(key, itemKey, currentTimeMS + delayMS);
+    await this.adapter.addScored(
+      scoredListKey,
+      itemKey,
+      currentTimeMS + delayMS,
+    );
   }
 
-  async remove(execId: string, itemKey: string) {
-    const key = this.encodeStoreKey(execId);
-
-    await this.adapter.removeScored(key, itemKey);
+  async removeKeys(execId: string, itemKey: string) {
+    const scoredListKey = this.encodeStoreKey(execId);
+    await this.adapter.removeScored(scoredListKey, itemKey);
   }
 
-  async claimDueItems(execId: string) {
-    const key = this.encodeStoreKey(execId);
+  async claimDueKeys(execId: string) {
+    const scoredListKey = this.encodeStoreKey(execId);
     const currentTimeMS = await this.adapter.timeMS();
 
-    return await this.adapter.withLock(key, async store => {
-      const items = await store.getScored(key, { max: currentTimeMS });
-      await store.removeScoredUpTo(key, { max: currentTimeMS });
-      return items;
+    return await this.adapter.withLock(scoredListKey, async store => {
+      const delayedKeys = await store.getScored(scoredListKey, {
+        max: currentTimeMS,
+      });
+      await store.removeScoredMany(scoredListKey, delayedKeys);
+
+      return delayedKeys;
     });
   }
 }
@@ -48,9 +54,47 @@ class _EventRescheduleStore extends WorkflowStore {
  * Store for events that are in progress to prevent double processing
  * @private
  */
-class _EventInProgressStore extends WorkflowStore {
+class _EventsProcessingStore extends WorkflowStore {
   constructor(adapter: WorkflowStoreAdapter) {
-    super('EVENT_IN_PROGRESS', adapter);
+    super('EVENTS_PROCESSING', adapter);
+  }
+
+  async addKeys(execId: string, storeKeys: string[]) {
+    const currentTimeMS = await this.adapter.timeMS();
+    const encodedKey = this.encodeStoreKey(execId);
+    await this.adapter.addScoredMany(encodedKey, storeKeys, currentTimeMS);
+  }
+
+  async removeKeys(execId: string, storeKeys: string[]) {
+    const encodedKey = this.encodeStoreKey(execId);
+    await this.adapter.removeScoredMany(encodedKey, storeKeys);
+  }
+}
+
+/**
+ * Store for events that are ready for processing
+ * @private
+ */
+class _EventsReadyStore extends WorkflowStore {
+  constructor(adapter: WorkflowStoreAdapter) {
+    super('EVENTS_READY', adapter);
+  }
+
+  async addKeys(execId: string, keys: string[]) {
+    const currentTimeMS = await this.adapter.timeMS();
+    const encodedKey = this.encodeStoreKey(execId);
+    await this.adapter.addScoredMany(encodedKey, keys, currentTimeMS);
+  }
+
+  async readKeys(execId: string) {
+    const encodedKey = this.encodeStoreKey(execId);
+    const currentTimeMS = await this.adapter.timeMS();
+    return await this.adapter.getScored(encodedKey, { max: currentTimeMS });
+  }
+
+  async removeKeys(execId: string, keys: string[]) {
+    const encodedKey = this.encodeStoreKey(execId);
+    await this.adapter.removeScoredMany(encodedKey, keys);
   }
 }
 
@@ -69,13 +113,15 @@ export class EventStore extends WorkflowStore {
     return [execId, eventName, nodeId, fiberKey].join(':');
   }
 
-  private readonly rescheduleStore: _EventRescheduleStore;
-  private readonly inProgressStore: _EventInProgressStore;
+  private readonly delayedStore: _EventsDelayedStore;
+  private readonly processingStore: _EventsProcessingStore;
+  private readonly readyStore: _EventsReadyStore;
 
   constructor(adapter: WorkflowStoreAdapter) {
     super('EVENT', adapter);
-    this.rescheduleStore = new _EventRescheduleStore(adapter);
-    this.inProgressStore = new _EventInProgressStore(adapter);
+    this.delayedStore = new _EventsDelayedStore(adapter);
+    this.processingStore = new _EventsProcessingStore(adapter);
+    this.readyStore = new _EventsReadyStore(adapter);
   }
 
   async estimateEventCount(pattern: EventMatchPattern) {
@@ -88,48 +134,89 @@ export class EventStore extends WorkflowStore {
   }
 
   async writeEvents(events: WorkflowEventAny[]) {
+    let execId: string | null = null;
+    const kvPairs: [string, WorkflowEventJSON][] = [];
+
     for (const event of events) {
-      const storeKey = this.encodeStoreKey(WorkflowEvent.encodePK(event));
-      await this.adapter.set(storeKey, event.toJSON());
+      if (execId === null) {
+        execId = event.execId;
+      }
+
+      if (execId !== event.execId) {
+        throw new Error('Cannot write events for multiple execIds');
+      }
+
+      kvPairs.push([
+        this.encodeStoreKey(WorkflowEvent.encodePK(event)),
+        event.toJSON(),
+      ]);
     }
+
+    if (execId === null) {
+      throw new Error('Unexpected empty execId');
+    }
+
+    await this.rwLock.usingWriteLock(this.encodeStoreKey(execId), async () => {
+      await Promise.all([
+        this.adapter.setMany<WorkflowEventJSON>(kvPairs),
+        this.readyStore.addKeys(
+          execId,
+          kvPairs.map(([key]) => key),
+        ),
+      ]);
+    });
   }
 
   async ack(event: WorkflowEventAny) {
     const storeKey = this.encodeStoreKey(WorkflowEvent.encodePK(event));
-    await this.adapter.remove(storeKey);
+    await this.rwLock.usingWriteLock(storeKey, async () =>
+      Promise.all([
+        this.adapter.remove(storeKey),
+        this.processingStore.removeKeys(event.execId, [storeKey]),
+      ]),
+    );
   }
 
-  async readQueued(execId: string, maxCount = 100) {}
+  async reProcessDelayed(execId: string) {
+    const delayedKeys = await this.delayedStore.claimDueKeys(execId);
+    await this.readyStore.addKeys(execId, delayedKeys);
+  }
 
-  async readEvents(pattern: EventMatchPattern) {
-    const events: WorkflowEventAny[] = [];
-    const encodedPattern = this.encodeStoreKey(pattern.toString());
+  async claimForProcessing(pattern: EventMatchPattern) {
+    const matchedKeys = await this.rwLock.usingWriteLock(
+      this.encodeStoreKey(pattern.toString()),
+      async () => {
+        const keys = await this.readyStore.readKeys(pattern.execId);
+        const matchedKeys = pattern.matchKeys(keys);
 
-    for await (const key of this.adapter.keysGenerator(encodedPattern)) {
-      const event = await this.adapter.get<WorkflowEventJSON>(key);
-      if (event) {
-        events.push(WorkflowEvent.fromJSON(event));
-      }
-    }
+        if (matchedKeys.length > 0) {
+          await Promise.all([
+            this.readyStore.removeKeys(pattern.execId, matchedKeys),
+            this.processingStore.addKeys(pattern.execId, matchedKeys),
+          ]);
+        }
 
-    return events;
+        return matchedKeys;
+      },
+    );
+
+    return await this.readMany(matchedKeys);
   }
 
   async rescheduleEvent(event: WorkflowEventAny, delayMs: number) {
-    throw new Error('Method not implemented.');
+    const storeKey = this.encodeStoreKey(WorkflowEvent.encodePK(event));
+    await this.rwLock.usingWriteLock(storeKey, async () =>
+      Promise.all([
+        this.processingStore.removeKeys(event.execId, [storeKey]),
+        this.delayedStore.addKeys(event.execId, storeKey, delayMs),
+      ]),
+    );
   }
 
-  async lockKey(key: string) {
-    // prevent events from being read and their keys to be enumerated
-    // how? hmm...
-    throw new Error('not implemnted');
-  }
+  private async readMany(keys: string[]) {
+    const encodedKeys = keys.map(this.encodeStoreKey);
+    const data = await this.adapter.getMany<WorkflowEventJSON>(encodedKeys);
 
-  async unlockKey(key: string) {
-    throw new Error('not implemented');
-  }
-
-  async isLockedKey(key: string): Promise<boolean> {
-    throw new Error('not implemented');
+    return data.map(eventJson => WorkflowEvent.fromJSON(eventJson));
   }
 }

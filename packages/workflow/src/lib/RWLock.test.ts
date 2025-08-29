@@ -1,15 +1,15 @@
-import { HierarchicalRwLock } from './RWLock';
+import { InMemoryPatternRwLock } from './RWLock';
 
 describe('HierarchicalRwLock', () => {
-  let lock: HierarchicalRwLock;
+  let lock: InMemoryPatternRwLock;
 
   beforeEach(() => {
-    lock = new HierarchicalRwLock();
+    lock = new InMemoryPatternRwLock();
   });
 
   describe('pattern normalization', () => {
     it('should normalize redundant wildcards', () => {
-      const lock = new HierarchicalRwLock();
+      const lock = new InMemoryPatternRwLock();
 
       expect(lock.normalizePattern('EVENT:*:*')).toBe('EVENT:*');
       expect(lock.normalizePattern('EVENT:CLOSED:*:*')).toBe('EVENT:CLOSED:*');
@@ -21,7 +21,7 @@ describe('HierarchicalRwLock', () => {
 
   describe('pattern overlap detection', () => {
     it('should detect overlapping patterns', () => {
-      const lock = new HierarchicalRwLock();
+      const lock = new InMemoryPatternRwLock();
 
       // Basic wildcard matching
       expect(lock.patternsOverlap('FOO:*', 'FOO:BAR')).toBe(true);
@@ -328,7 +328,7 @@ describe('HierarchicalRwLock', () => {
     });
 
     it('should handle patterns with multiple consecutive wildcards', async () => {
-      const lock = new HierarchicalRwLock() as any;
+      const lock = new InMemoryPatternRwLock() as any;
       expect(lock.normalizePattern('FOO:*:*:*')).toBe('FOO:*');
     });
 
