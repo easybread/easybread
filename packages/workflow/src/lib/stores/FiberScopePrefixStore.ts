@@ -1,5 +1,5 @@
-import { WorkflowStore } from '../WorkflowStore';
-import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
+import { Store } from '../Store';
+import type { StoreAdapter } from '../StoreAdapter';
 import type { FiberPolicy } from '../domain/FiberPolicy';
 import {
   FiberScopePrefix,
@@ -21,8 +21,8 @@ export function* range(start: number, end: number) {
   }
 }
 
-export class FiberScopePrefixStore extends WorkflowStore {
-  constructor(adapter: WorkflowStoreAdapter) {
+export class FiberScopePrefixStore extends Store {
+  constructor(adapter: StoreAdapter) {
     super('FIBER_SCOPE_PREFIX', adapter);
   }
 

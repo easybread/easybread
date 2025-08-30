@@ -1,4 +1,5 @@
 import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
+import { minimatch } from 'minimatch';
 
 export const SEGMENT_MACRO = enumSuiteObject(enumObject(['P', 'S']));
 export type SegmentMacro = typeof SEGMENT_MACRO.$type;
@@ -36,28 +37,15 @@ type inferPatternProps<T extends readonly KeyTemplateSegmentAny[]> = T extends [
     : { [K in S['propName']]: string }
   : never;
 
-export type KeyPatternWildcardChar =
-  (typeof KeyPattern.WILDCARDS)[keyof typeof KeyPattern.WILDCARDS];
-
-// TODO: move to shared utilities
-type NoWidenAnyString = string & { readonly __nominal?: never };
-
-export type Wildcardable<T extends string> = string extends T
-  ? KeyPatternWildcardChar | NoWidenAnyString
-  : KeyPatternWildcardChar | T;
-
 type WithPatternTemplate<T extends string> = {
   readonly PATTERN_TEMPLATE: T;
 };
 
 export class KeyPattern<T extends string> {
   static readonly WILDCARDS = {
-    ANY_SEGMENT: '*',
+    ONE_SEGMENT: '*',
+    MULTIPLE_SEGMENTS: '**',
   } as const;
-
-  static isWirdcard(char: string): char is KeyPatternWildcardChar {
-    return Object.values(this.WILDCARDS).includes(char as any);
-  }
 
   static forPreset<T extends string>(
     template: T,
@@ -83,11 +71,13 @@ export class KeyPattern<T extends string> {
     const segments = keyDef.split(':');
 
     return segments.map(segment => {
-      const [macro, propName] = segment.split('(');
+      const match = /(P|S)\((.*?)\)/.exec(segment);
 
-      if (!macro || !propName) {
+      if (!match) {
         throw new Error(`Invalid segment: ${segment}`);
       }
+
+      const [_, macro, propName] = match;
 
       if (!SEGMENT_MACRO.hasValue(macro)) {
         throw new Error(`Invalid macro: ${macro}`);
@@ -97,19 +87,21 @@ export class KeyPattern<T extends string> {
     }) as inferKeyTemplateSegments<T>;
   }
 
-  static makeWildcardedPathSegment(options: {
-    prefixWildcard?: KeyPatternWildcardChar;
-    partial: string;
-    suffixWildcard?: KeyPatternWildcardChar;
-  }) {
-    return [options.prefixWildcard, options.partial, options.suffixWildcard]
-      .filter(part => part != null)
-      .join('/')
-      .replace(/\/+/g, '/');
+  static makePathSegmentWildcardByPrefix(prefix: string) {
+    return this.makePathSegment([
+      prefix,
+      KeyPattern.WILDCARDS.ONE_SEGMENT,
+      KeyPattern.WILDCARDS.MULTIPLE_SEGMENTS,
+    ]);
   }
 
-  protected readonly templateSegments: inferKeyTemplateSegments<T>;
-  protected readonly props: inferPatternProps<inferKeyTemplateSegments<T>>;
+  static makePathSegment(parts: string[]) {
+    return parts.join('/');
+  }
+
+  readonly templateSegments: inferKeyTemplateSegments<T>;
+  readonly props: inferPatternProps<inferKeyTemplateSegments<T>>;
+  readonly minimatchPatterns: Record<string, string>;
 
   constructor(
     segments: inferKeyTemplateSegments<T>,
@@ -117,6 +109,7 @@ export class KeyPattern<T extends string> {
   ) {
     this.templateSegments = segments;
     this.props = props;
+    this.minimatchPatterns = this.createMinimatchPatterns();
   }
 
   toString() {
@@ -125,33 +118,65 @@ export class KeyPattern<T extends string> {
       .join(':');
   }
 
-  match(key: string) {
-    return true;
+  matchKey(key: string) {
+    const keyParts = key.split(':');
+
+    if (keyParts.length !== this.templateSegments.length) return false;
+
+    return this.templateSegments.every((segment, index) => {
+      const keyPart = keyParts[index];
+      const propValue = this.props[segment.propName];
+      const minimatchPattern = this.minimatchPatterns[segment.propName];
+
+      if (propValue === KeyPattern.WILDCARDS.ONE_SEGMENT) return true;
+      if (minimatchPattern) return minimatch(keyPart, minimatchPattern);
+
+      return keyPart === propValue;
+    });
   }
-  matchMany(keys: string[]) {
-    return keys.filter(key => this.match(key));
+
+  filter(keys: string[]) {
+    return keys.filter(key => this.matchKey(key));
   }
 
-  protected toMinimatch(segment: KeyTemplateSegmentAny) {
-    // TODO: implement
-    return 'minimatch string';
+  protected createMinimatchPatterns() {
+    return this.templateSegments.reduce(
+      (result, segment) => {
+        const propValue = this.props[segment.propName];
+
+        if (propValue === KeyPattern.WILDCARDS.ONE_SEGMENT) return result;
+        if (!propValue.includes(KeyPattern.WILDCARDS.ONE_SEGMENT))
+          return result;
+
+        result[segment.propName] = this.createMinimatchForSegment(segment);
+
+        return result;
+      },
+      {} as Record<string, string>,
+    );
   }
-}
 
-//----------------------------------
+  protected createMinimatchForSegment(segment: KeyTemplateSegmentAny) {
+    const { propName, macro } = segment;
+    const propValue = this.props[propName];
 
-export class EventMatchPattern extends KeyPattern.forPreset(
-  'S(execId):S(eventName):P(nodeId):P(fiberKey)',
-) {
-  static make = this.createFactoryMethod(this.PATTERN_TEMPLATE);
-
-  get execId() {
-    return this.props.execId;
+    switch (macro) {
+      case 'S':
+        return this.toMinimatch(propValue);
+      case 'P':
+        return this.toMinimatch(this.preparePathForMinimatch(propValue));
+      default:
+        throw new Error(`Invalid macro: ${macro satisfies never}`);
+    }
   }
-}
 
-export class FiberMatchPattern extends KeyPattern.forPreset(
-  'S(execId):P(fiberKey)',
-) {
-  static make = this.createFactoryMethod(this.PATTERN_TEMPLATE);
+  protected preparePathForMinimatch(path: string) {
+    // nothing to do here for now
+    return path;
+  }
+
+  protected toMinimatch(value: string): string {
+    // currently, nothing to change.
+    return value;
+  }
 }

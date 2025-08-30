@@ -1,8 +1,8 @@
-import { WorkflowStore } from '../WorkflowStore';
-import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
+import { Store } from '../Store';
+import type { StoreAdapter } from '../StoreAdapter';
 
-export class DataStore extends WorkflowStore {
-  constructor(adapter: WorkflowStoreAdapter) {
+export class DataStore extends Store {
+  constructor(adapter: StoreAdapter) {
     super('BLOB', adapter);
   }
 

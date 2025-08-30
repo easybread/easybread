@@ -1,10 +1,10 @@
-import { WorkflowStore } from '../WorkflowStore';
-import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
+import { Store } from '../Store';
+import type { StoreAdapter } from '../StoreAdapter';
 import type { FiberPolicy } from '../domain/FiberPolicy';
 import { FiberScope, FiberScopeJSON } from '../domain/FiberScope';
 
-export class FiberScopeStore extends WorkflowStore {
-  constructor(adapter: WorkflowStoreAdapter) {
+export class FiberScopeStore extends Store {
+  constructor(adapter: StoreAdapter) {
     super('FIBER_SCOPE', adapter);
   }
 

@@ -1,6 +1,6 @@
 import type { EventStore } from '../stores/EventStore';
 
-import type { EventMatchPattern } from './KeyPattern';
+import type { EventKeyPattern } from './EventKeyPattern';
 import { Poller } from './Poller';
 import type { WorkflowEventAny } from './WorkflowEvent';
 
@@ -8,11 +8,11 @@ export class EventsReadyPoller extends Poller<
   (events: WorkflowEventAny[]) => void
 > {
   private readonly eventStore: EventStore;
-  private readonly pattern: EventMatchPattern;
+  private readonly pattern: EventKeyPattern;
 
   constructor(
     eventStore: EventStore,
-    pattern: EventMatchPattern,
+    pattern: EventKeyPattern,
     callback: (events: WorkflowEventAny[]) => void,
     delay?: number,
   ) {

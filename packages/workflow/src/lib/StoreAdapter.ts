@@ -23,7 +23,7 @@ export interface WorkflowStoreAdapterEventSubscriberFn<
   (event: T extends 'ALL_CHANGES' ? WorkflowStoreAdapterEvent : T): void;
 }
 
-export abstract class WorkflowStoreAdapter {
+export abstract class StoreAdapter {
   abstract subscribe<U extends WorkflowStoreAdapterEventType, T extends U[]>(
     eventType: T,
     callback: WorkflowStoreAdapterEventSubscriberFn<T[number]>,

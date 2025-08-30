@@ -2,14 +2,16 @@ import { ContextFactory } from './ContextFactory';
 import { WorkflowBackpressureError } from './Error';
 import { Intent } from './Intent';
 import { IntentsProcessor } from './IntentsProcessor';
+import { ServiceRegistry } from './ServiceRegistry';
+import type { StoreAdapter } from './StoreAdapter';
 import { WorkflowGraph } from './WorkflowGraph';
 import type { WorkflowRuntimeStores } from './WorkflowRuntimeStores';
-import type { WorkflowStoreAdapter } from './WorkflowStoreAdapter';
+import { BackpressureEventKeyPattern } from './domain/BackpressureEventKeyPattern';
 import { BACKPRESSURE_POLICY_TYPE } from './domain/BackpressurePolicy';
+import { EventKeyPattern } from './domain/EventKeyPattern';
 import { DelayedQueuePoller } from './domain/EventsDelayedPoller';
 import { EventsReadyPoller } from './domain/EventsReadyPoller';
 import type { Fiber } from './domain/Fiber';
-import { EventMatchPattern } from './domain/KeyPattern';
 import type { NodeAny } from './domain/Node';
 import {
   type FiberClosedEvent,
@@ -23,42 +25,60 @@ import { EventStore } from './stores/EventStore';
 import { FiberStore } from './stores/FiberStore';
 
 export class WorkflowRuntime<TRoot extends NodeAny> {
-  private readonly graph: WorkflowGraph<TRoot>;
-  private readonly stores: WorkflowRuntimeStores;
-  private readonly contextFactory: ContextFactory;
-  private readonly intentsProcessor: IntentsProcessor;
+  private readonly serviceRegistry: ServiceRegistry;
+
+  private get graph(): WorkflowGraph<TRoot> {
+    return this.serviceRegistry.getInstance(WorkflowGraph<TRoot>);
+  }
+  private get contextFactory(): ContextFactory {
+    return this.serviceRegistry.getInstance(ContextFactory);
+  }
+  private get intentsProcessor(): IntentsProcessor {
+    return this.serviceRegistry.getInstance(IntentsProcessor);
+  }
+
+  private get stores(): WorkflowRuntimeStores {
+    return {
+      event: this.serviceRegistry.getInstance(EventStore),
+      fiber: this.serviceRegistry.getInstance(FiberStore),
+      data: this.serviceRegistry.getInstance(DataStore),
+    };
+  }
 
   private eventsReadyPoller: EventsReadyPoller | null = null;
   private eventsDelayedPoller: DelayedQueuePoller | null = null;
 
   static create<TRoot extends NodeAny>(
     root: TRoot,
-    storeAdapter: WorkflowStoreAdapter,
+    storeAdapter: StoreAdapter,
   ) {
     // TODO: create execution;
     return new WorkflowRuntime(root, storeAdapter);
   }
 
-  private constructor(root: TRoot, storeAdapter: WorkflowStoreAdapter) {
-    this.graph = new WorkflowGraph(root);
-    this.stores = {
-      data: new DataStore(storeAdapter),
-      fiber: new FiberStore(storeAdapter),
-      event: new EventStore(storeAdapter),
-    };
-    this.contextFactory = new ContextFactory(this.stores);
-    this.intentsProcessor = new IntentsProcessor(this.stores);
+  private constructor(root: TRoot, storeAdapter: StoreAdapter) {
+    this.serviceRegistry = new ServiceRegistry();
+    this.serviceRegistry.registerMultipleInstances(
+      this,
+      storeAdapter,
+      new WorkflowGraph(root),
+      new DataStore(storeAdapter),
+      new FiberStore(storeAdapter),
+      new EventStore(storeAdapter),
+      new ContextFactory(this.serviceRegistry),
+      new IntentsProcessor(this.serviceRegistry),
+    );
   }
 
   async resumeExecution(execId: string) {
     // load all data
     // re-start in-progress nodes
     // resume subscription
-    const pattern = EventMatchPattern.make({
+    const pattern = EventKeyPattern.make({
       execId,
-      eventName: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
-      nodeId: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
-      fiberKey: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+      eventName: EventKeyPattern.WILDCARDS.ONE_SEGMENT,
+      nodeId: EventKeyPattern.WILDCARDS.ONE_SEGMENT,
+      fiberKey: EventKeyPattern.WILDCARDS.ONE_SEGMENT,
     });
 
     this.eventsReadyPoller = new EventsReadyPoller(
@@ -74,22 +94,22 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
     // TODO: create execution
     const execId = '123';
 
-    const pattern = EventMatchPattern.make({
+    const eventMatchPattern = EventKeyPattern.make({
       execId,
-      eventName: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
-      nodeId: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
-      fiberKey: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
+      eventName: EventKeyPattern.WILDCARDS.ONE_SEGMENT,
+      nodeId: EventKeyPattern.WILDCARDS.ONE_SEGMENT,
+      fiberKey: EventKeyPattern.WILDCARDS.ONE_SEGMENT,
     });
 
     this.eventsReadyPoller = new EventsReadyPoller(
       this.stores.event,
-      pattern,
+      eventMatchPattern,
       this.onEventBatch.bind(this),
     );
 
     this.eventsDelayedPoller = new DelayedQueuePoller(
       this.stores.event,
-      pattern.execId,
+      eventMatchPattern.execId,
     );
 
     this.eventsReadyPoller.start();
@@ -192,15 +212,10 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
         return 0;
 
       case BACKPRESSURE_POLICY_TYPE.enum.GLOBAL: {
-        const messagesCount = await this.stores.event.estimateEventCount(
-          EventMatchPattern.make({
-            eventName: WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED,
-            execId: runFiber.execId,
-            nodeId: node.id,
-            fiberKey: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
-          }),
-        );
-        return messagesCount < node.backpressurePolicy.threshold;
+        const pattern = BackpressureEventKeyPattern.forGlobal(runFiber, node);
+
+        const count = await this.stores.event.estimateEventCount(pattern);
+        return count < node.backpressurePolicy.threshold;
       }
 
       case BACKPRESSURE_POLICY_TYPE.enum.NEAREST_FORK: {
@@ -209,19 +224,15 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
           return node.isFork();
         });
 
-        const messagesCount = await this.stores.event.estimateEventCount(
-          EventMatchPattern.make({
-            eventName: WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED,
-            execId: runFiber.execId,
-            nodeId: node.id,
-            fiberKey: EventMatchPattern.makeFiberKeyOption({
-              keyPartial: keyPrefix,
-              suffixWildcard: EventMatchPattern.WILDCARDS.ANY_SEGMENT,
-            }),
-          }),
+        const pattern = BackpressureEventKeyPattern.forNearestFork(
+          runFiber,
+          node,
+          keyPrefix,
         );
 
-        return messagesCount - node.backpressurePolicy.threshold;
+        const count = await this.stores.event.estimateEventCount(pattern);
+
+        return count < node.backpressurePolicy.threshold;
       }
 
       default:

@@ -1,5 +1,5 @@
-import { WorkflowStore } from '../WorkflowStore';
-import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
+import { Store } from '../Store';
+import type { StoreAdapter } from '../StoreAdapter';
 import { Fiber, type FiberAny, FiberJSONAny } from '../domain/Fiber';
 import type { ForkNodeAny, JoinNodeAny, PipeNodeAny } from '../domain/Node';
 import type { IOConstraint } from '../helpers/IO';
@@ -9,12 +9,12 @@ import { DataStore } from './DataStore';
 import { FiberScopePrefixStore } from './FiberScopePrefixStore';
 import { FiberScopeStore } from './FiberScopeStore';
 
-export class FiberStore extends WorkflowStore {
+export class FiberStore extends Store {
   private readonly fiberScopeStore: FiberScopeStore;
   private readonly fiberScopePrefixStore: FiberScopePrefixStore;
   private readonly dataStore: DataStore;
 
-  constructor(adapter: WorkflowStoreAdapter) {
+  constructor(adapter: StoreAdapter) {
     super('FIBER', adapter);
     this.fiberScopeStore = new FiberScopeStore(adapter);
     this.fiberScopePrefixStore = new FiberScopePrefixStore(adapter);

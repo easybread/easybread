@@ -1,5 +1,7 @@
-import type { WorkflowRuntimeStores } from '../WorkflowRuntimeStores';
+import type { ServiceRegistry } from '../ServiceRegistry';
 import type { IOConstraint } from '../helpers/IO';
+import { DataStore } from '../stores/DataStore';
+import { FiberStore } from '../stores/FiberStore';
 
 import type { Fiber } from './Fiber';
 import type { FIBER_POLICY_TYPE, FiberPolicy } from './FiberPolicy';
@@ -10,11 +12,11 @@ export abstract class NodeRunContextBase<
   TIn extends IOConstraint,
 > {
   statePolicy: SP;
-  stores: WorkflowRuntimeStores;
+  registry: ServiceRegistry;
 
-  constructor(stores: WorkflowRuntimeStores, statePolicy: SP) {
+  constructor(registry: ServiceRegistry, statePolicy: SP) {
     this.statePolicy = statePolicy;
-    this.stores = stores;
+    this.registry = registry;
   }
 
   async loadInputFiberData(fiber: Fiber): Promise<NonNullable<TIn>> {
@@ -22,7 +24,7 @@ export abstract class NodeRunContextBase<
       throw new Error('Input fiber has no data ref');
     }
 
-    return this.stores.data.getData<TIn>(fiber.dataRef);
+    return this.registry.getInstance(DataStore).getData<TIn>(fiber.dataRef);
   }
 
   async *iterateFiberScopeMembers(
@@ -30,7 +32,9 @@ export abstract class NodeRunContextBase<
     // node: JoinNodeAny | ForkNodeAny,
     node: any,
   ) {
-    return yield* this.stores.fiber.fiberScopeMembersGenerator(fiber, node);
+    return yield* this.registry
+      .getInstance(FiberStore)
+      .fiberScopeMembersGenerator(fiber, node);
   }
 }
 
@@ -44,12 +48,12 @@ export class PipeNodeRunContext<
   runFiber: Fiber;
 
   constructor(
-    stores: WorkflowRuntimeStores,
+    serviceRegistry: ServiceRegistry,
     statePolicy: SP,
     inputFiber: Fiber,
     runFiber: Fiber,
   ) {
-    super(stores, statePolicy);
+    super(serviceRegistry, statePolicy);
     this.inputFiber = inputFiber;
     this.runFiber = runFiber;
   }
@@ -65,12 +69,12 @@ export class ForkNodeRunContext<
   runFibers: Fiber[];
 
   constructor(
-    stores: WorkflowRuntimeStores,
+    registry: ServiceRegistry,
     statePolicy: SP,
     inputFiber: Fiber,
     runFibers: Fiber[],
   ) {
-    super(stores, statePolicy);
+    super(registry, statePolicy);
     this.inputFiber = inputFiber;
     this.runFibers = runFibers;
   }
@@ -84,8 +88,8 @@ export class JoinNodeRunContext<
 
   runFiber: Fiber;
 
-  constructor(stores: WorkflowRuntimeStores, statePolicy: SP, runFiber: Fiber) {
-    super(stores, statePolicy);
+  constructor(registry: ServiceRegistry, statePolicy: SP, runFiber: Fiber) {
+    super(registry, statePolicy);
     this.runFiber = runFiber;
   }
 }

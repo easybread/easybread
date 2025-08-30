@@ -4,15 +4,24 @@ import {
   type IntentAny,
   type RunNodeIntent,
 } from './Intent';
-import type { WorkflowRuntimeStores } from './WorkflowRuntimeStores';
+import type { ServiceRegistry } from './ServiceRegistry';
 import {
   FiberClosedEvent,
   NodeScheduledEvent,
   type WorkflowEventAny,
 } from './domain/WorkflowEvent';
+import { FiberStore } from './stores/FiberStore';
 
 export class IntentsProcessor {
-  constructor(private readonly stores: WorkflowRuntimeStores) {}
+  private readonly serviceRegistry: ServiceRegistry;
+
+  private get fiberStore() {
+    return this.serviceRegistry.getInstance(FiberStore);
+  }
+
+  constructor(serviceRegistry: ServiceRegistry) {
+    this.serviceRegistry = serviceRegistry;
+  }
 
   /**
    * Processes a list of intents, updates the stores and returns a list of events
@@ -67,7 +76,7 @@ export class IntentsProcessor {
     intent: CloseFiberIntentAny,
   ): Promise<WorkflowEventAny[]> {
     const { fiber, data } = intent.payload;
-    await this.stores.fiber.closeFiber(fiber, data);
+    await this.fiberStore.closeFiber(fiber, data);
 
     return [
       new FiberClosedEvent({

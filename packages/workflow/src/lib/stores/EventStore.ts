@@ -1,9 +1,6 @@
-import { WorkflowStore } from '../WorkflowStore';
-import type { WorkflowStoreAdapter } from '../WorkflowStoreAdapter';
-import {
-  EventMatchPattern,
-  type EventMatchPatternOptions,
-} from '../domain/KeyPattern';
+import { Store } from '../Store';
+import type { StoreAdapter } from '../StoreAdapter';
+import { EventKeyPattern } from '../domain/EventKeyPattern';
 import {
   WorkflowEvent,
   type WorkflowEventAny,
@@ -14,8 +11,8 @@ import {
  * Store for events that are delayed for processing later.
  * @private
  */
-class _EventsDelayedStore extends WorkflowStore {
-  constructor(adapter: WorkflowStoreAdapter) {
+class _EventsDelayedStore extends Store {
+  constructor(adapter: StoreAdapter) {
     super('EVENTS_DELAYED', adapter);
   }
 
@@ -54,8 +51,8 @@ class _EventsDelayedStore extends WorkflowStore {
  * Store for events that are in progress to prevent double processing
  * @private
  */
-class _EventsProcessingStore extends WorkflowStore {
-  constructor(adapter: WorkflowStoreAdapter) {
+class _EventsProcessingStore extends Store {
+  constructor(adapter: StoreAdapter) {
     super('EVENTS_PROCESSING', adapter);
   }
 
@@ -75,8 +72,8 @@ class _EventsProcessingStore extends WorkflowStore {
  * Store for events that are ready for processing
  * @private
  */
-class _EventsReadyStore extends WorkflowStore {
-  constructor(adapter: WorkflowStoreAdapter) {
+class _EventsReadyStore extends Store {
+  constructor(adapter: StoreAdapter) {
     super('EVENTS_READY', adapter);
   }
 
@@ -98,33 +95,19 @@ class _EventsReadyStore extends WorkflowStore {
   }
 }
 
-export class EventStore extends WorkflowStore {
-  static executionBasedPattern(execId: string) {
-    return WorkflowEvent.encodePK({
-      execId,
-      name: EventMatchPattern.WILDCARDS.ONE_SEGMENT,
-      nodeId: EventMatchPattern.WILDCARDS.ONE_SEGMENT,
-      fiberKey: EventMatchPattern.WILDCARDS.ONE_SEGMENT,
-    });
-  }
-
-  static makePattern(options: EventMatchPatternOptions) {
-    const { execId, eventName, nodeId, fiberKey } = options;
-    return [execId, eventName, nodeId, fiberKey].join(':');
-  }
-
+export class EventStore extends Store {
   private readonly delayedStore: _EventsDelayedStore;
   private readonly processingStore: _EventsProcessingStore;
   private readonly readyStore: _EventsReadyStore;
 
-  constructor(adapter: WorkflowStoreAdapter) {
+  constructor(adapter: StoreAdapter) {
     super('EVENT', adapter);
     this.delayedStore = new _EventsDelayedStore(adapter);
     this.processingStore = new _EventsProcessingStore(adapter);
     this.readyStore = new _EventsReadyStore(adapter);
   }
 
-  async estimateEventCount(pattern: EventMatchPattern) {
+  async estimateEventCount(pattern: EventKeyPattern) {
     const encodedPattern = this.encodeStoreKey(pattern.toString());
     let count = 0;
     for await (const _ of this.adapter.keysGenerator(encodedPattern)) {
@@ -182,12 +165,12 @@ export class EventStore extends WorkflowStore {
     await this.readyStore.addKeys(execId, delayedKeys);
   }
 
-  async claimForProcessing(pattern: EventMatchPattern) {
+  async claimForProcessing(pattern: EventKeyPattern) {
     const matchedKeys = await this.rwLock.usingWriteLock(
       this.encodeStoreKey(pattern.toString()),
       async () => {
         const keys = await this.readyStore.readKeys(pattern.execId);
-        const matchedKeys = pattern.matchKeys(keys);
+        const matchedKeys = pattern.filter(keys);
 
         if (matchedKeys.length > 0) {
           await Promise.all([
