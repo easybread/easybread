@@ -1,11 +1,11 @@
+import type { ServiceRegistry } from '../ServiceRegistry';
 import { Store } from '../Store';
-import type { StoreAdapter } from '../StoreAdapter';
 import type { FiberPolicy } from '../domain/FiberPolicy';
 import { FiberScope, FiberScopeJSON } from '../domain/FiberScope';
 
 export class FiberScopeStore extends Store {
-  constructor(adapter: StoreAdapter) {
-    super('FIBER_SCOPE', adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'FIBER_SCOPE');
   }
 
   async getScope(options: { execId: string; nodeId: string; key: string }) {

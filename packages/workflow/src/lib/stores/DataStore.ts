@@ -1,9 +1,9 @@
+import type { ServiceRegistry } from '../ServiceRegistry';
 import { Store } from '../Store';
-import type { StoreAdapter } from '../StoreAdapter';
 
 export class DataStore extends Store {
-  constructor(adapter: StoreAdapter) {
-    super('BLOB', adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'DATA');
   }
 
   randomKey() {

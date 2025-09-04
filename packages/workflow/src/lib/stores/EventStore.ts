@@ -1,5 +1,5 @@
+import type { ServiceRegistry } from '../ServiceRegistry';
 import { Store } from '../Store';
-import type { StoreAdapter } from '../StoreAdapter';
 import { EventKeyPattern } from '../domain/EventKeyPattern';
 import {
   WorkflowEvent,
@@ -12,8 +12,8 @@ import {
  * @private
  */
 class _EventsDelayedStore extends Store {
-  constructor(adapter: StoreAdapter) {
-    super('EVENTS_DELAYED', adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'EVENTS_DELAYED');
   }
 
   async addKeys(execId: string, itemKey: string, delayMS: number) {
@@ -52,8 +52,8 @@ class _EventsDelayedStore extends Store {
  * @private
  */
 class _EventsProcessingStore extends Store {
-  constructor(adapter: StoreAdapter) {
-    super('EVENTS_PROCESSING', adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'EVENTS_PROCESSING');
   }
 
   async addKeys(execId: string, storeKeys: string[]) {
@@ -73,8 +73,8 @@ class _EventsProcessingStore extends Store {
  * @private
  */
 class _EventsReadyStore extends Store {
-  constructor(adapter: StoreAdapter) {
-    super('EVENTS_READY', adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'EVENTS_READY');
   }
 
   async addKeys(execId: string, keys: string[]) {
@@ -100,11 +100,11 @@ export class EventStore extends Store {
   private readonly processingStore: _EventsProcessingStore;
   private readonly readyStore: _EventsReadyStore;
 
-  constructor(adapter: StoreAdapter) {
-    super('EVENT', adapter);
-    this.delayedStore = new _EventsDelayedStore(adapter);
-    this.processingStore = new _EventsProcessingStore(adapter);
-    this.readyStore = new _EventsReadyStore(adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'EVENT');
+    this.delayedStore = new _EventsDelayedStore(serviceRegistry);
+    this.processingStore = new _EventsProcessingStore(serviceRegistry);
+    this.readyStore = new _EventsReadyStore(serviceRegistry);
   }
 
   async estimateEventCount(pattern: EventKeyPattern) {

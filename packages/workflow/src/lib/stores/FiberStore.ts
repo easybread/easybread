@@ -1,5 +1,5 @@
+import type { ServiceRegistry } from '../ServiceRegistry';
 import { Store } from '../Store';
-import type { StoreAdapter } from '../StoreAdapter';
 import { Fiber, type FiberAny, FiberJSONAny } from '../domain/Fiber';
 import type { ForkNodeAny, JoinNodeAny, PipeNodeAny } from '../domain/Node';
 import type { IOConstraint } from '../helpers/IO';
@@ -14,11 +14,11 @@ export class FiberStore extends Store {
   private readonly fiberScopePrefixStore: FiberScopePrefixStore;
   private readonly dataStore: DataStore;
 
-  constructor(adapter: StoreAdapter) {
-    super('FIBER', adapter);
-    this.fiberScopeStore = new FiberScopeStore(adapter);
-    this.fiberScopePrefixStore = new FiberScopePrefixStore(adapter);
-    this.dataStore = new DataStore(adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'FIBER');
+    this.fiberScopeStore = new FiberScopeStore(serviceRegistry);
+    this.fiberScopePrefixStore = new FiberScopePrefixStore(serviceRegistry);
+    this.dataStore = new DataStore(serviceRegistry);
   }
 
   async getFiber(execId: string, fiberKey: string) {

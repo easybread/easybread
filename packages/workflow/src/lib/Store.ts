@@ -4,16 +4,16 @@ import { StoreAdapter } from './StoreAdapter';
 
 export class Store {
   protected get adapter() {
-    return this.serviceRegistry.get(StoreAdapter);
+    return this.serviceRegistry.getInstance(StoreAdapter);
   }
-  protected readonly storePrefix: string;
-
-  protected readonly serviceRegistry: ServiceRegistry;
 
   // TODO: use implementation
   protected get rwLock() {
     return this.serviceRegistry.getInstance(PatternRwLock);
   }
+
+  protected readonly storePrefix: string;
+  protected readonly serviceRegistry: ServiceRegistry;
 
   constructor(serviceRegistry: ServiceRegistry, storePrefix: string) {
     this.serviceRegistry = serviceRegistry;

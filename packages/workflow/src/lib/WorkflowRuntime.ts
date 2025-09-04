@@ -2,10 +2,10 @@ import { ContextFactory } from './ContextFactory';
 import { WorkflowBackpressureError } from './Error';
 import { Intent } from './Intent';
 import { IntentsProcessor } from './IntentsProcessor';
+import { PatternRwLock } from './RWLock';
 import { ServiceRegistry } from './ServiceRegistry';
-import type { StoreAdapter } from './StoreAdapter';
+import { StoreAdapter } from './StoreAdapter';
 import { WorkflowGraph } from './WorkflowGraph';
-import type { WorkflowRuntimeStores } from './WorkflowRuntimeStores';
 import { BackpressureEventKeyPattern } from './domain/BackpressureEventKeyPattern';
 import { BACKPRESSURE_POLICY_TYPE } from './domain/BackpressurePolicy';
 import { EventKeyPattern } from './domain/EventKeyPattern';
@@ -36,13 +36,11 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
   private get intentsProcessor(): IntentsProcessor {
     return this.serviceRegistry.getInstance(IntentsProcessor);
   }
-
-  private get stores(): WorkflowRuntimeStores {
-    return {
-      event: this.serviceRegistry.getInstance(EventStore),
-      fiber: this.serviceRegistry.getInstance(FiberStore),
-      data: this.serviceRegistry.getInstance(DataStore),
-    };
+  private get eventStore(): EventStore {
+    return this.serviceRegistry.getInstance(EventStore);
+  }
+  private get fiberStore(): FiberStore {
+    return this.serviceRegistry.getInstance(FiberStore);
   }
 
   private eventsReadyPoller: EventsReadyPoller | null = null;
@@ -51,20 +49,26 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
   static create<TRoot extends NodeAny>(
     root: TRoot,
     storeAdapter: StoreAdapter,
+    rwLock: PatternRwLock,
   ) {
     // TODO: create execution;
-    return new WorkflowRuntime(root, storeAdapter);
+    return new WorkflowRuntime(root, storeAdapter, rwLock);
   }
 
-  private constructor(root: TRoot, storeAdapter: StoreAdapter) {
+  private constructor(
+    root: TRoot,
+    storeAdapter: StoreAdapter,
+    rwLock: PatternRwLock,
+  ) {
     this.serviceRegistry = new ServiceRegistry();
+    this.serviceRegistry.bindInstance(StoreAdapter, storeAdapter);
+    this.serviceRegistry.bindInstance(PatternRwLock, rwLock);
     this.serviceRegistry.registerMultipleInstances(
       this,
-      storeAdapter,
       new WorkflowGraph(root),
-      new DataStore(storeAdapter),
-      new FiberStore(storeAdapter),
-      new EventStore(storeAdapter),
+      new DataStore(this.serviceRegistry),
+      new FiberStore(this.serviceRegistry),
+      new EventStore(this.serviceRegistry),
       new ContextFactory(this.serviceRegistry),
       new IntentsProcessor(this.serviceRegistry),
     );
@@ -82,7 +86,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
     });
 
     this.eventsReadyPoller = new EventsReadyPoller(
-      this.stores.event,
+      this.eventStore,
       pattern,
       this.onEventBatch.bind(this),
     );
@@ -102,13 +106,13 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
     });
 
     this.eventsReadyPoller = new EventsReadyPoller(
-      this.stores.event,
+      this.eventStore,
       eventMatchPattern,
       this.onEventBatch.bind(this),
     );
 
     this.eventsDelayedPoller = new DelayedQueuePoller(
-      this.stores.event,
+      this.eventStore,
       eventMatchPattern.execId,
     );
 
@@ -145,7 +149,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
     } catch (error) {
       // TODO: unlock the event
       if (error instanceof WorkflowBackpressureError) {
-        await this.stores.event.rescheduleEvent(
+        await this.eventStore.rescheduleEvent(
           event,
           error.details.pressure * 20,
         );
@@ -153,19 +157,20 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
 
       // TODO: handle other errors
 
-      await this.stores.event.rescheduleEvent(event, 300);
+      await this.eventStore.rescheduleEvent(event, 300);
     }
   }
 
   async onNodeScheduled(event: NodeScheduledEvent) {
     const { targetNodeId } = Option.unwrap(event.payload);
+
     await this.executeNode(event.execId, targetNodeId, event.fiberKey);
-    await this.stores.event.ack(event);
+    await this.eventStore.ack(event);
   }
 
   async executeNode(execId: string, nodeId: string, fiberKey: string) {
     const node = this.graph.getNode(nodeId);
-    const inputFiber = await this.stores.fiber.getFiber(execId, fiberKey);
+    const inputFiber = await this.fiberStore.getFiber(execId, fiberKey);
 
     const isBackpressureOk = await this.checkBackpressure(inputFiber, node);
 
@@ -182,13 +187,13 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
 
     const intents = await node.run(runContext);
     const events = await this.intentsProcessor.process(intents);
-    await this.stores.event.writeEvents(events);
+    await this.eventStore.writeEvents(events);
   }
 
   async onFiberClosed(event: FiberClosedEvent) {
     const { execId, fiberKey, nodeId } = event;
 
-    const closedFiber = await this.stores.fiber.getFiber(execId, fiberKey);
+    const closedFiber = await this.fiberStore.getFiber(execId, fiberKey);
 
     let node: NodeAny | null = this.graph.getNode(nodeId);
 
@@ -196,7 +201,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
       const intents = await node.onClose(closedFiber);
       const events = await this.intentsProcessor.process(intents);
 
-      await this.stores.event.writeEvents(events);
+      await this.eventStore.writeEvents(events);
 
       if (Intent.hasStopPropagation(intents)) {
         break;
@@ -214,7 +219,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
       case BACKPRESSURE_POLICY_TYPE.enum.GLOBAL: {
         const pattern = BackpressureEventKeyPattern.forGlobal(runFiber, node);
 
-        const count = await this.stores.event.estimateEventCount(pattern);
+        const count = await this.eventStore.estimateEventCount(pattern);
         return count < node.backpressurePolicy.threshold;
       }
 
@@ -230,7 +235,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
           keyPrefix,
         );
 
-        const count = await this.stores.event.estimateEventCount(pattern);
+        const count = await this.eventStore.estimateEventCount(pattern);
 
         return count < node.backpressurePolicy.threshold;
       }

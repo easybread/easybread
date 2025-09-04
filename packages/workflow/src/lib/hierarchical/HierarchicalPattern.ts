@@ -1,3 +1,5 @@
+import type { HierarchicalKey } from '.';
+
 /**
  * Represents a hierarchical pattern with wildcard support for matching keys.
  * Examples: "exec1:FIBER_CLOSED:*", "exec1:*:root/paginate/*"

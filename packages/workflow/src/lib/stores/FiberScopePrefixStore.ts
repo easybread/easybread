@@ -1,5 +1,5 @@
+import type { ServiceRegistry } from '../ServiceRegistry';
 import { Store } from '../Store';
-import type { StoreAdapter } from '../StoreAdapter';
 import type { FiberPolicy } from '../domain/FiberPolicy';
 import {
   FiberScopePrefix,
@@ -22,8 +22,8 @@ export function* range(start: number, end: number) {
 }
 
 export class FiberScopePrefixStore extends Store {
-  constructor(adapter: StoreAdapter) {
-    super('FIBER_SCOPE_PREFIX', adapter);
+  constructor(serviceRegistry: ServiceRegistry) {
+    super(serviceRegistry, 'FIBER_SCOPE_PREFIX');
   }
 
   async acquireMemberSlots(options: BookMemberSlotsOptions) {
