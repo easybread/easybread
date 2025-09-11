@@ -29,11 +29,11 @@ type StrictSameInputChildren<
  * Exits when all children have exited.
  */
 export class ConcurrentNode<
-  TId extends string,
+  TName extends string,
   TIn extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAnyWithSpecificInput<TIn>>,
 > extends ForkNode<
-  TId,
+  TName,
   NodeStatePolicyNone,
   TIn,
   IOOut<GetIO<TChildren[number]>>,
@@ -53,8 +53,11 @@ export class ConcurrentNode<
 
   private nodeIdByOrdinality: Map<number, string> = new Map();
 
-  constructor(id: TId, children: StrictSameInputChildren<TIn, [...TChildren]>) {
-    super(id, children);
+  constructor(
+    name: TName,
+    children: StrictSameInputChildren<TIn, [...TChildren]>,
+  ) {
+    super(name, children);
     children.forEach((child, index) => {
       this.nodeIdByOrdinality.set(index, child.id);
     });

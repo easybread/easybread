@@ -26,10 +26,10 @@ type FnOutput<T extends Fn<any, any>> = T extends (input: any) => infer U
     : U
   : never;
 export class FunctionNode<
-  TId extends string,
+  TName extends string,
   TFn extends Fn<any, any>,
 > extends PipeNode<
-  TId,
+  TName,
   NodeStatePolicyNone,
   FnInput<TFn>,
   FnOutput<TFn>,
@@ -40,7 +40,7 @@ export class FunctionNode<
 
   fn: TFn;
 
-  constructor(id: TId, fn: TFn) {
+  constructor(id: TName, fn: TFn) {
     super(id, []);
     this.fn = fn;
   }

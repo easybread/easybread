@@ -38,19 +38,19 @@ type IsEmptyNodeChildren<T extends ReadonlyArray<NodeAny>> = T extends never[]
  * ```
  */
 export class StreamNode<
-  TId extends string,
+  TName extends string,
   TIn extends IOConstraint = null,
   TOut extends IOConstraint = null,
   TChildren extends ReadonlyArray<NodeAny> = [],
-> extends PipeNode<TId, NodeStatePolicyNone, TIn, TOut, TIn, TChildren> {
-  static empty<TId extends string>(id: TId) {
+> extends PipeNode<TName, NodeStatePolicyNone, TIn, TOut, TIn, TChildren> {
+  static empty<TName extends string>(id: TName) {
     return new StreamNode(id, []);
   }
 
   fiberPolicy = makePipeFiberPolicy();
   statePolicy = noneStatePolicy();
 
-  private constructor(id: TId, children: TChildren) {
+  private constructor(id: TName, children: TChildren) {
     super(id, children);
   }
 
@@ -85,7 +85,7 @@ export class StreamNode<
       : NodeAnyWithSpecificInput<TOut>,
   >(child: C) {
     return new StreamNode<
-      TId,
+      TName,
       IsEmptyNodeChildren<TChildren> extends true ? IOIn<GetIO<C>> : TIn,
       IOOut<GetIO<C>>,
       IsEmptyNodeChildren<TChildren> extends true ? [C] : [...TChildren, C]

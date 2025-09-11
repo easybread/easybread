@@ -22,7 +22,7 @@ import {
 import { type NodeStatePolicyNone, noneStatePolicy } from '../NodeStatePolicy';
 
 export class CommandNode<
-  TId extends string,
+  TName extends string,
   TClient extends EasyBreadClientAny,
   TCommandName extends inferEasyBreadClientCommandName<TClient>,
   TCommand extends inferEasyBreadClientCommandByName<
@@ -30,7 +30,7 @@ export class CommandNode<
     TCommandName
   > = inferEasyBreadClientCommandByName<TClient, TCommandName>,
 > extends PipeNode<
-  TId,
+  TName,
   NodeStatePolicyNone,
   inferCommandInput<TCommand>,
   inferCommandOutputSuccessful<TCommand>,
@@ -42,7 +42,7 @@ export class CommandNode<
   protected client: TClient;
   protected commandName: TCommandName;
 
-  constructor(id: TId, client: TClient, commandName: TCommandName) {
+  constructor(id: TName, client: TClient, commandName: TCommandName) {
     super(id, []);
     this.client = client;
     this.commandName = commandName;

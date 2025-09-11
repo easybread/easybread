@@ -19,11 +19,11 @@ type GoToNodeTransform<TIn extends IOConstraint, TNode extends NodeAny> =
     : (input: TIn) => IOIn<GetIO<TNode>>;
 
 export class GoToNode<
-  TId extends string,
+  TName extends string,
   TIn extends IOConstraint,
   TNode extends NodeAny,
 > extends PipeNode<
-  TId,
+  TName,
   NodeStatePolicyNone,
   TIn,
   IOIn<GetIO<TNode>>,
@@ -35,7 +35,11 @@ export class GoToNode<
   private readonly targetNode: TNode;
   private readonly transform: (input: TIn) => IOIn<GetIO<TNode>>;
 
-  constructor(id: TId, node: TNode, transform: GoToNodeTransform<TIn, TNode>) {
+  constructor(
+    id: TName,
+    node: TNode,
+    transform: GoToNodeTransform<TIn, TNode>,
+  ) {
     super(id, []);
     this.targetNode = node;
     this.transform = (transform as any) ?? (input => input);

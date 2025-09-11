@@ -30,10 +30,16 @@ import type { NodeStatePolicy } from './NodeStatePolicy';
 const _FP = Symbol('FP');
 const _SP = Symbol('SP');
 const _CLOSE = Symbol('CLOSE');
+const _NAME = Symbol('NAME');
+
+type _FPType = typeof _FP;
+type _SPType = typeof _SP;
+type _CLOSEType = typeof _CLOSE;
+type _NAMEType = typeof _NAME;
 
 export type NodeChildrenMap<TChildren extends ReadonlyArray<NodeAny>> = {
-  [ChildrenID in TChildren[number]['id']]: TChildren[number] & {
-    id: ChildrenID;
+  [ChildrenID in TChildren[number][_NAMEType]]: TChildren[number] & {
+    [_NAME]: ChildrenID;
   };
 };
 
@@ -45,7 +51,7 @@ export type OnCloseResultIntents =
 export type OnExitResultIntents = ExitIntent;
 
 export abstract class Node<
-  TId extends string,
+  TName extends string,
   TFP extends FiberPolicy,
   TSP extends NodeStatePolicy,
   TIn extends IOConstraint,
@@ -54,16 +60,16 @@ export abstract class Node<
   TChildren extends ReadonlyArray<NodeAny> = [],
 > extends WithIO<IO<TIn, TOut>> {
   /**
-   * Creates a map of children nodes by their id.
+   * Creates a map of children nodes by their name.
    *
    * @param children - The list of children nodes.
-   * @returns A map of children nodes by their id.
+   * @returns A map of children nodes by their name.
    */
   private static makeChildrenMap<TChildren extends ReadonlyArray<NodeAny>>(
     children: TChildren,
   ): NodeChildrenMap<TChildren> {
     return children.reduce((acc, child) => {
-      acc[child.id as TChildren[number]['id']] = child;
+      acc[child[_NAME] as TChildren[number][_NAMEType]] = child;
       return acc;
     }, {} as NodeChildrenMap<TChildren>);
   }
@@ -72,27 +78,46 @@ export abstract class Node<
     return this.constructor.name;
   }
 
+  get id(): string {
+    return [this.parentNode?.id, this[_NAME]].filter(Boolean).join('/');
+  }
+
+  get isRoot(): boolean {
+    return this.parentNode === null;
+  }
+
   readonly [_FP] = {} as TFP;
   readonly [_SP] = {} as TSP;
   readonly [_CLOSE] = {} as TClose;
+  readonly [_NAME]: TName;
 
-  readonly id: TId;
+  readonly backpressurePolicy: BackpressurePolicy =
+    nearestForkBackpressurePolicy();
 
   readonly childrenMap: NodeChildrenMap<TChildren>;
   readonly childrenArray: TChildren;
 
-  constructor(id: TId, children: TChildren) {
+  private parentNode: NodeAny | null = null;
+
+  constructor(
+    name: TName,
+    children: TChildren,
+    parentNode: NodeAny | null = null,
+  ) {
     super();
-    this.id = id;
+    this[_NAME] = name;
     this.childrenMap = Node.makeChildrenMap(children);
     this.childrenArray = children;
+    this.parentNode = parentNode;
+    this.childrenArray.forEach(c => c.setParentNode(this));
   }
 
   abstract fiberPolicy: TFP;
   abstract statePolicy: TSP;
 
-  readonly backpressurePolicy: BackpressurePolicy =
-    nearestForkBackpressurePolicy();
+  setParentNode(parentNode: NodeAny) {
+    this.parentNode = parentNode;
+  }
 
   hasChildren(): this is NodeAny {
     return Object.keys(this.childrenMap).length > 0;
@@ -110,8 +135,8 @@ export abstract class Node<
     return this.fiberPolicy.type === FIBER_POLICY_TYPE.enum.PIPE;
   }
 
-  getChild(id: inferNodeId<TChildren[number]>): NodeAny | undefined {
-    return this.childrenMap[id];
+  getChild(name: inferNodeName<TChildren[number]>): NodeAny | undefined {
+    return this.childrenMap[name];
   }
 
   fiberScopeKey(this: ForkNodeAny | JoinNodeAny, fiber: Fiber): string {
@@ -136,44 +161,44 @@ export abstract class Node<
 }
 
 export abstract class PipeNode<
-  TId extends string,
+  TName extends string,
   TSP extends NodeStatePolicy,
   TIn extends IOConstraint,
   TOut extends IOConstraint,
   TClose extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAny> = [],
-> extends Node<TId, PipeFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+> extends Node<TName, PipeFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
 
 // export abstract class StreamNode<
-//   TId extends string,
+//   TName extends string,
 //   TSP extends NodeStatePolicy,
 //   TIn extends IOConstraint,
 //   TOut extends IOConstraint,
 //   TClose extends IOConstraint,
 //   TChildren extends ReadonlyArray<NodeAny> = [],
-// > extends PipeNode<TId, TSP, TIn, TOut, TClose, TChildren> {
+// > extends PipeNode<TName, TSP, TIn, TOut, TClose, TChildren> {
 //   abstract getFirst(): NodeAny | null;
 //   abstract getPrevious(nodeId: string): NodeAny | null;
 //   abstract getNext(nodeId: string): NodeAny | null;
 // }
 
 export abstract class ForkNode<
-  TId extends string,
+  TName extends string,
   TSP extends NodeStatePolicy,
   TIn extends IOConstraint,
   TOut extends IOConstraint,
   TClose extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAny> = [],
-> extends Node<TId, ForkFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+> extends Node<TName, ForkFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
 
 export abstract class JoinNode<
-  TId extends string,
+  TName extends string,
   TSP extends NodeStatePolicy,
   TIn extends IOConstraint,
   TOut extends IOConstraint,
   TClose extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAny> = [],
-> extends Node<TId, JoinFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+> extends Node<TName, JoinFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
 
 export type ForkNodeAny = ForkNode<
   string,
@@ -232,10 +257,10 @@ export type NodeAnyWithSpecificInput<TIn extends IOConstraint> = Node<
   any
 >;
 
-export type inferNodeId<N extends NodeAny> = N['id'];
-export type inferNodeFP<N extends NodeAny> = N[typeof _FP];
-export type inferNodeSP<N extends NodeAny> = N[typeof _SP];
-export type inferNodeClose<N extends NodeAny> = N[typeof _CLOSE];
+export type inferNodeName<N extends NodeAny> = N[_NAMEType];
+export type inferNodeFP<N extends NodeAny> = N[_FPType];
+export type inferNodeSP<N extends NodeAny> = N[_SPType];
+export type inferNodeClose<N extends NodeAny> = N[_CLOSEType];
 export type inferNodeChildren<N extends NodeAny> = N['childrenArray'];
 
 export type inferNodeRunContext<N extends NodeAny> = NodeRunContext<
