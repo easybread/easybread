@@ -23,3 +23,26 @@ export type PipeFiberPolicy = {
 };
 
 export type FiberPolicy = ForkFiberPolicy | JoinFiberPolicy | PipeFiberPolicy;
+
+export function makeJoinFiberPolicy(
+  anchor: string,
+  limit: number,
+): JoinFiberPolicy {
+  return {
+    type: FIBER_POLICY_TYPE.enum.JOIN,
+    anchor,
+    limit,
+  };
+}
+export function makeForkFiberPolicy(forkCount: number): ForkFiberPolicy {
+  return {
+    type: FIBER_POLICY_TYPE.enum.FORK,
+    forkCount,
+  };
+}
+
+export function makePipeFiberPolicy(): PipeFiberPolicy {
+  return {
+    type: FIBER_POLICY_TYPE.enum.PIPE,
+  };
+}

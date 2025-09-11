@@ -9,7 +9,7 @@ import {
 export interface BookMemberSlotsOptions {
   execId: string;
   nodeId: string;
-  key: string;
+  scopeKey: string;
   fiberPolicy: FiberPolicy;
   memberCount: number;
 }
@@ -27,7 +27,7 @@ export class FiberScopePrefixStore extends Store {
   }
 
   async acquireMemberSlots(options: BookMemberSlotsOptions) {
-    const { execId, nodeId, key, memberCount } = options;
+    const { execId, nodeId, scopeKey: key, memberCount, fiberPolicy } = options;
 
     const storeKey = this.encodeStoreKey(
       // S(execId):P(nodeId):P(key)
@@ -40,7 +40,7 @@ export class FiberScopePrefixStore extends Store {
 
       let prefix = json
         ? FiberScopePrefix.fromJSON(json)
-        : FiberScopePrefix.createEmpty(options);
+        : FiberScopePrefix.createEmpty({ execId, fiberPolicy, key, nodeId });
 
       // create scope prefix snapshot for each member
       for (const _ of range(0, memberCount)) {

@@ -1,11 +1,12 @@
 import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
 
+import type { Exit } from './Exit';
 import type { Fiber } from './domain/Fiber';
 import type { IOConstraint } from './helpers/IO';
 import type { Option } from './helpers/Option';
 
 export const INTENT_TYPE = enumSuiteObject(
-  enumObject(['CLOSE_FIBER', 'RUN_NODE', 'STOP_PROPAGATION']),
+  enumObject(['CLOSE_FIBER', 'RUN_NODE', 'STOP_PROPAGATION', 'EXIT']),
 );
 
 export type IntentType = typeof INTENT_TYPE.$type;
@@ -15,6 +16,10 @@ export abstract class Intent<T extends IntentType, P = undefined> {
     return intents.some(
       intent => intent.type === INTENT_TYPE.enum.STOP_PROPAGATION,
     );
+  }
+
+  static exit(options: ExitIntentOptions) {
+    return new ExitIntent(options);
   }
 
   static closeFiber<TClose extends IOConstraint>(
@@ -82,7 +87,23 @@ export class StopPropagationIntent extends Intent<
 }
 
 export type CloseFiberIntentAny = CloseFiberIntent<IOConstraint>;
+
+interface ExitIntentOptions {
+  exit: Exit;
+  fiber: Fiber;
+}
+
+export class ExitIntent extends Intent<
+  typeof INTENT_TYPE.enum.EXIT,
+  { exit: Exit; fiber: Fiber }
+> {
+  constructor({ exit, fiber }: ExitIntentOptions) {
+    super(INTENT_TYPE.enum.EXIT, { exit, fiber });
+  }
+}
+
 export type IntentAny =
   | CloseFiberIntentAny
   | RunNodeIntent
-  | StopPropagationIntent;
+  | StopPropagationIntent
+  | ExitIntent;

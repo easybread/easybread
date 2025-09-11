@@ -1,12 +1,13 @@
-import { Intent, RunNodeIntent, StopPropagationIntent } from '../../Intent';
+import { Intent } from '../../Intent';
 import type { GetIO, IOConstraint, IOOut } from '../../helpers/IO';
 import { Option } from '../../helpers/Option';
 import type { Fiber } from '../Fiber';
-import { FIBER_POLICY_TYPE, type ForkFiberPolicy } from '../FiberPolicy';
+import { type ForkFiberPolicy, makeForkFiberPolicy } from '../FiberPolicy';
 import {
   ForkNode,
   type NodeAnyWithSpecificInput,
   type OnCloseResultIntents,
+  type OnExitResultIntents,
   type inferNodeRunContext,
   type inferNodeRunReturn,
 } from '../Node';
@@ -41,12 +42,13 @@ export class ConcurrentNode<
 > {
   statePolicy = noneStatePolicy();
 
+  get childrenCount(): number {
+    return Object.keys(this.childrenMap).length;
+  }
+
   /** Fork a fiber for each child node. */
   get fiberPolicy(): ForkFiberPolicy {
-    return {
-      type: FIBER_POLICY_TYPE.enum.FORK,
-      forkCount: Object.keys(this.children).length,
-    };
+    return makeForkFiberPolicy(this.childrenCount);
   }
 
   private nodeIdByOrdinality: Map<number, string> = new Map();
@@ -80,9 +82,13 @@ export class ConcurrentNode<
     const nodeId = this.getTargetNodeId(fiber.ordinality);
 
     return [
-      new RunNodeIntent({ fiber, nodeId }),
-      new StopPropagationIntent({ reason: 'ConcurrentNode own close event' }),
+      Intent.runNode({ fiber, nodeId }),
+      Intent.stopPropagation({ reason: 'ConcurrentNode own close event' }),
     ];
+  }
+
+  async onExit(fiber: Fiber): Promise<OnExitResultIntents[]> {
+    return [];
   }
 
   private getTargetNodeId(ordinality: number): string {

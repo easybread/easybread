@@ -68,7 +68,7 @@ export class FiberStore extends Store {
     const prefixes = await this.fiberScopePrefixStore.acquireMemberSlots({
       execId: inputFiber.execId,
       nodeId: node.id,
-      key: inputFiber.scopePrefixKey(node.id, node.fiberPolicy),
+      scopeKey: inputFiber.scopePrefixKey(node.id, node.fiberPolicy),
       fiberPolicy: node.fiberPolicy,
       memberCount: node.fiberPolicy.forkCount ?? 1,
     });
@@ -94,7 +94,10 @@ export class FiberStore extends Store {
     const [prefix] = await this.fiberScopePrefixStore.acquireMemberSlots({
       execId: inputFiber.execId,
       nodeId: node.id,
-      key: inputFiber.scopePrefixKey(node.fiberPolicy.anchor, node.fiberPolicy),
+      scopeKey: inputFiber.scopePrefixKey(
+        node.fiberPolicy.anchor,
+        node.fiberPolicy,
+      ),
       fiberPolicy: node.fiberPolicy,
       memberCount: 1,
     });

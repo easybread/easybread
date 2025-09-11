@@ -30,6 +30,15 @@ export class WorkflowExecutionError<
   }
 }
 
+export class NodeExecutionError extends WorkflowError<
+  'NodeExecutionError',
+  { nodeId: string; nodeType: string }
+> {
+  constructor(nodeId: string, nodeType: string, cause?: unknown) {
+    super(`Node ${nodeId} failed: ${nodeType}`, { nodeId, nodeType }, cause);
+  }
+}
+
 export class InvalidFiberKeyError extends WorkflowError<
   'InvalidFiberKeyError',
   { execId: string; key: string }

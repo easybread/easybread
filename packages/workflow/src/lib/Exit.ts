@@ -18,3 +18,23 @@ export type Exit =
       status: typeof EXIT_STATUS.enum.DEFECT;
       defect?: any;
     };
+
+export function makeSuccessExit(): Exit {
+  return {
+    status: EXIT_STATUS.enum.SUCCESS,
+  };
+}
+
+export function makeErrorExit(error: WorkflowErrorAny): Exit {
+  return {
+    status: EXIT_STATUS.enum.ERROR,
+    error,
+  };
+}
+
+export function makeDefectExit(defect?: any): Exit {
+  return {
+    status: EXIT_STATUS.enum.DEFECT,
+    defect,
+  };
+}

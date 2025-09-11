@@ -1,5 +1,6 @@
 import type {
   CloseFiberIntent,
+  ExitIntent,
   RunNodeIntent,
   StopPropagationIntent,
 } from '../Intent';
@@ -36,7 +37,12 @@ export type NodeChildrenMap<TChildren extends ReadonlyArray<NodeAny>> = {
   };
 };
 
-export type OnCloseResultIntents = RunNodeIntent | StopPropagationIntent;
+export type OnCloseResultIntents =
+  | RunNodeIntent
+  | StopPropagationIntent
+  | ExitIntent;
+
+export type OnExitResultIntents = ExitIntent;
 
 export abstract class Node<
   TId extends string,
@@ -62,18 +68,24 @@ export abstract class Node<
     }, {} as NodeChildrenMap<TChildren>);
   }
 
+  get type(): string {
+    return this.constructor.name;
+  }
+
   readonly [_FP] = {} as TFP;
   readonly [_SP] = {} as TSP;
   readonly [_CLOSE] = {} as TClose;
 
   readonly id: TId;
 
-  protected readonly children: NodeChildrenMap<TChildren>;
+  readonly childrenMap: NodeChildrenMap<TChildren>;
+  readonly childrenArray: TChildren;
 
   constructor(id: TId, children: TChildren) {
     super();
     this.id = id;
-    this.children = Node.makeChildrenMap(children);
+    this.childrenMap = Node.makeChildrenMap(children);
+    this.childrenArray = children;
   }
 
   abstract fiberPolicy: TFP;
@@ -83,7 +95,7 @@ export abstract class Node<
     nearestForkBackpressurePolicy();
 
   hasChildren(): this is NodeAny {
-    return Object.keys(this.children).length > 0;
+    return Object.keys(this.childrenMap).length > 0;
   }
 
   isFork(): this is ForkNodeAny {
@@ -98,12 +110,8 @@ export abstract class Node<
     return this.fiberPolicy.type === FIBER_POLICY_TYPE.enum.PIPE;
   }
 
-  isStream(): this is StreamNodeAny {
-    return this instanceof StreamNode;
-  }
-
   getChild(id: inferNodeId<TChildren[number]>): NodeAny | undefined {
-    return this.children[id];
+    return this.childrenMap[id];
   }
 
   fiberScopeKey(this: ForkNodeAny | JoinNodeAny, fiber: Fiber): string {
@@ -123,6 +131,8 @@ export abstract class Node<
   abstract run(context: inferNodeRunContext<this>): inferNodeRunReturn<this>;
 
   abstract onClose(fiber: Fiber): Promise<OnCloseResultIntents[]>;
+
+  abstract onExit(fiber: Fiber): Promise<OnExitResultIntents[]>;
 }
 
 export abstract class PipeNode<
@@ -134,18 +144,18 @@ export abstract class PipeNode<
   TChildren extends ReadonlyArray<NodeAny> = [],
 > extends Node<TId, PipeFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
 
-export abstract class StreamNode<
-  TId extends string,
-  TSP extends NodeStatePolicy,
-  TIn extends IOConstraint,
-  TOut extends IOConstraint,
-  TClose extends IOConstraint,
-  TChildren extends ReadonlyArray<NodeAny> = [],
-> extends PipeNode<TId, TSP, TIn, TOut, TClose, TChildren> {
-  abstract getFirst(): NodeAny | null;
-  abstract getPrevious(nodeId: string): NodeAny | null;
-  abstract getNext(nodeId: string): NodeAny | null;
-}
+// export abstract class StreamNode<
+//   TId extends string,
+//   TSP extends NodeStatePolicy,
+//   TIn extends IOConstraint,
+//   TOut extends IOConstraint,
+//   TClose extends IOConstraint,
+//   TChildren extends ReadonlyArray<NodeAny> = [],
+// > extends PipeNode<TId, TSP, TIn, TOut, TClose, TChildren> {
+//   abstract getFirst(): NodeAny | null;
+//   abstract getPrevious(nodeId: string): NodeAny | null;
+//   abstract getNext(nodeId: string): NodeAny | null;
+// }
 
 export abstract class ForkNode<
   TId extends string,
@@ -203,14 +213,14 @@ export type NodeAny = Node<
   any
 >;
 
-export type StreamNodeAny = StreamNode<
-  string,
-  NodeStatePolicy,
-  IOConstraint,
-  IOConstraint,
-  any,
-  any
->;
+// export type StreamNodeAny = StreamNode<
+//   string,
+//   NodeStatePolicy,
+//   IOConstraint,
+//   IOConstraint,
+//   any,
+//   any
+// >;
 
 export type NodeAnyWithSpecificInput<TIn extends IOConstraint> = Node<
   string,
@@ -226,6 +236,7 @@ export type inferNodeId<N extends NodeAny> = N['id'];
 export type inferNodeFP<N extends NodeAny> = N[typeof _FP];
 export type inferNodeSP<N extends NodeAny> = N[typeof _SP];
 export type inferNodeClose<N extends NodeAny> = N[typeof _CLOSE];
+export type inferNodeChildren<N extends NodeAny> = N['childrenArray'];
 
 export type inferNodeRunContext<N extends NodeAny> = NodeRunContext<
   inferNodeFP<N>,
@@ -255,5 +266,4 @@ export type inferNodeRunReturn<N extends NodeAny> = Promise<
 //   [typeof nodeA]
 // >;
 
-// node.run();
-// nodeConcrete.run();
+// nodeA.__checkIO({ foo: 'a' });
