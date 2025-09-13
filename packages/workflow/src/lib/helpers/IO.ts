@@ -2,6 +2,7 @@ export const _IO = Symbol('io');
 
 type _IOConstraintItem = Record<string, unknown>;
 export type IOConstraint = _IOConstraintItem | _IOConstraintItem[] | null;
+export type IOConstraintArray = Extract<IOConstraint, Array<any>>;
 
 export type IO<I extends IOConstraint, O extends IOConstraint> = {
   readonly input: I;

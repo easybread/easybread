@@ -131,6 +131,12 @@ export class Fiber {
     return this.key.prefixFrom(segmentIndex).toString();
   }
 
+  keyOfInputFiber(nodeId: string) {
+    const segmentIndex = this.segments.findLastIndex(id => id === nodeId);
+    if (segmentIndex === -1) return '';
+    return this.key.parentPrefixFrom(segmentIndex).toString();
+  }
+
   scopeKey(anchorNodeId: string, fiberPolicy: ForkFiberPolicy): string;
   scopeKey(
     anchorNodeId: string,

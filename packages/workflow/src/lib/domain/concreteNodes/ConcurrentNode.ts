@@ -1,13 +1,13 @@
 import { Intent } from '../../Intent';
 import type { GetIO, IOConstraint, IOOut } from '../../helpers/IO';
 import { Option } from '../../helpers/Option';
-import type { Fiber } from '../Fiber';
 import { type ForkFiberPolicy, makeForkFiberPolicy } from '../FiberPolicy';
 import {
   ForkNode,
   type NodeAnyWithSpecificInput,
   type OnCloseResultIntents,
   type OnExitResultIntents,
+  type inferNodeEventHandlerContext,
   type inferNodeRunContext,
   type inferNodeRunReturn,
 } from '../Node';
@@ -58,13 +58,14 @@ export class ConcurrentNode<
     children: StrictSameInputChildren<TIn, [...TChildren]>,
   ) {
     super(name, children);
+
     children.forEach((child, index) => {
       this.nodeIdByOrdinality.set(index, child.id);
     });
   }
 
   /**
-   * Closes run fibers worwarding the input data.
+   * Closes run fibers forwarding the input data.
    */
   async run(context: inferNodeRunContext<this>): inferNodeRunReturn<this> {
     const inputData = await context.loadInputFiberData(context.inputFiber);
@@ -79,18 +80,22 @@ export class ConcurrentNode<
    * - for own fiber - runs a corresponding to fiber's ordinality child node and stops propagation.
    * - for children fibers - does nothing, letting the event to propagate.
    */
-  async onClose(fiber: Fiber): Promise<OnCloseResultIntents[]> {
-    if (fiber.nodeId !== this.id) return [];
+  async onClose(
+    context: inferNodeEventHandlerContext<this>,
+  ): Promise<OnCloseResultIntents[]> {
+    if (context.eventFiber.nodeId !== this.id) return [];
 
-    const nodeId = this.getTargetNodeId(fiber.ordinality);
+    const nodeId = this.getTargetNodeId(context.eventFiber.ordinality);
 
     return [
-      Intent.runNode({ fiber, nodeId }),
+      Intent.runNode({ fiber: context.eventFiber, nodeId }),
       Intent.stopPropagation({ reason: 'ConcurrentNode own close event' }),
     ];
   }
 
-  async onExit(fiber: Fiber): Promise<OnExitResultIntents[]> {
+  async onExit(
+    context: inferNodeEventHandlerContext<this>,
+  ): Promise<OnExitResultIntents[]> {
     return [];
   }
 

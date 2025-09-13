@@ -11,7 +11,7 @@ import {
   ForkNodeRunContext,
   JoinNodeRunContext,
   PipeNodeRunContext,
-} from './domain/NodeRunContext';
+} from './domain/NodeContext';
 import { FiberStore } from './stores/FiberStore';
 
 export class ContextFactory {

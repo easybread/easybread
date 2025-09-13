@@ -6,6 +6,7 @@ import type { Fiber } from '../Fiber';
 import { makePipeFiberPolicy } from '../FiberPolicy';
 import {
   type OnCloseResultIntents,
+  type OnExitResultIntents,
   PipeNode,
   type inferNodeRunContext,
   type inferNodeRunReturn,
@@ -64,5 +65,9 @@ export class FunctionNode<
    */
   async onClose(fiber: Fiber): Promise<OnCloseResultIntents[]> {
     return [Intent.exit({ exit: { status: EXIT_STATUS.enum.SUCCESS }, fiber })];
+  }
+
+  async onExit(fiber: Fiber): Promise<OnExitResultIntents[]> {
+    throw new Error('Method not implemented.');
   }
 }

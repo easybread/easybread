@@ -24,7 +24,7 @@ import {
   type JoinFiberPolicy,
   type PipeFiberPolicy,
 } from './FiberPolicy';
-import type { NodeRunContext } from './NodeRunContext';
+import type { NodeEventHandlerContext, NodeRunContext } from './NodeContext';
 import type { NodeStatePolicy } from './NodeStatePolicy';
 
 const _FP = Symbol('FP');
@@ -97,7 +97,11 @@ export abstract class Node<
   readonly childrenMap: NodeChildrenMap<TChildren>;
   readonly childrenArray: TChildren;
 
-  private parentNode: NodeAny | null = null;
+  protected get name(): TName {
+    return this[_NAME];
+  }
+
+  protected parentNode: NodeAny | null = null;
 
   constructor(
     name: TName,
@@ -155,9 +159,13 @@ export abstract class Node<
 
   abstract run(context: inferNodeRunContext<this>): inferNodeRunReturn<this>;
 
-  abstract onClose(fiber: Fiber): Promise<OnCloseResultIntents[]>;
+  abstract onClose(
+    context: inferNodeEventHandlerContext<this>,
+  ): Promise<OnCloseResultIntents[]>;
 
-  abstract onExit(fiber: Fiber): Promise<OnExitResultIntents[]>;
+  abstract onExit(
+    context: inferNodeEventHandlerContext<this>,
+  ): Promise<OnExitResultIntents[]>;
 }
 
 export abstract class PipeNode<
@@ -269,8 +277,11 @@ export type inferNodeRunContext<N extends NodeAny> = NodeRunContext<
   IOIn<GetIO<N>>
 >;
 
+export type inferNodeEventHandlerContext<N extends NodeAny> =
+  NodeEventHandlerContext<inferNodeSP<N>, IOIn<GetIO<N>>>;
+
 export type inferNodeRunReturn<N extends NodeAny> = Promise<
-  CloseFiberIntent<inferNodeClose<N>>[]
+  (CloseFiberIntent<inferNodeClose<N>> | RunNodeIntent)[]
 >;
 
 // declare const node: NodeAny;

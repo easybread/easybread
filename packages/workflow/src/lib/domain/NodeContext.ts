@@ -5,9 +5,10 @@ import { FiberStore } from '../stores/FiberStore';
 
 import type { Fiber } from './Fiber';
 import type { FIBER_POLICY_TYPE, FiberPolicy } from './FiberPolicy';
+import type { ForkNodeAny, JoinNodeAny, NodeAny } from './Node';
 import type { NodeStatePolicy } from './NodeStatePolicy';
 
-export abstract class NodeRunContextBase<
+export abstract class NodeContextBase<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
 > {
@@ -29,8 +30,8 @@ export abstract class NodeRunContextBase<
 
   async *iterateFiberScopeMembers(
     fiber: Fiber,
-    // node: JoinNodeAny | ForkNodeAny,
-    node: any,
+    node: JoinNodeAny | ForkNodeAny,
+    // node: any,
   ) {
     return yield* this.registry
       .getInstance(FiberStore)
@@ -41,7 +42,7 @@ export abstract class NodeRunContextBase<
 export class PipeNodeRunContext<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
-> extends NodeRunContextBase<SP, TIn> {
+> extends NodeContextBase<SP, TIn> {
   readonly contextType = 'PIPE' as const;
 
   inputFiber: Fiber;
@@ -62,7 +63,7 @@ export class PipeNodeRunContext<
 export class ForkNodeRunContext<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
-> extends NodeRunContextBase<SP, TIn> {
+> extends NodeContextBase<SP, TIn> {
   readonly contextType = 'FORK' as const;
 
   inputFiber: Fiber;
@@ -83,7 +84,7 @@ export class ForkNodeRunContext<
 export class JoinNodeRunContext<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
-> extends NodeRunContextBase<SP, TIn> {
+> extends NodeContextBase<SP, TIn> {
   readonly contextType = 'JOIN' as const;
 
   runFiber: Fiber;
@@ -105,3 +106,33 @@ export type NodeRunContext<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
 > = ContextMap<SP, TIn>[FP['type']];
+
+export class NodeEventHandlerContext<
+  SP extends NodeStatePolicy,
+  TIn extends IOConstraint,
+> extends NodeContextBase<SP, TIn> {
+  readonly contextType = 'EVENT_HANDLER' as const;
+
+  eventFiber: Fiber;
+
+  constructor(registry: ServiceRegistry, statePolicy: SP, eventFiber: Fiber) {
+    super(registry, statePolicy);
+    this.eventFiber = eventFiber;
+  }
+
+  async resolveRunFiber(node: NodeAny, fiber: Fiber) {
+    const key = fiber.keyPrefixByLastMatchingNodeId(id => id === node.id);
+
+    return await this.registry
+      .getInstance(FiberStore)
+      .getFiber(fiber.execId, key);
+  }
+
+  async resolveInputFiber(node: NodeAny, fiber: Fiber) {
+    const key = fiber.keyOfInputFiber(node.id);
+
+    return await this.registry
+      .getInstance(FiberStore)
+      .getFiber(fiber.execId, key);
+  }
+}

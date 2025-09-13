@@ -180,6 +180,8 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
 
     // TODO: check concurrency
 
+    // TODO: make sure we don't call this twice on node execute retry or workflow resume
+
     const runContext = await this.contextFactory.createNodeRunContext(
       node,
       inputFiber,
