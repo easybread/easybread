@@ -1,0 +1,69 @@
+[
+  {
+    "@id": "schema:CategoryCode",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "A Category Code.",
+    "rdfs:label": "CategoryCode",
+    "rdfs:subClassOf": {
+      "@id": "schema:DefinedTerm"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/894"
+    }
+  },
+  {
+    "@id": "schema:codeValue",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A short textual code that uniquely identifies the value.",
+    "rdfs:label": "codeValue",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:termCode"
+    },
+    "schema:domainIncludes": [
+      {
+        "@id": "schema:MedicalCode"
+      },
+      {
+        "@id": "schema:CategoryCode"
+      }
+    ],
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": {
+      "@id": "schema:Text"
+    },
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/894"
+    }
+  },
+  {
+    "@id": "schema:inCodeSet",
+    "@type": "rdf:Property",
+    "rdfs:comment": "A [[CategoryCodeSet]] that contains this category code.",
+    "rdfs:label": "inCodeSet",
+    "rdfs:subPropertyOf": {
+      "@id": "schema:inDefinedTermSet"
+    },
+    "schema:domainIncludes": {
+      "@id": "schema:CategoryCode"
+    },
+    "schema:isPartOf": {
+      "@id": "https://pending.schema.org"
+    },
+    "schema:rangeIncludes": [
+      {
+        "@id": "schema:URL"
+      },
+      {
+        "@id": "schema:CategoryCodeSet"
+      }
+    ],
+    "schema:source": {
+      "@id": "https://github.com/schemaorg/schemaorg/issues/894"
+    }
+  }
+]

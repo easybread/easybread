@@ -1,8 +1,6 @@
 import nx from '@nx/eslint-plugin';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 
-// import tailwind from 'eslint-plugin-tailwindcss';
-
 export default [
   {
     ignores: [
@@ -10,7 +8,7 @@ export default [
       '**/.docusaurus',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
-      '**/shadcn/**/*.tsx'
+      '**/shadcn/**/*.tsx',
     ],
   },
   {
@@ -25,7 +23,6 @@ export default [
   ...nx.configs['flat/base'],
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],
-  // ...tailwind.configs['flat/recommended'],
 
   prettierRecommended,
 

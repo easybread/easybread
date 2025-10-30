@@ -1,4 +1,5 @@
-export { type DBError, DB_ERROR } from './lib/DBError';
+export { type ErrCode, ERR_CODE } from './lib/ErrCode';
+
 export { errObject } from './lib/errObject';
 export { errLogAndReturn } from './lib/errLogAndReturn';
 export { errLog } from './lib/errLog';

@@ -3,7 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
 
 import { organizationCreateDefault, organizationsByUserId } from 'saas-core';
-import { accounts, db, sessions, users, verifications } from 'saas-pg';
+import { accounts, saasdb, sessions, users, verifications } from 'saas-db';
 
 import { AuthRedisStore } from './authRedisStore';
 
@@ -11,8 +11,9 @@ export const auth = betterAuth({
   plugins: [nextCookies()],
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 4,
   },
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(saasdb, {
     provider: 'pg',
     usePlural: true,
     schema: {

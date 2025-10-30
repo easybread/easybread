@@ -1,11 +1,11 @@
 import { fromPromise } from 'neverthrow';
 
+import { organizations, saasdb, usersToOrganizations } from 'saas-db';
 import { errDbQueryFailed, errLog } from 'saas-errors';
-import { db, organizations, usersToOrganizations } from 'saas-pg';
 
 export const organizationCreateDefault = async (userId: string) => {
   return fromPromise(
-    db.transaction(async tx => {
+    saasdb.transaction(async tx => {
       const [org] = await tx
         .insert(organizations)
         .values({ name: 'Default' })

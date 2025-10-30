@@ -1,12 +1,12 @@
 import { eq } from 'drizzle-orm';
 import { fromPromise, ok } from 'neverthrow';
 
+import { saasdb, usersToOrganizations } from 'saas-db';
 import { errDbQueryFailed, errLog, errLogAndReturn } from 'saas-errors';
-import { db, usersToOrganizations } from 'saas-pg';
 
 export const organizationsByUserId = (userId: string) => {
   return fromPromise(
-    db
+    saasdb
       .select()
       .from(usersToOrganizations)
       .where(eq(usersToOrganizations.userId, userId)),

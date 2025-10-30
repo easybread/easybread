@@ -11,6 +11,19 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  experimental: {
+    nodeMiddleware: true,
+  },
+  serverExternalPackages: [
+    '@dbml/*',
+    'pg',
+    'pg-native',
+    '@vercel/*',
+    '@google-cloud/*',
+    '@opentelemetry/*',
+    '@aws-sdk/*',
+  ],
 };
 
 const plugins = [

@@ -1,0 +1,11 @@
+[
+  {
+    "@id": "schema:URL",
+    "@type": "rdfs:Class",
+    "rdfs:comment": "Data type: URL.",
+    "rdfs:label": "URL",
+    "rdfs:subClassOf": {
+      "@id": "schema:Text"
+    }
+  }
+]

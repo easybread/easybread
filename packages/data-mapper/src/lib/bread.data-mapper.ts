@@ -3,7 +3,7 @@ import {
   type BreadDataMapIOConstraint,
   type BreadDataMapNoMapLiteral,
   type BreadDataMapValueResolverDefinition,
-  type BreadDataMapperClass,
+  type BreadDataMapperInstance,
   type BreadValueFactory,
   NO_MAP,
 } from './bread.data-map-definition';
@@ -18,7 +18,7 @@ import {
 export class BreadDataMapper<
   TInput extends BreadDataMapIOConstraint,
   TOutput extends BreadDataMapIOConstraint,
-> implements BreadDataMapperClass<TInput, TOutput>
+> implements BreadDataMapperInstance<TInput, TOutput>
 {
   /**
    * Helper factory method.
@@ -137,7 +137,7 @@ export class BreadDataMapper<
   private isMapperResolver<
     I extends BreadDataMapIOConstraint,
     O extends BreadDataMapIOConstraint,
-  >(value: unknown): value is BreadDataMapperClass<I, O> {
+  >(value: unknown): value is BreadDataMapperInstance<I, O> {
     return (
       value !== null &&
       typeof value === 'object' &&

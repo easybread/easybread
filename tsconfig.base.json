@@ -43,15 +43,21 @@
       "@easybread/core": ["packages/core/src/index.ts"],
       "@easybread/data-adapter": ["packages/data-adapter/src/index.ts"],
       "@easybread/data-mapper": ["packages/data-mapper/src/index.ts"],
+      "@easybread/data-model": ["packages/data-model/src/index.ts"],
+      "@easybread/data-model-instrospection": [
+        "packages/data-model-instrospection/src/index.ts"
+      ],
       "@easybread/pagination-adapter": [
         "packages/pagination-adapter/src/index.ts"
       ],
       "@easybread/recommended": ["tools/recommended/src/index.ts"],
+      "@easybread/schema-org": ["packages/schema-org/src/index.ts"],
       "@easybread/schemas": ["packages/schemas/src/index.ts"],
       "@easybread/state-adapter-mongo": [
         "packages/state-adapter-mongo/src/index.ts"
       ],
       "@easybread/test-utils": ["packages/test-utils/src/index.ts"],
+      "@easybread/workflow": ["packages/workflow/src/index.ts"],
       "playground-common": ["playground/common/src/index.ts"],
       "playground-db": ["playground/db/src/index.ts"],
       "playground-easybread-clients": [
@@ -92,13 +98,20 @@
       "saas-auth": ["apps/saas/auth/src/index.ts"],
       "saas-auth/server": ["apps/saas/auth/src/server.ts"],
       "saas-core": ["apps/saas/core/src/index.ts"],
+      "saas-db": ["apps/saas/db/src/index.ts"],
+      "saas-db/enums": ["apps/saas/db/src/lib/enums/index.ts"],
+      "saas-db/types": ["apps/saas/db/src/lib/types.ts"],
       "saas-dto": ["apps/saas/dto/src/index.ts"],
       "saas-errors": ["apps/saas/errors/src/index.ts"],
+      "saas-fake-bar-db": ["apps/saas/fake/bar-db/src/index.ts"],
+      "saas-fake-bar-db-enums/*": ["apps/saas/fake/bar-db/src/lib/enums/*"],
+      "saas-fake-bar-db-types": ["apps/saas/fake/bar-db/src/lib/types.ts"],
+      "saas-fake-foo-db": ["apps/saas/fake/foo-db/src/index.ts"],
+      "saas-fake-foo-db-enums/*": ["apps/saas/fake/foo-db/src/lib/enums/*"],
+      "saas-fake-foo-db-types": ["apps/saas/fake/foo-db/src/lib/types.ts"],
       "saas-neverthrow-util": ["apps/saas/neverthrow-util/src/index.ts"],
-      "saas-pg": ["apps/saas/pg/src/index.ts"],
-      "saas-pg/enums": ["apps/saas/pg/src/lib/enums/index.ts"],
-      "saas-pg/types": ["apps/saas/pg/src/lib/types.ts"],
       "saas-redis": ["apps/saas/redis/src/index.ts"],
+      "saas-shared-enum": ["apps/saas/shared/enum/src/index.ts"],
       "saas-trpc": ["apps/saas/trpc/src/index.ts"],
       "saas-trpc/server": ["apps/saas/trpc/src/server.ts"],
       "saas-ui": ["apps/saas/ui/src/index.ts"],

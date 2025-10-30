@@ -1,10 +1,10 @@
 import { breadDataAdapter } from '@easybread/data-adapter';
-import { AddressSchema } from '@easybread/schemas';
+import { PostalAddressSchema } from '@easybread/schemas';
 
 import { GoogleAdminDirectoryAddress } from '../interfaces';
 
 export const googleAdminDirectoryAddressAdapter = breadDataAdapter<
-  AddressSchema,
+  PostalAddressSchema,
   GoogleAdminDirectoryAddress
 >({
   toExternal: {

@@ -1,6 +1,6 @@
-import { DB_ERROR } from './DBError';
+import { ERR_CODE } from './ErrCode';
 import { errObject } from './errObject';
 
 export function errDbQueryFailed(cause: unknown) {
-  return errObject(DB_ERROR.QUERY_FAILED, cause);
+  return errObject(ERR_CODE.enum.DB_QUERY_FAILED, cause);
 }

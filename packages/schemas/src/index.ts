@@ -5,7 +5,7 @@ export * from './lib/hr/organization.schema';
 export * from './lib/hr/hr-any.schema';
 
 export * from './lib/common/person.schema';
-export * from './lib/common/address.schema';
+export * from './lib/common/postal-address.schema';
 export * from './lib/common/bcp47-language-code';
 export * from './lib/common/action.schema';
 export * from './lib/common/action-status-type.schema';

@@ -15,6 +15,7 @@ export const bambooEmployeeAdapter = breadDataAdapter<
     workPhone: 'telephone',
     avatar: 'image',
     photoUrl: 'image',
+    jobTitle: 'jobTitle',
   },
   toInternal: {
     '@type': () => 'Person',

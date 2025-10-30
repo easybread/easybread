@@ -1,0 +1,74 @@
+{
+  "name": "saas-fake-foo-db",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/saas/fake/foo-db/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/saas/fake/foo-db"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../../../coverage/apps/saas/fake/foo-db"
+      }
+    },
+    "seed": {
+      "command": "tsx src/lib/seed/seed.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "seed:reset": {
+      "command": "tsx src/lib/seed/reset.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mig:apply": {
+      "command": "drizzle-kit migrate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mig:gen": {
+      "command": "drizzle-kit generate",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mig:gen:c": {
+      "command": "drizzle-kit generate --custom --name {args.name}",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "push": {
+      "command": "drizzle-kit push",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "pull": {
+      "command": "drizzle-kit pull",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

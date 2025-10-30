@@ -1,0 +1,10 @@
+{
+  "name": "@easybread/data-model",
+  "version": "0.0.1",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "dependencies": {
+    "@space-architects/util-enum": "^1.2.0",
+    "@space-architects/util-ts": "^1.2.0"
+  }
+}

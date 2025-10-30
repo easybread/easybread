@@ -1,0 +1,10 @@
+{
+  "name": "@easybread/data-model-instrospection",
+  "version": "0.0.1",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "dependencies": {
+    "@dbml/connector": "^3.13.5",
+    "@easybread/data-model": "0.0.1"
+  }
+}
