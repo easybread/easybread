@@ -1,7 +1,7 @@
-import { makeSuccessExit } from '../../Exit';
 import { Intent } from '../../Intent';
 import type { GetIO, IOConstraint, IOIn } from '../../helpers/IO';
 import { Option } from '../../helpers/Option';
+import { makeSuccessExit } from '../Exit';
 import type { Fiber } from '../Fiber';
 import { makePipeFiberPolicy } from '../FiberPolicy';
 import {

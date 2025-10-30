@@ -131,10 +131,20 @@ export class Fiber {
     return this.key.prefixFrom(segmentIndex).toString();
   }
 
-  keyOfInputFiber(nodeId: string) {
-    const segmentIndex = this.segments.findLastIndex(id => id === nodeId);
+  keyParentPrefixByLastMatchingNodeId(
+    predicate: (nodeId: string, index: number) => boolean,
+  ) {
+    const segmentIndex = this.segments.findLastIndex(predicate);
     if (segmentIndex === -1) return '';
     return this.key.parentPrefixFrom(segmentIndex).toString();
+  }
+
+  keyOfInputFiber(nodeId: string) {
+    return this.keyParentPrefixByLastMatchingNodeId(id => id === nodeId);
+  }
+
+  keyOfRunFiber(nodeId: string) {
+    return this.keyPrefixByLastMatchingNodeId(id => id === nodeId);
   }
 
   scopeKey(anchorNodeId: string, fiberPolicy: ForkFiberPolicy): string;
@@ -158,14 +168,14 @@ export class Fiber {
         }
         return FiberKey.fromSegments([
           prefixKey,
-          FiberKey.CHARS.ANY,
+          FiberKey.CHARS.WILDCARD,
           ordinality.toString(),
         ]).toString();
 
       case FIBER_POLICY_TYPE.enum.FORK:
         return FiberKey.fromSegments([
           prefixKey,
-          FiberKey.CHARS.ANY,
+          FiberKey.CHARS.WILDCARD,
         ]).toString();
 
       default:

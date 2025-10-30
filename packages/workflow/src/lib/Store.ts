@@ -1,6 +1,7 @@
 import { PatternRwLock } from './RWLock';
 import type { ServiceRegistry } from './ServiceRegistry';
 import { StoreAdapter } from './StoreAdapter';
+import type { KeyPatternAny } from './domain/keyPatterns/KeyPattern';
 
 export class Store {
   protected get adapter() {
@@ -18,6 +19,15 @@ export class Store {
   constructor(serviceRegistry: ServiceRegistry, storePrefix: string) {
     this.serviceRegistry = serviceRegistry;
     this.storePrefix = storePrefix;
+  }
+
+  async countKeys<P extends KeyPatternAny>(pattern: P) {
+    const encodedPattern = this.encodeStoreKey(pattern.toString());
+    let count = 0;
+    for await (const key of this.adapter.keysGenerator(encodedPattern)) {
+      if (pattern.matchKey(key)) count++;
+    }
+    return count;
   }
 
   protected encodeStoreKey = (pk: string) => {

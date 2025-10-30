@@ -1,11 +1,11 @@
 import type { ServiceRegistry } from '../ServiceRegistry';
 import { Store } from '../Store';
-import { EventKeyPattern } from '../domain/EventKeyPattern';
 import {
   WorkflowEvent,
   type WorkflowEventAny,
   type WorkflowEventJSON,
 } from '../domain/WorkflowEvent';
+import { EventKeyPattern } from '../domain/keyPatterns/EventKeyPattern';
 
 /**
  * Store for events that are delayed for processing later.
@@ -107,12 +107,14 @@ export class EventStore extends Store {
     this.readyStore = new _EventsReadyStore(serviceRegistry);
   }
 
-  async estimateEventCount(pattern: EventKeyPattern) {
+  async countEvents(pattern: EventKeyPattern) {
     const encodedPattern = this.encodeStoreKey(pattern.toString());
+    const lock = await this.rwLock.acquireRead(encodedPattern);
     let count = 0;
-    for await (const _ of this.adapter.keysGenerator(encodedPattern)) {
-      count++;
+    for await (const key of this.adapter.keysGenerator(encodedPattern)) {
+      if (pattern.matchKey(key)) count++;
     }
+    this.rwLock.release(lock);
     return count;
   }
 

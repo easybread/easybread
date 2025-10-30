@@ -5,6 +5,7 @@ import {
   type RunNodeIntent,
 } from './Intent';
 import type { ServiceRegistry } from './ServiceRegistry';
+import { WorkflowGraph } from './WorkflowGraph';
 import {
   FiberClosedEvent,
   NodeScheduledEvent,
@@ -17,6 +18,10 @@ export class IntentsProcessor {
 
   private get fiberStore() {
     return this.serviceRegistry.getInstance(FiberStore);
+  }
+
+  private get graph() {
+    return this.serviceRegistry.getInstance(WorkflowGraph);
   }
 
   constructor(serviceRegistry: ServiceRegistry) {
@@ -59,17 +64,12 @@ export class IntentsProcessor {
   private async processRunNodeIntent(
     intent: RunNodeIntent,
   ): Promise<WorkflowEventAny[]> {
-    const { fiber, nodeId } = intent.payload;
-    return [
-      new NodeScheduledEvent(
-        {
-          execId: fiber.execId,
-          fiberKey: fiber.key.toString(),
-          nodeId: fiber.nodeId,
-        },
-        { targetNodeId: nodeId },
-      ),
-    ];
+    const { fiber, nodeId: targetNodeId } = intent.payload;
+
+    const targetNode = this.graph.getNode(targetNodeId);
+    const runFibers = await this.fiberStore.openFibers(fiber, targetNode);
+
+    return runFibers.map(f => NodeScheduledEvent.forFiber(f, targetNodeId));
   }
 
   private async processCloseFiberIntent(

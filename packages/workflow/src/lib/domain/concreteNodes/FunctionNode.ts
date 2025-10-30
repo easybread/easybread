@@ -1,7 +1,7 @@
-import { EXIT_STATUS } from '../../Exit';
 import { Intent } from '../../Intent';
 import type { IOConstraint } from '../../helpers/IO';
 import { Option } from '../../helpers/Option';
+import { EXIT_STATUS } from '../Exit';
 import type { Fiber } from '../Fiber';
 import { makePipeFiberPolicy } from '../FiberPolicy';
 import {

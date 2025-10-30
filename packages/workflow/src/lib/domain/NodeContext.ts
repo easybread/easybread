@@ -1,12 +1,14 @@
 import type { ServiceRegistry } from '../ServiceRegistry';
 import type { IOConstraint } from '../helpers/IO';
 import { DataStore } from '../stores/DataStore';
+import { EventStore } from '../stores/EventStore';
 import { FiberStore } from '../stores/FiberStore';
 
 import type { Fiber } from './Fiber';
-import type { FIBER_POLICY_TYPE, FiberPolicy } from './FiberPolicy';
 import type { ForkNodeAny, JoinNodeAny, NodeAny } from './Node';
 import type { NodeStatePolicy } from './NodeStatePolicy';
+import { WORKFLOW_EVENT_NAME } from './WorkflowEvent';
+import { EventKeyPattern } from './keyPatterns/EventKeyPattern';
 
 export abstract class NodeContextBase<
   SP extends NodeStatePolicy,
@@ -31,7 +33,6 @@ export abstract class NodeContextBase<
   async *iterateFiberScopeMembers(
     fiber: Fiber,
     node: JoinNodeAny | ForkNodeAny,
-    // node: any,
   ) {
     return yield* this.registry
       .getInstance(FiberStore)
@@ -39,7 +40,7 @@ export abstract class NodeContextBase<
   }
 }
 
-export class PipeNodeRunContext<
+export class NodeRunContext<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
 > extends NodeContextBase<SP, TIn> {
@@ -60,53 +61,6 @@ export class PipeNodeRunContext<
   }
 }
 
-export class ForkNodeRunContext<
-  SP extends NodeStatePolicy,
-  TIn extends IOConstraint,
-> extends NodeContextBase<SP, TIn> {
-  readonly contextType = 'FORK' as const;
-
-  inputFiber: Fiber;
-  runFibers: Fiber[];
-
-  constructor(
-    registry: ServiceRegistry,
-    statePolicy: SP,
-    inputFiber: Fiber,
-    runFibers: Fiber[],
-  ) {
-    super(registry, statePolicy);
-    this.inputFiber = inputFiber;
-    this.runFibers = runFibers;
-  }
-}
-
-export class JoinNodeRunContext<
-  SP extends NodeStatePolicy,
-  TIn extends IOConstraint,
-> extends NodeContextBase<SP, TIn> {
-  readonly contextType = 'JOIN' as const;
-
-  runFiber: Fiber;
-
-  constructor(registry: ServiceRegistry, statePolicy: SP, runFiber: Fiber) {
-    super(registry, statePolicy);
-    this.runFiber = runFiber;
-  }
-}
-
-export type ContextMap<SP extends NodeStatePolicy, TIn extends IOConstraint> = {
-  [FIBER_POLICY_TYPE.enum.PIPE]: PipeNodeRunContext<SP, TIn>;
-  [FIBER_POLICY_TYPE.enum.FORK]: ForkNodeRunContext<SP, TIn>;
-  [FIBER_POLICY_TYPE.enum.JOIN]: JoinNodeRunContext<SP, TIn>;
-};
-
-export type NodeRunContext<
-  FP extends FiberPolicy,
-  SP extends NodeStatePolicy,
-  TIn extends IOConstraint,
-> = ContextMap<SP, TIn>[FP['type']];
-
 export class NodeEventHandlerContext<
   SP extends NodeStatePolicy,
   TIn extends IOConstraint,
@@ -120,19 +74,35 @@ export class NodeEventHandlerContext<
     this.eventFiber = eventFiber;
   }
 
-  async resolveRunFiber(node: NodeAny, fiber: Fiber) {
-    const key = fiber.keyPrefixByLastMatchingNodeId(id => id === node.id);
-
+  async resolveRunFiber(node: NodeAny) {
     return await this.registry
       .getInstance(FiberStore)
-      .getFiber(fiber.execId, key);
+      .resolveNearestRunFiber(this.eventFiber, node);
   }
 
-  async resolveInputFiber(node: NodeAny, fiber: Fiber) {
-    const key = fiber.keyOfInputFiber(node.id);
-
+  async resolveInputFiber(node: NodeAny) {
     return await this.registry
       .getInstance(FiberStore)
-      .getFiber(fiber.execId, key);
+      .resolveNearestInputFiber(this.eventFiber, node);
+  }
+
+  async countPendingChildrenTasks(node: NodeAny) {
+    const runFiber = await this.resolveRunFiber(node);
+    const eventStore = this.registry.getInstance(EventStore);
+
+    return await eventStore.countEvents(
+      EventKeyPattern.make({
+        eventName: WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED,
+        execId: this.eventFiber.execId,
+        nodeId: EventKeyPattern.makePathSegment([
+          node.id,
+          EventKeyPattern.WILDCARDS.ONE_SEGMENT,
+        ]),
+        fiberKey: EventKeyPattern.makePathSegment([
+          runFiber.key.toString(),
+          EventKeyPattern.WILDCARDS.MULTIPLE_SEGMENTS,
+        ]),
+      }),
+    );
   }
 }

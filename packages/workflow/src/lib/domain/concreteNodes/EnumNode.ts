@@ -16,27 +16,16 @@ export class EnumNode<
   TName extends string,
   TIn extends IOConstraintArray,
 > extends ForkNode<TName, NodeStatePolicyNone, TIn, TIn[number], TIn[number]> {
-  fiberPolicy = makeForkFiberPolicy(1);
+  fiberPolicy = makeForkFiberPolicy();
   statePolicy = noneStatePolicy();
 
+  makeNumberToFork(inputData: TIn): number {
+    return inputData.length;
+  }
+
   async run(context: inferNodeRunContext<this>): inferNodeRunReturn<this> {
-    const [runFiber] = context.runFibers;
+    const runFiber = context.runFiber;
     const inputData = await context.loadInputFiberData(context.inputFiber);
-
-    if (runFiber.ordinality === 0) {
-      const firstItem = inputData.shift();
-
-      if (firstItem == null) {
-        throw new Error('First item is null');
-      }
-
-      return [
-        Intent.closeFiber({ fiber: runFiber, data: Option.some(firstItem) }),
-        ...inputData.map(_ =>
-          Intent.runNode({ fiber: context.inputFiber, nodeId: this.id }),
-        ),
-      ];
-    }
 
     return [
       Intent.closeFiber({
@@ -49,39 +38,16 @@ export class EnumNode<
   async onClose(
     context: inferNodeEventHandlerContext<this>,
   ): Promise<OnCloseResultIntents[]> {
+    // exit if all items have been emitted.
+    // i.e. if all fibers in the scope are closed, exit
+    // we don't want to load all members every time
+    // it can be hundreds of items... on every onClose call... crazy!!!
+    // So we better use node state counters.
+    // if number of open fibers is 0 by this time - we are ready to close
     return [];
   }
 
-  async onExit(
-    context: inferNodeEventHandlerContext<this>,
-  ): Promise<OnExitResultIntents[]> {
+  async onExit(): Promise<OnExitResultIntents[]> {
     return [];
   }
 }
-
-/* 
-There is a different approach to creating the fibers.
-instead of opening the fiber when running the node, we can open the fiber when scheduling the node run.
-
-(processing the run node intent)
-  inputFiber = intent.fiber;
-  targetNode = graph.getNode(intent.nodeId)
-  
-  runFibers = await fiberStore.openForkFibers(inputFiber, targetNode)
-  return runFibers.map fiber => NodeScheduledEvent(fiber.execId, fiber.key, fiber.nodeId, targetNode.id)
-
-this way for every scheduled node run we will have an open fiber. Always. 
-That means, we don't need to check the queue size to know if there are any pending tasks.
-
-runNode
-  node = graph.getNode(event.nodeId)
-  runFiber = fiberStore.getFiber(event.execId, event.fiberKey)
-  inputFiber = fiberStore.resolveInputFiber(runFiber)
-
-  checkBackPressure(inputFiber, node)
-
-  context = factory.createRunContext(node, inputFiber, runFiber)
-  intents = node.run(context)
-  events = processor.process(intents)
-  eventStore.writeMany(events)
-*/

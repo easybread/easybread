@@ -222,7 +222,6 @@ describe('scopePrefixKey()', () => {
     expect(
       fiber.scopePrefixKey('r/p', {
         type: FIBER_POLICY_TYPE.enum.FORK,
-        forkCount: 1,
       }),
     ).toBe('-/0');
   });
@@ -240,7 +239,6 @@ describe('scopePrefixKey()', () => {
     expect(
       fiber.scopePrefixKey('r/p', {
         type: FIBER_POLICY_TYPE.enum.FORK,
-        forkCount: 1,
       }),
     ).toBe('-/0');
   });
@@ -300,7 +298,6 @@ describe('scopeKey()', () => {
     expect(
       fiber.scopeKey('r/p', {
         type: FIBER_POLICY_TYPE.enum.FORK,
-        forkCount: 1,
       }),
     ).toBe('-/0/~');
   });
@@ -318,7 +315,6 @@ describe('scopeKey()', () => {
     expect(
       fiber.scopeKey('r/p', {
         type: FIBER_POLICY_TYPE.enum.FORK,
-        forkCount: 1,
       }),
     ).toBe('-/0/~');
   });

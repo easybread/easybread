@@ -8,7 +8,6 @@ export type FiberPolicyType = typeof FIBER_POLICY_TYPE.$type;
 
 export type ForkFiberPolicy = {
   type: typeof FIBER_POLICY_TYPE.enum.FORK;
-  forkCount: number | null;
 };
 
 export type JoinFiberPolicy = {
@@ -34,10 +33,9 @@ export function makeJoinFiberPolicy(
     limit,
   };
 }
-export function makeForkFiberPolicy(forkCount: number): ForkFiberPolicy {
+export function makeForkFiberPolicy(): ForkFiberPolicy {
   return {
     type: FIBER_POLICY_TYPE.enum.FORK,
-    forkCount,
   };
 }
 

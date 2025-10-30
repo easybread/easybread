@@ -1,7 +1,7 @@
-import { EventKeyPattern } from './EventKeyPattern';
 import type { Fiber } from './Fiber';
 import type { NodeAny } from './Node';
 import { WORKFLOW_EVENT_NAME } from './WorkflowEvent';
+import { EventKeyPattern } from './keyPatterns/EventKeyPattern';
 
 export class BackpressureEventKeyPattern extends EventKeyPattern {
   static make = this.createFactoryMethod(this.PATTERN_TEMPLATE);

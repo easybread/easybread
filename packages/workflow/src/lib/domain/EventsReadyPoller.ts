@@ -1,8 +1,8 @@
 import type { EventStore } from '../stores/EventStore';
 
-import type { EventKeyPattern } from './EventKeyPattern';
 import { Poller } from './Poller';
 import type { WorkflowEventAny } from './WorkflowEvent';
+import type { EventKeyPattern } from './keyPatterns/EventKeyPattern';
 
 export class EventsReadyPoller extends Poller<
   (events: WorkflowEventAny[]) => void

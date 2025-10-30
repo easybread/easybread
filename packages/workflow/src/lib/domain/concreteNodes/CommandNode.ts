@@ -8,9 +8,9 @@ import type {
 } from '@easybread/core';
 
 import { NodeExecutionError } from '../../Error';
-import { EXIT_STATUS } from '../../Exit';
 import { Intent } from '../../Intent';
 import { Option } from '../../helpers/Option';
+import { EXIT_STATUS } from '../Exit';
 import type { Fiber } from '../Fiber';
 import { makePipeFiberPolicy } from '../FiberPolicy';
 import {

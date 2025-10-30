@@ -1,6 +1,6 @@
 import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
 
-import type { WorkflowErrorAny } from './Error';
+import type { WorkflowErrorAny } from '../Error';
 
 export const EXIT_STATUS = enumSuiteObject(
   enumObject(['SUCCESS', 'ERROR', 'DEFECT']),

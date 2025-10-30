@@ -97,6 +97,10 @@ export abstract class Node<
   readonly childrenMap: NodeChildrenMap<TChildren>;
   readonly childrenArray: TChildren;
 
+  get childrenCount(): number {
+    return this.childrenArray.length;
+  }
+
   protected get name(): TName {
     return this[_NAME];
   }
@@ -197,7 +201,9 @@ export abstract class ForkNode<
   TOut extends IOConstraint,
   TClose extends IOConstraint,
   TChildren extends ReadonlyArray<NodeAny> = [],
-> extends Node<TName, ForkFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {}
+> extends Node<TName, ForkFiberPolicy, TSP, TIn, TOut, TClose, TChildren> {
+  abstract makeNumberToFork(inputData: TIn): number | null;
+}
 
 export abstract class JoinNode<
   TName extends string,
@@ -272,7 +278,6 @@ export type inferNodeClose<N extends NodeAny> = N[_CLOSEType];
 export type inferNodeChildren<N extends NodeAny> = N['childrenArray'];
 
 export type inferNodeRunContext<N extends NodeAny> = NodeRunContext<
-  inferNodeFP<N>,
   inferNodeSP<N>,
   IOIn<GetIO<N>>
 >;

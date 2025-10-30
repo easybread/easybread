@@ -8,7 +8,6 @@ import { StoreAdapter } from './StoreAdapter';
 import { WorkflowGraph } from './WorkflowGraph';
 import { BackpressureEventKeyPattern } from './domain/BackpressureEventKeyPattern';
 import { BACKPRESSURE_POLICY_TYPE } from './domain/BackpressurePolicy';
-import { EventKeyPattern } from './domain/EventKeyPattern';
 import { DelayedQueuePoller } from './domain/EventsDelayedPoller';
 import { EventsReadyPoller } from './domain/EventsReadyPoller';
 import type { Fiber } from './domain/Fiber';
@@ -19,6 +18,7 @@ import {
   WORKFLOW_EVENT_NAME,
   type WorkflowEventAny,
 } from './domain/WorkflowEvent';
+import { EventKeyPattern } from './domain/keyPatterns/EventKeyPattern';
 import { Option } from './helpers/Option';
 import { DataStore } from './stores/DataStore';
 import { EventStore } from './stores/EventStore';
@@ -182,10 +182,10 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
 
     // TODO: make sure we don't call this twice on node execute retry or workflow resume
 
-    const runContext = await this.contextFactory.createNodeRunContext(
+    const runContext = await this.contextFactory.createNodeRunContext({
       node,
       inputFiber,
-    );
+    });
 
     const intents = await node.run(runContext);
     const events = await this.intentsProcessor.process(intents);
@@ -221,7 +221,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
       case BACKPRESSURE_POLICY_TYPE.enum.GLOBAL: {
         const pattern = BackpressureEventKeyPattern.forGlobal(runFiber, node);
 
-        const count = await this.eventStore.estimateEventCount(pattern);
+        const count = await this.eventStore.countEvents(pattern);
         return count < node.backpressurePolicy.threshold;
       }
 
@@ -237,7 +237,7 @@ export class WorkflowRuntime<TRoot extends NodeAny> {
           keyPrefix,
         );
 
-        const count = await this.eventStore.estimateEventCount(pattern);
+        const count = await this.eventStore.countEvents(pattern);
 
         return count < node.backpressurePolicy.threshold;
       }

@@ -2,8 +2,10 @@ import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
 
 import { BreadEvent } from '@easybread/core';
 
-import type { Exit } from '../Exit';
 import { type None, Option, type Some } from '../helpers/Option';
+
+import type { Exit } from './Exit';
+import type { Fiber } from './Fiber';
 
 export const WORKFLOW_EVENT_NAME = enumSuiteObject(
   enumObject(['FIBER_CLOSED', 'NODE_EXITED', 'NODE_SCHEDULED']),
@@ -136,6 +138,17 @@ export class NodeScheduledEvent extends WorkflowEvent<
   typeof WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED,
   Some<{ targetNodeId: string }>
 > {
+  static forFiber(fiber: Fiber, targetNodeId: string) {
+    return new NodeScheduledEvent(
+      {
+        execId: fiber.execId,
+        fiberKey: fiber.key.toString(),
+        nodeId: fiber.nodeId,
+      },
+      { targetNodeId },
+    );
+  }
+
   constructor(props: WorkflowEventProps, payload: { targetNodeId: string }) {
     super(WORKFLOW_EVENT_NAME.enum.NODE_SCHEDULED, props, Option.some(payload));
   }

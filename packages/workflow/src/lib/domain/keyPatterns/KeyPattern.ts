@@ -1,6 +1,40 @@
 import { enumObject, enumSuiteObject } from '@space-architects/util-enum';
 import { minimatch } from 'minimatch';
 
+// TODO: move to shared type utils
+
+// Helpers (optional)
+type IsNever<T> = [T] extends [never] ? true : false;
+type IsAny<T> = 0 extends 1 & T ? true : false;
+
+// Generic literal detector for common primitives
+export type IsLiteral<T> =
+  IsNever<T> extends true
+    ? false
+    : IsAny<T> extends true
+      ? false
+      : T extends string
+        ? [string] extends [T]
+          ? false
+          : true
+        : T extends number
+          ? [number] extends [T]
+            ? false
+            : true
+          : T extends boolean
+            ? [boolean] extends [T]
+              ? false
+              : true
+            : T extends bigint
+              ? [bigint] extends [T]
+                ? false
+                : true
+              : T extends symbol
+                ? [symbol] extends [T]
+                  ? false
+                  : true
+                : false;
+
 export const SEGMENT_MACRO = enumSuiteObject(enumObject(['P', 'S']));
 export type SegmentMacro = typeof SEGMENT_MACRO.$type;
 
@@ -17,9 +51,14 @@ type inferKeyTemplateSegment<T extends string> =
     : KeyTemplateSegmentAny;
 
 type inferKeyTemplateSegments<T extends string> =
+  // IsLiteral<T> extends true  ? inferKeyTemplateSegment<T>[] :
   T extends `${infer A}:${infer R}`
     ? [inferKeyTemplateSegment<A>, ...inferKeyTemplateSegments<R>]
     : [inferKeyTemplateSegment<T>];
+
+// Resolves to `true` iff T is `any`, otherwise `false`
+// type T1 = inferKeyTemplateSegments<'P(nodeId):S(key)'>;
+// type T2 = inferKeyTemplateSegments<any>;
 
 type IsNonEmptyArray<T extends readonly any[]> = T extends [
   infer _ extends any,
@@ -180,3 +219,8 @@ export class KeyPattern<T extends string> {
     return value;
   }
 }
+
+// TODO: make this type work as a constraint for fn arguments.
+//  currently, it is too strict:
+//  when passing a concrete pattern, it resolves different sizes of arrays (segments, etc.)
+export type KeyPatternAny = KeyPattern<string>;

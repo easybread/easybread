@@ -2,7 +2,7 @@ export class FiberKey {
   static CHARS = {
     SEPARATOR: '/',
     PIPE: '-',
-    ANY: '~',
+    WILDCARD: '~',
   } as const;
 
   path: string[];

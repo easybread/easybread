@@ -1,6 +1,7 @@
 import { Intent } from '../../Intent';
 import type { GetIO, IOConstraint, IOIn, IOOut } from '../../helpers/IO';
 import { Option } from '../../helpers/Option';
+import { EXIT_STATUS } from '../Exit';
 import { makePipeFiberPolicy } from '../FiberPolicy';
 import {
   type NodeAny,
@@ -25,7 +26,8 @@ type IsEmptyNodeChildren<T extends ReadonlyArray<NodeAny>> = T extends never[]
  *
  * Does not propagate the close event when it has no next child node.
  *
- * Exits when the last child node exits.
+ * Exits when all direct children have exited and there are no pending
+ * tasks for them on fibers that have this node's run fiber as their origin.
  *
  * @example
  * ```
@@ -73,7 +75,7 @@ export class StreamNode<
     if (nextNode) {
       return [
         Intent.runNode({ fiber: context.eventFiber, nodeId: nextNode.id }),
-        Intent.stopPropagation({ reason: 'StreamNode has next child node' }),
+        Intent.stopPropagation({ reason: 'StreamNode has next child node.' }),
       ];
     }
 
@@ -83,11 +85,9 @@ export class StreamNode<
   async onExit(
     context: inferNodeEventHandlerContext<this>,
   ): Promise<OnExitResultIntents[]> {
-    // exit when all direct children have exited, and the execution queue is empty
-    // to check the status of all children we might structure the exit store as follows
     /* 
     Exit Store
-    nodeId        key            status       fiberCloseData (in another store)
+    nodeId        fiberKey       status       fiberCloseData (in another store)
     r             -              -------
     r/a           -/-            SUCCESS      [T1, T2, T3]
     r/e           -/-/0          -------      T1
@@ -101,15 +101,22 @@ export class StreamNode<
     r/batch       -/-/2/-/0      SUCCESS      [T1-foo, T2-foo, T3-foo]
     r             -              SUCCESS
     
-    use case
-
     const exits = await context.exitStore.getExits('r/*', '-/**')
-    const 
-    
-    
     */
+    const tasksCount = await context.countPendingChildrenTasks(this);
 
-    throw new Error('Method not implemented.');
+    const exitsCount = 10;
+
+    if (tasksCount > 0) return [];
+    // this doesn't solve the problem. Children can exit multiple times. see the notepad.
+    if (exitsCount < this.childrenCount) return [];
+
+    return [
+      Intent.exit({
+        fiber: context.eventFiber,
+        exit: { status: EXIT_STATUS.enum.SUCCESS },
+      }),
+    ];
   }
 
   addChild<
