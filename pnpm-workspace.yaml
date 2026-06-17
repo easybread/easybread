@@ -1,3 +1,22 @@
+# pnpm settings.
+#
+# As of pnpm v10/v11 the `pnpm` field in `package.json` is no longer read.
+# Workspace-wide settings such as dependency overrides and build-script
+# allow-lists now live here instead.
+# See https://pnpm.io/settings
+
+overrides:
+  react: $react
+  react-dom: $react-dom
+  eslint-config-prettier: $eslint-config-prettier
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - esbuild
+  - nx
+  - sharp
+
 allowBuilds:
   '@parcel/watcher': set this to true or false
   '@prisma/client': set this to true or false
