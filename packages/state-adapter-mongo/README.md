@@ -1,11 +1,35 @@
-# state-adapter-mongo
+# @easybread/state-adapter-mongo
 
-This library was generated with [Nx](https://nx.dev).
+A MongoDB-backed [`StateAdapter`](../core) for EasyBREAD. Use it to persist auth data
+(OAuth tokens, refresh tokens, basic-auth credentials, …) outside of memory.
 
-## Building
+## Install
 
-Run `nx build state-adapter-mongo` to build the library.
+```shell
+pnpm add @easybread/state-adapter-mongo mongodb
+```
 
-## Running unit tests
+## Usage
 
-Run `nx test state-adapter-mongo` to execute the unit tests via [Jest](https://jestjs.io).
+`StateAdapterMongo` is created through async factory methods — either from an existing
+`MongoClient` or directly from a connection URL:
+
+```ts
+import { EasyBreadClient } from '@easybread/core';
+import { StateAdapterMongo } from '@easybread/state-adapter-mongo';
+
+const stateAdapter = await StateAdapterMongo.fromConnectionUrl(
+  'mongodb://localhost:27017/my-db',
+);
+
+const client = new EasyBreadClient(stateAdapter, serviceAdapter, authStrategy);
+```
+
+State adapters are interchangeable — the in-memory adapter from `@easybread/core` is
+great for tests, while this adapter is suited for production where auth data must
+survive restarts.
+
+## Development
+
+Run `nx test state-adapter-mongo` and `nx build state-adapter-mongo`. The tests use
+`mongodb-memory-server`, which downloads a MongoDB binary on first run.

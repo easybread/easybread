@@ -1,11 +1,39 @@
-# service-adapters-rocket-chat-users
+# @easybread/adapter-rocket-chat-users
 
-This library was generated with [Nx](https://nx.dev).
+[EasyBREAD](../../../../README.md) service adapter for
+[Rocket.Chat](https://www.rocket.chat/) users.
 
-## Building
+## Install
 
-Run `nx build service-adapters-rocket-chat-users` to build the library.
+```shell
+pnpm add @easybread/adapter-rocket-chat-common @easybread/adapter-rocket-chat-users
+```
 
-## Running unit tests
+## Authentication
 
-Run `nx test service-adapters-rocket-chat-users` to execute the unit tests via [Jest](https://jestjs.io).
+Uses **Basic auth** via `RocketChatAuthStrategy` from
+[`@easybread/adapter-rocket-chat-common`](../common). Set the credentials with
+`AUTH_BASIC_SET` before invoking user operations.
+
+```ts
+import { EasyBreadClient, InMemoryStateAdapter } from '@easybread/core';
+import { RocketChatAuthStrategy } from '@easybread/adapter-rocket-chat-common';
+import { RocketChatUsersAdapter } from '@easybread/adapter-rocket-chat-users';
+
+const stateAdapter = new InMemoryStateAdapter();
+const authStrategy = new RocketChatAuthStrategy(stateAdapter);
+const serviceAdapter = new RocketChatUsersAdapter(authStrategy, {
+  serverUrl: 'https://your-rocket-chat.example.com',
+});
+const client = new EasyBreadClient(stateAdapter, serviceAdapter);
+```
+
+## Operations
+
+- Auth: `AUTH_BASIC_SET`
+- Users: `BASIC_USER_SEARCH`, `BASIC_USER_BY_ID`
+
+## Development
+
+Run `nx test service-adapters-rocket-chat-users` and
+`nx build service-adapters-rocket-chat-users`.

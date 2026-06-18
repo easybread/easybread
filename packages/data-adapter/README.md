@@ -1,8 +1,15 @@
-# data-adapter
+# @easybread/data-adapter
 
-Simple module to map from and to internal and external types.
+Declarative, two-way mapping between an external API shape and your internal
+(BreadSchema) shape. Primarily used by service-adapter authors.
 
-### Simple Use Case
+## Install
+
+```shell
+pnpm add @easybread/data-adapter
+```
+
+## Usage
 
 ```ts
 import { breadDataAdapter } from '@easybread/data-adapter';
@@ -16,34 +23,8 @@ const dataAdapter = breadDataAdapter<External, Internal>({
 });
 ```
 
-### Composition Use Case
+It is built on top of the lower-level [`@easybread/data-mapper`](../data-mapper).
 
-```ts
-import { breadDataAdapter } from '@easybread/data-adapter';
+## Development
 
-type ExternalFoo = { a: string };
-type InternalFoo = { b: string };
-
-type External = { foo: ExternalFoo };
-type Internal = { foo: InternalFoo };
-
-const fooAdapter = breadDataAdapter<ExternalFoo, InternalFoo>({
-  toExternal: { b: 'a' },
-  toInternal: { a: 'b' },
-});
-
-const adapter = breadDataAdapter<External, Internal>({
-  toExternal: { foo: (i) => fooAdapter.toExternal(i.foo) },
-  toInternal: { foo: (i) => fooAdapter.toInternal(i.foo) },
-});
-```
-
-
-## Building
-
-Run `nx build data-adapter` to build the library.
-
-## Running unit tests
-
-Run `nx test data-adapter` to execute the unit tests via [Jest](https://jestjs.io).
-
+Run `nx test data-adapter` to execute the unit tests and `nx build data-adapter` to build.
