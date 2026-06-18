@@ -12,13 +12,16 @@ import {
   BreezyAdapter,
   BreezyAuthBasicSetCommand,
   BreezyAuthStrategy,
+  type BreezyJobApplicantSearchCommand,
   type BreezyOrganizationSearchCommand,
 } from '../..';
 
 import {
+  CANDIDATES_RESPONSE_MOCK,
   COMPANIES_SEARCH_RESPONSE_MOCK,
   EMAIL,
   PASSWORD,
+  POSITIONS_SEARCH_RESPONSE_MOCK,
   SIGN_IN_RESPONSE_MOCK,
   USER_ID,
 } from './mocks';
@@ -156,6 +159,102 @@ describe('Breezy', () => {
             numberOfEmployees: 2,
           },
         ]);
+      });
+    });
+
+    // ------------------------------------
+
+    describe(BREEZY_COMMAND_NAME.HR_JOB_APPLICANT_SEARCH, () => {
+      function invokeApplicantSearch(): Promise<
+        inferCommandOutput<BreezyJobApplicantSearchCommand>
+      > {
+        return client.invoke(BREEZY_COMMAND_NAME.HR_JOB_APPLICANT_SEARCH, {
+          breadId: USER_ID,
+          params: null,
+          pagination: { type: 'DISABLED' },
+        });
+      }
+
+      beforeEach(async () => {
+        jest
+          .mocked(axiosMock.request)
+          // 1. list companies
+          .mockImplementationOnce(() =>
+            Promise.resolve({
+              status: 200,
+              data: COMPANIES_SEARCH_RESPONSE_MOCK,
+            }),
+          )
+          // 2. list published positions for the company
+          .mockImplementationOnce(() =>
+            Promise.resolve({
+              status: 200,
+              data: POSITIONS_SEARCH_RESPONSE_MOCK,
+            }),
+          )
+          // 3. list candidates for the position
+          .mockImplementationOnce(() =>
+            Promise.resolve({
+              status: 200,
+              data: CANDIDATES_RESPONSE_MOCK,
+            }),
+          );
+      });
+
+      it(`should call companies, positions and candidates apis`, async () => {
+        await invokeApplicantSearch();
+
+        expect(axiosMock.request).toHaveBeenNthCalledWith(1, {
+          headers: { authorization: 'accessToken' },
+          method: 'GET',
+          url: 'https://api.breezy.hr/v3/companies',
+        });
+
+        expect(axiosMock.request).toHaveBeenNthCalledWith(2, {
+          headers: { authorization: 'accessToken' },
+          method: 'GET',
+          url: 'https://api.breezy.hr/v3/company/90e727223953/positions',
+          params: { state: 'published' },
+        });
+
+        expect(axiosMock.request).toHaveBeenNthCalledWith(3, {
+          headers: { authorization: 'accessToken' },
+          method: 'GET',
+          url: 'https://api.breezy.hr/v3/company/90e727223953/position/position-one/candidates',
+          params: { page: 1, page_size: 50, sort: 'created' },
+        });
+      });
+
+      it(`should return raw payload`, async () => {
+        const result = await invokeApplicantSearch();
+        if (!result.success) throw new Error('No success');
+        expect(result.rawPayload).toEqual(CANDIDATES_RESPONSE_MOCK);
+      });
+
+      it(`should return Person[] schema payload`, async () => {
+        const result = await invokeApplicantSearch();
+        if (!result.success) throw new Error('No success');
+        expect(result.payload).toEqual([
+          {
+            '@type': 'Person',
+            identifier: 'candidate-one',
+            email: 'jane.doe@mail.com',
+            name: 'Jane Doe',
+            givenName: 'Jane',
+            familyName: 'Doe',
+            image: 'https://breezy.hr/photos/jane.png',
+            workLocation: 'New York, NY',
+            createdAt: '2025-03-30T01:00:00.000Z',
+            updatedAt: '2025-04-02T01:00:00.000Z',
+            telephone: '+15551234567',
+          },
+        ]);
+      });
+
+      it(`should return DISABLED pagination`, async () => {
+        const result = await invokeApplicantSearch();
+        if (!result.success) throw new Error('No success');
+        expect(result.pagination).toEqual({ type: 'DISABLED' });
       });
     });
   });

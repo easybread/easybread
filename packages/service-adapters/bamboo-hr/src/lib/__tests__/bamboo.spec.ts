@@ -615,6 +615,95 @@ describe('BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_CREATE', () => {
   });
 });
 
+describe('BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_UPDATE', () => {
+  beforeEach(async () => {
+    (axios.request as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 200,
+        headers: {},
+      } as unknown as AxiosResponse),
+    );
+  });
+
+  function invokeEmployeeUpdate() {
+    return client.invoke(BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_UPDATE, {
+      breadId: BREAD_ID,
+      params: null,
+      payload: {
+        '@type': 'Person',
+        identifier: '27',
+        email: 'updated@mail.ru',
+        givenName: 'Updated',
+        familyName: 'Employee',
+        telephone: '+71231231212',
+      },
+    });
+  }
+
+  it(`should call bamboo API with the employee identifier`, async () => {
+    await invokeEmployeeUpdate();
+    expect(axios.request).toHaveBeenCalledWith({
+      url: 'https://api.bamboohr.com/api/gateway.php/company-one/v1/employees/27',
+      method: 'POST',
+      data: {
+        id: 27,
+        firstName: 'Updated',
+        lastName: 'Employee',
+        workEmail: 'updated@mail.ru',
+        workPhone: '+71231231212',
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        accept: 'application/json',
+        authorization: 'Basic dXNlci1zZWNyZXQta2V5Ong=',
+      },
+    });
+  });
+
+  it(`should have correct output`, async () => {
+    const result = await invokeEmployeeUpdate();
+    expect(result).toEqual({
+      success: true,
+      breadId: BREAD_ID,
+      payload: {
+        '@type': 'Person',
+        identifier: '27',
+        email: 'updated@mail.ru',
+        familyName: 'Employee',
+        givenName: 'Updated',
+        telephone: '+71231231212',
+      },
+      rawPayload: null,
+    });
+  });
+
+  it(`should return correct error when request failed`, async () => {
+    const error = createAxiosError('Request failed with status code 404', {
+      status: 404,
+    });
+
+    jest
+      .mocked(axios.request)
+      .mockReset()
+      .mockImplementation(() => Promise.reject(error));
+
+    const result = await invokeEmployeeUpdate();
+
+    expect(result).toEqual({
+      breadId: BREAD_ID,
+      success: false,
+      error: {
+        name: 'ServiceException',
+        message: expect.stringContaining(
+          'Request failed with status code 404',
+        ),
+        provider: 'bamboo',
+        timestamp: expect.any(String),
+      },
+    });
+  });
+});
+
 describe('BAMBOO_HR_COMMAND_NAME.HR_JOB_APPLICATION_SEARCH', () => {
   it(`should return an expected rawData and payload`, async () => {
     const startTime = new Date('2024-10-11T00:00:00.000Z').toISOString();
