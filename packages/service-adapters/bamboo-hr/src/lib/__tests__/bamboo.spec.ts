@@ -694,9 +694,7 @@ describe('BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_UPDATE', () => {
       success: false,
       error: {
         name: 'ServiceException',
-        message: expect.stringContaining(
-          'Request failed with status code 404',
-        ),
+        message: expect.stringContaining('Request failed with status code 404'),
         provider: 'bamboo',
         timestamp: expect.any(String),
       },
