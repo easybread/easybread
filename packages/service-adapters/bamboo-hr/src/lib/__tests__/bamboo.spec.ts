@@ -617,6 +617,12 @@ describe('BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_CREATE', () => {
 
 describe('BAMBOO_HR_COMMAND_NAME.HR_EMPLOYEE_UPDATE', () => {
   beforeEach(async () => {
+    // seed auth data so the suite is self-contained when run in isolation
+    await stateAdapter.write(
+      `${BAMBOO_HR_PROVIDER_NAME}:auth-data:BambooHrAuthStrategy:${BREAD_ID}`,
+      { companyName: COMPANY_NAME, token: 'dXNlci1zZWNyZXQta2V5Ong=' },
+    );
+
     (axios.request as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
         status: 200,

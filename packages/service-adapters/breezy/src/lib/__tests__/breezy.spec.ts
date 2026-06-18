@@ -176,6 +176,12 @@ describe('Breezy', () => {
       }
 
       beforeEach(async () => {
+        // seed auth data so the suite is self-contained when run in isolation
+        await stateAdapter.write(
+          `breezy:auth-data:BreezyAuthStrategy:${USER_ID}`,
+          { accessToken: 'accessToken' },
+        );
+
         jest
           .mocked(axiosMock.request)
           // 1. list companies
